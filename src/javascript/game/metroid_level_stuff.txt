@@ -1,0 +1,34 @@
+
+This dude has too much time on his hands:
+
+  Write-up on Metroid level encoding: http://www.metroid-database.com/m1/lvldata.php
+  Metedit download: http://www.romhacking.net/utilities/176/
+
+Observations:
+
+Screen in blocks: 16 x 15
+NES Screen in pixels: 256 x 240
+Tile size: 16x16px
+  (in actuality block tiles consist of 2x2 8-px-square mini tiles)
+
+Aspect ratio stuff:
+  "Realistic" NES representations are 4:3, or 1.333 (pixels are 1/3 wider than tall)
+  On a Mac Book Pro retina, the apparent res when fullscreening is 1200x900
+   
+  In-browser size that looks nice: 
+    640x480   
+      Be sure to set DisplayObjectContainer scale.x 1.333 (or 2.666 if stretching a sprite sheet to 2x)
+
+Samus runs at approx 5.5 blocks/sec
+  88 pixels per second in NES land
+  176 px in  doubler land
+
+Game Frames,  ms
+0             0   frame0
+3             50  frame1
+6             100 frame2
+
+
+0---->50---->100---->150---->200
+F0    F1     F2      F0      F1
+0---->50---->100---->0------>50

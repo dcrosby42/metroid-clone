@@ -1,0 +1,39 @@
+{"frames": {
+
+"skree-green-01":
+{
+	"frame": {"x":2,"y":2,"w":16,"h":24},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":24},
+	"sourceSize": {"w":16,"h":24},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"skree-green-02":
+{
+	"frame": {"x":20,"y":2,"w":8,"h":24},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":0,"w":8,"h":24},
+	"sourceSize": {"w":16,"h":24},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"skree-green-03":
+{
+	"frame": {"x":30,"y":2,"w":8,"h":24},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":0,"w":8,"h":24},
+	"sourceSize": {"w":16,"h":24},
+	"pivot": {"x":0.5,"y":0.5}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "skree.png",
+	"format": "RGBA8888",
+	"size": {"w":40,"h":28},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:f5f626f203893ad8fe2958e0752f60fc:54cf85428d779e72ae30e6415caf7aa4:6707f84dbb444af27c59550dfc369e4c$"
+}
+}

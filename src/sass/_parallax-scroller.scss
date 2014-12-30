@@ -1,0 +1,22 @@
+body { background-color: #000000; }
+
+.row {
+  float: left;
+  width: 100%;
+  clear: both;
+}
+#game-holder {
+  // display: inline-block;
+  float: left;
+  width: 512;
+  height: 480;
+}
+
+#game-debug {
+  // display: inline-block;
+  float: left;
+  width: 300px;
+  height: 384px;
+}
+// canvas { background-color: #444444; }
+

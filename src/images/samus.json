@@ -1,0 +1,102 @@
+{"frames": {
+
+"samus1-04-00":
+{
+	"frame": {"x":2,"y":2,"w":26,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
+	"sourceSize": {"w":26,"h":38},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"samus1-06-00":
+{
+	"frame": {"x":2,"y":42,"w":26,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
+	"sourceSize": {"w":26,"h":38},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"samus1-07-00":
+{
+	"frame": {"x":2,"y":82,"w":26,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
+	"sourceSize": {"w":26,"h":38},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"samus1-08-00":
+{
+	"frame": {"x":2,"y":122,"w":26,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
+	"sourceSize": {"w":26,"h":38},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"samus1-aim-up-run1":
+{
+	"frame": {"x":2,"y":162,"w":26,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
+	"sourceSize": {"w":26,"h":38},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"samus1-aim-up-run2":
+{
+	"frame": {"x":2,"y":202,"w":26,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
+	"sourceSize": {"w":26,"h":38},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"samus1-aim-up-run3":
+{
+	"frame": {"x":2,"y":242,"w":26,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
+	"sourceSize": {"w":26,"h":38},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"samus1-aim-up":
+{
+	"frame": {"x":2,"y":282,"w":26,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
+	"sourceSize": {"w":26,"h":38},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"samus1-jump-right":
+{
+	"frame": {"x":2,"y":322,"w":26,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
+	"sourceSize": {"w":26,"h":38},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"samus1-shoot-up":
+{
+	"frame": {"x":2,"y":362,"w":26,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
+	"sourceSize": {"w":26,"h":38},
+	"pivot": {"x":0.5,"y":0.5}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "samus.png",
+	"format": "RGBA8888",
+	"size": {"w":30,"h":402},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a02b712d9c57d6edb500651c0ee3448f:72661f487f1fcd9efb29429e96fae5e0:ee3397b934a0f7ddedb37d84ef594e2f$"
+}
+}
