@@ -33,7 +33,7 @@ class SamusAnimationSystem
       visual = estore.getComponent(samus.eid, 'visual')
       oldState = visual.state
 
-      keyPath = ObjectUtils.getPropertiesList samus, ['action','direction','aim']
+      keyPath = ObjectUtils.getPropertiesList samus, ['motion','direction','aim']
       visual.state = ObjectUtils.getDeep @states, keyPath
 
       if visual.state != oldState

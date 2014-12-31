@@ -6,16 +6,19 @@ class KeyboardWrapper
     for key in @keys
       @downs[key] = { queued: [], last: false }
       @_bind key
+    @newEvent = false
 
   _bind: (key) ->
     Mousetrap.bind key, (=> @_keyDown(key)), 'keydown'
     Mousetrap.bind key, (=> @_keyUp(key)), 'keyup'
   
   _keyDown: (key) ->
+    @newEvent = true
     @downs[key]['queued'].push(true)
     false
 
   _keyUp: (key) ->
+    @newEvent = true
     @downs[key]['queued'].push(false)
     false
 
@@ -43,7 +46,7 @@ class InputState
       return null
 
 class KeyboardController
-  constructor: (@bindings) ->
+  constructor: ({@bindings,mutually_exclusive_actions}) ->
     @keys = []
     @inputStates = {}
     @actionStates = {}
@@ -52,24 +55,44 @@ class KeyboardController
       @inputStates[key] = new InputState(key)
       @actionStates[key] = false
 
+    if mutually_exclusive_actions?
+      @excluded_actions_for = {}
+      for [action_a, action_b] in mutually_exclusive_actions
+        @excluded_actions_for[action_a] = [ action_b ]
+        @excluded_actions_for[action_b] = [ action_a ]
+
     @keyboardWrapper = new KeyboardWrapper(@keys)
 
+
   update: ->
+    return null if !@keyboardWrapper.newEvent
+    @keyboardWrapper.newEvent = false
     diff = {}
     change = false
     for key,inputState of @inputStates
       action = @bindings[key]
-      res = inputState.update(@keyboardWrapper)
-      switch res
+      switch inputState.update(@keyboardWrapper)
         when "justPressed"
-          diff[action] = true
           @actionStates[action] = true
+          diff[action] = true
+          if @excluded_actions_for?
+            others = @excluded_actions_for[action]
+            if others?
+              for a in others
+                if @actionStates[a]
+                  @actionStates[a] = false
+                  diff[a] = false
           change = true
         when "justReleased"
-          diff[action] = false
           @actionStates[action] = false
+          diff[action] = false
           change = true
-    diff if change
+    @keyboardWrapper.newEvent = false
+    if change
+      return diff
+    else
+      return null
+
 
   isActive: (action) ->
     @actionStates[action]

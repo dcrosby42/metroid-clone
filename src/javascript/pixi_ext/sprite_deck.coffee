@@ -1,8 +1,9 @@
 PIXI = require 'pixi.js'
 _    = require 'lodash'
 
-debug = (a...) ->
-  console.log "SpriteDeck DEBUG: ", a...
+debug = ->
+# debug = (a...) ->
+#   console.log "SpriteDeck DEBUG: ", a...
 
 class SpriteDeck extends PIXI.DisplayObjectContainer
 

@@ -1,7 +1,8 @@
 jquery    = require 'jquery'
 
 PixiHarness = require './pixi_ext/pixi_harness'
-OneRoom = require './game/one_room'
+# OneRoom = require './game/one_room'
+CollisionSpike = require './game/collision_spike'
 # SamusPreview = require './game/samus_preview'
 # SkreePreview = require './samus/skree_preview'
 BigScreen = require './vendor/bigscreen_wrapper'
@@ -9,7 +10,8 @@ BigScreen = require './vendor/bigscreen_wrapper'
 jquery ->
   el = jquery('#game-holder')[0]
 
-  del = new OneRoom()
+  # del = new OneRoom()
+  del = new CollisionSpike()
   # del = new SamusPreview()
   # del = new SkreePreview()
   harness = new PixiHarness

@@ -4,13 +4,15 @@ Common = require('../components')
 samusComps = (args) ->
   [
     new S.Samus
-      action: 'standing' # standing | running | jumping | falling
+      action: null
+      motion: 'standing' # standing | running | jumping | falling
       direction: 'right' # right | left
       aim: 'straight' # up | straight
       runSpeed: 88/1000 # 88 px/sec
-      jumpSpeed: 200/1000
+      jumpSpeed: 400/1000
       floatSpeed: 60/1000
-    new Common.Position(x: 50, y: 208)
+    new Common.Position(x: 50, y: 50)
+    new Common.Velocity(x: 0, y: 0)
     new Common.Movement()
     new Common.Controller(inputName: 'player1')
     new Common.Visual

@@ -7,6 +7,12 @@ C.Position = class Position
     @x ||= 0
     @y ||= 0
 
+C.Velocity = class Velocity
+  constructor: ({@x,@y}={}) ->
+    @ctype = 'velocity'
+    @x ||= 0
+    @y ||= 0
+
 C.Movement = class Movement
   constructor: ({@x,@y}={}) ->
     @ctype = 'movement'

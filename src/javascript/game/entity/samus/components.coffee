@@ -1,6 +1,7 @@
 
 exports.Samus = class Samus
-  constructor: ({@action
+  constructor: ({@motion
+                 @action
                  @direction
                  @aim
                  @runSpeed
