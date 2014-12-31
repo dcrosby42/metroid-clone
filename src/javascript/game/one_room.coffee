@@ -6,8 +6,7 @@ Mousetrap = require '../vendor/mousetrap_wrapper'
 KeyboardController = require '../input/keyboard_controller'
 GamepadController = require('../input/gamepad_controller')
 
-EntityStore    = require '../ecs/entity_store'
-SystemRegistry = require '../ecs/system_registry'
+EntityStore = require '../ecs/entity_store'
 Systems = require './systems'
 
 Samus = require './entity/samus'
@@ -71,6 +70,7 @@ class OneRoom
     base.addChild creatures
     base.addChild overlay
 
+    # layers:
     {
       base: base
       map: map
