@@ -1,0 +1,21 @@
+{"frames": {
+
+"block-0":
+{
+	"frame": {"x":2,"y":2,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16},
+	"pivot": {"x":0.5,"y":0.5}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "brinstar.png",
+	"format": "RGBA8888",
+	"size": {"w":20,"h":20},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:dcbc30c87d80d141b263ad9e9c2b4e49:5c8d3ca56ed95ec075135eecfdea4f8a:e7899a9d3f27523d45ce9e66020a6680$"
+}
+}

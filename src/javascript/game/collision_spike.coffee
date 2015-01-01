@@ -22,8 +22,6 @@ Systems.register 'controller_action', class GestureAction
       else
         samus.aim = 'straight'
     
-      # if ctrl.left or ctrl.right
-      #   console.log "L/R: #{ctrl.left} #{ctrl.right}"
       if ctrl.left
         samus.direction = 'left'
       else if ctrl.right
@@ -84,7 +82,6 @@ Systems.register 'action_velocity', class ActionVelocity
         when 'jump'
           velocity.y = -samus.jumpSpeed
 
-
         when 'fall'
           velocity.y = 0
 
@@ -106,13 +103,27 @@ Systems.register 'velocity_position', class GestureAction
         dx = velocity.x * dt
         dy = velocity.y * dt
 
-        position.x += dx
-        position.y += dy
+        newX = position.x + dx
+        newY = position.y + dy
 
-        if position.y > 240
-          position.y = 240
+        # Detect map collisions
+        tileRow = Math.floor(newY/16)
+        tileCol = Math.floor(newX/16)
+        row = roomData[tileRow]
+        block = null
+        if row?
+          block = row[tileCol]
+          if block?
+            if velocity.y > 0
+              newY = (tileRow * 16)
+              velocity.y = 0
+
+        if newY > 240
+          newY = 240
           velocity.y = 0
-        # console.log velocity.y
+
+        position.x = newX
+        position.y = newY
 
 
     # translate velocity into position
@@ -129,21 +140,25 @@ Systems.register 'update_motion', class UpdateMotion
         'jumping'
       else if velocity.y > 0
         'falling'
-      else if velocity.x == 0
-        'standing'
       else
-        'running'
+        if velocity.x == 0
+          'standing'
+        else
+          'running'
 
-      if samus.motion != m
-        console.log "Motion updated: #{samus.motion}"
-
+      # if samus.motion != m
+      #   console.log "Motion updated: #{samus.motion}"
 
 
 class CollisionSpike
   constructor: ->
 
   graphicsToPreload: ->
-    assets = Samus.assets
+    assets = [
+      "images/brinstar.json"
+    ]
+    assets = assets.concat(Samus.assets)
+
     assets
 
   setupStage: (@stage, width, height) ->
@@ -158,7 +173,9 @@ class CollisionSpike
     @setupSystems()
 
     @setupInput()
-    
+
+    @setupMap(@layers['map'])
+
     @timeDilation = 1
 
     window.me = @
@@ -252,7 +269,7 @@ class CollisionSpike
     @handleAdminControls()
 
     p1in = @p1Controller.update()
-    # console.log p1in if p1in
+    console.log p1in if p1in
     @input.controllers.player1 = p1in
     # @input.controllers.player2 = @p2Controller.update()
 
@@ -267,6 +284,45 @@ class CollisionSpike
     #   else
     #     @p1Controller = @keyboardController
     
+  setupMap: (container) ->
+    # for i in [ 0 ]
+    #   blockTextures[i] = PIXI.Texture.fromFrame("block-#{i}")
+    
+    for row,r in roomData
+      for b,c in row
+        if b?
+          sprite = PIXI.Sprite.fromFrame("block-#{b}")
+          sprite.position.set c*16,r*16
+          container.addChild sprite
+
 
 module.exports = CollisionSpike
 
+blockTextures = [
+  null
+]
+
+mapSprites = [
+]
+
+roomData = [
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,0x00,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,0x00,null,null, null,null,null,null, null,null,null,null ]
+
+  [ null,null,null,null, null,0x00,null,null, null,null,null,null, null,null,null,null ]
+  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+]

@@ -6,26 +6,30 @@ class KeyboardWrapper
     for key in @keys
       @downs[key] = { queued: [], last: false }
       @_bind key
-    @newEvent = false
+    @eventCount = 0
+
+  hasEvents: ->
+    @eventCount > 0
 
   _bind: (key) ->
     Mousetrap.bind key, (=> @_keyDown(key)), 'keydown'
     Mousetrap.bind key, (=> @_keyUp(key)), 'keyup'
   
   _keyDown: (key) ->
-    @newEvent = true
     @downs[key]['queued'].push(true)
+    @eventCount++
     false
 
   _keyUp: (key) ->
-    @newEvent = true
     @downs[key]['queued'].push(false)
+    @eventCount++
     false
 
   isActive: (key) ->
     if (@downs[key]['queued'].length > 0)
       v = @downs[key]['queued'].shift()
       @downs[key]['last'] = v
+      @eventCount--
 
     @downs[key]['last']
 
@@ -65,8 +69,7 @@ class KeyboardController
 
 
   update: ->
-    return null if !@keyboardWrapper.newEvent
-    @keyboardWrapper.newEvent = false
+    return null if !@keyboardWrapper.hasEvents()
     diff = {}
     change = false
     for key,inputState of @inputStates
