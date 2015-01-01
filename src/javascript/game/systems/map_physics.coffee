@@ -75,11 +75,16 @@ class MapPhysics
         hitBox.x = box.x # kinda redundant but let's just keep er up2date ok
         hitBox.y = box.y# kinda redundant but let's just keep er up2date ok
 
+        hitBox.touching.left = hits.left.length > 0
+        hitBox.touching.right = hits.right.length > 0
+        hitBox.touching.top = hits.top.length > 0
+        hitBox.touching.bottom = hits.bottom.length > 0
+
         # Update velocity if needed based on running into objects:
-        if hits.right.length > 0 or hits.left.length > 0
+        if hitBox.touching.left or hitBox.touching.right
           velocity.x = 0
 
-        if hits.top.length > 0 or hits.bottom.length > 0
+        if hitBox.touching.top or hitBox.touching.bottom
           velocity.y = 0
 
 

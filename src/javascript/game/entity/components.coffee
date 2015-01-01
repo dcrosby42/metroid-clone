@@ -32,4 +32,10 @@ C.HitBox = class HitBox
     @height ||= 10
     @anchorX ||= 0
     @anchorY ||= 0
+    @touching ||= {}
+    @touching.left ||= false
+    @touching.right ||= false
+    @touching.top ||= false
+    @touching.bottom ||= false
     
+

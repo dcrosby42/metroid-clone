@@ -116,7 +116,8 @@ class CollisionSpike
       'samus_controller_action'
       'samus_action_velocity'
       ['map_physics',
-        spriteGrid: @mapSpriteGrid
+        # spriteGrid: @mapSpriteGrid
+        spriteGrid: @mapTileGrid
         tileWidth: @mapTileWidth
         tileHeight: @mapTileHeight]
       'samus_animation'
@@ -147,36 +148,39 @@ class CollisionSpike
     #     @p1Controller = @keyboardController
     
   setupMap: (container) ->
-    # for i in [ 0 ]
-    #   blockTextures[i] = PIXI.Texture.fromFrame("block-#{i}")
-    
     @mapTileHeight = 16
     @mapTileWidth = 16
 
     spriteRows = []
+    tileRows = []
     for row,r in roomData
       spriteRow = []
       spriteRows.push spriteRow
+      tileRow = []
+      tileRows.push tileRow
       for bnum,c in row
         if bnum?
           sprite = PIXI.Sprite.fromFrame("block-#{bnum}")
-          sprite.position.set c*@mapTileWidth,r*@mapTileHeight
+          x = c*@mapTileWidth
+          y = r*@mapTileHeight
+          sprite.position.set x, y
           container.addChild sprite
           spriteRow.push sprite
+          tileRow.push
+            x: x
+            y: y
+            width: @mapTileWidth
+            height: @mapTileHeight
+
         else
           spriteRow.push null
+          tileRow.push null
 
+    @mapTileGrid = tileRows
     @mapSpriteGrid = spriteRows
 
 
 module.exports = CollisionSpike
-
-blockTextures = [
-  null
-]
-
-mapSprites = [
-]
 
 roomData = [
   [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]

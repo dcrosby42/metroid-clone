@@ -3,8 +3,9 @@ class SamusControllerAction
   run: (estore,dt,input) ->
     for samus in estore.getComponentsOfType('samus')
       controller = estore.getComponent(samus.eid, 'controller')
+
       ctrl = controller.states
-      
+
       if ctrl.up
         samus.aim = 'up'
       else
@@ -32,6 +33,7 @@ class SamusControllerAction
             samus.action = 'stand'
 
         when 'falling'
+          ctrl.jump = false
           if ctrl.left or ctrl.right
             samus.action = 'drift'
 
