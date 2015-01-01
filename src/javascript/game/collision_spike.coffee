@@ -132,12 +132,14 @@ Systems.register 'velocity_position', class GestureAction
         grid = window.mapSpriteGrid
         bottomHits = tileSearchHorizontal(grid, newBottom, left,right-1)
         if bottomHits.length > 0
-          newY = (Math.floor(newBottom/tileWidth) * tileWidth) - (samusHeight*(1-samusAnchorY))
+          s = bottomHits[0]
+          newY = s.y  - (samusHeight*(1-samusAnchorY))
           velY = 0 if velY > 0
         else
           topHits = tileSearchHorizontal(grid, newTop, left,right-1)
           if topHits.length > 0
-            newY = (Math.floor(newTop/tileWidth) + 1) * tileWidth + (samusHeight*samusAnchorY)
+            s = topHits[0]
+            newY = s.y + s.height + (samusHeight*samusAnchorY)
             velY = 0 if velY < 0
 
         newBottom = newY
@@ -145,19 +147,15 @@ Systems.register 'velocity_position', class GestureAction
 
         leftHits = tileSearchVertical(grid, newLeft, newTop,newBottom-1)
         if leftHits.length > 0
-          newX = (Math.floor(newLeft/tileWidth) + 1) * tileWidth + (samusWidth*samusAnchorX)
+          s = leftHits[0]
+          newX = s.x + s.width + (samusWidth*samusAnchorX)
           velX = 0 if velX < 0
         else
           rightHits = tileSearchVertical(grid, newRight, newTop,newBottom-1)
           if rightHits.length > 0
-            newX = Math.floor(newRight/tileWidth) * tileWidth - (samusWidth*(1-samusAnchorX))
+            s = rightHits[0]
+            newX = s.x - (samusWidth*(1-samusAnchorX))
             velX = 0 if velX > 0
-
-        # XXX Floor safety check:
-        # screenBottom = 240
-        # if newY > screenBottom
-        #   newY = screenBottom
-        #   velY = 0
 
         velocity.x = velX
         velocity.y = velY
@@ -181,8 +179,8 @@ Systems.register 'update_motion', class UpdateMotion
         else
           'running'
 
-      if samus.motion != m
-        console.log "Motion updated: #{samus.motion}"
+      # if samus.motion != m
+        # console.log "Motion updated: #{samus.motion}"
 
 
 class CollisionSpike
