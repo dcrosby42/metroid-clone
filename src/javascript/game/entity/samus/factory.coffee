@@ -11,6 +11,7 @@ samusComps = (args) ->
       runSpeed: 88/1000 # 88 px/sec
       jumpSpeed: 400/1000
       floatSpeed: 60/1000
+      grounded: true
     new Common.Position(x: 50, y: 50)
     new Common.Velocity(x: 0, y: 0)
     new Common.Movement()

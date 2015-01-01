@@ -97,6 +97,8 @@ Systems.register 'action_velocity', class ActionVelocity
 tileWidth = 16
 samusWidth = 12
 halfSamusWidth = samusWidth/2
+samusAnchorX = 0.5
+samusAnchorY = 1
 samusHeight = 32
 
 Systems.register 'velocity_position', class GestureAction
@@ -116,10 +118,10 @@ Systems.register 'velocity_position', class GestureAction
         newY = position.y + dy
 
         # Samus box:
-        left = position.x - halfSamusWidth
+        left = position.x - (samusWidth * samusAnchorX)
         right = left + samusWidth
-        bottom = position.y
-        top = bottom - samusHeight
+        top = position.y - (samusHeight * samusAnchorY)
+        bottom = top + samusHeight
 
         newLeft = newX - samusWidth/2
         newRight = newLeft + samusWidth
@@ -130,12 +132,12 @@ Systems.register 'velocity_position', class GestureAction
         grid = window.mapSpriteGrid
         bottomHits = tileSearchHorizontal(grid, newBottom, left,right-1)
         if bottomHits.length > 0
-          newY = (Math.floor(newBottom/tileWidth) * tileWidth)
+          newY = (Math.floor(newBottom/tileWidth) * tileWidth) - (samusHeight*(1-samusAnchorY))
           velY = 0 if velY > 0
         else
           topHits = tileSearchHorizontal(grid, newTop, left,right-1)
           if topHits.length > 0
-            newY = (Math.floor(newBottom/tileWidth) + 1) * tileWidth
+            newY = (Math.floor(newTop/tileWidth) + 1) * tileWidth + (samusHeight*samusAnchorY)
             velY = 0 if velY < 0
 
         newBottom = newY
@@ -143,30 +145,25 @@ Systems.register 'velocity_position', class GestureAction
 
         leftHits = tileSearchVertical(grid, newLeft, newTop,newBottom-1)
         if leftHits.length > 0
-          newX = (Math.floor(newLeft/tileWidth) + 1) * tileWidth + halfSamusWidth
+          newX = (Math.floor(newLeft/tileWidth) + 1) * tileWidth + (samusWidth*samusAnchorX)
           velX = 0 if velX < 0
         else
           rightHits = tileSearchVertical(grid, newRight, newTop,newBottom-1)
           if rightHits.length > 0
-            newX = Math.floor(newRight/tileWidth) * tileWidth - halfSamusWidth
+            newX = Math.floor(newRight/tileWidth) * tileWidth - (samusWidth*(1-samusAnchorX))
             velX = 0 if velX > 0
 
-        # Floor safety check:
-        screenBottom = 240
-        if newY > screenBottom
-          newY = screenBottom
-          velY = 0
+        # XXX Floor safety check:
+        # screenBottom = 240
+        # if newY > screenBottom
+        #   newY = screenBottom
+        #   velY = 0
 
         velocity.x = velX
         velocity.y = velY
 
         position.x = newX
         position.y = newY
-
-
-    # translate velocity into position
-    # resolve terrain collisions
-    # --> updated velocity and position
     
 Systems.register 'update_motion', class UpdateMotion
   run: (estore,dt,input) ->
@@ -184,8 +181,8 @@ Systems.register 'update_motion', class UpdateMotion
         else
           'running'
 
-      # if samus.motion != m
-      #   console.log "Motion updated: #{samus.motion}"
+      if samus.motion != m
+        console.log "Motion updated: #{samus.motion}"
 
 
 class CollisionSpike
