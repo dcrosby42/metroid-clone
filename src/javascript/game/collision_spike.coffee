@@ -11,53 +11,8 @@ Systems = require './systems'
 Samus = require './entity/samus'
 
 
-Systems.register 'controller_action', class GestureAction
-  run: (estore,dt,input) ->
-    for samus in estore.getComponentsOfType('samus')
-      controller = estore.getComponent(samus.eid, 'controller')
-      ctrl = controller.states
-      
-      if ctrl.up
-        samus.aim = 'up'
-      else
-        samus.aim = 'straight'
-    
-      if ctrl.left
-        samus.direction = 'left'
-      else if ctrl.right
-        samus.direction = 'right'
 
-      switch samus.motion
-        when 'standing'
-          if ctrl.jump
-            samus.action = 'jump'
-          else if ctrl.right or ctrl.left
-            samus.action = 'run'
-
-        when 'running'
-          if ctrl.jump
-            samus.action = 'jump'
-          else if ctrl.right or ctrl.left
-            # If we don't re-iterate the run action, mid-run direction changes will not register
-            samus.action = 'run'
-          else
-            samus.action = 'stand'
-
-        when 'falling'
-          if ctrl.left or ctrl.right
-            samus.action = 'drift'
-
-        when 'jumping'
-          if !ctrl.jump
-            samus.action = 'fall'
-
-          if ctrl.left or ctrl.right
-            samus.action = 'drift'
-
-      # if samus.action?
-      #   console.log "action: #{samus.action}"
-
-Systems.register 'action_velocity', class ActionVelocity
+Systems.register 'samus_action_velocity', class ActionVelocity
   run: (estore,dt,input) ->
     # run | drift | stand | jump | fall
     for samus in estore.getComponentsOfType('samus')
@@ -94,6 +49,10 @@ Systems.register 'action_velocity', class ActionVelocity
       velocity.y = max if velocity.y > max
     
 
+
+
+
+
 tileWidth = 16
 samusWidth = 12
 halfSamusWidth = samusWidth/2
@@ -101,87 +60,66 @@ samusAnchorX = 0.5
 samusAnchorY = 1
 samusHeight = 32
 
-Systems.register 'velocity_position', class GestureAction
+AnchoredBox = require '../utils/anchored_box'
+
+Systems.register 'map_physics', class MapPhysics
   run: (estore,dt,input) ->
     for velocity in estore.getComponentsOfType('velocity')
-      if position = estore.getComponent(velocity.eid, 'position')
-        # Current pos and velocity:
-        velX = velocity.x
-        velY = velocity.y
+      hitBox = estore.getComponent(velocity.eid, 'hit_box')
+      position = estore.getComponent(velocity.eid, 'position')
+      if hitBox and position
+        box = new AnchoredBox(hitBox)
+        box.setXY position.x, position.y
 
-        # Proposed movement:
-        dx = velX * dt
-        dy = velY * dt
+        hits =
+          left: []
+          right: []
+          top: []
+          bottom: []
 
-        # Proposed resulting position:
-        newX = position.x + dx
-        newY = position.y + dy
-
-        # Samus box:
-        left = position.x - (samusWidth * samusAnchorX)
-        right = left + samusWidth
-        top = position.y - (samusHeight * samusAnchorY)
-        bottom = top + samusHeight
-
-        newLeft = newX - samusWidth/2
-        newRight = newLeft + samusWidth
-        newBottom = newY
-        newTop = newBottom - samusHeight
-
-        # Collisions:
         grid = window.mapSpriteGrid
-        bottomHits = tileSearchHorizontal(grid, newBottom, left,right-1)
-        if bottomHits.length > 0
-          s = bottomHits[0]
-          newY = s.y  - (samusHeight*(1-samusAnchorY))
-          velY = 0 if velY > 0
+
+        # Apply & restrict VERTICAL movement
+        box.moveY(velocity.y * dt)
+
+        hits.top = tileSearchHorizontal(grid, box.top, box.left, box.right-1)
+        if hits.top.length > 0
+          s = hits.top[0]
+          box.setY(s.y+s.height - box.topOffset)
         else
-          topHits = tileSearchHorizontal(grid, newTop, left,right-1)
-          if topHits.length > 0
-            s = topHits[0]
-            newY = s.y + s.height + (samusHeight*samusAnchorY)
-            velY = 0 if velY < 0
+          hits.bottom = tileSearchHorizontal(grid, box.bottom, box.left, box.right-1)
+          if hits.bottom.length > 0
+            s = hits.bottom[0]
+            box.setY(s.y - box.bottomOffset)
+          else
 
-        newBottom = newY
-        newTop = newBottom - samusHeight
+        # Step 2: apply & restrict horizontal movement
+        box.moveX(velocity.x * dt)
 
-        leftHits = tileSearchVertical(grid, newLeft, newTop,newBottom-1)
-        if leftHits.length > 0
-          s = leftHits[0]
-          newX = s.x + s.width + (samusWidth*samusAnchorX)
-          velX = 0 if velX < 0
+        hits.left = tileSearchVertical(grid, box.left, box.top, box.bottom-1)
+        if hits.left.length > 0
+          s = hits.left[0]
+          box.setX(s.x+s.width - box.leftOffset)
         else
-          rightHits = tileSearchVertical(grid, newRight, newTop,newBottom-1)
-          if rightHits.length > 0
-            s = rightHits[0]
-            newX = s.x - (samusWidth*(1-samusAnchorX))
-            velX = 0 if velX > 0
+          hits.right = tileSearchVertical(grid, box.right, box.top, box.bottom-1)
+          if hits.right.length > 0
+            s = hits.right[0]
+            box.setX(s.x - box.rightOffset)
+        
+        # Update position and hit_box components 
+        position.x = box.x
+        position.y = box.y
+        hitBox.x = box.x # kinda redundant but let's just keep er up2date ok
+        hitBox.y = box.y# kinda redundant but let's just keep er up2date ok
 
-        velocity.x = velX
-        velocity.y = velY
+        # Update velocity if needed based on running into objects:
+        if hits.right.length > 0 or hits.left.length > 0
+          velocity.x = 0
 
-        position.x = newX
-        position.y = newY
+        if hits.top.length > 0 or hits.bottom.length > 0
+          velocity.y = 0
+
     
-Systems.register 'update_motion', class UpdateMotion
-  run: (estore,dt,input) ->
-    for samus in estore.getComponentsOfType('samus')
-      velocity = estore.getComponent(samus.eid, 'velocity')
-
-      m = samus.motion
-      samus.motion = if velocity.y < 0
-        'jumping'
-      else if velocity.y > 0
-        'falling'
-      else
-        if velocity.x == 0
-          'standing'
-        else
-          'running'
-
-      # if samus.motion != m
-        # console.log "Motion updated: #{samus.motion}"
-
 
 class CollisionSpike
   constructor: ->
@@ -284,14 +222,14 @@ class CollisionSpike
 
   setupSystems: ->
     @systemsRunner = Systems.sequence [
-      'update_motion'
+      'samus_motion'
       'controller'
-      'controller_action'
-      'action_velocity'
-      'velocity_position'
-      # 'samus_motion'
+      'samus_controller_action'
+
+      'samus_action_velocity'
+      'map_physics'
       'samus_animation'
-      # 'movement'
+
       ['sprite_sync',
         spriteConfigs: @spriteConfigs
         spriteLookupTable: @spriteLookupTable

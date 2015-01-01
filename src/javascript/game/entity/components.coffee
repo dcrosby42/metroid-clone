@@ -29,6 +29,13 @@ C.Controller = class Controller
     @ctype = 'controller'
     @states ||= {}
 
-C.Samus = class Samus
-  constructor: ({@action,@direction,@aim,@runSpeed}={}) ->
-    @ctype = 'samus'
+C.HitBox = class HitBox
+  constructor: ({@x,@y,@width,@height,@anchorX,@anchorY}={}) ->
+    @ctype = 'hit_box'
+    @x ||= 0
+    @y ||= 0
+    @width ||= 10
+    @height ||= 10
+    @anchorX ||= 0
+    @anchorY ||= 0
+    

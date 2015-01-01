@@ -1,6 +1,6 @@
-ObjectUtils = require '../../utils/object_utils'
+ObjectUtils = require '../../../../utils/object_utils'
 
-class SamusAnimationSystem
+class SamusAnimation
   constructor: ->
     defs = [
       [['standing','right','straight'], 'stand-right']
@@ -41,4 +41,4 @@ class SamusAnimationSystem
       else
         visual.time += dt
 
-module.exports = SamusAnimationSystem
+module.exports = SamusAnimation
