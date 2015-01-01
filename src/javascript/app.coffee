@@ -19,7 +19,7 @@ jquery ->
     delegate: del
     width: 640
     height: 480
-    stage_background: 0x000033
+    stage_background: 0x000000
 
   harness.start()
 

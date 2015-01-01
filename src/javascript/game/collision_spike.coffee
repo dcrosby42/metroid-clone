@@ -85,16 +85,13 @@ Systems.register 'action_velocity', class ActionVelocity
         when 'fall'
           velocity.y = 0
 
+      samus.action = null
 
       # TODO: Gravity system?
       # TODO: always apply? or just when airborn?
-      # velocity.y += 100/1000 * dt
-      # if samus.action != 'run' and samus.action != 'stand'
       max = 200/1000
       velocity.y += max/10
       velocity.y = max if velocity.y > max
-        # console.log "v #{velocity.x} #{velocity.y}"
-      samus.action = null
     
 
 tileWidth = 16
@@ -125,33 +122,34 @@ Systems.register 'velocity_position', class GestureAction
         top = bottom - samusHeight
 
         newLeft = newX - samusWidth/2
-        newRight = left + samusWidth
+        newRight = newLeft + samusWidth
         newBottom = newY
-        newTop = bottom - samusHeight
+        newTop = newBottom - samusHeight
 
         # Collisions:
-        leftHits = tileSearchVertical(roomData, newLeft, top+1,bottom-1)
-        rightHits = tileSearchVertical(roomData, newRight, top+1,bottom-1)
-        topHits = tileSearchHorizontal(roomData, newTop, left+1,right-1)
-        bottomHits = tileSearchHorizontal(roomData, newBottom, left+1,right-1)
+        grid = window.mapSpriteGrid
+        bottomHits = tileSearchHorizontal(grid, newBottom, left,right-1)
+        if bottomHits.length > 0
+          newY = (Math.floor(newBottom/tileWidth) * tileWidth)
+          velY = 0 if velY > 0
+        else
+          topHits = tileSearchHorizontal(grid, newTop, left,right-1)
+          if topHits.length > 0
+            newY = (Math.floor(newBottom/tileWidth) + 1) * tileWidth
+            velY = 0 if velY < 0
 
+        newBottom = newY
+        newTop = newBottom - samusHeight
 
+        leftHits = tileSearchVertical(grid, newLeft, newTop,newBottom-1)
         if leftHits.length > 0
           newX = (Math.floor(newLeft/tileWidth) + 1) * tileWidth + halfSamusWidth
           velX = 0 if velX < 0
-
-        if rightHits.length > 0
-          newX = Math.floor(newRight/tileWidth) * tileWidth - halfSamusWidth
-          velX = 0 if velX > 0
-
-        if bottomHits.length > 0
-          newY = Math.floor(newBottom/tileWidth) * tileWidth
-          velY = 0 if velY > 0
-
-        if topHits.length > 0
-          newY = (Math.floor(newBottom/tileWidth) + 1) * tileWidth
-          velY = 0 if velY < 0
-
+        else
+          rightHits = tileSearchVertical(grid, newRight, newTop,newBottom-1)
+          if rightHits.length > 0
+            newX = Math.floor(newRight/tileWidth) * tileWidth - halfSamusWidth
+            velX = 0 if velX > 0
 
         # Floor safety check:
         screenBottom = 240
@@ -328,12 +326,21 @@ class CollisionSpike
     # for i in [ 0 ]
     #   blockTextures[i] = PIXI.Texture.fromFrame("block-#{i}")
     
+    spriteRows = []
     for row,r in roomData
-      for b,c in row
-        if b?
-          sprite = PIXI.Sprite.fromFrame("block-#{b}")
+      spriteRow = []
+      spriteRows.push spriteRow
+      for bnum,c in row
+        if bnum?
+          sprite = PIXI.Sprite.fromFrame("block-#{bnum}")
           sprite.position.set c*16,r*16
           container.addChild sprite
+          spriteRow.push sprite
+        else
+          spriteRow.push null
+
+    @mapSpriteGrid = spriteRows
+    window.mapSpriteGrid = @mapSpriteGrid
 
 
 module.exports = CollisionSpike
@@ -346,25 +353,24 @@ mapSprites = [
 ]
 
 roomData = [
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
 
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,null,null,null, null,null,0x00,null, 0x00,null,0x00,0x00 ]
+  [ null,null,0x00,null, null,0x00,null,null, null,null,0x00,null, 0x00,null,0x00,0x00 ]
+  [ null,null,0x00,null, null,0x00,0x00,0x00, null,null,0x00,0x00, 0x00,null,0x00,0x00 ]
+  [ 0x00,null,0x00,0x00, 0x00,null,null,null, null,null,null,null, null,null,0x00,0x00 ]
 
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,0x00,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,0x00,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,0x00,0x00 ]
+  [ null,null,null,null, null,null,null,null, 0x00,0x00,0x00,null, null,null,0x00,0x00 ]
+  [ null,0x00,null,null, null,0x00,null,null, null,0x00,0x00,null, null,null,0x00,0x00 ]
+  [ null,null,null,null, null,0x00,null,null, null,null,null,null, 0x00,null,0x00,0x00 ]
 
-  [ null,null,null,null, null,0x00,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,0x00,null, null,0x00,null,null, null,null,null,null, null,null,0x00,0x00 ]
   [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
 ]
 
 tileSearchVertical = (grid, x, topY, bottomY) ->
@@ -375,9 +381,7 @@ tileSearchVertical = (grid, x, topY, bottomY) ->
     if row?
       hit = grid[r][c]
       if hit?
-        hits.push [r,c,hit]
-    # else
-    #   console.log "vsearch NO row? #{r}",grid
+        hits.push hit
   hits
 
 tileSearchHorizontal = (grid, y, leftX, rightX) ->
@@ -388,6 +392,5 @@ tileSearchHorizontal = (grid, y, leftX, rightX) ->
     for c in [Math.floor(leftX/16)..Math.floor(rightX/16)]
       hit = grid[r][c]
       if hit?
-        # hits.push hit
-        hits.push [r,c,hit]
+        hits.push hit
   hits
