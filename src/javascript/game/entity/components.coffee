@@ -38,4 +38,10 @@ C.HitBox = class HitBox
     @touching.top ||= false
     @touching.bottom ||= false
     
-
+# C.Tags = class Tags
+#   constructor: ({@names}) ->
+#     @ctype = 'tags'
+#     @has = {}
+#     for n in @names
+#       @has[n] = true
+#

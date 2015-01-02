@@ -24,7 +24,7 @@ tileSearchHorizontal = (grid, tw,th, y, leftX, rightX) ->
 
 
 class MapPhysics
-  constructor: ({@spriteGrid, @tileWidth, @tileHeight}) ->
+  constructor: ({@tileGrid, @tileWidth, @tileHeight}) ->
 
   run: (estore,dt,input) ->
     for velocity in estore.getComponentsOfType('velocity')
@@ -40,7 +40,7 @@ class MapPhysics
           top: []
           bottom: []
 
-        grid = @spriteGrid
+        grid = @tileGrid
 
         # Apply & restrict VERTICAL movement
         box.moveY(velocity.y * dt)
