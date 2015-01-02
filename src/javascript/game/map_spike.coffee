@@ -10,48 +10,6 @@ Systems = require './systems'
 
 C = require './entity/components'
 
-clamp = (x,min,max) ->
-  return min if x < min
-  return max if x > max
-  x
-
-keepWithin = (x,target,minDist,maxDist) ->
-  if target - x < minDist
-    # move left to preserve min dist:
-    return target - minDist
-  else if target - x > maxDist
-    # move right to stay within max dist:
-    return target - maxDist
-  x # x is already at comfortable distance to target
-
-
-Systems.register 'viewport-track-samus', class ViewportTrackSamus
-  constructor: ({@container,@tileGrid}) ->
-    @minX = 0
-    @maxX = (@tileGrid[0].length - 16) * 16 # num tiles, less 16 tiles (one room's worth), times tilewidth of 16px
-    @minY = 0
-    @maxY = (@tileGrid.length - 15) * 16
-
-    @trackBufLeft = 7*16
-    @trackBufRight = 9*16
-    @trackBufTop = 7*16
-    @trackBufBottom = 9*16
-
-  run: (estore, dt, input) ->
-    for samus in estore.getComponentsOfType('samus')
-      position = estore.getComponent(samus.eid, 'position')
-
-      # Let's do the calcs using a "viewport" simulation,
-      # where x,y is world coord of upper-left of viewing area:
-      #   (because the inverted movement of the actual Pixi container was killing my math brain)
-      viewportX = -@container.x
-      viewportY = -@container.y
-
-      viewportX = clamp keepWithin(viewportX, position.x, @trackBufLeft, @trackBufRight), @minX, @maxX
-      viewportY = clamp keepWithin(viewportY, position.y, @trackBufTop, @trackBufBottom), @minY, @maxY
-      
-      @container.x = -viewportX
-      @container.y = -viewportY
 
 
 Samus = require './entity/samus'
@@ -74,16 +32,11 @@ class MapSpike
 
     @samusId = @estore.createEntity Samus.factory.createComponents('samus')
 
-    # @cameraId = @estore.createEntity [
-    #   new C.Tags(names: ['camera'])
-    #   new C.Position(x:0,y:0)
-    # ]
-
     @setupSpriteConfigs()
 
     @setupInput()
 
-    @setupMap(@layers['map'])
+    @setupMap(areaC, @layers['map'])
 
     @timeDilation = 1
 
@@ -181,9 +134,13 @@ class MapSpike
         spriteLookupTable: @spriteLookupTable
         layers: @layers ]
 
-      ['viewport-track-samus',
+      ['samus_viewport_tracker',
         container: @layers.base
         tileGrid: @mapTileGrid
+        tileWidth: @mapTileWidth
+        tileHeight: @mapTileHeight
+        screenWidthInTiles: 16
+        screenHeightInTiles: 15
       ]
     ]
 
@@ -206,7 +163,7 @@ class MapSpike
     #   else
     #     @p1Controller = @keyboardController
     
-  setupMap: (container) ->
+  setupMap: (map, container) ->
     @mapTileHeight = 16
     @mapTileWidth = 16
 
@@ -220,8 +177,6 @@ class MapSpike
         null
 
     divRem = (numer,denom) -> [Math.floor(numer/denom), numer % denom]
-
-    map = areaB
 
     mapRowCount = map.length * 15
     mapColCount = map[0].length * 16
@@ -345,25 +300,25 @@ roomTypes[4] = [
   [ 0x00,null,null,null, null,null,null,null, null,0x00,0x00,0x00, null,null,null,0x00 ]
   [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
   [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, 0x00,null,null,null, null,null,null,0x00 ]
   [ 0x00,null,null,null, null,null,null,null, null,null,null,null, 0x00,0x00,0x00,0x00 ]
   [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,0x00,0x00,null, null,null,null,null, null,null,null,0x00 ]
   [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,0x00,0x00,0x00, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,0x00,0x00,null, null,null,null,0x00 ]
+  [ null,null,null,null, null,null,null,null, null,0x00,0x00,0x00, null,null,null,null ]
+  [ null,null,null,0x00, 0x00,null,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ 0x00,0x00,null,null, null,null,null,null, null,null,null,null, 0x00,0x00,0x00,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, null,null,null,0x00, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, 0x00,0x00,null,null, null,null,null,0x00 ]
 ]
 
 roomTypes[5] = [
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,0x00,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
   [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
   [ 0x00,null,null,null, null,null,null,null, 0x00,0x00,0x00,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,0x00,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
   [ 0x00,null,null,null, null,null,null,null, null,null,null,0x00, null,null,null,0x00 ]
   [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
   [ 0x00,0x00,0x00,0x00, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
@@ -385,4 +340,11 @@ areaB = [
   [3]
   [4]
   [5]
+]
+
+areaC = [
+  [3,3]
+  [4,4]
+  [4,4]
+  [5,5]
 ]
