@@ -12,6 +12,8 @@ C = require './entity/components'
 
 Samus = require './entity/samus'
 
+MapData = require './map/map_data'
+
 class MapSpike
   constructor: ->
 
@@ -34,7 +36,7 @@ class MapSpike
 
     @setupInput()
 
-    @setupMap(areaC, @layers['map'])
+    @setupMap(MapData.areas.c, @layers.map)
 
     @timeDilation = 1
 
@@ -165,8 +167,11 @@ class MapSpike
     @mapTileHeight = 16
     @mapTileWidth = 16
 
-    @roomWidth = 256
-    @roomHeight = 240
+    @roomWidth = 16
+    @roomHeight = 15
+
+    @roomWidthPx = @roomWidth * @mapTileWidth
+    @roomHeightPx = @roomHeight * @mapTileHeight
 
     getMapTileSprite = (n) ->
       if n?
@@ -176,18 +181,18 @@ class MapSpike
 
     divRem = (numer,denom) -> [Math.floor(numer/denom), numer % denom]
 
-    mapRowCount = map.length * 15
-    mapColCount = map[0].length * 16
+    mapRowCount = map.length * @roomHeight
+    mapColCount = map[0].length * @roomWidth
 
     tileGrid = []
     for r in [0...mapRowCount]
       tileRow = []
       tileGrid.push tileRow
       for c in [0...mapColCount]
-        [rr,tr] = divRem(r, 15)
-        [rc,tc] = divRem(c, 16)
+        [rr,tr] = divRem(r, @roomHeight)
+        [rc,tc] = divRem(c, @roomWidth)
         roomType = map[rr][rc]
-        room = roomTypes[roomType]
+        room = MapData.roomTypes[roomType]
         tileType = room[tr][tc]
         if tileType?
           tile =
@@ -210,139 +215,3 @@ class MapSpike
     
 
 module.exports = MapSpike
-roomTypes = []
-
-roomTypes[0] = [
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-        
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ 0x00,null,0x00,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ 0x00,null,0x00,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ 0x00,null,0x00,0x00, null,null,null,null, null,null,null,null, null,null,null,null ]
-        
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,0x00,null ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,0x00,null ]
-  [ 0x00,0x00,null,null, null,0x00,null,null, null,null,null,null, null,null,0x00,null ]
-  [ 0x00,null,null,null, null,0x00,null,null, null,null,null,null, 0x00,null,0x00,null ]
-        
-  [ 0x00,null,0x00,null, null,0x00,null,null, null,null,null,null, null,null,0x00,0x00 ]
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-]
-
-roomTypes[1] = [
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-]
-
-
-roomTypes[2] = [
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-
-  [ null,null,null,null, null,null,null,null, null,null,0x00,null, 0x00,null,0x00,0x00 ]
-  [ null,null,0x00,null, null,0x00,null,null, null,null,0x00,null, 0x00,null,0x00,0x00 ]
-  [ null,null,0x00,null, null,0x00,0x00,0x00, null,null,0x00,0x00, 0x00,null,0x00,0x00 ]
-  [ 0x00,null,0x00,0x00, 0x00,null,null,null, null,null,null,null, null,null,0x00,0x00 ]
-
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,0x00,0x00 ]
-  [ null,null,null,null, null,null,null,null, 0x00,0x00,0x00,null, null,null,0x00,0x00 ]
-  [ null,0x00,null,null, null,0x00,null,null, null,0x00,0x00,null, null,null,0x00,0x00 ]
-  [ null,null,null,null, null,0x00,null,null, null,null,null,null, 0x00,null,0x00,0x00 ]
-
-  [ null,null,0x00,null, null,0x00,null,null, null,null,null,null, null,null,0x00,0x00 ]
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-]
-
-roomTypes[3] = [
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,0x00,0x00,0x00, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,0x00,0x00,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-]
-
-roomTypes[4] = [
-  [ 0x00,null,null,null, null,null,null,null, null,0x00,0x00,0x00, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, 0x00,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,0x00,0x00,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ null,null,null,null, null,null,null,null, null,0x00,0x00,0x00, null,null,null,null ]
-  [ null,null,null,0x00, 0x00,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ null,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ 0x00,0x00,null,null, null,null,null,null, null,null,null,null, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,0x00, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, 0x00,0x00,null,null, null,null,null,0x00 ]
-]
-
-roomTypes[5] = [
-  [ 0x00,null,0x00,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, 0x00,0x00,0x00,null, null,null,null,0x00 ]
-  [ 0x00,0x00,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,0x00, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,0x00,0x00,0x00, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, 0x00,null,null,null, null,null,null,null, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,0x00, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,0x00,0x00, 0x00,0x00,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-]
-
-areaA = [
-  [ 0, 1, 2]
-]
-
-areaB = [
-  [3]
-  [4]
-  [5]
-]
-
-areaC = [
-  [3,3]
-  [4,4]
-  [4,4]
-  [5,5]
-]

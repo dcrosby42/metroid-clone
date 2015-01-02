@@ -23,7 +23,11 @@ class PixiHarness
 
   update: ->
     dt = @stopWatch.lapInMillis()
-    @delegate.update dt
+    if dt > 1000
+      console.log "SKIPPING UPDATE, long dt: #{dt}"
+    else
+      @delegate.update dt
+
     @renderer.render(@stage)
     requestAnimationFrame => @update()
 
