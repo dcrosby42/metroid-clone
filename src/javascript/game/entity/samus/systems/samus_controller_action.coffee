@@ -16,6 +16,8 @@ class SamusControllerAction
       else if ctrl.right
         samus.direction = 'right'
 
+      samus.action = null
+
       switch samus.motion
         when 'standing'
           if ctrl.jump
@@ -30,19 +32,23 @@ class SamusControllerAction
             # If we don't re-iterate the run action, mid-run direction changes will not register
             samus.action = 'run'
           else
-            samus.action = 'stand'
+            samus.action = 'stop'
 
         when 'falling'
           ctrl.jump = false
           if ctrl.left or ctrl.right
             samus.action = 'drift'
+          else
+            samus.action = 'stop'
+            
 
         when 'jumping'
           if !ctrl.jump
             samus.action = 'fall'
 
-          if ctrl.left or ctrl.right
+          else if ctrl.left or ctrl.right
             samus.action = 'drift'
+            
 
       # if samus.action?
       #   console.log "action: #{samus.action}"

@@ -18,7 +18,7 @@ class SamusActionVelocity
           else
             velocity.x = -samus.floatSpeed
 
-        when 'stand'
+        when 'stop'
           velocity.x = 0
 
         when 'jump'
