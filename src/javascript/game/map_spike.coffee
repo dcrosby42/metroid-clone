@@ -10,8 +10,6 @@ Systems = require './systems'
 
 C = require './entity/components'
 
-
-
 Samus = require './entity/samus'
 
 class MapSpike
