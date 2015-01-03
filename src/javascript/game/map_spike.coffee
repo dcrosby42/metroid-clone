@@ -3,7 +3,7 @@ _ = require 'lodash'
 
 Mousetrap = require '../vendor/mousetrap_wrapper'
 KeyboardController = require '../input/keyboard_controller'
-# GamepadController = require('../input/gamepad_controller')
+GamepadController = require('../input/gamepad_controller')
 
 EntityStore = require '../ecs/entity_store'
 Systems = require './systems'
@@ -36,7 +36,7 @@ class MapSpike
 
     @setupInput()
 
-    @setupMap(MapData.areas.c, @layers.map)
+    @setupMap(MapData.areas.a, @layers.map)
 
     @timeDilation = 1
 
@@ -100,13 +100,13 @@ class MapSpike
       bindings:
         "g": 'toggle_gamepad'
 
-    # @gamepadController = new GamepadController
-    #   "DPAD_RIGHT": 'right'
-    #   "DPAD_LEFT": 'left'
-    #   "DPAD_UP": 'up'
-    #   "DPAD_DOWN": 'down'
-    #   "FACE_1": 'jump'
-    #   "FACE_3": 'shoot'
+    @gamepadController = new GamepadController
+      "DPAD_RIGHT": 'right'
+      "DPAD_LEFT": 'left'
+      "DPAD_UP": 'up'
+      "DPAD_DOWN": 'down'
+      "FACE_1": 'jump'
+      "FACE_3": 'shoot'
 
     @useGamepad = false
     @p1Controller = @keyboardController
@@ -156,12 +156,12 @@ class MapSpike
 
   handleAdminControls: ->
     ac = @adminController.update()
-    # if ac and ac.toggle_gamepad
-    #   @useGamepad = !@useGamepad
-    #   if @useGamepad
-    #     @p1Controller = @gamepadController
-    #   else
-    #     @p1Controller = @keyboardController
+    if ac and ac.toggle_gamepad
+      @useGamepad = !@useGamepad
+      if @useGamepad
+        @p1Controller = @gamepadController
+      else
+        @p1Controller = @keyboardController
     
   setupMap: (map, container) ->
     @mapTileHeight = 16
