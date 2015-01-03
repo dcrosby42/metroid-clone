@@ -28,6 +28,10 @@ module.exports = {
     src: src + "/images/**",
     dest: dest + "/images"
   },
+  sounds: {
+    src: src + "/sounds/**",
+    dest: dest + "/sounds"
+  },
   markup: {
     src: src + "/htdocs/**",
     dest: dest
