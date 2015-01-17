@@ -27,7 +27,6 @@ class SamusActionVelocity
         when 'fall'
           velocity.y = 0
 
-      samus.action = null
 
       # TODO: Gravity system?
       # TODO: always apply? or just when airborn?

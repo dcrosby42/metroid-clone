@@ -25,6 +25,22 @@ class MapSpike
 
     assets
 
+  soundsToPreload: ->
+    songs = ["brinstar"]
+    effects = [
+      "enemy_die1"
+      "health"
+      "jump"
+      "samus_hurt"
+      "short_beam"
+    ]
+    assets = {}
+    for song in songs
+      assets[song] = "sounds/music/#{song}.mp3"
+    for effect in effects
+      assets[effect] = "sounds/fx/#{effect}.wav"
+    assets
+
   setupStage: (@stage, width, height) ->
     @layers = @setupLayers()
 
@@ -41,6 +57,11 @@ class MapSpike
     @timeDilation = 1
 
     @setupSystems()
+
+    #window.instance = createjs.Sound.play("brinstar")
+    # window.instance.on "complete", () -> {}, @
+    #window.instance.volume = 0.5
+    # createjs.Sound.play("jump")
 
     window.me = @
     window.estore = @estore
@@ -119,16 +140,19 @@ class MapSpike
 
   setupSystems: ->
     @systemsRunner = Systems.sequence [
+      'sound'
       'samus_motion'
       'controller'
       'samus_controller_action'
       'samus_action_velocity'
+      'samus_action_sounds'
       ['map_physics',
         tileGrid: @mapTileGrid
         tileWidth: @mapTileWidth
         tileHeight: @mapTileHeight]
       'samus_animation'
 
+      # 'output' systems mutate world state (graphics, sounds, browser etc)
       ['sprite_sync',
         spriteConfigs: @spriteConfigs
         spriteLookupTable: @spriteLookupTable
@@ -142,6 +166,9 @@ class MapSpike
         screenWidthInTiles: 16
         screenHeightInTiles: 15
       ]
+
+      ['sound_sync',
+        soundCache: {} ]
     ]
 
   update: (dt) ->

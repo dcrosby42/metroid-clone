@@ -1,5 +1,6 @@
 PIXI = require 'pixi.js'
 StopWatch = require './stop_watch'
+CompositeEvent = require '../utils/composite_event'
 
 class PixiHarness
   constructor: ({@domElement, @delegate, stage_background, width, height})->
@@ -11,16 +12,41 @@ class PixiHarness
 
 
   start: ->
-    assets = @delegate.graphicsToPreload()
-    loader = new PIXI.AssetLoader(assets)
-    loader.onComplete = =>
+    @_loadAssets =>
       console.log "Assets loaded."
       @delegate.setupStage @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight
       @stopWatch.start()
       requestAnimationFrame => @update()
 
+  _loadAssets: (callback) ->
+    allDone = CompositeEvent.create ["graphics", "sounds"], callback
+
+    @_loadGraphicalAssets @delegate.graphicsToPreload(), allDone.notifier("graphics")
+    if @delegate.soundsToPreload?
+      @_loadSoundAssets @delegate.soundsToPreload(), allDone.notifier("sounds")
+    else
+      allDone.notify "sounds"
+
+  _loadGraphicalAssets: (assets, callback) ->
+    loader = new PIXI.AssetLoader(assets)
+    loader.onComplete = callback
     loader.load()
 
+  _loadSoundAssets: (assets, callback) ->
+    ids = []
+    manifest = []
+    _.forOwn assets, (src,id) ->
+      ids.push id
+      manifest.push {id:id, src:src}
+
+    soundsLoadedEvent = CompositeEvent.create ids, callback
+
+    createjs.Sound.addEventListener "fileload", (event) ->
+      soundsLoadedEvent.notify event.id
+
+    createjs.Sound.alternateExtensions = ["mp3"]
+    createjs.Sound.registerSounds manifest
+   
   update: ->
     dt = @stopWatch.lapInMillis()
     if dt > 1000

@@ -1,5 +1,7 @@
 class SamusMotion
   run: (estore, dt, input) ->
+    # input: velocity[x,y] + hit_box[touching]
+    # output: samus[motion]
     for samus in estore.getComponentsOfType('samus')
       velocity = estore.getComponent(samus.eid, 'velocity')
       hitBox = estore.getComponent(samus.eid, 'hit_box')

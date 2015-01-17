@@ -1,6 +1,8 @@
 
 class SamusControllerAction
   run: (estore,dt,input) ->
+    # input: samus[motion] + controller[states]
+    # output: samus[action]
     for samus in estore.getComponentsOfType('samus')
       controller = estore.getComponent(samus.eid, 'controller')
 
@@ -48,7 +50,6 @@ class SamusControllerAction
 
           else if ctrl.left or ctrl.right
             samus.action = 'drift'
-            
 
       # if samus.action?
       #   console.log "action: #{samus.action}"

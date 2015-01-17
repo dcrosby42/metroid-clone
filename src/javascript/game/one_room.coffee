@@ -121,9 +121,9 @@ class OneRoom
       'samus_animation'
       'movement'
       ['sprite_sync',
-        spriteConfigs: @spriteConfigs
-        spriteLookupTable: @spriteLookupTable
-        layers: @layers ]
+        spriteConfigs: @spriteConfigs         # Static config data
+        spriteLookupTable: @spriteLookupTable # Cache
+        layers: @layers ]                     # Stateful graphics objects
     ]
 
   update: (dt) ->
