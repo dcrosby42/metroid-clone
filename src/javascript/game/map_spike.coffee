@@ -58,11 +58,6 @@ class MapSpike
 
     @setupSystems()
 
-    #window.instance = createjs.Sound.play("brinstar")
-    # window.instance.on "complete", () -> {}, @
-    #window.instance.volume = 0.5
-    # createjs.Sound.play("jump")
-
     window.me = @
     window.estore = @estore
     window.samusId = @samusId

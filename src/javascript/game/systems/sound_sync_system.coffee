@@ -1,5 +1,6 @@
 ArrayToCacheBinding = require '../../pixi_ext/array_to_cache_binding'
-# AnimatedSprite = require '../../pixi_ext/animated_sprite'
+SoundController = require '../../pixi_ext/sound_controller'
+
 
 class SoundSyncSystem
   constructor: ({@soundCache}) ->
@@ -12,9 +13,9 @@ class SoundSyncSystem
       cache: @soundCache
       identKey: 'eid'
 
-      addFn: (sound) =>
-        instance = createjs.Sound.play(sound.soundId)
-        instance.volume = sound.volume if sound.volume?
+      addFn: (soundComp) =>
+        instance = SoundController.playSound soundComp.soundId
+        instance.volume = soundComp.volume if soundComp.volume?
         instance
 
       removeFn: (instance) =>

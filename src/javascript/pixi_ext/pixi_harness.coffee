@@ -1,10 +1,11 @@
 PIXI = require 'pixi.js'
 StopWatch = require './stop_watch'
 CompositeEvent = require '../utils/composite_event'
+SoundController = require './sound_controller'
 
 class PixiHarness
-  constructor: ({@domElement, @delegate, stage_background, width, height})->
-    @stage = new PIXI.Stage(stage_background)
+  constructor: ({@domElement, @delegate, stageBgColor, width, height})->
+    @stage = new PIXI.Stage(stageBgColor)
     @renderer = PIXI.autoDetectRenderer(width,height)
     @view = @renderer.view
     @domElement.appendChild @view
@@ -33,19 +34,7 @@ class PixiHarness
     loader.load()
 
   _loadSoundAssets: (assets, callback) ->
-    ids = []
-    manifest = []
-    _.forOwn assets, (src,id) ->
-      ids.push id
-      manifest.push {id:id, src:src}
-
-    soundsLoadedEvent = CompositeEvent.create ids, callback
-
-    createjs.Sound.addEventListener "fileload", (event) ->
-      soundsLoadedEvent.notify event.id
-
-    createjs.Sound.alternateExtensions = ["mp3"]
-    createjs.Sound.registerSounds manifest
+    SoundController.loadSoundMap assets, callback
    
   update: ->
     dt = @stopWatch.lapInMillis()
