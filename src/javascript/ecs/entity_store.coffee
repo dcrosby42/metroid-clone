@@ -19,6 +19,11 @@ class EntityStore
     eid = @newEntity()
     for comp in components
       @addComponent eid, comp
+    eid
+
+  destroyEntity: (eid) ->
+    for byEid in _.values(@comps)
+      delete byEid[eid]
 
   addComponent: (eid, comp) ->
     comp.eid = eid

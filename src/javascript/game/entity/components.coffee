@@ -39,8 +39,11 @@ C.HitBox = class HitBox
     @touching.bottom ||= false
     
 C.Sound = class Sound
-  constructor: ({@soundId,@playPosition,@timeLimit}) ->
+  constructor: ({@soundId,@volume,@playPosition,@timeLimit,@loop}) ->
     @ctype = 'sound'
+    @restart = false
+    if !@loop?
+      @loop = false
 
 # C.Tags = class Tags
 #   constructor: ({@names}) ->

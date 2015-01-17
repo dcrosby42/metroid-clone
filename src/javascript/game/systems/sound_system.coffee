@@ -4,7 +4,13 @@ class SoundSystem
     for sound in sounds
       sound.playPosition += dt
       if sound.playPosition >= sound.timeLimit
-        estore.removeComponent sound.eid, sound
+        if sound.loop
+          sound.playPosition = 0
+          # sound.restart = true
+        else
+          estore.removeComponent sound.eid, sound
+      # else
+        # sound.restart = false
 
 module.exports = SoundSystem
 

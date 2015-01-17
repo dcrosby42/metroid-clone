@@ -30,6 +30,7 @@ class MapSpike
     effects = [
       "enemy_die1"
       "health"
+      "step2"
       "jump"
       "samus_hurt"
       "short_beam"
@@ -47,6 +48,11 @@ class MapSpike
     @estore = new EntityStore()
 
     @samusId = @estore.createEntity Samus.factory.createComponents('samus')
+
+    # Background music:
+    # @estore.createEntity [
+    #   new C.Sound soundId: 'brinstar', timeLimit: 116000, volume: 0.4
+    # ]
 
     @setupSpriteConfigs()
 
@@ -115,6 +121,7 @@ class MapSpike
     @adminController = new KeyboardController
       bindings:
         "g": 'toggle_gamepad'
+        "b": 'toggle_bgm'
 
     @gamepadController = new GamepadController
       "DPAD_RIGHT": 'right'
@@ -178,12 +185,21 @@ class MapSpike
 
   handleAdminControls: ->
     ac = @adminController.update()
-    if ac and ac.toggle_gamepad
-      @useGamepad = !@useGamepad
-      if @useGamepad
-        @p1Controller = @gamepadController
-      else
-        @p1Controller = @keyboardController
+    if ac
+      if ac.toggle_gamepad
+        @useGamepad = !@useGamepad
+        if @useGamepad
+          @p1Controller = @gamepadController
+        else
+          @p1Controller = @keyboardController
+      if ac.toggle_bgm
+        if @bgmId?
+          @estore.destroyEntity @bgmId
+          @bgmId = null
+        else
+          @bgmId = @estore.createEntity [
+            new C.Sound soundId: 'brinstar', timeLimit: 116000, volume: 0.4
+          ]
     
   setupMap: (map, container) ->
     @mapTileHeight = 16
