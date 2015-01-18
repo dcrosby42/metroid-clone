@@ -8,3 +8,7 @@ exports.Samus = class Samus
                  @jumpSpeed
                  @floatSpeed}={}) ->
     @ctype = 'samus'
+
+    @recoil = 'no'
+    @weaponTrigger = 'released'
+    # @weaponCooldown = null

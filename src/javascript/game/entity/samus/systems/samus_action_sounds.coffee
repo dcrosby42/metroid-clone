@@ -40,12 +40,9 @@ class SamusActionSounds
             timeLimit: 20
             loop: true
           estore.addComponent samus.eid, s
-          console.log "Run..."
-
 
       if sound? and sound.soundId == 'step2' and samus.motion != 'running'
         estore.removeComponent samus.eid, sound
-        console.log "...stop run."
 
 
 

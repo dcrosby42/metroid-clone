@@ -19,8 +19,8 @@ samusComps = (args) ->
       # y: 50
       width: 12
       height: 32
-      anchorX: 0.5
-      anchorY: 1
+      anchorX: 0.5 # halfway across
+      anchorY: 1   # all the way at the bottom
     new Common.Controller(inputName: 'player1')
     new Common.Visual
       layer: 'creatures'

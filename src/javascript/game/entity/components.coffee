@@ -45,6 +45,11 @@ C.Sound = class Sound
     if !@loop?
       @loop = false
 
+C.DeathTimer = class DeathTimer
+  constructor: ({@time}) ->
+    @ctype = 'death_timer'
+    
+
 # C.Tags = class Tags
 #   constructor: ({@names}) ->
 #     @ctype = 'tags'

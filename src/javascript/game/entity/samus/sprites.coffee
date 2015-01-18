@@ -1,9 +1,27 @@
 sprites =
+  bullet:
+    spriteSheet: "images/samus.json"
+    states:
+      'normal':
+        frame: 'bullet'
+        props:
+          anchor:
+            x: 0.5
+            y: 0.5
+      'splode':
+        frame: 'bullet-splode'
+        props:
+          anchor:
+            x: 0.5
+            y: 0.5
+
   samus:
     spriteSheet: "images/samus.json"
     states:
       "stand-right":
         frame: "samus1-04-00"
+      "stand-right-shoot":
+        frame: "samus1-stand-shoot"
       "stand-right-aim-up":
         frame: "samus1-aim-up"
       "run-right":
@@ -22,6 +40,10 @@ sprites =
         fps: 20
       "stand-left":
         frame: "samus1-04-00"
+        props:
+          scale: { x: -1 }
+      "stand-left-shoot":
+        frame: "samus1-stand-shoot"
         props:
           scale: { x: -1 }
       "stand-left-aim-up":

@@ -17,7 +17,8 @@ class SpriteSyncSystem
         container.addChild sprite
         sprite
       removeFn: (sprite) =>
-        @container.removeChild sprite
+        container = sprite.parent #@layers[sprite.layer] || @layers.default
+        container.removeChild sprite
       syncFn: (visual,sprite) =>
         pos = estore.getComponent(visual.eid, 'position')
         sprite.displayAnimation visual.state, visual.time

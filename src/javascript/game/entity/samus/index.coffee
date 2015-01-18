@@ -2,7 +2,7 @@ _ = require 'lodash'
 sprites = require './sprites'
 factory = require './factory'
 
-assets = _.map _.values(sprites), (info) -> info.spriteSheet
+assets = _.uniq _.map _.values(sprites), (info) -> info.spriteSheet
 
 
 module.exports =

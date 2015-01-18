@@ -142,10 +142,12 @@ class MapSpike
 
   setupSystems: ->
     @systemsRunner = Systems.sequence [
+      'death_timer'
       'sound'
       'samus_motion'
       'controller'
       'samus_controller_action'
+      'samus_weapon'
       'samus_action_velocity'
       'samus_action_sounds'
       ['map_physics',
@@ -192,6 +194,7 @@ class MapSpike
           @p1Controller = @gamepadController
         else
           @p1Controller = @keyboardController
+
       if ac.toggle_bgm
         if @bgmId?
           @estore.destroyEntity @bgmId

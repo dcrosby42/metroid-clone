@@ -51,6 +51,14 @@ class SamusControllerAction
           else if ctrl.left or ctrl.right
             samus.action = 'drift'
 
+      if ctrl.shoot
+        if samus.weaponTrigger == 'released'
+          samus.weaponTrigger = 'pulled'
+        else
+          samus.weaponTrigger = 'held'
+      else
+        samus.weaponTrigger = 'released'
+      
       # if samus.action?
       #   console.log "action: #{samus.action}"
 
