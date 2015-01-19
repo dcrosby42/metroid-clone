@@ -51,7 +51,8 @@ class MapSpike
 
     @samusId = @estore.createEntity Samus.factory.createComponents('samus')
 
-    @estore.createEntity Enemies.factory.createComponents('basicSkree')
+    for x in [150, 200, 250, 300, 350]
+      @estore.createEntity Enemies.factory.createComponents('basicSkree', x:x, y: 32)
 
     # Background music:
     # @estore.createEntity [

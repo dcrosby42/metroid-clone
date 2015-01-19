@@ -12,7 +12,7 @@ F.basicSkree = (args) ->
   [
     new C.Skree
       action: 'sleep'
-    new Common.Position(x: 175, y: 32)
+    new Common.Position(x: args.x, y: args.y)
     new Common.Velocity(x: 0, y: 0)
     new Common.HitBox
       width: 16
