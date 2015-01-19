@@ -13,6 +13,10 @@ C.Velocity = class Velocity
     @x ||= 0
     @y ||= 0
 
+C.Gravity = class Gravity
+  constructor: ({@accel,@max}) ->
+    @ctype = 'gravity'
+
 C.Visual = class Visual
   constructor: ({@spriteName,@state,@time}={}) ->
     @ctype = 'visual'

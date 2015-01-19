@@ -30,9 +30,9 @@ class SamusActionVelocity
 
       # TODO: Gravity system?
       # TODO: always apply? or just when airborn?
-      max = 200/1000
-      velocity.y += max/10
-      velocity.y = max if velocity.y > max
+      # max = 200/1000
+      # velocity.y += max/10
+      # velocity.y = max if velocity.y > max
 
 module.exports = SamusActionVelocity
 

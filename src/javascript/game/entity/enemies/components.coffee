@@ -1,7 +1,11 @@
 
 exports.Skree = class Skree
-  constructor: ({@type
-                 @motion}={}) ->
+  constructor: ({@action
+                 @direction
+                 @triggerRange
+                 @strafeSpeed}={}) ->
     @ctype = 'skree'
-    @type ||= 'skree'
-    @motion ||= 'hanging'
+    @action ||= 'sleep' # attack | igniteFuse | explode
+    @direction ||= 'neither' # left | right | neither
+    @strafeSpeed ||= 50/1000
+    @triggerRange ||= 32

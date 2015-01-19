@@ -13,6 +13,7 @@ samusComps = (args) ->
       floatSpeed: 60/1000
     new Common.Position(x: 50, y: 50)
     new Common.Velocity(x: 0, y: 0)
+    new Common.Gravity(max: 200/1000, accel: (200/1000)/10)
     # new Common.Movement()
     new Common.HitBox
       # x: 50 # we're going to rely on Position component for authorotative location

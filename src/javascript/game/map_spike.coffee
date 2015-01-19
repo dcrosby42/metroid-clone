@@ -143,7 +143,6 @@ class MapSpike
     _.merge @spriteConfigs, Samus.sprites
     _.merge @spriteConfigs, Enemies.sprites
 
-    @spriteLookupTable = {}
 
   setupSystems: ->
     @systemsRunner = Systems.sequence [
@@ -153,19 +152,24 @@ class MapSpike
       'controller'
       'samus_controller_action'
       'samus_weapon'
+      'skree_action'
       'samus_action_velocity'
       'samus_action_sounds'
+      'skree_velocity'
+      'gravity'
       ['map_physics',
         tileGrid: @mapTileGrid
         tileWidth: @mapTileWidth
         tileHeight: @mapTileHeight]
-      'samus_animation'
+
       'visual_timer'
+      'samus_animation'
+      'skree_animation'
 
       # 'output' systems mutate world state (graphics, sounds, browser etc)
       ['sprite_sync',
         spriteConfigs: @spriteConfigs
-        spriteLookupTable: @spriteLookupTable
+        spriteLookupTable: {}
         layers: @layers ]
 
       ['samus_viewport_tracker',
