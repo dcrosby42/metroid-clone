@@ -61,7 +61,5 @@ class SamusAnimation
 
       if visual.state != oldState
         visual.time = 0
-      else
-        visual.time += dt
 
 module.exports = SamusAnimation

@@ -11,6 +11,7 @@ Systems = require './systems'
 C = require './entity/components'
 
 Samus = require './entity/samus'
+Enemies = require './entity/enemies'
 
 MapData = require './map/map_data'
 
@@ -22,6 +23,7 @@ class MapSpike
       "images/brinstar.json"
     ]
     assets = assets.concat(Samus.assets)
+    assets = assets.concat(Enemies.assets)
 
     assets
 
@@ -48,6 +50,8 @@ class MapSpike
     @estore = new EntityStore()
 
     @samusId = @estore.createEntity Samus.factory.createComponents('samus')
+
+    @estore.createEntity Enemies.factory.createComponents('basicSkree')
 
     # Background music:
     # @estore.createEntity [
@@ -137,6 +141,7 @@ class MapSpike
   setupSpriteConfigs: ->
     @spriteConfigs = {}
     _.merge @spriteConfigs, Samus.sprites
+    _.merge @spriteConfigs, Enemies.sprites
 
     @spriteLookupTable = {}
 
@@ -155,6 +160,7 @@ class MapSpike
         tileWidth: @mapTileWidth
         tileHeight: @mapTileHeight]
       'samus_animation'
+      'visual_timer'
 
       # 'output' systems mutate world state (graphics, sounds, browser etc)
       ['sprite_sync',

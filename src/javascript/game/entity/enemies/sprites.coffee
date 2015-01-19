@@ -17,7 +17,7 @@ sprites =
           "skree-green-03"
         ]
         fps: 30
-    modify:
+    props:
       anchor: { x: 0.5, y: 0 }
 
 module.exports = sprites

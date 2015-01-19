@@ -18,8 +18,6 @@ class SamusWeapon
         when 'released'
           0
         when 'pulled'
-          console.log "BANG!"
-
           xoff = GUN_SETTINGS.x_offset
           vel = GUN_SETTINGS.muzzle_velocity
 

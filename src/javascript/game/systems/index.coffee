@@ -8,6 +8,7 @@ Systems.register 'map_physics',     require('./map_physics')
 Systems.register 'sound',           require('./sound_system')
 Systems.register 'sound_sync',      require('./sound_sync_system')
 Systems.register 'death_timer',      require('./death_timer_system')
+Systems.register 'visual_timer',      require('./visual_timer_system')
 
 Systems.register 'samus_motion',            require('../entity/samus/systems/samus_motion')
 Systems.register 'samus_animation',         require('../entity/samus/systems/samus_animation')
