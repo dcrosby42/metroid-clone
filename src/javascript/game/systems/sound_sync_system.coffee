@@ -19,11 +19,15 @@ class SoundSyncSystem
         instance.volume = soundComp.volume if soundComp.volume?
         if soundComp.loop
           instance.loop = -1
+        if soundComp.resound
+          instance._resound = true
+        else
+          instance._resound = false
         instance
 
       removeFn: (instance) =>
         if instance?
-          instance.stop()
+          instance.stop() unless instance._resound
         else
           console.log "SoundSyncSystem: ArrayToCacheBinding removeFn called with", instance
         

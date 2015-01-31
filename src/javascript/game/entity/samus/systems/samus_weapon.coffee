@@ -53,6 +53,7 @@ class SamusWeapon
               volume: 0.2
               playPosition: 0
               timeLimit: 55
+              resound: true
 
             new Common.DeathTimer
               time: GUN_SETTINGS.bullet_life
