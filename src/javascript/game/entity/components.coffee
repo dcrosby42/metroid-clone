@@ -52,6 +52,10 @@ C.Sound = class Sound
 C.DeathTimer = class DeathTimer
   constructor: ({@time}) ->
     @ctype = 'death_timer'
+
+C.Bullet = class Bullet
+  constructor: ->
+    @ctype = 'bullet'
     
 
 # C.Tags = class Tags

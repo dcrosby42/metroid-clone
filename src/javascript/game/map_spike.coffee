@@ -6,7 +6,12 @@ KeyboardController = require '../input/keyboard_controller'
 GamepadController = require('../input/gamepad_controller')
 
 EntityStore = require '../ecs/entity_store'
-Systems = require './systems'
+
+SystemRegistry = require '../ecs/system_registry'
+CommonSystems = require './systems'
+SamusSystems =  require './entity/samus/systems'
+EnemiesSystems =  require './entity/enemies/systems'
+
 
 C = require './entity/components'
 
@@ -146,29 +151,34 @@ class MapSpike
 
 
   setupSystems: ->
+    Systems = new SystemRegistry()
+    Systems.register CommonSystems
+    Systems.register SamusSystems
+    Systems.register EnemiesSystems
+
     @systemsRunner = Systems.sequence [
-      'death_timer'
-      'sound'
+      'death_timer_system'
+      'sound_system'
       'samus_motion'
-      'controller'
+      'controller_system'
       'samus_controller_action'
       'samus_weapon'
       'skree_action'
       'samus_action_velocity'
       'samus_action_sounds'
       'skree_velocity'
-      'gravity'
-      ['map_physics',
+      'gravity_system'
+      ['map_physics_system',
         tileGrid: @mapTileGrid
         tileWidth: @mapTileWidth
         tileHeight: @mapTileHeight]
 
-      'visual_timer'
+      'visual_timer_system'
       'samus_animation'
       'skree_animation'
 
       # 'output' systems mutate world state (graphics, sounds, browser etc)
-      ['sprite_sync',
+      ['sprite_sync_system',
         spriteConfigs: @spriteConfigs
         spriteLookupTable: {}
         layers: @layers ]
@@ -182,7 +192,7 @@ class MapSpike
         screenHeightInTiles: 15
       ]
 
-      ['sound_sync',
+      ['sound_sync_system',
         soundCache: {} ]
     ]
 

@@ -29,6 +29,7 @@ class SamusWeapon
           fireY = position.y + GUN_SETTINGS.y_offset
 
           estore.createEntity [
+            new Common.Bullet
             new Common.Visual
               layer: 'creatures'
               spriteName: 'bullet'

@@ -23,7 +23,7 @@ tileSearchHorizontal = (grid, tw,th, y, leftX, rightX) ->
   hits
 
 
-class MapPhysics
+class MapPhysicsSystem
   constructor: ({@tileGrid, @tileWidth, @tileHeight}) ->
 
   run: (estore,dt,input) ->
@@ -88,5 +88,5 @@ class MapPhysics
           velocity.y = 0
 
 
-module.exports = MapPhysics
+module.exports = MapPhysicsSystem
 

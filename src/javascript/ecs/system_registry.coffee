@@ -26,7 +26,9 @@ class SystemRegistry
 
   register: (name,clazz) ->
     if _.isPlainObject(name)
-      _.forOwn name, (clazz,name) ->
+      console.log ">>> registering set of",name
+      _.forOwn name, (clazz,name) =>
+        console.log "About to register '#{name}' to be",clazz
         @register name,clazz
     else
       @_registry[name] = clazz
