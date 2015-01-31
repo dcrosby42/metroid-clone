@@ -79,6 +79,7 @@ class MapPhysicsSystem
         hitBox.touching.right = hits.right.length > 0
         hitBox.touching.top = hits.top.length > 0
         hitBox.touching.bottom = hits.bottom.length > 0
+        hitBox.touchingSomething = hitBox.touching.left or hitBox.touching.right or hitBox.touching.top or hitBox.touching.bottom
 
         # Update velocity if needed based on running into objects:
         if hitBox.touching.left or hitBox.touching.right

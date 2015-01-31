@@ -173,6 +173,8 @@ class MapSpike
         tileWidth: @mapTileWidth
         tileHeight: @mapTileHeight]
 
+      'bullet_system'
+
       'visual_timer_system'
       'samus_animation'
       'skree_animation'

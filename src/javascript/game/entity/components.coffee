@@ -41,6 +41,7 @@ C.HitBox = class HitBox
     @touching.right ||= false
     @touching.top ||= false
     @touching.bottom ||= false
+    @touchingSomething = false
     
 C.Sound = class Sound
   constructor: ({@soundId,@volume,@playPosition,@timeLimit,@loop}) ->
