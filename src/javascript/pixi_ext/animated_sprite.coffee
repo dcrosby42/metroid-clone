@@ -19,13 +19,13 @@ class AnimatedSprite extends SpriteDeck
   @createTimelines: (config) ->
     timelines = []
     _.forOwn config.states, (data,state) ->
-      frames = if data.frames?
-        data.frames
+      frameCount = if data.frames?
+        data.frames.length
       else
-        [ data.frame ]
+        1
 
       frameDelayMillis = 1000 / data.fps
-      frameIndices = _.range(0,frames.length)
+      frameIndices = _.range(0,frameCount)
       timeline = Timeline.createTimedEvents(frameDelayMillis, frameIndices, true)
       timelines[state] = timeline
     timelines

@@ -1,6 +1,6 @@
 {"frames": {
 
-"bullet-splode":
+"blank":
 {
 	"frame": {"x":2,"y":2,"w":7,"h":8},
 	"rotated": false,
@@ -9,9 +9,18 @@
 	"sourceSize": {"w":7,"h":8},
 	"pivot": {"x":0.5,"y":0.5}
 },
+"bullet-splode":
+{
+	"frame": {"x":11,"y":2,"w":7,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":7,"h":8},
+	"sourceSize": {"w":7,"h":8},
+	"pivot": {"x":0.5,"y":0.5}
+},
 "bullet":
 {
-	"frame": {"x":11,"y":2,"w":4,"h":5},
+	"frame": {"x":20,"y":2,"w":4,"h":5},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":4,"h":5},
@@ -124,6 +133,6 @@
 	"format": "RGBA8888",
 	"size": {"w":30,"h":452},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:10186a8f046e3806f901bc87929aaf04:c64b62afd4752bddf6bd4cf08086b272:ee3397b934a0f7ddedb37d84ef594e2f$"
+	"smartupdate": "$TexturePacker:SmartUpdate:66aaea1913ac104ce2b1af048b21c4f0:1a053ec662f1d7dcb3079cd401b4caf2:ee3397b934a0f7ddedb37d84ef594e2f$"
 }
 }

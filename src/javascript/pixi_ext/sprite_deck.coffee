@@ -5,6 +5,11 @@ debug = ->
 # debug = (a...) ->
 #   console.log "SpriteDeck DEBUG: ", a...
 
+class FauxSprite
+  constructor: ->
+    @visible = false
+    @isFauxSprite = true
+
 class SpriteDeck extends PIXI.DisplayObjectContainer
 
   constructor: (@sprites={}) ->
@@ -14,9 +19,9 @@ class SpriteDeck extends PIXI.DisplayObjectContainer
     _.forOwn @sprites, (sprite,state) =>
       if _.isArray(sprite)
         for s in sprite
-          @addChild s
+          @addChild s unless s.isFauxSprite
       else
-        @addChild sprite
+        @addChild sprite unless s.isFauxSprite
 
   display: (state, index=0) ->
     return if state == @state and index == @index
@@ -41,14 +46,15 @@ class SpriteDeck extends PIXI.DisplayObjectContainer
     _.forOwn config.states, (data, state) ->
       mods = _.clone(propsForAll)
       _.merge(mods, data.props)
-      if state == 'stand-right' or state == 'jump-right'
-        debug propsForAll, data.props, mods
-      if data.frame?
-        sprites[state] = [ SpriteDeck._buildSprite(data.frame, mods) ]
+      frames = if data.frame?
+        [ data.frame ]
       else if data.frames?
-        sprites[state] = _.map data.frames, (frame) -> SpriteDeck._buildSprite(frame, mods)
+        data.frames
       else
         console.log "SpriteDeck.create: data for '#{state}' missing either 'frame' or 'frames'"
+      if frames?
+        sprites[state] = _.map frames, (frame) -> SpriteDeck._buildSprite(frame, mods)
+
     sprites
 
   @create: (config) ->
@@ -56,7 +62,11 @@ class SpriteDeck extends PIXI.DisplayObjectContainer
     new SpriteDeck(sprites)
 
   @_buildSprite: (frame, mods) ->
-    sprite = PIXI.Sprite.fromFrame(frame)
+    sprite = if frame == "_BLANK_"
+      new FauxSprite()
+    else
+      PIXI.Sprite.fromFrame(frame)
+
     sprite.visible = false
     if mods?
       SpriteDeck._applyMods(sprite, mods)

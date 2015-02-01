@@ -9,7 +9,11 @@ sprites =
             x: 0.5
             y: 0.5
       'splode':
-        frame: 'bullet-splode'
+        frames: [
+          'bullet-splode'
+          'blank'
+        ]
+        fps: 60
         props:
           anchor:
             x: 0.5

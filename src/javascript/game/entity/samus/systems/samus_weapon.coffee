@@ -1,7 +1,5 @@
 Common = require '../../components'
 
-# tweak = {x:0,y:0}
-# window.tweak = tweak
 GUN_SETTINGS =
   x_offset: 10
   y_offset: -22
@@ -34,7 +32,6 @@ class SamusWeapon
               layer: 'creatures'
               spriteName: 'bullet'
               state: 'normal'
-              time: 0
 
             new Common.Position
               x: fireX
