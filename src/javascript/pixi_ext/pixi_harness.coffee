@@ -22,19 +22,29 @@ class PixiHarness
   _loadAssets: (callback) ->
     allDone = CompositeEvent.create ["graphics", "sounds"], callback
 
-    @_loadGraphicalAssets @delegate.graphicsToPreload(), allDone.notifier("graphics")
+    if @delegate.graphicsToPreload?
+      @_loadGraphicalAssets @delegate.graphicsToPreload(), allDone.notifier("graphics")
+    else
+      allDone.notify "graphics"
+
     if @delegate.soundsToPreload?
       @_loadSoundAssets @delegate.soundsToPreload(), allDone.notifier("sounds")
     else
       allDone.notify "sounds"
 
   _loadGraphicalAssets: (assets, callback) ->
-    loader = new PIXI.AssetLoader(assets)
-    loader.onComplete = callback
-    loader.load()
+    if assets? and assets.length > 0
+      loader = new PIXI.AssetLoader(assets)
+      loader.onComplete = callback
+      loader.load()
+    else
+      callback()
 
   _loadSoundAssets: (assets, callback) ->
-    SoundController.loadSoundMap assets, callback
+    if _.keys(assets).length > 0
+      SoundController.loadSoundMap assets, callback
+    else
+      callback()
    
   update: ->
     dt = @stopWatch.lapInMillis()
