@@ -62,6 +62,9 @@ C.Enemy = class Enemy
   constructor: ->
     @ctype = 'enemy'
     
+C.HitBoxVisual = class HitBoxVisual
+  constructor: ({@color})->
+    @ctype = 'hit_box_visual'
 
 # C.Tags = class Tags
 #   constructor: ({@names}) ->
