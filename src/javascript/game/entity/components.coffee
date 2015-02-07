@@ -57,6 +57,10 @@ C.DeathTimer = class DeathTimer
 C.Bullet = class Bullet
   constructor: ->
     @ctype = 'bullet'
+
+C.Enemy = class Enemy
+  constructor: ->
+    @ctype = 'enemy'
     
 
 # C.Tags = class Tags

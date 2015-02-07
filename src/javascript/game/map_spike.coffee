@@ -158,14 +158,15 @@ class MapSpike
 
     @systemsRunner = Systems.sequence [
       'death_timer_system'
+      'visual_timer_system'
       'sound_system'
       'samus_motion'
       'controller_system'
       'samus_controller_action'
       'samus_weapon'
-      'skree_action'
       'samus_action_velocity'
       'samus_action_sounds'
+      'skree_action'
       'skree_velocity'
       'gravity_system'
       ['map_physics_system',
@@ -175,11 +176,12 @@ class MapSpike
 
       'bullet_system'
 
-      'visual_timer_system'
       'samus_animation'
       'skree_animation'
 
+      # 
       # 'output' systems mutate world state (graphics, sounds, browser etc)
+      #
       ['sprite_sync_system',
         spriteConfigs: @spriteConfigs
         spriteLookupTable: {}
@@ -224,7 +226,7 @@ class MapSpike
           @bgmId = null
         else
           @bgmId = @estore.createEntity [
-            new C.Sound soundId: 'brinstar', timeLimit: 116000, volume: 0.4
+            new C.Sound soundId: 'brinstar', timeLimit: 116000, volume: 0.3
           ]
     
   setupMap: (map, container) ->

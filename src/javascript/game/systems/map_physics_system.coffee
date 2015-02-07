@@ -72,8 +72,9 @@ class MapPhysicsSystem
         # Update position and hit_box components 
         position.x = box.x
         position.y = box.y
-        hitBox.x = box.x # kinda redundant but let's just keep er up2date ok
-        hitBox.y = box.y# kinda redundant but let's just keep er up2date ok
+        # some systems will expect the hitBox to be up-to-date with current position
+        hitBox.x = box.x
+        hitBox.y = box.y
 
         hitBox.touching.left = hits.left.length > 0
         hitBox.touching.right = hits.right.length > 0

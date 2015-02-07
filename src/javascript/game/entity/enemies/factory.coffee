@@ -1,4 +1,4 @@
-C = require('./components')
+Enemy = require('./components')
 Common = require('../components')
 
 F = {}
@@ -10,7 +10,7 @@ F = {}
 
 F.basicSkree = (args) ->
   [
-    new C.Skree
+    new Enemy.Skree
       action: 'sleep'
     new Common.Position(x: args.x, y: args.y)
     new Common.Velocity(x: 0, y: 0)
@@ -24,6 +24,7 @@ F.basicSkree = (args) ->
       spriteName: 'basic_skree'
       state: 'wait'
       time: 0
+    new Common.Enemy()
   ]
 
 

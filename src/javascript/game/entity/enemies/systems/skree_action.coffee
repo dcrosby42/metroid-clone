@@ -33,7 +33,7 @@ class SkreeAction
             else
               skree.direction = 'neither'
         when 'countdown'
-          skree.countdown -= dt
+          # TODO skree.countdown -= dt
           if skree.countdown < 0
             skree.action = 'explode'
 
