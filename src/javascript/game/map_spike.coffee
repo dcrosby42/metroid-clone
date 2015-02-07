@@ -132,6 +132,7 @@ class MapSpike
       bindings:
         "g": 'toggle_gamepad'
         "b": 'toggle_bgm'
+        "p": 'toggle_pause'
 
     @gamepadController = new GamepadController
       "DPAD_RIGHT": 'right'
@@ -196,6 +197,11 @@ class MapSpike
         screenHeightInTiles: 15
       ]
 
+      ['hit_box_visual_sync_system'
+        cache: {}
+        layer: @layers.overlay
+      ]
+
       ['sound_sync_system',
         soundCache: {} ]
     ]
@@ -208,7 +214,7 @@ class MapSpike
     @input.controllers.player1 = p1in
     # @input.controllers.player2 = @p2Controller.update()
 
-    @systemsRunner.run @estore, dt*@timeDilation, @input
+    @systemsRunner.run(@estore, dt*@timeDilation, @input) unless @paused
 
   handleAdminControls: ->
     ac = @adminController.update()
@@ -228,6 +234,11 @@ class MapSpike
           @bgmId = @estore.createEntity [
             new C.Sound soundId: 'brinstar', timeLimit: 116000, volume: 0.3
           ]
+      if ac.toggle_pause
+        if @paused
+          @paused = false
+        else
+          @paused = true
     
   setupMap: (map, container) ->
     @mapTileHeight = 16

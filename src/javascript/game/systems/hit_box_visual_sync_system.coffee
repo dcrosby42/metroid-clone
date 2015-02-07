@@ -12,7 +12,6 @@ class HitBoxVisualSyncSystem
       cache: @cache
       identKey: 'eid'
       addFn: (hitBoxVisual) =>
-        console.log "hitBoxVisual sync",hitBoxVisual
         hitBox = estore.getComponent(hitBoxVisual.eid, 'hit_box')
         abox = new AnchoredBox(hitBox)
         abox.setXY 0,0

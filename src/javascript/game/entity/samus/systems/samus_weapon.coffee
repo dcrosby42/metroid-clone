@@ -54,6 +54,9 @@ class SamusWeapon
 
             new Common.DeathTimer
               time: GUN_SETTINGS.bullet_life
+
+            new Common.HitBoxVisual
+              color: 0xffffff
           ]
 
         when 'held'

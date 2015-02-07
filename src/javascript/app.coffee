@@ -2,8 +2,8 @@ jquery    = require 'jquery'
 
 PixiHarness = require './pixi_ext/pixi_harness'
 # OneRoom = require './game/one_room'
-# MapSpike = require './game/map_spike'
-BoxDrawSpike = require './game/box_draw_spike'
+MapSpike = require './game/map_spike'
+# BoxDrawSpike = require './game/box_draw_spike'
 # CollisionSpike = require './game/collision_spike'
 # SamusPreview = require './game/samus_preview'
 # SkreePreview = require './samus/skree_preview'
@@ -13,8 +13,8 @@ jquery ->
   el = jquery('#game-holder')[0]
 
   # del = new OneRoom()
-  # del = new MapSpike()
-  del = new BoxDrawSpike()
+  del = new MapSpike()
+  # del = new BoxDrawSpike()
   # del = new CollisionSpike()
   # del = new SamusPreview()
   # del = new SkreePreview()

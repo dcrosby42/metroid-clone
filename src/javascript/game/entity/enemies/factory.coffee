@@ -10,6 +10,7 @@ F = {}
 
 F.basicSkree = (args) ->
   [
+    new Common.Enemy()
     new Enemy.Skree
       action: 'sleep'
     new Common.Position(x: args.x, y: args.y)
@@ -24,7 +25,7 @@ F.basicSkree = (args) ->
       spriteName: 'basic_skree'
       state: 'wait'
       time: 0
-    new Common.Enemy()
+    new Common.HitBoxVisual(color: 0x55FF55)
   ]
 
 

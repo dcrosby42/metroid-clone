@@ -28,6 +28,8 @@ samusComps = (args) ->
       spriteName: 'samus'
       state: 'stand-right'
       time: 0
+
+    new Common.HitBoxVisual(color: 0x0099ff)
   ]
 
 componentFactories =
