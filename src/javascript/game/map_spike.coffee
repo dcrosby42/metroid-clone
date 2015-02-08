@@ -133,6 +133,7 @@ class MapSpike
         "g": 'toggle_gamepad'
         "b": 'toggle_bgm'
         "p": 'toggle_pause'
+        "d": 'toggle_bounding_box'
 
     @gamepadController = new GamepadController
       "DPAD_RIGHT": 'right'
@@ -156,6 +157,8 @@ class MapSpike
     Systems.register CommonSystems
     Systems.register SamusSystems
     Systems.register EnemiesSystems
+
+    @boundingBoxToggle = {value:true}
 
     @systemsRunner = Systems.sequence [
       'death_timer_system'
@@ -200,10 +203,12 @@ class MapSpike
       ['hit_box_visual_sync_system'
         cache: {}
         layer: @layers.overlay
+        toggle: @boundingBoxToggle
       ]
 
       ['sound_sync_system',
-        soundCache: {} ]
+        soundCache: {}
+      ]
     ]
 
   update: (dt) ->
@@ -239,6 +244,9 @@ class MapSpike
           @paused = false
         else
           @paused = true
+
+      if ac.toggle_bounding_box
+        @boundingBoxToggle.value = !@boundingBoxToggle.value
     
   setupMap: (map, container) ->
     @mapTileHeight = 16

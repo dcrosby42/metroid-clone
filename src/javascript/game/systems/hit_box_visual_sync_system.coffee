@@ -3,10 +3,15 @@ AnchoredBox = require '../../utils/anchored_box'
 PIXI = require 'pixi.js'
 
 class HitBoxVisualSyncSystem
-  constructor: ({@cache,@layer}) ->
+  constructor: ({@cache,@layer,@toggle}) ->
+    @toggle ||= {value:true}
 
   run: (estore,dt,input) ->
-    hitBoxVisuals = estore.getComponentsOfType('hit_box_visual')
+    hitBoxVisuals = if @toggle.value
+      estore.getComponentsOfType('hit_box_visual')
+    else
+      []
+
     ArrayToCacheBinding.update
       source: hitBoxVisuals
       cache: @cache
