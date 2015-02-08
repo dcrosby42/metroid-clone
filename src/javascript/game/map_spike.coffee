@@ -59,6 +59,34 @@ class MapSpike
     for x in [150, 200, 250, 300, 350]
       @estore.createEntity Enemies.factory.createComponents('basicSkree', x:x, y: 32)
 
+
+    dbg1 = @estore.createEntity [
+      new C.Tags(['testbox1'])
+      new C.Controller(inputName: 'mover1')
+      new C.HitBox
+        x: 0
+        y: 0
+        width: 32
+        height: 16
+        anchorX: 0.5
+        anchorY: 0.5
+      new C.HitBoxVisual
+        color: 0x0099FF
+    ]
+    dbg2 = @estore.createEntity [
+      new C.Tags(['testbox2'])
+      new C.Controller(inputName: 'mover2')
+      new C.HitBox
+        x: 32
+        y: 32
+        width: 16
+        height: 32
+        anchorX: 0.25
+        anchorY: 0.75
+      new C.HitBoxVisual
+        color: 0xFF9900
+    ]
+
     # Background music:
     # @estore.createEntity [
     #   new C.Sound soundId: 'brinstar', timeLimit: 116000, volume: 0.4
@@ -134,6 +162,11 @@ class MapSpike
         "b": 'toggle_bgm'
         "p": 'toggle_pause'
         "d": 'toggle_bounding_box'
+        "m": 'cycle_admin_mover'
+        "h": 'left'
+        "j": 'down'
+        "k": 'up'
+        "l": 'right'
 
     @gamepadController = new GamepadController
       "DPAD_RIGHT": 'right'
@@ -145,6 +178,10 @@ class MapSpike
 
     @useGamepad = false
     @p1Controller = @keyboardController
+
+    @boundingBoxToggle = {value:true}
+    @adminMovers = [ 'mover1','mover2' ]
+    @adminMoversIndex = 0
 
   setupSpriteConfigs: ->
     @spriteConfigs = {}
@@ -158,7 +195,6 @@ class MapSpike
     Systems.register SamusSystems
     Systems.register EnemiesSystems
 
-    @boundingBoxToggle = {value:true}
 
     @systemsRunner = Systems.sequence [
       'death_timer_system'
@@ -166,6 +202,8 @@ class MapSpike
       'sound_system'
       'samus_motion'
       'controller_system'
+      ['manual_mover_system'
+        componentType: 'hit_box' ]
       'samus_controller_action'
       'samus_weapon'
       'samus_action_velocity'
@@ -212,42 +250,48 @@ class MapSpike
     ]
 
   update: (dt) ->
-    @handleAdminControls()
-
     p1in = @p1Controller.update()
-    # console.log p1in if p1in
+    ac = @adminController.update()
+    @handleAdminControls(ac) if ac?
+
     @input.controllers.player1 = p1in
+    @input.controllers[@adminMovers[@adminMoversIndex]] = ac
     # @input.controllers.player2 = @p2Controller.update()
 
     @systemsRunner.run(@estore, dt*@timeDilation, @input) unless @paused
 
-  handleAdminControls: ->
-    ac = @adminController.update()
-    if ac
-      if ac.toggle_gamepad
-        @useGamepad = !@useGamepad
-        if @useGamepad
-          @p1Controller = @gamepadController
-        else
-          @p1Controller = @keyboardController
+  handleAdminControls: (ac) ->
+    if ac.toggle_gamepad
+      @useGamepad = !@useGamepad
+      if @useGamepad
+        @p1Controller = @gamepadController
+      else
+        @p1Controller = @keyboardController
 
-      if ac.toggle_bgm
-        if @bgmId?
-          @estore.destroyEntity @bgmId
-          @bgmId = null
-        else
-          @bgmId = @estore.createEntity [
-            new C.Sound soundId: 'brinstar', timeLimit: 116000, volume: 0.3
-          ]
-      if ac.toggle_pause
-        if @paused
-          @paused = false
-        else
-          @paused = true
+    if ac.toggle_bgm
+      if @bgmId?
+        @estore.destroyEntity @bgmId
+        @bgmId = null
+      else
+        @bgmId = @estore.createEntity [
+          new C.Sound soundId: 'brinstar', timeLimit: 116000, volume: 0.3
+        ]
 
-      if ac.toggle_bounding_box
-        @boundingBoxToggle.value = !@boundingBoxToggle.value
-    
+    if ac.toggle_pause
+      if @paused
+        @paused = false
+      else
+        @paused = true
+
+    if ac.toggle_bounding_box
+      @boundingBoxToggle.value = !@boundingBoxToggle.value
+
+    if ac.cycle_admin_mover
+      @adminMoversIndex += 1
+      if @adminMoversIndex >= @adminMovers.length
+        @adminMoversIndex = 0
+
+
   setupMap: (map, container) ->
     @mapTileHeight = 16
     @mapTileWidth = 16

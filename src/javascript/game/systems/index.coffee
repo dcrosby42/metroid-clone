@@ -4,6 +4,7 @@ module.exports =
   death_timer_system: require './death_timer_system'
   gravity_system: require './gravity_system'
   hit_box_visual_sync_system: require './hit_box_visual_sync_system'
+  manual_mover_system: require './manual_mover_system'
   map_physics_system: require './map_physics_system'
   sound_sync_system: require './sound_sync_system'
   sound_system: require './sound_system'

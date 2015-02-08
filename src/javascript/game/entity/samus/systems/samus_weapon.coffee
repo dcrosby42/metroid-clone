@@ -40,10 +40,10 @@ class SamusWeapon
               x: vel
               y: 0
             new Common.HitBox
-              width: 3
-              height: 3
+              width: 4
+              height: 4
               anchorX: 0.5
-              anchory: 0.5
+              anchorY: 0.5
 
             new Common.Sound
               soundId: 'short_beam'

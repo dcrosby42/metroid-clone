@@ -63,13 +63,14 @@ C.Enemy = class Enemy
     @ctype = 'enemy'
     
 C.HitBoxVisual = class HitBoxVisual
-  constructor: ({@color})->
+  constructor: ({@color,@anchorColor})->
     @ctype = 'hit_box_visual'
+    @color ||= 0x0000ff
+    @anchorColor ||= 0xffffff
 
-# C.Tags = class Tags
-#   constructor: ({@names}) ->
-#     @ctype = 'tags'
-#     @has = {}
-#     for n in @names
-#       @has[n] = true
-#
+C.Tags = class Tags
+  constructor: (@names) ->
+    @ctype = 'tags'
+    @has = {}
+    for n in @names
+      @has[n] = true

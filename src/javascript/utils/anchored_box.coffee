@@ -30,10 +30,10 @@ class AnchoredBox
     @
 
   overlaps: (other) ->
-    !((@right < other.left) or
-      (@left > other.right) or
-      (@top < other.buttom) or
-      (@bottom > other.top))
+    !(other.left > @right ||
+      other.right < @left ||
+      other.top > @bottom ||
+      other.bottom < @top)
 
   _updateLeftRight: ->
     @left = @x + @leftOffset

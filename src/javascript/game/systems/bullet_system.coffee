@@ -29,6 +29,20 @@ hitBoxesOverlap = (a,b) ->
 
 class BulletSystem
   run: (estore, dt, input) ->
+    for tags in estore.getComponentsOfType('tags')
+      if tags.has['testbox1']
+        if hitBox1 = estore.getComponent(tags.eid, 'hit_box')
+          for tags2 in estore.getComponentsOfType('tags')
+            if tags2.has['testbox2']
+              if hitBox2 = estore.getComponent(tags2.eid, 'hit_box')
+                a1 = new AnchoredBox(hitBox1)
+                a2 = new AnchoredBox(hitBox2)
+                if a1.overlaps(a2)
+                  console.log "overlap!",a1,a2
+
+
+
+  TODO_run: (estore, dt, input) ->
     forComponentsWith estore, ['bullet', 'hit_box'], (bullet, bulletHitBox) ->
       bulletBox = new AnchoredBox(bulletHitBox)
       forComponentsWith estore, ['enemy', 'hit_box'], (enemy, enemyHitBox) ->
