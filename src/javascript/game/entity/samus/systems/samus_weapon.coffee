@@ -26,6 +26,7 @@ class SamusWeapon
           fireX = position.x + xoff
           fireY = position.y + GUN_SETTINGS.y_offset
 
+
           estore.createEntity [
             new Common.Bullet
             new Common.Visual
