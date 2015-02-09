@@ -1,7 +1,11 @@
 var dest = "./build";
 var src = './src';
+var test = './test';
 
 module.exports = {
+  spec: {
+    src: "./spec/**/*_{spec,test}.coffee"
+  },
   browserSync: {
     server: {
       // We're serving the src folder as well
