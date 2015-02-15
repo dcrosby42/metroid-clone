@@ -1,5 +1,4 @@
-chai = require 'chai'
-expect = chai.expect
+expect = require('chai').expect
 
 describe 'an array', ->
   arr = [1,2,3]
