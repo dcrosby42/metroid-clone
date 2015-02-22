@@ -10,6 +10,11 @@ filterComponent = (filter,comp) ->
   _.every filter, (val,key) ->
     comp[key] == val
 
+filterComponents = (comps,filter,fn) ->
+  _.forEach comps, (c, cid) ->
+    if filterComponent(filter,c)
+      fn c
+
 class EntityStore
   constructor: ->
     @eidGen = nextId(prefix:'e',number:0)
@@ -31,12 +36,32 @@ class EntityStore
     # @_updateIndices()
     comp
 
+  createEntity: (comps) ->
+    eid = @newEntityId()
+    _.forEach comps, (comp) =>
+      @addComponent eid, comp
+    [eid,comps]
+
   findComponents: (filters, fn) ->
     filter = filters[0]
-    _.forEach @comps, (c, cid) ->
-      f = filterComponent(filter,c)
-      if f
-        fn c
+    filterComponents @comps, filter, (comp) ->
+      fn comp
+
+  matchComponents: (filters, fn) ->
+
+joinFind = (comps, filters, result, fn) ->
+  filter = _.first(filters)
+  remainingFilters = _.rest(filters)
+  
+  
+  # filter.
+
+
+
+# type = 'velocity' 
+# eid = 0.eid
+[ 'match', 'type', 'velocity' ]
+[ 'match', 'eid', 0, 'eid' ]
         
 
 module.exports = EntityStore

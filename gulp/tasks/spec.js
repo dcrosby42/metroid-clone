@@ -10,6 +10,6 @@ gulp.task('spec', function () {
   return gulp
     .src(config.src, {read: false})
     .pipe(mocha({
-      reporter: 'nyan',
+      //reporter: 'nyan',
     }));
 });
