@@ -88,7 +88,7 @@ describe 'The new EntityStore', ->
       # expect(pairs.length).to.eq 2
 
   describe 'searching', ->
-    it 'search1', ->
+    it 'filterObjects', ->
       c1 = { id: 1, name: 'Link', affil: 'good' }
       c2 = { id: 2, name: 'Zelda', affil: 'good' }
       c3 = { id: 3, name: 'Gannon', affil: 'bad' }
@@ -100,82 +100,107 @@ describe 'The new EntityStore', ->
         ['match', 'name', 'Zelda']
       ]
 
-      found1 = search1 comps, filter1
+      found1 = filterObjects comps, filter1
       expectArray found1, [c2]
 
       filter2 = [
         ['match', 'affil', 'good']
       ]
-      found2 = search1 comps, filter2
+      found2 = filterObjects comps, filter2
       expectArray found2, [c1,c2]
       
       filter3 = [
         ['match', 'name', 'Link']
       ]
-      found3 = search1 comps, filter3
+      found3 = filterObjects comps, filter3
       expectArray found3, [c1,c4]
 
       filter4 = [
         ['match', 'name', 'Link']
         ['match', 'affil', 'bad']
       ]
-      found4 = search1 comps, filter4
+      found4 = filterObjects comps, filter4
       expectArray found4, [c4]
 
-    it 'search2', ->
+    it 'joinObjects', ->
+      t1 = { eid: 'e1', type: 'tag', value: 'hero' }
       c1 = { eid: 'e1', type: 'character', name: 'Link' }
       c2 = { eid: 'e1', type: 'bbox', shape: [1,2,3,4] }
       c3 = { eid: 'e2', type: 'character', name: 'Tektike' }
       c4 = { eid: 'e2', type: 'bbox', shape: [3,4,5,6] }
+      c5 = { eid: 'e1', type: 'other', stuff: 'items' }
+      c6 = { eid: 'e2', type: 'other', stuff: 'things' }
 
-      comps = [c1,c2,c3,c4]
+      comps = [t1,c1,c2,c3,c4,c5,c6]
 
       filter1 = [
         ['match', 'type', 'character']
       ]
       filter2 = [
+        ['join', 'eid']
         ['match', 'type', 'bbox']
       ]
+      filter3 = [
+        ['join', 'eid']
+        ['match', 'type', 'tag']
+        ['match', 'value', 'hero']
+      ]
 
-      found1 = search2 comps, [filter1,filter2]
-      console.log found1
+      found1 = joinObjects comps, [filter1,filter2]
+      console.log "RESULTS:",found1
       expectArray found1, [
         [c1, c2]
         [c3, c4]
       ]
 
+      found2 = joinObjects comps, [filter1,filter2,filter3]
+      console.log "RESULTS 2:",found2
+      expectArray found2, [
+        [c1, c2, t1]
+      ]
 
-search1 = (comps,filter) ->
+
+filterObjects = (comps,filter) ->
   _.filter comps, (c) ->
     _.every filter, (fil) ->
-      switch fil[0]
-        when 'match'
-          c[fil[1]] == fil[2]
+      c[fil[1]] == fil[2] # so far, 'match' is the ONLY kind of condition we support currently
+      # TODO: to support different conditions, bring this switch statement back:
+      # switch fil[0]
+      #   when 'match'  #  [ 'match', key, val ]
+      #     c[fil[1]] == fil[2]
 
-search2 = (comps,filters) ->
+joinComponents = (comps,filters) ->
+  filters2 = _.cloneDeep(filters)
+  _.forEach _.rest(filters2), (f) ->
+    f.unshift [ 'join', 'eid' ]
+  joinObjects comps,filters2
+
+joinObjects = (comps,filters,row=[]) ->
+  if filters.length == 0
+    return [ row ]
+
+  f0 = _.cloneDeep(_.first(filters))
+  fs = _.rest(filters)
+
+  _.forEach f0, (cond) ->
+    switch cond[0]
+      when 'join'
+        if row.length > 0
+          lobj = row[row.length-1]
+          cond[0] = 'match'
+          # cond[1] remains the specified key, such as 'eid'
+          cond[2] = lobj[cond[1]]  # eg, converts [ 'join', 'eid' ] into [ 'match', 'eid', lc['eid'] ]
+        # TODO maybe this isn't an error after all? Would it be convenient to allow ALL filters to have a join condition?
+        # else
+        #   console.log "!! ERROR: join condition found, but no left-hand object to match on? Condition:",cond
+
   rows = []
-  # f1 = _.first(filters)
-  # fs = _.rest(filters)
-  f0 = filters[0]
-  f1 = filters[1]
-
-  rowx = []
-  lcomps = search1(comps,f0)
-  _.forEach lcomps, (lc) ->
-    row = _.cloneDeep(rowx)
-    row.push lc
-    f1p = _.cloneDeep(f1)
-    f1p.unshift ['match','eid',lc['eid']]
-    # console.log "f1p modified w eid join:",f1p
-    rcomps = search1(comps,f1p)
-    _.forEach rcomps, (rc) ->
-      row = _.cloneDeep(row)
-      row.push rc
-      rows.push row
-      # rows.push [lc,rc]
-
+  _.forEach filterObjects(comps,f0), (c) ->
+    r = _.cloneDeep(row)
+    r.push c
+    _.forEach joinObjects(comps,fs,r), (r2) ->
+      rows.push r2
   rows
-
 
 
 
