@@ -152,6 +152,34 @@ describe 'The new EntityStore', ->
         [comps[1], comps[2], comps[0]]
       ]
 
+  describe 'joinObjects2', ->
+    it 'works', ->
+      comps = makeZeldaComps()
+
+      charFilter =
+        match: { type: 'character' }
+
+      boxFilter =
+        join: 'eid'
+        match: { type: 'bbox' }
+
+      heroFilter =
+        join: 'eid'
+        match: { type: 'tag', value: 'hero' }
+
+      found1 = joinObjects2 comps, [charFilter, boxFilter]
+      # console.log "RESULTS:",found1
+      expectArray found1, [
+        [comps[1], comps[2]]
+        [comps[5], comps[6]]
+      ]
+
+      found2 = joinObjects2 comps, [charFilter,boxFilter,heroFilter]
+      # console.log "RESULTS 2:",found2
+      expectArray found2, [
+        [comps[1], comps[2], comps[0]]
+      ]
+
   describe 'expandFilter', ->
     it 'leaves arrays as they are', ->
       expectArray expandFilter([[]]), [[]]
@@ -191,6 +219,8 @@ makeZeldaComps = ->
     { eid: 'e2', type: 'digger', status: 'burrowing' }
   ]
 
+################################################################################################################################################
+#
 filterObjects = (comps,filter) ->
   _.filter comps, (c) ->
     _.every filter, (fil) ->
@@ -199,12 +229,6 @@ filterObjects = (comps,filter) ->
       # switch fil[0]
       #   when 'match'  #  [ 'match', key, val ]
       #     c[fil[1]] == fil[2]
-
-# joinComponents = (comps,filters) ->
-#   filters2 = _.cloneDeep(filters)
-#   _.forEach _.rest(filters2), (f) ->
-#     f.unshift [ 'join', 'eid' ]
-#   joinObjects comps,filters2
 
 joinObjects = (comps,filters,row=[]) ->
   if filters.length == 0
@@ -234,6 +258,40 @@ joinObjects = (comps,filters,row=[]) ->
   rows
 
 
+##########################################################################################
+
+filterObjects2 = (comps,filter) ->
+  _.filter comps, _.matches(filter.match)
+# filterObjects2 = (comps,filter) ->
+#   _.filter comps, (c) ->
+#     _.every filter.match, (val,key) ->
+#       c[key] == val
+
+
+joinObjects2 = (comps,filters,row=[]) ->
+  # console.log "joinObjects2(comps,", filters, ",", row, ")"
+  if filters.length == 0
+    return [ row ]
+
+  f0 = _.cloneDeep(_.first(filters))
+  fs = _.rest(filters)
+
+  if f0.join?
+    if row.length > 0
+      refObj = row[row.length-1]
+      key = f0.join
+      f0.match ||= {}
+      f0.match[key] = refObj[key]
+    
+  rows = []
+  _.forEach filterObjects2(comps,f0), (c) ->
+    r = _.cloneDeep(row)
+    r.push c
+    _.forEach joinObjects2(comps,fs,r), (r2) ->
+      rows.push r2
+  rows
+
+
 miniFormat = /\s*^(.+):(.+)\s*$/
 expandFilter = (f) ->
   if _.isString(f)
@@ -252,3 +310,20 @@ expandFilter = (f) ->
       [ [ 'match', 'type', f ] ]
   else
     f
+
+
+query =
+  filters: [
+    {
+      match: { type: 'tag', value: 'hero' }
+    }
+    {
+      match: { type: 'bbox' }
+      join: 'eid'
+    }
+    {
+      match: { type: 'character' }
+      join: 'eid'
+    }
+  ]
+console.log query
