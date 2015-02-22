@@ -87,8 +87,8 @@ describe 'The new EntityStore', ->
 
       # expect(pairs.length).to.eq 2
 
-  describe 'searching', ->
-    it 'filterObjects', ->
+  describe 'filterObjects', ->
+    it 'works', ->
       c1 = { id: 1, name: 'Link', affil: 'good' }
       c2 = { id: 2, name: 'Zelda', affil: 'good' }
       c3 = { id: 3, name: 'Gannon', affil: 'bad' }
@@ -122,43 +122,74 @@ describe 'The new EntityStore', ->
       found4 = filterObjects comps, filter4
       expectArray found4, [c4]
 
-    it 'joinObjects', ->
-      t1 = { eid: 'e1', type: 'tag', value: 'hero' }
-      c1 = { eid: 'e1', type: 'character', name: 'Link' }
-      c2 = { eid: 'e1', type: 'bbox', shape: [1,2,3,4] }
-      c3 = { eid: 'e2', type: 'character', name: 'Tektike' }
-      c4 = { eid: 'e2', type: 'bbox', shape: [3,4,5,6] }
-      c5 = { eid: 'e1', type: 'other', stuff: 'items' }
-      c6 = { eid: 'e2', type: 'other', stuff: 'things' }
+  describe 'joinObjects', ->
+    it 'works', ->
+      comps = makeZeldaComps()
 
-      comps = [t1,c1,c2,c3,c4,c5,c6]
-
-      filter1 = [
+      charFilter = [
         ['match', 'type', 'character']
       ]
-      filter2 = [
+      boxFilter = [
         ['join', 'eid']
         ['match', 'type', 'bbox']
       ]
-      filter3 = [
+      heroFilter = [
         ['join', 'eid']
         ['match', 'type', 'tag']
         ['match', 'value', 'hero']
       ]
 
-      found1 = joinObjects comps, [filter1,filter2]
-      console.log "RESULTS:",found1
+      found1 = joinObjects comps, [charFilter, boxFilter]
+      # console.log "RESULTS:",found1
       expectArray found1, [
-        [c1, c2]
-        [c3, c4]
+        [comps[1], comps[2]]
+        [comps[5], comps[6]]
       ]
 
-      found2 = joinObjects comps, [filter1,filter2,filter3]
-      console.log "RESULTS 2:",found2
+      found2 = joinObjects comps, [charFilter,boxFilter,heroFilter]
+      # console.log "RESULTS 2:",found2
       expectArray found2, [
-        [c1, c2, t1]
+        [comps[1], comps[2], comps[0]]
       ]
 
+  describe 'expandFilter', ->
+    it 'leaves arrays as they are', ->
+      expectArray expandFilter([[]]), [[]]
+      f2 = [
+        ['match','something','interesting']
+        ['a','b']
+      ]
+      expectArray expandFilter(f2), f2
+
+    it 'turns a plain string into a "type matcher"', ->
+      expectArray expandFilter('dude'), [['match','type','dude']]
+      expectArray expandFilter('character'), [['match','type','character']]
+
+    it 'turns a key:value into a key-value filter', ->
+      expectArray expandFilter('hi:there'), [['match','hi','there']]
+      expectArray expandFilter('type:dude'), [['match','type','dude']]
+
+    it 'turns a tag:string into a "tag matcher"', ->
+      expectArray expandFilter('tag:dude'), [['match','type','tag'],['match','value','dude']]
+      expectArray expandFilter('tag:enemy'), [['match','type','tag'],['match','value','enemy']]
+    it 'stops expanding', ->
+      tagFilter = [['match','type','tag'],['match','value','enemy']]
+      expectArray expandFilter('tag:enemy'), tagFilter
+      expectArray expandFilter(expandFilter(expandFilter('tag:enemy'))), tagFilter
+
+
+makeZeldaComps = ->
+  [
+    { eid: 'e1', type: 'tag', value: 'hero' }
+    { eid: 'e1', type: 'character', name: 'Link' }
+    { eid: 'e1', type: 'bbox', shape: [1,2,3,4] }
+    { eid: 'e1', type: 'inventory', stuff: 'items' }
+
+    { eid: 'e1', type: 'tag', value: 'enemy' }
+    { eid: 'e2', type: 'character', name: 'Tektike' }
+    { eid: 'e2', type: 'bbox', shape: [3,4,5,6] }
+    { eid: 'e2', type: 'digger', status: 'burrowing' }
+  ]
 
 filterObjects = (comps,filter) ->
   _.filter comps, (c) ->
@@ -169,11 +200,11 @@ filterObjects = (comps,filter) ->
       #   when 'match'  #  [ 'match', key, val ]
       #     c[fil[1]] == fil[2]
 
-joinComponents = (comps,filters) ->
-  filters2 = _.cloneDeep(filters)
-  _.forEach _.rest(filters2), (f) ->
-    f.unshift [ 'join', 'eid' ]
-  joinObjects comps,filters2
+# joinComponents = (comps,filters) ->
+#   filters2 = _.cloneDeep(filters)
+#   _.forEach _.rest(filters2), (f) ->
+#     f.unshift [ 'join', 'eid' ]
+#   joinObjects comps,filters2
 
 joinObjects = (comps,filters,row=[]) ->
   if filters.length == 0
@@ -203,5 +234,21 @@ joinObjects = (comps,filters,row=[]) ->
   rows
 
 
-
-      
+miniFormat = /\s*^(.+):(.+)\s*$/
+expandFilter = (f) ->
+  if _.isString(f)
+    if ms = miniFormat.exec(f)
+      switch ms[1]
+        when 'tag'
+          [
+            ['match', 'type', 'tag']
+            ['match', 'value', ms[2]]
+          ]
+        else
+          [
+            ['match', ms[1], ms[2]]
+          ]
+    else
+      [ [ 'match', 'type', f ] ]
+  else
+    f
