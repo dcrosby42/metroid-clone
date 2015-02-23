@@ -123,38 +123,38 @@ describe 'The new EntityStore', ->
       found4 = filterObjects comps, filter4
       expectIs found4, Immutable.List [c4]
 
-  # describe 'joinObjects', ->
-  #   it 'works with immutable objects', ->
-  #     compsJS = makeZeldaComps()
-  #     comps = Immutable.fromJS(compsJS)
-  #     # comps = Immutable.List(compsJS) # Makes an immutable list of regular mutable JS objects
-  #
-  #     charFilter = Immutable.fromJS
-  #       match: { type: 'character' }
-  #       as: 'char'
-  #
-  #     boxFilter = Immutable.fromJS
-  #       join: 'char.eid'
-  #       match: { type: 'bbox' }
-  #       as: 'box'
-  #
-  #     heroFilter = Immutable.fromJS
-  #       join: 'box.eid'
-  #       match: { type: 'tag', value: 'hero' }
-  #       as: 'hero'
-  #
-  #     found1 = joinObjects comps, Immutable.fromJS([charFilter, boxFilter])
-  #     # console.log "RESULTS:",found1
-  #     expectIs found1, Immutable.fromJS [
-  #       { char: comps.get(1), box: comps.get(2) }
-  #       { char: comps.get(5), box: comps.get(6) }
-  #     ]
-  #
-  #     found2 = joinObjects comps, Immutable.fromJS([charFilter,boxFilter,heroFilter])
-  #     # console.log "RESULTS 2:",found2
-  #     expectIs found2, Immutable.fromJS [
-  #       {char: comps.get(1), box: comps.get(2), hero: comps.get(0) }
-  #     ]
+  describe 'joinObjects', ->
+    it 'works with immutable objects', ->
+      compsJS = makeZeldaComps()
+      comps = Immutable.fromJS(compsJS)
+      # comps = Immutable.List(compsJS) # Makes an immutable list of regular mutable JS objects
+
+      charFilter = Immutable.fromJS
+        match: { type: 'character' }
+        as: 'char'
+
+      boxFilter = Immutable.fromJS
+        join: 'char.eid'
+        match: { type: 'bbox' }
+        as: 'box'
+
+      heroFilter = Immutable.fromJS
+        join: 'box.eid'
+        match: { type: 'tag', value: 'hero' }
+        as: 'hero'
+
+      found1 = joinObjects comps, Immutable.fromJS([charFilter, boxFilter])
+      # console.log "RESULTS:",found1
+      expectIs found1, Immutable.fromJS [
+        { char: comps.get(1), box: comps.get(2) }
+        { char: comps.get(5), box: comps.get(6) }
+      ]
+
+      found2 = joinObjects comps, Immutable.fromJS([charFilter,boxFilter,heroFilter])
+      # console.log "RESULTS 2:",found2
+      expectIs found2, Immutable.fromJS [
+        {char: comps.get(1), box: comps.get(2), hero: comps.get(0) }
+      ]
 
     it 'works with normal (mutable) objects', ->
       compsJS = makeZeldaComps()
@@ -177,14 +177,6 @@ describe 'The new EntityStore', ->
 
       found1 = joinObjects comps, Immutable.fromJS([charFilter, boxFilter])
       console.log "RESULTS:",found1
-      console.log found1.getIn [0,'char']
-      console.log found1.getIn [0,'box']
-      console.log found1.getIn [1,'char']
-      console.log found1.getIn [1,'box']
-      console.log found1.getIn [2,'char']
-      console.log found1.getIn [2,'box']
-      console.log found1.getIn [3,'char']
-      console.log found1.getIn [3,'box']
       expect(found1.size).to.eq(2)
       expectIs found1, Immutable.List [
         Immutable.Map( char: comps.get(1), box: comps.get(2) )
