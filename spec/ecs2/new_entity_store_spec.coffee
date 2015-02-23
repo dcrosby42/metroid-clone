@@ -1,11 +1,18 @@
 _ = require 'lodash'
-expect = require('chai').expect
+Immutable = require 'immutable'
+chai = require('chai')
+expect = chai.expect
+assert = chai.assert
 
 EntityStore = require '../../src/javascript/ecs2/entity_store'
 
 expectArray = (got,expected) ->
   expect(got.length).to.eq expected.length
   expect(got).to.deep.include.members(expected)
+
+expectIs = (actual,expected) ->
+  if !Immutable.is(actual,expected)
+    assert.fail(actual,expected,"Immutable structures not equal.\nExpected: #{expected.toString()}\n  Actual: #{actual.toString()}")
 
 testFindComponents = (estore,filters,expected) ->
   found = []
@@ -89,62 +96,106 @@ describe 'The new EntityStore', ->
 
   describe 'filterObjects', ->
     it 'works', ->
-      c1 = { id: 1, name: 'Link', affil: 'good' }
-      c2 = { id: 2, name: 'Zelda', affil: 'good' }
-      c3 = { id: 3, name: 'Gannon', affil: 'bad' }
-      c4 = { id: 4, name: 'Link', affil: 'bad' }
+      c1 = Immutable.fromJS id: 1, name: 'Link', affil: 'good'
+      c2 = Immutable.fromJS id: 2, name: 'Zelda', affil: 'good'
+      c3 = Immutable.fromJS id: 3, name: 'Gannon', affil: 'bad'
+      c4 = Immutable.fromJS id: 4, name: 'Link', affil: 'bad'
 
-      comps = [c1,c2,c3,c4]
+      comps = Immutable.List([c1,c2,c3,c4])
 
-      filter1 = { match: { name: 'Zelda' } }
+      filter1 = Immutable.fromJS match: { name: 'Zelda' }
       found1 = filterObjects comps, filter1
-      expectArray found1, [c2]
-
-      filter2 = { match: { affil: 'good' } }
+      expectIs found1, Immutable.List([c2])
+  
+      filter2 = Immutable.fromJS { match: { affil: 'good' } }
       found2 = filterObjects comps, filter2
-      expectArray found2, [c1,c2]
-      
-      filter3 = { match: { name: 'Link' } }
+      expectIs found2, Immutable.List [c1,c2]
+ 
+      filter3 = Immutable.fromJS { match: { name: 'Link' } }
       found3 = filterObjects comps, filter3
-      expectArray found3, [c1,c4]
-
-      filter4 =
+      expectIs found3, Immutable.List [c1,c4]
+  
+      filter4 = Immutable.fromJS
         match:
           name: 'Link'
           affil: 'bad'
-      
+
       found4 = filterObjects comps, filter4
-      expectArray found4, [c4]
+      expectIs found4, Immutable.List [c4]
 
-  describe 'joinObjects', ->
-    it 'works', ->
-      comps = makeZeldaComps()
+  # describe 'joinObjects', ->
+  #   it 'works with immutable objects', ->
+  #     compsJS = makeZeldaComps()
+  #     comps = Immutable.fromJS(compsJS)
+  #     # comps = Immutable.List(compsJS) # Makes an immutable list of regular mutable JS objects
+  #
+  #     charFilter = Immutable.fromJS
+  #       match: { type: 'character' }
+  #       as: 'char'
+  #
+  #     boxFilter = Immutable.fromJS
+  #       join: 'char.eid'
+  #       match: { type: 'bbox' }
+  #       as: 'box'
+  #
+  #     heroFilter = Immutable.fromJS
+  #       join: 'box.eid'
+  #       match: { type: 'tag', value: 'hero' }
+  #       as: 'hero'
+  #
+  #     found1 = joinObjects comps, Immutable.fromJS([charFilter, boxFilter])
+  #     # console.log "RESULTS:",found1
+  #     expectIs found1, Immutable.fromJS [
+  #       { char: comps.get(1), box: comps.get(2) }
+  #       { char: comps.get(5), box: comps.get(6) }
+  #     ]
+  #
+  #     found2 = joinObjects comps, Immutable.fromJS([charFilter,boxFilter,heroFilter])
+  #     # console.log "RESULTS 2:",found2
+  #     expectIs found2, Immutable.fromJS [
+  #       {char: comps.get(1), box: comps.get(2), hero: comps.get(0) }
+  #     ]
 
-      charFilter =
+    it 'works with normal (mutable) objects', ->
+      compsJS = makeZeldaComps()
+      # comps = Immutable.fromJS(compsJS)
+      comps = Immutable.List(compsJS) # Makes an immutable list of regular mutable JS objects
+
+      charFilter = Immutable.fromJS
         match: { type: 'character' }
         as: 'char'
 
-      boxFilter =
+      boxFilter = Immutable.fromJS
         join: 'char.eid'
         match: { type: 'bbox' }
         as: 'box'
 
-      heroFilter =
+      heroFilter = Immutable.fromJS
         join: 'box.eid'
         match: { type: 'tag', value: 'hero' }
         as: 'hero'
 
-      found1 = joinObjects comps, [charFilter, boxFilter]
-      # console.log "RESULTS:",found1
-      expectArray found1, [
-        { char: comps[1], box: comps[2] }
-        { char: comps[5], box: comps[6] }
+      found1 = joinObjects comps, Immutable.fromJS([charFilter, boxFilter])
+      console.log "RESULTS:",found1
+      console.log found1.getIn [0,'char']
+      console.log found1.getIn [0,'box']
+      console.log found1.getIn [1,'char']
+      console.log found1.getIn [1,'box']
+      console.log found1.getIn [2,'char']
+      console.log found1.getIn [2,'box']
+      console.log found1.getIn [3,'char']
+      console.log found1.getIn [3,'box']
+      expect(found1.size).to.eq(2)
+      expectIs found1, Immutable.List [
+        Immutable.Map( char: comps.get(1), box: comps.get(2) )
+        Immutable.Map( char: comps.get(5), box: comps.get(6) )
       ]
 
-      found2 = joinObjects comps, [charFilter,boxFilter,heroFilter]
+      found2 = joinObjects comps, Immutable.fromJS([charFilter,boxFilter,heroFilter])
       # console.log "RESULTS 2:",found2
-      expectArray found2, [
-        {char: comps[1], box: comps[2], hero: comps[0] }
+      expect(found2.size).to.eq(1)
+      expectIs found2, Immutable.List [
+        Immutable.Map(char: comps.get(1), box: comps.get(2), hero: comps.get(0) )
       ]
 
 
@@ -162,45 +213,82 @@ makeZeldaComps = ->
   ]
 
 
+  
 filterObjects = (comps,filter) ->
-  _.filter comps, _.matches(filter.match)
+  matchProps = filter.get('match')
 
-joinObjects = (comps,filters,row={}) ->
-  if filters.length == 0
-    return [ row ]
+  comps.filter (obj) ->
+    if Immutable.Map.isMap(obj)
+      obj.isSuperset(matchProps)
+    else
+      _.matches(matchProps.toJS())(obj)
 
-  f0 = _.cloneDeep(_.first(filters))
-  fs = _.rest(filters)
+  # cs = _.filter comps, _.matches(matchProps)
+  # Immutable.fromJS(cs)
 
-  if f0.join?
-    j = f0.join
-    [refName, key] = j.split('.')
-    refObj = row[refName]
-    if refObj?
-      f0.match ||= {}
-      f0.match[key] = refObj[key]
+joinObjects = (comps,filters,row=Immutable.Map()) ->
+  # console.log "joinObjects(comps,",filters,",",row,")"
+  if filters.size == 0
+    return Immutable.List([row])
+
+  f0 = convertJoins(filters.first(),row)
+  fs = filters.shift()
+
     
-  rows = []
-  _.forEach filterObjects(comps,f0), (c) ->
-    r = _.cloneDeep(row)
-    r[f0.as] = c
-    _.forEach joinObjects(comps,fs,r), (r2) ->
-      rows.push r2
-  rows
+  as = f0.get('as')
+  filterObjects(comps,f0).map((c) ->
+    joinObjects(comps,fs,row.set(as,c))
+  ).flatten(1)
+ 
+
+convertJoins = (filter,row) ->
+  join = filter.get('join')
+  if join?
+    [refKey,key] = join.split('.')
+    refObj = row.get(refKey)
+    if refObj
+      val = if Immutable.Map.isMap(refObj)
+        refObj.get(key)
+      else
+        refObj[key]
+
+      if val?
+        filter.setIn ['match',key], val
+      else
+        filter
+    else
+      filter
+  else
+    filter
 
 
+
+
+
+
+
+
+
+################################
 query =
   filters: [
     {
       match: { type: 'tag', value: 'hero' }
+      as: 'tag'
     }
+    "bbox"
     {
       match: { type: 'bbox' }
       join: 'eid'
+      as: 'bbox'
     }
     {
       match: { type: 'character' }
       join: 'eid'
+      as: 'char'
     }
   ]
-console.log query
+# console.log query
+
+
+# searchComponents comps, ["character", "bbox", "tag:hero"]
