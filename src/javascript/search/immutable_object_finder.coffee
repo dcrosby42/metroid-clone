@@ -37,7 +37,6 @@ expandJoins = (filter,row) ->
     filter
 
 
-
 module.exports =
   search: (objects, filterSet) ->
     searchWithJoins Immutable.List(objects), Immutable.fromJS(filterSet)

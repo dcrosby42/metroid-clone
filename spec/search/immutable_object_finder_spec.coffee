@@ -55,7 +55,7 @@ describe 'ImmutableObjectFinder.search', ->
     it 'labels results based on first matcher value', ->
       filter = imm
         match:
-          name: 'Tektike' 
+          name: 'Tektike'
       expectIs searchZelda([filter]), imm([
         { "Tektike": zeldaObjects.get(5) }
       ])
