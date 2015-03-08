@@ -13,3 +13,8 @@ gulp.task('watch', ['setWatch', 'browserSync'], function() {
   gulp.watch(config.markup.src, ['markup']);
   gulp.watch(["./src/javascript/**/*.coffee", config.spec.src],  ['spec']);
 });
+
+gulp.task('watch-spec', [], function() {
+  gulp.watch(["./src/javascript/**/*.coffee", config.spec.src],  ['spec']);
+});
+

@@ -2,9 +2,15 @@ var dest = "./build";
 var src = './src';
 var test = './test';
 
+specSrc = "./spec/**/*_{spec,test}.coffee";
+if ((spec = process.env['SPEC']) != undefined) {
+  specSrc = spec;
+}
+
+
 module.exports = {
   spec: {
-    src: "./spec/**/*_{spec,test}.coffee"
+    src: specSrc
   },
   browserSync: {
     server: {
