@@ -52,6 +52,50 @@ describe 'The new EntityStore', ->
       expect(link.get('name')).to.eq 'Link'
       expect(link.get('race')).to.eq 'elf'
 
+    it 'accepts an Immutable.List of JS objects', ->
+      estore = newEntityStore()
+
+      eid = estore.createEntity Immutable.List([
+        { type: 'player', id: '9876' }
+        { type: 'character', name: 'Link', race: 'elf' }
+        { type: 'armor', name: 'jerkin', defense: 2 }
+      ])
+    
+      comps = estore.getEntityComponents(eid)
+      expect(comps).to.be
+      expect(Immutable.Set.isSet(comps)).to.be.true
+      expect(comps.size).to.eq 3
+
+      compList = comps.toList()
+      link = compList.get(1)
+      expect(link.get('eid')).to.eq eid
+      expect(link.get('cid')).to.match /^c\d+$/
+      expect(link.get('type')).to.eq 'character'
+      expect(link.get('name')).to.eq 'Link'
+      expect(link.get('race')).to.eq 'elf'
+
+    it 'accepts an Immutable.List of Immutable.Map comps', ->
+      estore = newEntityStore()
+
+      eid = estore.createEntity Immutable.fromJS [
+        { type: 'player', id: '9876' }
+        { type: 'character', name: 'Link', race: 'elf' }
+        { type: 'armor', name: 'jerkin', defense: 2 }
+      ]
+    
+      comps = estore.getEntityComponents(eid)
+      expect(comps).to.be
+      expect(Immutable.Set.isSet(comps)).to.be.true
+      expect(comps.size).to.eq 3
+
+      compList = comps.toList()
+      link = compList.get(1)
+      expect(link.get('eid')).to.eq eid
+      expect(link.get('cid')).to.match /^c\d+$/
+      expect(link.get('type')).to.eq 'character'
+      expect(link.get('name')).to.eq 'Link'
+      expect(link.get('race')).to.eq 'elf'
+
     it 'can create an Entity without components', ->
       estore = newEntityStore()
 

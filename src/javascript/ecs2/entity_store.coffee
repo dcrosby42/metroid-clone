@@ -14,7 +14,7 @@ class EntityStore
   createEntity: (compProps) ->
     eid = @_nextEntityId()
     if compProps?
-      for props in compProps
+      Immutable.List(compProps).forEach (props) =>
         @createComponent eid, props
     eid
 
