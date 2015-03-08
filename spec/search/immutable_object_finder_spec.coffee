@@ -1,16 +1,13 @@
 Finder = require '../../src/javascript/search/immutable_object_finder'
-
 Immutable = require 'immutable'
+ExpectHelpers = require '../helpers/expect_helpers'
+expectIs = ExpectHelpers.expectIs
 
 chai = require('chai')
 expect = chai.expect
 assert = chai.assert
 
 imm = Immutable.fromJS
-
-expectIs = (actual,expected) ->
-  if !Immutable.is(actual,expected)
-    assert.fail(actual,expected,"Immutable structures not equal.\nExpected: #{expected.toString()}\n  Actual: #{actual.toString()}")
 
 
 zeldaObjects = Immutable.fromJS [
