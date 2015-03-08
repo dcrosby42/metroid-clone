@@ -1,68 +1,91 @@
+Immutable = require 'immutable'
 _ = require 'lodash'
 
-nextId = (_gen) ->
-  gen = {number: _gen.number, value: _gen.value, prefix: _gen.prefix}
-  gen.number += 1
-  gen.value = "#{gen.prefix}#{gen.number}"
-  gen
-
-filterComponent = (filter,comp) ->
-  _.every filter, (val,key) ->
-    comp[key] == val
-
-filterComponents = (comps,filter,fn) ->
-  _.forEach comps, (c, cid) ->
-    if filterComponent(filter,c)
-      fn c
+SeqGen = require './id_sequence_generator'
 
 class EntityStore
   constructor: ->
-    @eidGen = nextId(prefix:'e',number:0)
-    @cidGen = nextId(prefix:'cmp',number:0)
-    @comps = {}
+    @eidGen = SeqGen.new 'e', 0
+    @cidGen = SeqGen.new 'c', 0
 
-  newEntityId: ->
-    eid = @eidGen.value
-    @eidGen = nextId(@eidGen)
+    @componentsByCid = Immutable.Map()
+    @indices = Immutable.Map()
+
+  createEntity: (compProps) ->
+    eid = @_nextEntityId()
+    if compProps?
+      for props in compProps
+        @createComponent eid, props
     eid
 
-  addComponent: (eid,comp) ->
-    comp.eid = eid
+  getEntityComponents: (eid) ->
+    # Shortcut: instead of searching, jump straight to the eid index:
+    (@indices.getIn(['eid',eid]) || Immutable.Set()).map (cid) => @componentsByCid.get(cid)
 
-    comp.cid = @cidGen.value
-    @cidGen = nextId(@cidGen)
-
-    @comps[comp.cid] = comp
-    # @_updateIndices()
+  createComponent: (eid,props) ->
+    cid = @_nextComponentId()
+    comp = @_newComponent eid, cid, props
+    @componentsByCid = @componentsByCid.set cid, comp
+    @_addToIndex 'eid', comp
     comp
 
-  createEntity: (comps) ->
-    eid = @newEntityId()
-    _.forEach comps, (comp) =>
-      @addComponent eid, comp
-    [eid,comps]
+  getComponent: (cid) ->
+    @componentsByCid.get cid
 
-  findComponents: (filters, fn) ->
-    filter = filters[0]
-    filterComponents @comps, filter, (comp) ->
-      fn comp
+  updateComponent: (comp) ->
+    # ASSUMES NO INDEXABLE FIELDS ON COMP CAN BE CHANGED... otherwise our indices are now invalid
+    # That goes for entity id (eid) as well!
+    cid = comp.get('cid')
+    @componentsByCid = @componentsByCid.set(cid, comp)
 
-  matchComponents: (filters, fn) ->
+  deleteComponent: (comp) ->
+    cid = comp.get('cid')
+    @componentsByCid = @componentsByCid.delete cid
+    @_deleteFromIndex 'eid', comp
+    null
 
-joinFind = (comps, filters, result, fn) ->
-  filter = _.first(filters)
-  remainingFilters = _.rest(filters)
-  
-  
-  # filter.
+  #
+  # PRIVATE
+  #
 
+  _newComponent: (eid, cid, props) ->
+    comp = Immutable.fromJS(props)
+      .set('eid',eid)
+      .set('cid',cid)
+    if !comp.get('type')
+      console.log "EntityStore#_newComponent: creating component with no 'type' field", comp
+    comp
+      
 
+  # ID generators:
 
-# type = 'velocity' 
-# eid = 0.eid
-[ 'match', 'type', 'velocity' ]
-[ 'match', 'eid', 0, 'eid' ]
-        
+  _nextEntityId: ->
+    @eidGen = SeqGen.next(@eidGen)
+    @eidGen.get('value')
+
+  _nextComponentId: ->
+    @cidGen = SeqGen.next(@cidGen)
+    @cidGen.get('value')
+
+  # Indexing:
+
+  _addToIndex: (indexName, comp) ->
+    cid = comp.get('cid')
+    key = comp.get(indexName)
+    @indices = @indices.updateIn [indexName,key], (s) -> if s? then s.add(cid) else Immutable.Set([cid])
+
+  _deleteFromIndex: (indexName,comp) ->
+    cid = comp.get('cid')
+    key = comp.get(indexName)
+
+    @indices = @indices.update indexName, (index) ->
+      cids = index.get(key).delete(cid)
+      if cids.size > 0
+        index.set(key, cids)
+      else
+        index.delete(key)
+    
+    
 
 module.exports = EntityStore
 
