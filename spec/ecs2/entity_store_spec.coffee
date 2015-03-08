@@ -1,5 +1,8 @@
 _ = require 'lodash'
 Immutable = require 'immutable'
+imm = Immutable.fromJS
+
+
 ExpectHelpers = require '../helpers/expect_helpers'
 
 expectIs = ExpectHelpers.expectIs
@@ -10,14 +13,6 @@ assert = chai.assert
 
 EntityStore = require '../../src/javascript/ecs2/entity_store'
 
-# expectArray = (got,expected) ->
-#   expect(got.length).to.eq expected.length
-#   expect(got).to.deep.include.members(expected)
-
-# testFindComponents = (estore,filters,expected) ->
-#   found = []
-#   estore.findComponents filters, (c) -> found.push c
-#   expectArray found, expected
 findEntityComponent = (estore, eid, key,val) ->
   found = estore.getEntityComponents(eid).filter((c) -> c.get(key) == val).first()
   if found?
@@ -183,3 +178,48 @@ describe 'The new EntityStore', ->
       comps = estore.getEntityComponents(eid)
       expect(comps.size).to.eq 1
       expect(comps.first().get('type')).to.eq 'player'
+
+  describe "search", ->
+    linkData = imm [
+      { type: 'tag', value: 'hero' }
+      { type: 'character', name: 'Link' }
+      { type: 'bbox', shape: [1,2,3,4] }
+      { type: 'inventory', stuff: 'items' }
+    ]
+
+    tektikeData = imm [
+      { type: 'tag', value: 'enemy' }
+      { type: 'character', name: 'Tektike' }
+      { type: 'bbox', shape: [3,4,5,6] }
+      { type: 'digger', status: 'burrowing' }
+    ]
+
+    it 'filters and joins components using an object finder', ->
+      estore = newEntityStore()
+      link = estore.createEntity(linkData)
+      tektike = estore.createEntity(tektikeData)
+
+      linkCharacter    = findEntityComponent estore, link, 'type','character'
+      linkBox          = findEntityComponent estore, link, 'type','bbox'
+      tektikeCharacter = findEntityComponent estore, tektike, 'type','character'
+      tektikeBox       = findEntityComponent estore, tektike, 'type','bbox'
+
+      results = estore.search [
+        {
+          match: { type: 'character' }
+        }
+        {
+          match: { type: 'bbox' }
+          join:  "character.eid"
+        }
+      ]
+
+      expectIs results, imm [
+        { character: linkCharacter, bbox: linkBox }
+        { character: tektikeCharacter, bbox: tektikeBox }
+      ]
+
+      
+      
+
+

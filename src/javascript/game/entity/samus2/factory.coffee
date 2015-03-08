@@ -1,5 +1,6 @@
 Immutable = require 'immutable'
-# S = require('./components')
+
+S = require('./components')
 Common = require('../components2')
 
 
@@ -28,7 +29,7 @@ samusComps = (args) ->
       spriteName: 'samus'
       state: 'stand-right'
       time: 0
-    Common.HitBoxVisual,merge
+    Common.HitBoxVisual.merge
       color: 0x0099ff
   ]
 

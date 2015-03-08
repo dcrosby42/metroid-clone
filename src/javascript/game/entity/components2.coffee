@@ -1,3 +1,5 @@
+Immutable = require 'immutable'
+
 C = {}
 module.exports = C
 

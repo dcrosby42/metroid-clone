@@ -1,3 +1,4 @@
+Immutable = require 'immutable'
 
 exports.Samus = Immutable.fromJS
   type: 'samus'

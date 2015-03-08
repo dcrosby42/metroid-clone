@@ -1,7 +1,7 @@
 Immutable = require 'immutable'
-_ = require 'lodash'
-
+# _ = require 'lodash'
 SeqGen = require './id_sequence_generator'
+Finder = require '../search/immutable_object_finder'
 
 class EntityStore
   constructor: ->
@@ -43,6 +43,10 @@ class EntityStore
     @componentsByCid = @componentsByCid.delete cid
     @_deleteFromIndex 'eid', comp
     null
+
+
+  search: (filters) ->
+    Finder.search @componentsByCid.toList(), filters
 
   #
   # PRIVATE

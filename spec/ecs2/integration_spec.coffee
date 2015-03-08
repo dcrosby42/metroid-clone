@@ -7,6 +7,7 @@ assert = chai.assert
 expectIs = require('../helpers/expect_helpers').expectIs
 
 EntityStore = require '../../src/javascript/ecs2/entity_store'
+SystemRunner = require '../../src/javascript/ecs2/system_runner'
 newEntityStore = -> new EntityStore()
 
 findEntityComponent = (estore, eid, key,val) ->
@@ -28,27 +29,8 @@ checkByType = (estore, eid, m) ->
       
     
   
-Finder = require '../../src/javascript/search/immutable_object_finder'
-
-class EntityStoreUpdater
-  constructor: (@estore) ->
-  update:         (comp) -> @estore.updateComponent comp
-  delete:         (comp) -> @estore.deleteComponent comp
-  add:       (eid,props) -> @estore.createComponent eid, props
-  newEntity: (propsList) -> @estore.createEntity propsList
 
 
-runSystems = (estore, updater, systems) ->
-  systems.forEach (sys) -> runSystem(estore, updater, sys)
-
-
-runSystem = (estore, updater, system) ->
-  filters = system.getIn ['config','filters']
-  update = system.get 'update'
-
-  results = Finder.search estore.componentsByCid.toList(), filters
-  results.forEach (result) ->
-    update(result,updater)
 
 describe 'simple entity/component/system test', ->
   counterSystem = imm
@@ -68,7 +50,7 @@ describe 'simple entity/component/system test', ->
     ]
 
     estore = newEntityStore()
-    updater = new EntityStoreUpdater(estore)
+    runner = new SystemRunner estore, systems
 
     counterEid = estore.createEntity [
       { type: 'counter', ticks: 0 }
@@ -77,13 +59,13 @@ describe 'simple entity/component/system test', ->
     comp1 = findEntityComponent estore, counterEid, 'type','counter'
     expect(comp1.get('ticks')).to.eq 0
 
-    runSystems estore, updater, systems
+    runner.run()
 
     comp2 = findEntityComponent estore, counterEid, 'type','counter'
     expect(comp2.get('ticks')).to.eq 1
 
-    runSystems estore, updater, systems
-    runSystems estore, updater, systems
+    runner.run()
+    runner.run()
 
     comp3 = findEntityComponent estore, counterEid, 'type','counter'
     expect(comp3.get('ticks')).to.eq 3
@@ -116,13 +98,13 @@ describe 'simple entity/component/system test', ->
       u.update velocity
 
   it "process multiple systems combining multiple joined components", ->
+
+    estore = newEntityStore()
     systems = imm [
       gravitySystem
       moverSystem
     ]
-
-    estore = newEntityStore()
-    updater = new EntityStoreUpdater(estore)
+    runner = new SystemRunner estore, systems
 
     m1 = estore.createEntity [
       { type: 'gravity', mag: 0.1 }
@@ -143,7 +125,7 @@ describe 'simple entity/component/system test', ->
       velocity: { x: 3, y: 2 }
       position: { x: 100, y: 30 }
 
-    runSystems estore, updater, systems
+    runner.run()
 
     checkByType estore, m1,
       velocity: { x: 5, y: 1.1 }

@@ -102,7 +102,7 @@ class Ecs2Spike
 
     @timeDilation = 1
 
-    @setupSystems()
+    # @setupSystems()
 
     window.me = @
     window.estore = @estore
@@ -318,7 +318,7 @@ class Ecs2Spike
     @input.controllers[@adminMovers[@adminMoversIndex]] = ac
     # @input.controllers.player2 = @p2Controller.update()
 
-    @systemsRunner.run(@estore, dt*@timeDilation, @input) unless @paused
+    # TODO @systemsRunner.run(@estore, dt*@timeDilation, @input) unless @paused
 
   handleAdminControls: (ac) ->
     if ac.toggle_gamepad
