@@ -8,9 +8,12 @@ expectIs = require('../helpers/expect_helpers').expectIs
 
 EntityStore = require '../../src/javascript/ecs2/entity_store'
 SystemRunner = require '../../src/javascript/ecs2/system_runner'
+FilterExpander = require '../../src/javascript/ecs2/filter_expander'
+SystemExpander = require '../../src/javascript/ecs2/system_expander'
+
 newEntityStore = -> new EntityStore()
 
-findEntityComponent = (estore, eid, key,val) ->
+findEntityComponent = (estore, eid, key, val) ->
   found = estore.getEntityComponents(eid).filter((c) -> c.get(key) == val).first()
   if found?
     return found
@@ -27,10 +30,6 @@ checkByType = (estore, eid, m) ->
     if !comp.isSuperset(atts)
       assert.fail comp,atts, "WRONG ATTRIBUTES, entity #{eid}'s #{type} component #{comp.toString()} should have matched attributes #{atts.toString()}"
       
-    
-  
-
-
 
 describe 'simple entity/component/system test', ->
   counterSystem = imm
@@ -104,6 +103,67 @@ describe 'simple entity/component/system test', ->
       gravitySystem
       moverSystem
     ]
+    runner = new SystemRunner estore, systems
+
+    m1 = estore.createEntity [
+      { type: 'gravity', mag: 0.1 }
+      { type: 'velocity', x: 5, y: 1 }
+      { type: 'position', x: 50, y: 30 }
+    ]
+    m2 = estore.createEntity [
+      { type: 'gravity', mag: 0.2 }
+      { type: 'velocity', x: 3, y: 2 }
+      { type: 'position', x: 100, y: 30 }
+    ]
+
+    checkByType estore, m1,
+      velocity: { x: 5, y: 1 }
+      position: { x: 50, y: 30 }
+
+    checkByType estore, m2,
+      velocity: { x: 3, y: 2 }
+      position: { x: 100, y: 30 }
+
+    runner.run()
+
+    checkByType estore, m1,
+      velocity: { x: 5, y: 1.1 }
+      position: { x: 55, y: 31.1 }
+
+    checkByType estore, m2,
+      velocity: { x: 3, y: 2.2 }
+      position: { x: 103, y: 32.2 }
+
+
+  moverSystem2 = imm
+    config:
+      filters: [ 'position', 'velocity' ]
+      
+    update: (comps,u) ->
+      velocity = comps.get('velocity')
+      position = comps.get('position')
+        .update 'x', (x) -> x += velocity.get('x')
+        .update 'y', (y) -> y += velocity.get('y')
+      u.update position
+
+  gravitySystem2 = imm
+    config:
+      filters: [ 'gravity', 'velocity' ]
+      
+    update: (comps,u) ->
+      gravity = comps.get('gravity')
+      velocity = comps.get('velocity')
+        .update 'y', (y) -> y += gravity.get('mag')
+      u.update velocity
+
+
+  it "systems using abbreviated filter config", ->
+
+    estore = newEntityStore()
+    systems = imm([
+      gravitySystem2
+      moverSystem2]).map SystemExpander.expandSystemConfig
+
     runner = new SystemRunner estore, systems
 
     m1 = estore.createEntity [
