@@ -1,11 +1,11 @@
 PIXI = require 'pixi.js'
 _ = require 'lodash'
+Immutable = require 'immutable'
 
 Mousetrap = require '../vendor/mousetrap_wrapper'
 KeyboardController = require '../input/keyboard_controller'
 GamepadController = require('../input/gamepad_controller')
 
-#XXX EntityStore = require '../ecs/entity_store'
 EntityStore = require '../ecs2/entity_store'
 
 SystemRegistry = require '../ecs/system_registry'
@@ -97,8 +97,12 @@ class Ecs2Spike
     @setupSpriteConfigs()
 
     @setupInput()
+    # TODO: update sprite configs to immutable structure.
+    # TODO: somethign better than sneaking data into 'cheatsies'
+    @input.setIn ['cheatsies','spriteConfigs'], @spriteConfigs
 
-    @setupMap(MapData.areas.a, @layers.map)
+    map = @input.getIn(['cheatsies','map'])
+    @setupMap(MapData.areas.a, @layers.map, map.get('tileWidth'),map.get('tileHeight'))
 
     @timeDilation = 1
 
@@ -138,11 +142,20 @@ class Ecs2Spike
     }
 
   setupInput: ->
-    @input =
+    @input = Immutable.fromJS
       controllers:
         player1: {}
         player2: {}
         admin: {}
+      dt: 0
+      cheatsies:
+        map:
+          tileGrid: "NOT SET"
+          tileWidth: 16
+          tileHeight: 16
+        spriteConfigs:
+          {}
+
 
     @keyboardController = new KeyboardController
       bindings:
@@ -211,10 +224,7 @@ class Ecs2Spike
       # 'skree_action'
       # 'skree_velocity'
       'gravity_system'
-      ['map_physics_system',
-        tileGrid: @mapTileGrid
-        tileWidth: @mapTileWidth
-        tileHeight: @mapTileHeight]
+      'map_physics_system',
 
       # 'bullet_system'
 
@@ -314,9 +324,24 @@ class Ecs2Spike
     ac = @adminController.update()
     @handleAdminControls(ac) if ac?
 
-    @input.controllers.player1 = p1in
-    @input.controllers[@adminMovers[@adminMoversIndex]] = ac
+    # @input.controllers.player1 = p1in
+    # @input.controllers[@adminMovers[@adminMoversIndex]] = ac
     # @input.controllers.player2 = @p2Controller.update()
+
+    @input = @input
+      .setIn(['controllers','player1'], Immutable.fromJS(p1in))
+      .set('dt', dt*@timeDilation)
+    
+    # input
+    #   dt
+    #   controllers
+    #     player1
+    #   cheatsies
+    #     map
+    #       tileGrid
+    #       tileWidth
+    #       tileHeight
+    #     spriteConfigs
 
     # TODO @systemsRunner.run(@estore, dt*@timeDilation, @input) unless @paused
 
@@ -352,15 +377,9 @@ class Ecs2Spike
         @adminMoversIndex = 0
 
 
-  setupMap: (map, container) ->
-    @mapTileHeight = 16
-    @mapTileWidth = 16
-
-    @roomWidth = 16
-    @roomHeight = 15
-
-    @roomWidthPx = @roomWidth * @mapTileWidth
-    @roomHeightPx = @roomHeight * @mapTileHeight
+  setupMap: (map, container, mapTileWidth, mapTileHeight) ->
+    roomWidth = 16
+    roomHeight = 15
 
     getMapTileSprite = (n) ->
       if n?
@@ -370,26 +389,26 @@ class Ecs2Spike
 
     divRem = (numer,denom) -> [Math.floor(numer/denom), numer % denom]
 
-    mapRowCount = map.length * @roomHeight
-    mapColCount = map[0].length * @roomWidth
+    mapRowCount = map.length * roomHeight
+    mapColCount = map[0].length * roomWidth
 
     tileGrid = []
     for r in [0...mapRowCount]
       tileRow = []
       tileGrid.push tileRow
       for c in [0...mapColCount]
-        [rr,tr] = divRem(r, @roomHeight)
-        [rc,tc] = divRem(c, @roomWidth)
+        [rr,tr] = divRem(r, roomHeight)
+        [rc,tc] = divRem(c, roomWidth)
         roomType = map[rr][rc]
         room = MapData.roomTypes[roomType]
         tileType = room[tr][tc]
         if tileType?
           tile =
             type: tileType
-            x: c * @mapTileWidth
-            y: r * @mapTileHeight
-            width: @mapTileWidth
-            height: @mapTileHeight
+            x: c * mapTileWidth
+            y: r * mapTileHeight
+            width: mapTileWidth
+            height: mapTileHeight
           
           sprite = getMapTileSprite(tile.type)
           if sprite?
