@@ -1,11 +1,13 @@
-class GravitySystem
-  run: (estore, dt, input) ->
-    gravities = estore.getComponentsOfType('gravity')
-    for gravity in gravities
-      velocity = estore.getComponent gravity.eid, 'velocity'
-      if velocity?
-        velocity.y += gravity.accel
-        velocity.y = gravity.max if velocity.y > gravity.max
+MathUtils = require '../../utils/math_utils'
 
-module.exports = GravitySystem
+module.exports =
+  config:
+    filters: ['gravity','velocity']
+
+  update: (comps, input, u) ->
+    velocity = comps.get('velocity')
+    gravity = comps.get('gravity')
+    velocity1 = velocity.update 'y', (y) ->
+      MathUtils.min(y + gravity.get('accel'), gravity.get('max'))
+    u.update velocity1
 

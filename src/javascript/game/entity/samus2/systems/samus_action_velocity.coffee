@@ -1,38 +1,35 @@
 
-class SamusActionVelocity
-  run: (estore,dt,input) ->
-    # run | drift | stand | jump | fall
-    for samus in estore.getComponentsOfType('samus')
-      velocity = estore.getComponent(samus.eid, 'velocity')
+module.exports =
+  config:
+    filters: [ 'samus', 'velocity' ]
 
-      switch samus.action
-        when 'run'
-          if samus.direction == 'right'
-            velocity.x = samus.runSpeed
-          else
-            velocity.x = -samus.runSpeed
+  update: (comps,input,u) ->
+    # samus actions: run | drift | stand | jump | fall
+    samus = comps.get('samus')
+    velocity = comps.get('velocity')
 
-        when 'drift'
-          if samus.direction == 'right'
-            velocity.x = samus.floatSpeed
-          else
-            velocity.x = -samus.floatSpeed
+    direction = samus.get('direction')
 
-        when 'stop'
-          velocity.x = 0
+    v2 = switch samus.get('action')
+      when 'run'
+        if direction == 'right'
+          velocity.set('x', samus.runSpeed)
+        else
+          velocity.set('x', -samus.runSpeed)
 
-        when 'jump'
-          velocity.y = -samus.jumpSpeed
+      when 'drift'
+        if direction == 'right'
+          velocity.set('x', samus.floatSpeed)
+        else
+          velocity.set('x', -samus.floatSpeed)
 
-        when 'fall'
-          velocity.y = 0
+      when 'stop'
+        velocity.set('x', 0)
 
+      when 'jump'
+        velocity.set('y', -samus.jumpSpeed)
 
-      # TODO: Gravity system?
-      # TODO: always apply? or just when airborn?
-      # max = 200/1000
-      # velocity.y += max/10
-      # velocity.y = max if velocity.y > max
+      when 'fall'
+        velocity.set('y', 0)
 
-module.exports = SamusActionVelocity
-
+    u.update v2

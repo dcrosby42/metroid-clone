@@ -22,73 +22,84 @@ tileSearchHorizontal = (grid, tw,th, y, leftX, rightX) ->
         hits.push hit
   hits
 
+module.exports =
+  config:
+    filters: ['velocity','hit_box','position']
 
-class MapPhysicsSystem
-  constructor: ({@tileGrid, @tileWidth, @tileHeight}) ->
+  update: (comps,input,u) ->
+    velocity = comps.get('velocity')
+    hitBox = comps.get('hit_box')
+    position = comps.get('position')
 
-  run: (estore,dt,input) ->
-    for velocity in estore.getComponentsOfType('velocity')
-      hitBox = estore.getComponent(velocity.eid, 'hit_box')
-      position = estore.getComponent(velocity.eid, 'position')
-      if hitBox and position
-        box = new AnchoredBox(hitBox)
-        box.setXY position.x, position.y
+    dt = input.get('dt')
 
-        hits =
-          left: []
-          right: []
-          top: []
-          bottom: []
+    map = input.getIn(['cheatsies','map'])
+    grid = map.get('tileGrid')
+    tileWidth = map.get('tileWidth')
+    tileHeight = map.get('tileHeight')
 
-        grid = @tileGrid
+    vx = velocity.get('x')
+    vy = velocity.get('y')
+    hitBoxJS = hitBox.toJS()
 
-        # Apply & restrict VERTICAL movement
-        box.moveY(velocity.y * dt)
+    box = new AnchoredBox(hitBoxJS)
+    box.setXY position.get('x'), position.get('y')
 
-        hits.top = tileSearchHorizontal(grid, @tileWidth,@tileHeight,box.top, box.left, box.right-1)
-        if hits.top.length > 0
-          s = hits.top[0]
-          box.setY(s.y+s.height - box.topOffset)
-        else
-          hits.bottom = tileSearchHorizontal(grid, @tileWidth,@tileHeight,box.bottom, box.left, box.right-1)
-          if hits.bottom.length > 0
-            s = hits.bottom[0]
-            box.setY(s.y - box.bottomOffset)
-          else
+    hits =
+      left: []
+      right: []
+      top: []
+      bottom: []
 
-        # Step 2: apply & restrict horizontal movement
-        box.moveX(velocity.x * dt)
+    # Apply & restrict VERTICAL movement
+    box.moveY(vy * dt)
 
-        hits.left = tileSearchVertical(grid, @tileWidth,@tileHeight,box.left, box.top, box.bottom-1)
-        if hits.left.length > 0
-          s = hits.left[0]
-          box.setX(s.x+s.width - box.leftOffset)
-        else
-          hits.right = tileSearchVertical(grid, @tileWidth,@tileHeight,box.right, box.top, box.bottom-1)
-          if hits.right.length > 0
-            s = hits.right[0]
-            box.setX(s.x - box.rightOffset)
-        
-        # Update position and hit_box components 
-        position.x = box.x
-        position.y = box.y
-        # some systems will expect the hitBox to be up-to-date with current position
-        hitBox.x = box.x
-        hitBox.y = box.y
+    hits.top = tileSearchHorizontal(grid, tileWidth,tileHeight,box.top, box.left, box.right-1)
+    if hits.top.length > 0
+      s = hits.top[0]
+      box.setY(s.y+s.height - box.topOffset)
+    else
+      hits.bottom = tileSearchHorizontal(grid, tileWidth,tileHeight,box.bottom, box.left, box.right-1)
+      if hits.bottom.length > 0
+        s = hits.bottom[0]
+        box.setY(s.y - box.bottomOffset)
+      else
 
-        hitBox.touching.left = hits.left.length > 0
-        hitBox.touching.right = hits.right.length > 0
-        hitBox.touching.top = hits.top.length > 0
-        hitBox.touching.bottom = hits.bottom.length > 0
-        hitBox.touchingSomething = hitBox.touching.left or hitBox.touching.right or hitBox.touching.top or hitBox.touching.bottom
+    # Step 2: apply & restrict horizontal movement
+    box.moveX(vx * dt)
 
-        # Update velocity if needed based on running into objects:
-        if hitBox.touching.left or hitBox.touching.right
-          velocity.x = 0
+    hits.left = tileSearchVertical(grid, tileWidth,tileHeight,box.left, box.top, box.bottom-1)
+    if hits.left.length > 0
+      s = hits.left[0]
+      box.setX(s.x+s.width - box.leftOffset)
+    else
+      hits.right = tileSearchVertical(grid, tileWidth,tileHeight,box.right, box.top, box.bottom-1)
+      if hits.right.length > 0
+        s = hits.right[0]
+        box.setX(s.x - box.rightOffset)
+    
+    # Update position and hit_box components 
+    u.update position.set('x', box.x).set('y', box.y)
 
-        if hitBox.touching.top or hitBox.touching.bottom
-          velocity.y = 0
+    #XXX position.x = box.x
+    #XXX position.y = box.y
+    # some systems will expect the hitBox to be up-to-date with current position
+    hitBoxJS = {}
+    hitBoxJS.x = box.x
+    hitBoxJS.y = box.y
+    hitBoxJS.touching.left = hits.left.length > 0
+    hitBoxJS.touching.right = hits.right.length > 0
+    hitBoxJS.touching.top = hits.top.length > 0
+    hitBoxJS.touching.bottom = hits.bottom.length > 0
+    hitBoxJS.touchingSomething = hitBoxJS.touching.left or hitBoxJS.touching.right or hitBoxJS.touching.top or hitBoxJS.touching.bottom
 
+    u.update hitBox.merge(hitBoxJS)
 
-module.exports = MapPhysicsSystem
+    # Update velocity if needed based on running into objects:
+    if hitBoxJS.touching.left or hitBoxJS.touching.right
+      vx = 0
 
+    if hitBoxJS.touching.top or hitBoxJS.touching.bottom
+      vy = 0
+    
+    u.update velocity.set('x',vx).set('y',vy)

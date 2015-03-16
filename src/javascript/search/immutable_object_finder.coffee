@@ -20,11 +20,6 @@ expandLabel = (filter) ->
   return filter if filter.get('as')?
   filter.set 'as', filter.get('match').first()
   
-  # match = filter.get 'match'
-  # if t = match.get 'type'
-  #   filter.set 'as', t
-  # else
-
 expandJoins = (filter,row) ->
   join = filter.get('join')
   if join?

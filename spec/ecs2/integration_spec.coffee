@@ -31,7 +31,7 @@ checkByType = (estore, eid, m) ->
       assert.fail comp,atts, "WRONG ATTRIBUTES, entity #{eid}'s #{type} component #{comp.toString()} should have matched attributes #{atts.toString()}"
       
 
-describe 'simple entity/component/system test', ->
+describe 'An ECS integration test', ->
   counterSystem = imm
     config:
       filters: [
@@ -46,7 +46,7 @@ describe 'simple entity/component/system test', ->
   it "updates game state by executing a system over the EntityStore", ->
     systems = imm [
       counterSystem
-    ]
+    ].map SystemExpander.expandSystem
 
     estore = newEntityStore()
     runner = new SystemRunner estore, systems
@@ -102,7 +102,8 @@ describe 'simple entity/component/system test', ->
     systems = imm [
       gravitySystem
       moverSystem
-    ]
+    ].map SystemExpander.expandSystem
+
     runner = new SystemRunner estore, systems
 
     m1 = estore.createEntity [
@@ -162,7 +163,7 @@ describe 'simple entity/component/system test', ->
     estore = newEntityStore()
     systems = imm([
       gravitySystem2
-      moverSystem2]).map SystemExpander.expandSystemConfig
+      moverSystem2]).map SystemExpander.expandSystem
 
     runner = new SystemRunner estore, systems
 

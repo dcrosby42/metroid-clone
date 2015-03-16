@@ -1,18 +1,7 @@
-
-# class VisualTimerSystem
-#   run: (estore, dt, input) ->
-#     visuals = estore.getComponentsOfType('visual')
-#     for visual in visuals
-#       visual.time += dt
-#
-# module.exports = VisualTimerSystem
-
-
-module.exports
+module.exports =
   config:
-    components: [
-      { match: { type: 'visual' } }
-    ]
+    filters: [ 'visual' ]
 
-  update: ([visual], dt) ->
-    visual.update 'time', (t) -> t + dt
+  update: (comps, input, u) ->
+    visual = comps.get('visual')
+    u.update visual.update('time', (t) -> t + input.get('dt'))

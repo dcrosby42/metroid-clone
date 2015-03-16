@@ -1,9 +1,9 @@
-class ControllerSystem
-  run: (estore, dt, input) ->
-    for controller in estore.getComponentsOfType('controller')
-      if input.controllers and ins = input.controllers[controller.inputName]
-        states = controller.states
-        _.forOwn ins, (val,key) ->
-          states[key] = val
+module.exports =
+  config:
+    filters: [ 'controller' ]
 
-module.exports = ControllerSystem
+  update: (comps, input, u) ->
+    controller = comps.get('controller')
+    u.update controller.set 'states', input.getIn(['controllers', controller.get('inputName')])
+
+

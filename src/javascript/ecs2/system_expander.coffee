@@ -2,8 +2,20 @@ Immutable = require 'immutable'
 
 FilterExpander = require './filter_expander'
 
-expandSystemConfig = (system) ->
+expandFilters = (system) ->
   system.updateIn ['config','filters'], FilterExpander.expandFilters
 
+expandType = (system) ->
+  if system.has 'type'
+    system
+  else
+    system.set 'type', 'iterating-updating'
+
+expandSystem = (system) ->
+  expandFilters(
+    expandType(
+      system))
+
 module.exports =
-  expandSystemConfig: expandSystemConfig
+  expandSystem: (system) ->
+    expandSystem(Immutable.fromJS(system))

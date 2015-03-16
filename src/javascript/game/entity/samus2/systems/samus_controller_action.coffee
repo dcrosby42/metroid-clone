@@ -1,66 +1,69 @@
 
-class SamusControllerAction
-  run: (estore,dt,input) ->
-    # input: samus[motion] + controller[states]
-    # output: samus[action]
-    for samus in estore.getComponentsOfType('samus')
-      controller = estore.getComponent(samus.eid, 'controller')
+module.exports =
+  config:
+    filters: ['samus','controller']
 
-      ctrl = controller.states
+  update: (comps,input,u) ->
+    samus = comps.get('samus')
+    ctrl = comps.getIn(['controller','states'])
 
-      if ctrl.up
-        samus.aim = 'up'
-      else
-        samus.aim = 'straight'
-    
-      if ctrl.left
-        samus.direction = 'left'
-      else if ctrl.right
-        samus.direction = 'right'
 
-      samus.action = null
-
-      switch samus.motion
-        when 'standing'
-          if ctrl.jump
-            samus.action = 'jump'
-          else if ctrl.right or ctrl.left
-            samus.action = 'run'
-
-        when 'running'
-          if ctrl.jump
-            samus.action = 'jump'
-          else if ctrl.right or ctrl.left
-            # If we don't re-iterate the run action, mid-run direction changes will not register
-            samus.action = 'run'
-          else
-            samus.action = 'stop'
-
-        when 'falling'
-          ctrl.jump = false
-          if ctrl.left or ctrl.right
-            samus.action = 'drift'
-          else
-            samus.action = 'stop'
-            
-
-        when 'jumping'
-          if !ctrl.jump
-            samus.action = 'fall'
-
-          else if ctrl.left or ctrl.right
-            samus.action = 'drift'
-
-      if ctrl.shoot
-        if samus.weaponTrigger == 'released'
-          samus.weaponTrigger = 'pulled'
-        else
-          samus.weaponTrigger = 'held'
-      else
-        samus.weaponTrigger = 'released'
+    aim = if ctrl.get('up') then 'up' else 'straight'
       
-      # if samus.action?
-      #   console.log "action: #{samus.action}"
+    direction = if ctrl.get('left')
+      'left'
+    else if ctrl.get('right')
+      'right'
+    else
+      samus.get('direction')
+      
+    sideways = ctrl.get('right') or ctrl.get('left')
 
-module.exports = SamusControllerAction
+    action = switch samus.get('motion')
+      when 'standing'
+        if ctrl.get('jump')
+          'jump'
+        else if sideways
+          'run'
+
+      when 'running'
+        if ctrl.get('jump')
+          'jump'
+        else if sideways
+          # If we don't re-iterate the run action, mid-run direction changes will not register
+          'run'
+        else
+          'stop'
+
+      when 'falling'
+        if sideways
+          'drift'
+        else
+          'stop'
+          
+      when 'jumping'
+        if !ctrl.get('jump')
+          'fall'
+
+        else if sideways
+          'drift'
+
+    weaponTrigger = if ctrl.get('shoot')
+      if samus.get('weaponTrigger') == 'released'
+        'pulled'
+      else
+        'held'
+    else
+      'released'
+
+    u.update(samus
+      .set('aim', aim)
+      .set('direction', direction)
+      .set('action', action)
+      .set('weaponTrigger', weaponTrigger))
+
+     # TODO is this really necessary? Because this is kinda jank, updating the controller states like this...
+    if samus.get('motion') == 'falling'
+      u.update(comps.get('controller').setIn(['states','jump'], false))
+    
 

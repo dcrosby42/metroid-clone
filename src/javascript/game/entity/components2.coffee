@@ -1,35 +1,34 @@
 Immutable = require 'immutable'
 
 C = {}
-module.exports = C
 
-C.Position = Immutable.Map
+C.Position = Immutable.fromJS
   type: 'position'
   x: 0
   y: 0
 
-C.Velocity = Immutable.Map
+C.Velocity = Immutable.fromJS
   type: 'velocity'
   x: 0
   y: 0
 
-C.Gravity = Immutable.Map
+C.Gravity = Immutable.fromJS
   type: 'gravity'
   accel: 0
   max: 0
 
-C.Visual = Immutable.Map
+C.Visual = Immutable.fromJS
   type: 'visual'
   time: 0
   spriteName: null
   state: null
 
-C.Controller = Immutable.Map
+C.Controller = Immutable.fromJS
   type: 'controller'
   inputName: null
   states: {}
 
-C.HitBox = Immutable.Map
+C.HitBox = Immutable.fromJS
   type: 'hit_box'
   x: 0
   y: 0
@@ -72,3 +71,5 @@ C.HitBoxVisual = Immutable.Map
 C.Tags = Immutable.Map
   type: 'tags'
   names: Immutable.Set()
+
+module.exports = C
