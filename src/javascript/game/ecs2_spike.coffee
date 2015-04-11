@@ -7,6 +7,9 @@ KeyboardController = require '../input/keyboard_controller'
 GamepadController = require('../input/gamepad_controller')
 
 EntityStore = require '../ecs2/entity_store'
+EntityStoreFinder = require '../ecs2/entity_store_finder'
+EntityStoreUpdater = require '../ecs2/entity_store_updater'
+
 
 SystemRegistry = require '../ecs/system_registry'
 CommonSystems = require './systems'
@@ -50,10 +53,28 @@ class Ecs2Spike
       assets[effect] = "sounds/fx/#{effect}.wav"
     assets
 
-  setupStage: (@stage, width, height) ->
-    @layers = @setupLayers()
+  setupStage: (stage, width, height) ->
+    layers = @setupLayers(stage)
+
+    map = @setupMap(
+      MapData.areas.a,
+      layers.map,
+      MapData.info.tileWidth,
+      MapData.info.tileHeight)
+
+    @ui = {
+      stage: stage
+      spriteConfigs: @setupSpriteConfigs()
+      viewportConfig: @setupViewportConfig(map)
+      layers: layers
+      map: map
+      spriteCache: {}
+    }
+
 
     @estore = new EntityStore()
+    @entityFinder = new EntityStoreFinder(@estore)
+    @entityUpdater = new EntityStoreUpdater(@estore)
 
     @samusId = @estore.createEntity Samus.factory.createComponents('samus')
 
@@ -62,58 +83,20 @@ class Ecs2Spike
     #   @estore.createEntity Enemies.factory.createComponents('basicSkree', x:x, y: 32)
 
 
-    # dbg1 = @estore.createEntity [
-    #   new C.Tags(['testbox1'])
-    #   new C.Controller(inputName: 'mover1')
-    #   new C.HitBox
-    #     x: 0
-    #     y: 0
-    #     width: 32
-    #     height: 16
-    #     anchorX: 0.5
-    #     anchorY: 0.5
-    #   new C.HitBoxVisual
-    #     color: 0x0099FF
-    # ]
-    # dbg2 = @estore.createEntity [
-    #   new C.Tags(['testbox2'])
-    #   new C.Controller(inputName: 'mover2')
-    #   new C.HitBox
-    #     x: 32
-    #     y: 32
-    #     width: 16
-    #     height: 32
-    #     anchorX: 0.25
-    #     anchorY: 0.75
-    #   new C.HitBoxVisual
-    #     color: 0xFF9900
-    # ]
-
-    # Background music:
-    # @estore.createEntity [
-    #   new C.Sound soundId: 'brinstar', timeLimit: 116000, volume: 0.4
-    # ]
-
-    @setupSpriteConfigs()
-
     @setupInput()
-    # TODO: update sprite configs to immutable structure.
-    # TODO: somethign better than sneaking data into 'cheatsies'
-    @input.setIn ['cheatsies','spriteConfigs'], @spriteConfigs
-
-    map = @input.getIn(['cheatsies','map'])
-    @setupMap(MapData.areas.a, @layers.map, map.get('tileWidth'),map.get('tileHeight'))
 
     @timeDilation = 1
 
-    # @setupSystems()
+    @systemRunner       = @setupSystemRunner()
+    @outputSystemRunner = @setupOutputSystemRunner()
 
     window.me = @
     window.estore = @estore
     window.samusId = @samusId
     window.stage = @stage
+    window.ui = @ui
 
-  setupLayers: ->
+  setupLayers: (stage) ->
     scaler = new PIXI.DisplayObjectContainer()
     scaler.scale.set(2.5,2) # double size, and stretch the actual nintendo 256 px to look like 320
 
@@ -125,21 +108,20 @@ class Ecs2Spike
 
     overlay = new PIXI.DisplayObjectContainer()
 
-    @stage.addChild scaler
+    stage.addChild scaler
     scaler.addChild base
     base.addChild map
     base.addChild creatures
     base.addChild overlay
 
-    # layers:
-    {
+    layers =
       scaler: scaler
       base: base
       map: map
       creatures: creatures
       overlay: overlay
       default: creatures
-    }
+    layers
 
   setupInput: ->
     @input = Immutable.fromJS
@@ -148,13 +130,6 @@ class Ecs2Spike
         player2: {}
         admin: {}
       dt: 0
-      cheatsies:
-        map:
-          tileGrid: "NOT SET"
-          tileWidth: 16
-          tileHeight: 16
-        spriteConfigs:
-          {}
 
 
     @keyboardController = new KeyboardController
@@ -199,17 +174,33 @@ class Ecs2Spike
     @adminMoversIndex = 0
 
   setupSpriteConfigs: ->
-    @spriteConfigs = {}
-    _.merge @spriteConfigs, Samus.sprites
-    _.merge @spriteConfigs, Enemies.sprites
+    spriteConfigs = {}
+    _.merge spriteConfigs, Samus.sprites
+    _.merge spriteConfigs, Enemies.sprites
+    spriteConfigs
+
+  setupViewportConfig: (map) ->
+   condig =
+     layerName: "base"
+     minX: 0
+     maxX: (map.tileGrid[0].length - map.screenWidthInTiles) * map.tileWidth
+     minY: 0
+     maxY: (map.tileGrid.length - map.screenHeightInTiles) * map.tileHeight
+     trackBufLeft: 7 * map.tileWidth
+     trackBufRight: 9 * map.tileWidth
+     trackBufTop: 7 * map.tileHeight
+     trackBufBottom: 9 * map.tileHeight
+   config
 
 
-  setupSystems: ->
-    Systems = new SystemRegistry()
-    Systems.register CommonSystems
-    Systems.register SamusSystems
 
-    @systemsRunner = Systems.sequence [
+  setupSystemRunner: ->
+    # r = new SystemRegistry()
+    # r.register CommonSystems
+    # r.register SamusSystems
+
+    # runner = r.sequence 
+    [
       # 'death_timer_system'
       'visual_timer_system'
       # 'sound_system'
@@ -230,23 +221,44 @@ class Ecs2Spike
 
       'samus_animation'
       # 'skree_animation'
+    ]
 
-      # 
-      # 'output' systems mutate world state (graphics, sounds, browser etc)
+    systems = [
+      CommonSystems.visual_timer_system
+      # SamusSystems.samus_motion
+      # CommonSystems.controller_system
+      # SamusSystems.samus_controller_action
+      # SamusSystems.samus_action_velocity
+      # CommonSystems.gravity_system
+      # CommonSystems.map_physics_system
+      # SamusSystems.samus_animation
+    ]
+
+
+    systemRunner = new SystemRunner(@entityFinder, @entityUpdater, systems)
+
+
+  setupOutputSystemRunner: ->
+    system = [
+      CommonSystems.sprite_sync_system
+      # CommonSystems.sound_sync_system,
+      # CommonSystems.hit_box_visual_sync_system,
+      # SamusSystems.samus_viewport_tracker,
+    ]
+
+      # ['sprite_sync_system',
+      #   spriteConfigs: @spriteConfigs
+      #   spriteLookupTable: {}
+      #   layers: @layers ]
       #
-      ['sprite_sync_system',
-        spriteConfigs: @spriteConfigs
-        spriteLookupTable: {}
-        layers: @layers ]
-
-      ['samus_viewport_tracker',
-        container: @layers.base
-        tileGrid: @mapTileGrid
-        tileWidth: @mapTileWidth
-        tileHeight: @mapTileHeight
-        screenWidthInTiles: 16
-        screenHeightInTiles: 15
-      ]
+      # ['samus_viewport_tracker',
+      #   container: @layers.base
+      #   tileGrid: @map.tileGrid
+      #   tileWidth: @map.tileWidth
+      #   tileHeight: @map.tileHeight
+      #   screenWidthInTiles: @map.screenWidthInTiles
+      #   screenHeightInTiles: @map.screenHeightInTiles
+      # ]
 
       # ['hit_box_visual_sync_system'
       #   cache: {}
@@ -257,67 +269,9 @@ class Ecs2Spike
       # ['sound_sync_system',
       #   soundCache: {}
       # ]
-    ]
+    
 
-  _TODO_setupSystems: ->
-    Systems = new SystemRegistry()
-    Systems.register CommonSystems
-    Systems.register SamusSystems
-    Systems.register EnemiesSystems
-
-
-    @systemsRunner = Systems.sequence [
-      'death_timer_system'
-      'visual_timer_system'
-      'sound_system'
-      'samus_motion'
-      'controller_system'
-      ['manual_mover_system'
-        componentType: 'hit_box' ]
-      'samus_controller_action'
-      'samus_weapon'
-      'samus_action_velocity'
-      'samus_action_sounds'
-      'skree_action'
-      'skree_velocity'
-      'gravity_system'
-      ['map_physics_system',
-        tileGrid: @mapTileGrid
-        tileWidth: @mapTileWidth
-        tileHeight: @mapTileHeight]
-
-      'bullet_system'
-
-      'samus_animation'
-      'skree_animation'
-
-      # 
-      # 'output' systems mutate world state (graphics, sounds, browser etc)
-      #
-      ['sprite_sync_system',
-        spriteConfigs: @spriteConfigs
-        spriteLookupTable: {}
-        layers: @layers ]
-
-      ['samus_viewport_tracker',
-        container: @layers.base
-        tileGrid: @mapTileGrid
-        tileWidth: @mapTileWidth
-        tileHeight: @mapTileHeight
-        screenWidthInTiles: 16
-        screenHeightInTiles: 15
-      ]
-
-      ['hit_box_visual_sync_system'
-        cache: {}
-        layer: @layers.overlay
-        toggle: @boundingBoxToggle
-      ]
-
-      ['sound_sync_system',
-        soundCache: {}
-      ]
-    ]
+    doutputSystemRunner = new OutputSystemRunner(@entityFinder, @ui, systems)
 
   update: (dt) ->
     p1in = @p1Controller.update()
@@ -419,7 +373,16 @@ class Ecs2Spike
         else
           tileRow.push null
 
-    @mapTileGrid = tileGrid
+    map =
+      tileGrid: tileGrid
+      tileWidth: mapTileWidth
+      tileHeight: mapTileHeight
+      screenWidthInTiles: roomWidth
+      screenHeightInTiles: roomHeight
+    map
+
+      
+
     
 
 module.exports = Ecs2Spike

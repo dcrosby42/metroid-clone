@@ -139,3 +139,9 @@ areas.c = [
 
 exports.roomTypes = roomTypes
 exports.areas = areas
+exports.info =
+  tileWidth: 16
+  tileHeight: 16
+  screenWidthInTiles: 16
+  screenHeightInTiles: 15
+

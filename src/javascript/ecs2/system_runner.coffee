@@ -1,25 +1,21 @@
-EntityStoreUpdater = require './entity_store_updater'
 
-searchAndUpdate = (estore, updater, system) ->
+searchAndUpdate = (system, entityFinder, input, entityUpdater) ->
   filters = system.getIn ['config','filters']
   update = system.get 'update'
-  estore.search(filters).forEach (result) ->
-    update(result,updater)
-
+  entityFinder.search(filters).forEach (result) ->
+    update(result,input,entityUpdater)
 
 class SystemRunner
-  constructor: (@estore, @systems) ->
-    @updater = new EntityStoreUpdater(@estore)
+  constructor: (@entityFinder, @entityUpdater, @systems) ->
 
-  run: ->
+  run: (input) ->
     @systems.forEach (system) =>
-      # console.log "Runngin system", system.toString()
       switch system.get('type')
         when 'iterating-updating'
-          searchAndUpdate @estore, @updater, system
+          searchAndUpdate system, @entityFinder, input, @entityUpdater
+          
         else
           console.log "!! CAN'T RUN SYSTEM OF TYPE: #{system.get('type')} - #{system.toString()}"
-
 
 module.exports = SystemRunner
 
