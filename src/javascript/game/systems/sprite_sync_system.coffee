@@ -13,14 +13,12 @@ removeSprite = (sprite) ->
   container.removeChild sprite
 
 module.exports =
-  #TODO type: 'something'
-  #TODO config: 'something'
-  update: (entityFinder, ui, input) ->
+  update: (entityFinder, input, ui) ->
 
     vps = entityFinder.search(['visual','position'])
 
     ArrayToCacheBinding.update
-      source: vps
+      source: vps.toArray()
       cache: ui.spriteCache
       identFn: (vp) -> vp.getIn ['visual','cid']
 

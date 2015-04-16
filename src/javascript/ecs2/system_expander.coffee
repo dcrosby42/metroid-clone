@@ -3,7 +3,11 @@ Immutable = require 'immutable'
 FilterExpander = require './filter_expander'
 
 expandFilters = (system) ->
-  system.updateIn ['config','filters'], FilterExpander.expandFilters
+  path = ['config','filters']
+  if system.hasIn path
+    system.updateIn path, FilterExpander.expandFilters
+  else
+    system
 
 expandType = (system) ->
   if system.has 'type'
@@ -19,3 +23,5 @@ expandSystem = (system) ->
 module.exports =
   expandSystem: (system) ->
     expandSystem(Immutable.fromJS(system))
+  expandSystems: (systems) ->
+    Immutable.fromJS(systems).map expandSystem

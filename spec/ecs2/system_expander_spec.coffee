@@ -38,6 +38,15 @@ describe 'expandSystem', ->
     s1 = expandSystem(s0)
     expectIs s1.get('type'), 'iterating-updating'
 
+  it 'does not carp if no filters are present', ->
+    s0 = imm
+      type: "something"
+      config:
+        what: 'evar'
+      update: (_) ->
+    
+    expectIs expandSystem(s0), s0
+
 
 
 

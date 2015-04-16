@@ -11,7 +11,11 @@ EntityStoreFinder = require '../ecs2/entity_store_finder'
 EntityStoreUpdater = require '../ecs2/entity_store_updater'
 
 
-SystemRegistry = require '../ecs/system_registry'
+# SystemRegistry = require '../ecs/system_registry'
+SystemRunner = require '../ecs2/system_runner'
+OutputSystemRunner = require '../ecs2/output_system_runner'
+SystemExpander = require '../ecs2/system_expander'
+
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus2/systems'
 EnemiesSystems =  require './entity/enemies/systems'
@@ -124,7 +128,7 @@ class Ecs2Spike
     layers
 
   setupInput: ->
-    @input = Immutable.fromJS
+    @defaultInput = Immutable.fromJS
       controllers:
         player1: {}
         player2: {}
@@ -180,7 +184,7 @@ class Ecs2Spike
     spriteConfigs
 
   setupViewportConfig: (map) ->
-   condig =
+   config =
      layerName: "base"
      minX: 0
      maxX: (map.tileGrid[0].length - map.screenWidthInTiles) * map.tileWidth
@@ -223,7 +227,7 @@ class Ecs2Spike
       # 'skree_animation'
     ]
 
-    systems = [
+    systems = SystemExpander.expandSystems [
       CommonSystems.visual_timer_system
       # SamusSystems.samus_motion
       # CommonSystems.controller_system
@@ -234,12 +238,11 @@ class Ecs2Spike
       # SamusSystems.samus_animation
     ]
 
-
-    systemRunner = new SystemRunner(@entityFinder, @entityUpdater, systems)
+    return new SystemRunner(@entityFinder, @entityUpdater, systems)
 
 
   setupOutputSystemRunner: ->
-    system = [
+    systems = SystemExpander.expandSystems [
       CommonSystems.sprite_sync_system
       # CommonSystems.sound_sync_system,
       # CommonSystems.hit_box_visual_sync_system,
@@ -271,7 +274,11 @@ class Ecs2Spike
       # ]
     
 
-    doutputSystemRunner = new OutputSystemRunner(@entityFinder, @ui, systems)
+    new OutputSystemRunner
+      entityFinder: @entityFinder
+      ui: @ui
+      systems: systems
+
 
   update: (dt) ->
     p1in = @p1Controller.update()
@@ -282,7 +289,7 @@ class Ecs2Spike
     # @input.controllers[@adminMovers[@adminMoversIndex]] = ac
     # @input.controllers.player2 = @p2Controller.update()
 
-    @input = @input
+    input = @defaultInput
       .setIn(['controllers','player1'], Immutable.fromJS(p1in))
       .set('dt', dt*@timeDilation)
     
@@ -290,14 +297,10 @@ class Ecs2Spike
     #   dt
     #   controllers
     #     player1
-    #   cheatsies
-    #     map
-    #       tileGrid
-    #       tileWidth
-    #       tileHeight
-    #     spriteConfigs
 
     # TODO @systemsRunner.run(@estore, dt*@timeDilation, @input) unless @paused
+    @systemRunner.run input
+    @outputSystemRunner.run input
 
   handleAdminControls: (ac) ->
     if ac.toggle_gamepad
