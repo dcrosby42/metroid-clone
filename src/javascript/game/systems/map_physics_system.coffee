@@ -33,10 +33,10 @@ module.exports =
 
     dt = input.get('dt')
 
-    map = input.getIn(['cheatsies','map'])
-    grid = map.get('tileGrid')
-    tileWidth = map.get('tileWidth')
-    tileHeight = map.get('tileHeight')
+    map = input.getIn(['static','map'])
+    grid = map.tileGrid
+    tileWidth = map.tileWidth
+    tileHeight = map.tileHeight
 
     vx = velocity.get('x')
     vy = velocity.get('y')
@@ -60,10 +60,10 @@ module.exports =
       box.setY(s.y+s.height - box.topOffset)
     else
       hits.bottom = tileSearchHorizontal(grid, tileWidth,tileHeight,box.bottom, box.left, box.right-1)
+      # console.log "tileSearchHorizontal(grid, tileWidth,tileHeight,box.bottom, box.left, box.right-1)", tileWidth,tileHeight,box.bottom, box.left, box.right-1
       if hits.bottom.length > 0
         s = hits.bottom[0]
         box.setY(s.y - box.bottomOffset)
-      else
 
     # Step 2: apply & restrict horizontal movement
     box.moveX(vx * dt)
@@ -87,6 +87,7 @@ module.exports =
     hitBoxJS = {}
     hitBoxJS.x = box.x
     hitBoxJS.y = box.y
+    hitBoxJS.touching = {}
     hitBoxJS.touching.left = hits.left.length > 0
     hitBoxJS.touching.right = hits.right.length > 0
     hitBoxJS.touching.top = hits.top.length > 0

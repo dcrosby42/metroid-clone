@@ -87,7 +87,7 @@ class Ecs2Spike
     #   @estore.createEntity Enemies.factory.createComponents('basicSkree', x:x, y: 32)
 
 
-    @setupInput()
+    @setupInput(map:map)
 
     @timeDilation = 1
 
@@ -127,13 +127,14 @@ class Ecs2Spike
       default: creatures
     layers
 
-  setupInput: ->
+  setupInput: ({map}) ->
     @defaultInput = Immutable.fromJS
       controllers:
         player1: {}
         player2: {}
         admin: {}
       dt: 0
+      
 
 
     @keyboardController = new KeyboardController
@@ -199,11 +200,6 @@ class Ecs2Spike
 
 
   setupSystemRunner: ->
-    # r = new SystemRegistry()
-    # r.register CommonSystems
-    # r.register SamusSystems
-
-    # runner = r.sequence 
     [
       # 'death_timer_system'
       'visual_timer_system'
@@ -233,8 +229,8 @@ class Ecs2Spike
       # CommonSystems.controller_system
       # SamusSystems.samus_controller_action
       # SamusSystems.samus_action_velocity
-      # CommonSystems.gravity_system
-      # CommonSystems.map_physics_system
+      CommonSystems.gravity_system
+      CommonSystems.map_physics_system
       # SamusSystems.samus_animation
     ]
 
@@ -291,6 +287,7 @@ class Ecs2Spike
 
     input = @defaultInput
       .setIn(['controllers','player1'], Immutable.fromJS(p1in))
+      .setIn(['static','map'], @ui.map)
       .set('dt', dt*@timeDilation)
     
     # input
