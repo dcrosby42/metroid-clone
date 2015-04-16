@@ -3,8 +3,8 @@ module.exports =
     filters: ['samus', 'velocity', 'hit_box']
 
   update: (comps, input, u) ->
-    comps.get('velocity')
-    comps.get('hit_box')
+    velocity = comps.get('velocity')
+    hitBox = comps.get('hit_box')
     comps.get('samus').update 'motion', (m) ->
       if velocity.get('y') < 0
         'jumping'

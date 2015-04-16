@@ -4,6 +4,7 @@ module.exports =
 
   update: (comps, input, u) ->
     controller = comps.get('controller')
-    u.update controller.set 'states', input.getIn(['controllers', controller.get('inputName')])
+    if ins = input.getIn(['controllers', controller.get('inputName')])
+      u.update controller.set 'states', ins
 
 

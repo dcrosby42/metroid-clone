@@ -225,10 +225,10 @@ class Ecs2Spike
 
     systems = SystemExpander.expandSystems [
       CommonSystems.visual_timer_system
-      # SamusSystems.samus_motion
-      # CommonSystems.controller_system
-      # SamusSystems.samus_controller_action
-      # SamusSystems.samus_action_velocity
+      SamusSystems.samus_motion
+      CommonSystems.controller_system
+      SamusSystems.samus_controller_action
+      SamusSystems.samus_action_velocity
       CommonSystems.gravity_system
       CommonSystems.map_physics_system
       # SamusSystems.samus_animation
