@@ -28,12 +28,14 @@ Enemies = require './entity/enemies'
 
 MapData = require './map/map_data'
 
+Debug = require '../utils/debug'
 MyDebugSystem =
   update: (entityFinder,input,ui) ->
     comps = entityFinder.search ['samus','controller']
-    entityFinder.search(['samus','controller']).forEach (comps) ->
-      # ui.componentInspector.update comps.get("samus")
+    entityFinder.search(['samus','controller','visual']).forEach (comps) ->
+      ui.componentInspector.update comps.get("samus")
       ui.componentInspector.update comps.get("controller")
+      ui.componentInspector.update comps.get("visual")
 
 class Ecs2Spike
   constructor: ({@componentInspector}) ->
@@ -308,6 +310,9 @@ class Ecs2Spike
     # TODO @systemsRunner.run(@estore, dt*@timeDilation, @input) unless @paused
     @systemRunner.run input
     @outputSystemRunner.run input
+ 
+    @ui.componentInspector.sync()
+    # Debug.scratch2 @estore.componentsByCid
 
   handleAdminControls: (ac) ->
     if ac.toggle_gamepad

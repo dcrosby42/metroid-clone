@@ -21,6 +21,7 @@ C.Visual = Immutable.fromJS
   type: 'visual'
   time: 0
   spriteName: null
+  layer: null
   state: null
 
 C.Controller = Immutable.fromJS
