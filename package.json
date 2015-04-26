@@ -55,6 +55,6 @@
     "pixi.js": "~2.2.0",
     "lodash": "*",
     "mousetrap": "~1.4.6",
-    "knockout": "~3.3.0"
+    "react": "~0.13.2"
   }
 }

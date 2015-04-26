@@ -30,13 +30,14 @@ MapData = require './map/map_data'
 
 MyDebugSystem =
   update: (entityFinder,input,ui) ->
-    # comps = entityFinder.search ['samus','controller']
-    # entityFinder.search(['samus','controller']).forEach (comps) ->
-    #   console.log comps.get("samus").toString()
-
+    comps = entityFinder.search ['samus','controller']
+    entityFinder.search(['samus','controller']).forEach (comps) ->
+      # ui.componentInspector.update comps.get("samus")
+      ui.componentInspector.update comps.get("controller")
 
 class Ecs2Spike
-  constructor: ->
+  constructor: ({@componentInspector}) ->
+    console.log @componentInspector
 
   graphicsToPreload: ->
     assets = [
@@ -80,6 +81,7 @@ class Ecs2Spike
       layers: layers
       map: map
       spriteCache: {}
+      componentInspector: @componentInspector
     }
 
 
@@ -247,7 +249,7 @@ class Ecs2Spike
   setupOutputSystemRunner: ->
     systems = SystemExpander.expandSystems [
       CommonSystems.sprite_sync_system
-      # MyDebugSystem
+      MyDebugSystem
       
       # CommonSystems.sound_sync_system,
       # CommonSystems.hit_box_visual_sync_system,

@@ -12,19 +12,25 @@ DelegateClass = Ecs2Spike
 
 BigScreen = require './vendor/bigscreen_wrapper'
 
+Inspector = require './inspector'
+
 
 jquery ->
-  el = jquery('#game-holder')[0]
+  gameHolder = jquery('#game-holder')[0]
+  inspectorHolder = jquery('#inspector-holder')[0]
 
-  del = new DelegateClass()
+  componentInspector = Inspector.createComponentInspector(inspectorHolder)
+  del = new DelegateClass(componentInspector: componentInspector)
+
   harness = new PixiHarness
-    domElement: el
+    domElement: gameHolder
     delegate: del
     width: 640
     height: 480
     stage_background: 0x000000
 
   harness.start()
+
 
   gameView = harness.view
   $('#fullscreen').on "click", ->
