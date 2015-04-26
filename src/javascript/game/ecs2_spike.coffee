@@ -28,6 +28,13 @@ Enemies = require './entity/enemies'
 
 MapData = require './map/map_data'
 
+MyDebugSystem =
+  update: (entityFinder,input,ui) ->
+    # comps = entityFinder.search ['samus','controller']
+    # entityFinder.search(['samus','controller']).forEach (comps) ->
+    #   console.log comps.get("samus").toString()
+
+
 class Ecs2Spike
   constructor: ->
 
@@ -231,7 +238,7 @@ class Ecs2Spike
       SamusSystems.samus_action_velocity
       CommonSystems.gravity_system
       CommonSystems.map_physics_system
-      # SamusSystems.samus_animation
+      SamusSystems.samus_animation
     ]
 
     return new SystemRunner(@entityFinder, @entityUpdater, systems)
@@ -240,6 +247,8 @@ class Ecs2Spike
   setupOutputSystemRunner: ->
     systems = SystemExpander.expandSystems [
       CommonSystems.sprite_sync_system
+      # MyDebugSystem
+      
       # CommonSystems.sound_sync_system,
       # CommonSystems.hit_box_visual_sync_system,
       # SamusSystems.samus_viewport_tracker,

@@ -57,6 +57,8 @@ module.exports =
     filters: ['samus','visual']
 
   update: (comps,input,u) ->
+    visual = comps.get('visual')
+    samus = comps.get('samus')
     oldState = visual.get('state')
 
     keyPath = [
