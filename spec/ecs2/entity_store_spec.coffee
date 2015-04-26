@@ -1,5 +1,8 @@
 _ = require 'lodash'
 Immutable = require 'immutable'
+Map = Immutable.Map
+Set = Immutable.Set
+List = Immutable.List
 imm = Immutable.fromJS
 
 
@@ -218,8 +221,46 @@ describe 'The new EntityStore', ->
         { character: linkCharacter, bbox: linkBox }
         { character: tektikeCharacter, bbox: tektikeBox }
       ]
+  
+  describe "search realistic", ->
 
-      
+    samusData = imm [
+      { recoil: "no", aim: "straight", floatSpeed: 0.06, action: undefined, motion: "standing", jumpSpeed: 0.4, type: "samus", runSpeed: 0.088, weaponTrigger: "released", direction: "right" }
+      { type: "position", x: 50, y: 80}
+      { type: "velocity", x: 0, y: 0}
+      { type: "gravity", accel: 0.02, max: 0.2 }
+      { anchorX: 0.5, touching: { left: false, right: false, top: false, bottom: true }, anchorY: 1, width: 12, height: 32, touchingSomething: true, x: 50, y: 80, type: "hit_box"}
+      { type: "controller", inputName: "player1", states: {} }
+      { time: 0, spriteName: "samus", state: null, layer: "creatures", type: "visual" }
+      { type: "hit_box_visual", color: 39423, anchorColor: 16777215 }
+    ]
+    it 'filters and joins components using an object finder', ->
+      estore = newEntityStore()
+      samusEid = estore.createEntity(samusData)
+
+      samus = findEntityComponent estore, samusEid, 'type','samus'
+      controller = findEntityComponent estore, samusEid, 'type','controller'
+
+      results = estore.search [
+        {
+          match: { type: 'samus' }
+          as: 'samus'
+        }
+        {
+          match: { type: 'controller' }
+          as: 'controller'
+          join: 'samus.eid'
+        }
+      ]
+
+      expectIs results, imm [
+        { samus: samus, controller: controller }
+      ]
+
+      # expectIs results, imm [
+      #   { character: linkCharacter, bbox: linkBox }
+      #   { character: tektikeCharacter, bbox: tektikeBox }
+      # ]
       
 
 

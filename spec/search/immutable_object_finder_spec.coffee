@@ -20,6 +20,9 @@ zeldaObjects = Immutable.fromJS [
   { eid: 'e2', type: 'character', name: 'Tektike' }
   { eid: 'e2', type: 'bbox', shape: [3,4,5,6] }
   { eid: 'e2', type: 'digger', status: 'burrowing' }
+
+  { eid: 'e1', type: 'hat', color: 'green' }
+  { eid: 'e99', extraneous: 'hat', type: 'other-thing', sha: 'zam' }
 ]
 
 searchZelda = (filters) -> Finder.search zeldaObjects, imm(filters)
@@ -73,6 +76,14 @@ describe 'ImmutableObjectFinder.search', ->
         { character: zeldaObjects.get(1), bbox: zeldaObjects.get(6) }
         { character: zeldaObjects.get(5), bbox: zeldaObjects.get(2) }
         { character: zeldaObjects.get(5), bbox: zeldaObjects.get(6) }
+      ]
+
+    it 'does not mistakenly include other objects based on values alone', ->
+      cf = typeFilter 'character'
+      bf = typeFilter 'hat'
+      expectIs searchZelda([cf,bf]), imm [
+        { character: zeldaObjects.get(1), hat: zeldaObjects.get(8) }
+        { character: zeldaObjects.get(5), hat: zeldaObjects.get(8) }
       ]
 
   describe 'with joins', ->

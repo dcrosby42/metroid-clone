@@ -14,7 +14,8 @@ searchWithJoins = (comps,filters,row=Immutable.Map()) ->
 
 filterObjects = (comps,filter) ->
   matchProps = filter.get('match')
-  comps.filter (obj) -> obj.isSuperset(matchProps)
+  comps.filter (obj) ->
+    matchProps.every (v,k) -> obj.get(k) == v
 
 expandLabel = (filter) ->
   return filter if filter.get('as')?
