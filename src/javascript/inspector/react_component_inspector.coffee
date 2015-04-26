@@ -22,11 +22,12 @@ Entity = React.createClass
 
     comps = entity.get('components')
     componentViews = comps.map (comp) ->
-      React.createElement Component, {component: comp}
+      React.createElement Component, {component: comp, key: comp.get('cid')}
 
     React.createElement 'div', {className: 'entity'},
       header,
       componentViews
+
 
 Component = React.createClass
   displayName: 'Component'
@@ -40,19 +41,31 @@ Component = React.createClass
       React.createElement 'span', {className: 'component-cid'},
         comp.get('cid')
 
+    pairs = comp.filterNot((value,key) -> ReservedComponentKeys.contains(key))
+    rows = pairs.map((value,key) ->
+      React.createElement PropRow, {key: key, value: value}
+    ).toList()
 
-    pairs = comp.filterNot((prop,name) -> ReservedComponentKeys.contains(name))
     props = React.createElement 'table', {className: 'component-props'},
       React.createElement 'tbody', null,
-        pairs.map (prop,name) ->
-          React.createElement 'tr', null,
-            React.createElement 'td', {className:'prop-name'}, name
-            React.createElement 'td', {className:'prop-value'}, prop.toString()
+      rows
 
     React.createElement 'div', {className: 'component'},
       header,
       props
 
+PropRow = React.createClass
+  displayName: 'PropRow'
+  render: ->
+    React.createElement 'tr', null,
+      React.createElement 'td', {className:'prop-name'}, @props.key
+      React.createElement PropValueCell, {value: @props.value}
+
+PropValueCell = React.createClass
+  displayName: 'PropValueCell'
+  render: ->
+    val = @props.value.toString()
+    React.createElement 'td', {className:'prop-value'}, val
 
 # ------------------------------
 

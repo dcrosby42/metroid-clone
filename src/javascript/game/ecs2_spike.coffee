@@ -37,7 +37,6 @@ MyDebugSystem =
 
 class Ecs2Spike
   constructor: ({@componentInspector}) ->
-    console.log @componentInspector
 
   graphicsToPreload: ->
     assets = [
