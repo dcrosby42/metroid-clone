@@ -5,7 +5,7 @@ module.exports =
   update: (comps, input, u) ->
     velocity = comps.get('velocity')
     hitBox = comps.get('hit_box')
-    comps.get('samus').update 'motion', (m) ->
+    u.update comps.get('samus').update 'motion', (m) ->
       if velocity.get('y') < 0
         'jumping'
       else if velocity.get('y') > 0
