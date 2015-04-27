@@ -37,9 +37,7 @@ Entity = React.createClass
       @props.eid
 
     componentViews = if @state.foldOpen
-      # sc = @_sortedComponents()
-      sc = @props.components
-      sc.map((comp,cid) =>
+      @props.components.map((comp,cid) =>
         React.createElement Component, {component: comp, key: cid, inspectorConfig: @props.inspectorConfig}
       ).toList()
     else
@@ -48,28 +46,6 @@ Entity = React.createClass
     React.createElement 'div', {className: 'entity'},
       header,
       componentViews
-
-  # _sortedComponents: ->
-  #   console.log "_sortedComponents"
-  #   unsorted = @props.components
-  #
-  #   layout = @_componentLayout()
-  #   sorted = Immutable.OrderedMap()
-  #   layout.forEach (info,type) =>
-  #     @_findCompsByType(unsorted,type).forEach (comp,cid) ->
-  #       unsorted = unsorted.delete(cid)
-  #       sorted = sorted.set(cid,comp)
-  #
-  #   sorted.merge(unsorted)
-  #
-  # _componentLayout: ->
-  #   if @props.inspectorConfig? and @props.inspectorConfig.has('componentLayout')
-  #     @props.inspectorConfig.get('componentLayout')
-  #   else
-  #     Immutable.OrderedMap()
-  #
-  # _findCompsByType: (compsByCid, type) ->
-  #   compsByCid.filter (comp) -> comp.get('type') == type
 
 
 ReservedComponentKeys = Set.of('type','eid','cid')
