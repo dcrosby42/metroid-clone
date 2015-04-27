@@ -31,11 +31,14 @@ MapData = require './map/map_data'
 Debug = require '../utils/debug'
 MyDebugSystem =
   update: (entityFinder,input,ui) ->
-    comps = entityFinder.search ['samus','controller']
-    entityFinder.search(['samus','controller','visual']).forEach (comps) ->
-      ui.componentInspector.update comps.get("samus")
-      ui.componentInspector.update comps.get("controller")
-      ui.componentInspector.update comps.get("visual")
+    entityFinder.estore.componentsByCid.forEach (comp) ->
+        ui.componentInspector.update comp
+    # entityFinder.search(['samus','controller','visual']).forEach (comps) ->
+      # comps.forEach (comp) ->
+      #   ui.componentInspector.update comp
+      # ui.componentInspector.update comps.get("samus")
+      # ui.componentInspector.update comps.get("controller")
+      # ui.componentInspector.update comps.get("visual")
 
 class Ecs2Spike
   constructor: ({@componentInspector}) ->

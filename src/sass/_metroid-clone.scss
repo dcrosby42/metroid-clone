@@ -25,6 +25,7 @@ body { background-color: #000000; }
   .entity {
     border: solid 1px white;
     .entity-header {
+      cursor: pointer;
       color: white;
     }
 
@@ -34,6 +35,7 @@ body { background-color: #000000; }
       border-top: 1px solid gray;
 
       .component-header {
+        cursor: pointer;
         .component-type {
           font-weight: bold;
         }
