@@ -9,7 +9,7 @@ imm = Immutable.fromJS
 InspectorUI = require './inspector_ui'
 
 class ReactComponentInspector
-  constructor: (@mountNode) ->
+  constructor: ({@mountNode,@inspectorConfig}) ->
     @_resetEntities()
     @_renderInspector()
 
@@ -23,7 +23,7 @@ class ReactComponentInspector
     
   _renderInspector: ->
     React.render(
-      React.createElement(InspectorUI, entities: @entities)
+      React.createElement(InspectorUI, entities: @entities, inspectorConfig: @inspectorConfig)
       @mountNode
     )
     @_resetEntities()

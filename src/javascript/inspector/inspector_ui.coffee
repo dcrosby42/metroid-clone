@@ -9,8 +9,8 @@ InspectorUI = React.createClass
   displayName: 'InspectorUI'
   render: ->
     React.createElement 'div', {className: 'component-inspector'},
-      @props.entities.map((components,eid) ->
-        React.createElement Entity, {eid: eid, components: components, key: eid}
+      @props.entities.map((components,eid) =>
+        React.createElement Entity, {eid: eid, components: components, key: eid, inspectorConfig: @props.inspectorConfig}
       ).toList()
 
 Entity = React.createClass
@@ -27,17 +27,20 @@ Entity = React.createClass
 
   render: ->
     folder = if @state.foldOpen
-        React.createElement 'span', {className: 'component-folder open'}, "[ - ] "
+        React.createElement 'span', {className: 'entity-folder open'}, "[ - ] "
       else
-        React.createElement 'span', {className: 'component-folder closed'}, "[ + ] "
+        React.createElement 'span', {className: 'entity-folder closed'}, "[ + ] "
+
     header = React.createElement 'div', {className: "entity-header", onClick: @headerClicked},
       folder
       "Entity: "
       @props.eid
 
     componentViews = if @state.foldOpen
-      @props.components.map((comp,cid) ->
-        React.createElement Component, {component: comp, key: cid}
+      # sc = @_sortedComponents()
+      sc = @props.components
+      sc.map((comp,cid) =>
+        React.createElement Component, {component: comp, key: cid, inspectorConfig: @props.inspectorConfig}
       ).toList()
     else
       List()
@@ -46,14 +49,38 @@ Entity = React.createClass
       header,
       componentViews
 
+  # _sortedComponents: ->
+  #   console.log "_sortedComponents"
+  #   unsorted = @props.components
+  #
+  #   layout = @_componentLayout()
+  #   sorted = Immutable.OrderedMap()
+  #   layout.forEach (info,type) =>
+  #     @_findCompsByType(unsorted,type).forEach (comp,cid) ->
+  #       unsorted = unsorted.delete(cid)
+  #       sorted = sorted.set(cid,comp)
+  #
+  #   sorted.merge(unsorted)
+  #
+  # _componentLayout: ->
+  #   if @props.inspectorConfig? and @props.inspectorConfig.has('componentLayout')
+  #     @props.inspectorConfig.get('componentLayout')
+  #   else
+  #     Immutable.OrderedMap()
+  #
+  # _findCompsByType: (compsByCid, type) ->
+  #   compsByCid.filter (comp) -> comp.get('type') == type
+
 
 ReservedComponentKeys = Set.of('type','eid','cid')
 
 Component = React.createClass
   displayName: 'Component'
   getInitialState: ->
+    layout = @props.inspectorConfig.getIn(['componentLayout',@props.component.get('type')])
+    open = if layout? then layout.get('open') else false
     {
-      foldOpen: false
+      foldOpen: open
     }
 
   headerClicked: (e) ->
@@ -109,3 +136,4 @@ PropValueCell = React.createClass
     React.createElement 'td', {className:'prop-value'}, val
     
 module.exports = InspectorUI
+

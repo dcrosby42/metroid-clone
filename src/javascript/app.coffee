@@ -1,6 +1,8 @@
 jquery    = require 'jquery'
 
 PixiHarness = require './pixi_ext/pixi_harness'
+Immutable = require 'immutable'
+
 # OneRoom = require './game/one_room'
 # MapSpike = require './game/map_spike'
 # BoxDrawSpike = require './game/box_draw_spike'
@@ -10,16 +12,27 @@ PixiHarness = require './pixi_ext/pixi_harness'
 Ecs2Spike = require './game/ecs2_spike'
 DelegateClass = Ecs2Spike
 
+
 BigScreen = require './vendor/bigscreen_wrapper'
 
 Inspector = require './inspector'
 
+inspectorConfig = Immutable.fromJS
+  componentLayout:
+    samus:      { open: true }
+    controller: { open: true }
+    visual:     { open: true }
+    velocity:   { open: false }
+    position:   { open: false }
 
 jquery ->
   gameHolder = jquery('#game-holder')[0]
   inspectorHolder = jquery('#inspector-holder')[0]
 
-  componentInspector = Inspector.createComponentInspector(inspectorHolder)
+  componentInspector = Inspector.createComponentInspector
+    mountNode: inspectorHolder
+    inspectorConfig: inspectorConfig
+
   del = new DelegateClass(componentInspector: componentInspector)
 
   harness = new PixiHarness
