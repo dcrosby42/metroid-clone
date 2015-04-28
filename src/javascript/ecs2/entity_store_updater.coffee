@@ -3,6 +3,7 @@ class EntityStoreUpdater
   update:         (comp) -> @estore.updateComponent comp
   delete:         (comp) -> @estore.deleteComponent comp
   add:       (eid,props) -> @estore.createComponent eid, props
-  newEntity: (propsList) -> @estore.createEntity propsList
+  newEntity:     (comps) -> @estore.createEntity comps
+  destroyEntity:   (eid) -> @estore.destroyEntity eid
 
 module.exports = EntityStoreUpdater

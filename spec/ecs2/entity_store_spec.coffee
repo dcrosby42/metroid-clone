@@ -262,5 +262,39 @@ describe 'The new EntityStore', ->
       #   { character: tektikeCharacter, bbox: tektikeBox }
       # ]
       
+  describe "destroyEntity", ->
+    estore = newEntityStore()
+    
+    eid1 = estore.createEntity [
+      { type: 'player', id: '9876' }
+      { type: 'character', name: 'Link', race: 'elf' }
+    ]
 
+    eid2 = estore.createEntity [
+      { type: 'player', id: '1234' }
+      { type: 'character', name: 'Baddy', race: 'tektike' }
+    ]
 
+    # scrounge through entity store to get some refs
+    link = findEntityComponent estore, eid1, 'race', 'elf'
+    linkPl = findEntityComponent estore, eid1, 'id', '9876'
+    linkComps = Immutable.Set.of(linkPl, link)
+
+    tk = findEntityComponent estore, eid2, 'race', 'tektike'
+    tkPl = findEntityComponent estore, eid2, 'id', '1234'
+    tkComps = Immutable.Set.of(tk,tkPl)
+
+    comps = estore.getEntityComponents(eid1)
+    console.log comps.toString()
+    expectIs comps, linkComps
+
+    # Remove Link
+    estore.destroyEntity(eid1)
+
+    # See no more Link components:
+    comps = estore.getEntityComponents(eid1)
+    expectIs comps, Immutable.Set()
+
+    # Verify Tektike components are still present
+    comps2 = estore.getEntityComponents(eid2)
+    expectIs comps2, tkComps

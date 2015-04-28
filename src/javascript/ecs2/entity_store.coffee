@@ -44,9 +44,13 @@ class EntityStore
     @_deleteFromIndex 'eid', comp
     null
 
+  destroyEntity: (eid) ->
+    @getEntityComponents(eid).forEach (comp) =>
+      @deleteComponent(comp)
 
   search: (filters) ->
     Finder.search @componentsByCid.toList(), filters
+
 
   #
   # PRIVATE
