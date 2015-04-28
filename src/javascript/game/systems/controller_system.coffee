@@ -5,6 +5,6 @@ module.exports =
   update: (comps, input, u) ->
     controller = comps.get('controller')
     if ins = input.getIn(['controllers', controller.get('inputName')])
-      u.update controller.set 'states', ins
+      u.update controller.update 'states', (states) -> states.merge(ins)
 
 
