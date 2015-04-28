@@ -29,16 +29,6 @@ Enemies = require './entity/enemies'
 MapData = require './map/map_data'
 
 Debug = require '../utils/debug'
-MyDebugSystem =
-  update: (entityFinder,input,ui) ->
-    entityFinder.estore.componentsByCid.forEach (comp) ->
-        ui.componentInspector.update comp
-    # entityFinder.search(['samus','controller','visual']).forEach (comps) ->
-      # comps.forEach (comp) ->
-      #   ui.componentInspector.update comp
-      # ui.componentInspector.update comps.get("samus")
-      # ui.componentInspector.update comps.get("controller")
-      # ui.componentInspector.update comps.get("visual")
 
 class Ecs2Spike
   constructor: ({@componentInspector}) ->
@@ -255,7 +245,7 @@ class Ecs2Spike
   setupOutputSystemRunner: ->
     systems = SystemExpander.expandSystems [
       CommonSystems.sprite_sync_system
-      MyDebugSystem
+      CommonSystems.debug_system
       
       # CommonSystems.sound_sync_system,
       # CommonSystems.hit_box_visual_sync_system,
@@ -303,9 +293,9 @@ class Ecs2Spike
     # @input.controllers.player2 = @p2Controller.update()
 
     input = @defaultInput
+      .set('dt', dt*@timeDilation)
       .setIn(['controllers','player1'], Immutable.fromJS(p1in))
       .setIn(['static','map'], @ui.map)
-      .set('dt', dt*@timeDilation)
     
     # input
     #   dt
@@ -313,10 +303,10 @@ class Ecs2Spike
     #     player1
 
     # TODO @systemsRunner.run(@estore, dt*@timeDilation, @input) unless @paused
-    @systemRunner.run input
-    @outputSystemRunner.run input
- 
-    @ui.componentInspector.sync()
+    unless @paused
+      @systemRunner.run input
+      @outputSystemRunner.run input
+      @ui.componentInspector.sync()
     # Debug.scratch2 @estore.componentsByCid
 
   handleAdminControls: (ac) ->

@@ -7,7 +7,8 @@ class EntityStoreFinder
   search:      (filters) ->
     filters = Debug.imm(filters)
     expanded = FilterExpander.expandFilters(filters)
-    # Debug.scratch1("#{filters.toString()} ---- #{expanded.toString()}")
     @estore.search expanded
+
+  allComponentsByCid: -> @estore.allComponentsByCid()
 
 module.exports = EntityStoreFinder

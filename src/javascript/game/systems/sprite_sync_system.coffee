@@ -13,6 +13,8 @@ removeSprite = (sprite) ->
   container.removeChild sprite
 
 module.exports =
+  systemType: 'output'
+
   update: (entityFinder, input, ui) ->
 
     vps = entityFinder.search(['visual','position'])

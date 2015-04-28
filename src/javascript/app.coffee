@@ -44,10 +44,8 @@ jquery ->
 
   harness.start()
 
-
-  gameView = harness.view
   $('#fullscreen').on "click", ->
-    BigScreen.doTheBigThing gameView
+    BigScreen.doTheBigThing harness.view
 
 
 # for console debugging and messing around:

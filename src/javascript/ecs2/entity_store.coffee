@@ -51,6 +51,7 @@ class EntityStore
   search: (filters) ->
     Finder.search @componentsByCid.toList(), filters
 
+  allComponentsByCid: -> @componentsByCid
 
   #
   # PRIVATE
