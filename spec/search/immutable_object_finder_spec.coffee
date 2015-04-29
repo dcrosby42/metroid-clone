@@ -10,7 +10,7 @@ assert = chai.assert
 imm = Immutable.fromJS
 
 
-zeldaObjects = Immutable.fromJS [
+zeldaObjects = imm [
   { eid: 'e1', type: 'tag', value: 'hero' }
   { eid: 'e1', type: 'character', name: 'Link' }
   { eid: 'e1', type: 'bbox', shape: [1,2,3,4] }
@@ -126,3 +126,60 @@ describe 'ImmutableObjectFinder.search', ->
         { character: zeldaObjects.get(1) }
         { character: zeldaObjects.get(5) }
       ])
+
+  describe 'with pairs of joins', ->
+    c1 = imm { e: 1, id: 'c1', t: 'bullet' }
+    c2 = imm { e: 1, id: 'c2', t: 'box' }
+    c3 = imm { e: 1, id: 'c3', t: 'position' }
+
+    c4 = imm { e: 2, id: 'c4', t: 'enemy' }
+    c5 = imm { e: 2, id: 'c5', t: 'box' }
+
+    c6 = imm { e: 3, id: 'c6', t: 'enemy' }
+    c7 = imm { e: 3, id: 'c7', t: 'box' }
+
+    c8 = imm { e: 4, id: 'c8', t: 'bullet' }
+    c9 = imm { e: 4, id: 'c9', t: 'box' }
+    c10= imm { e: 4, id: 'c10', t: 'position' }
+
+    objects = imm [ c1,c2,c3,c4,c5,c6,c7,c8,c9,c10 ]
+
+    it 'confines joins to their respective sub-groups of objects', ->
+      #  bullet+box+position * enemy+x
+      f0_a = imm
+        match: { t: 'bullet' }
+        as: 'bullet0'
+
+      f0_b = imm
+        match: { t: 'box' }
+        join: 'bullet0.e'
+        as: 'box0'
+
+      f0_c = imm
+        match: { t: 'position' }
+        join: 'box0.e'
+        as: 'position0'
+
+
+      f1_a = imm
+        match: { t: 'enemy' }
+        as: 'enemy0'
+
+      f1_b = imm
+        match: { t: 'box' }
+        join: 'enemy0.e'
+        as: 'box1'
+
+
+      results = Finder.search objects, [f0_a,f0_b,f0_c, f1_a,f1_b]
+      
+      expectIs results, imm [
+        { bullet0: c1, box0: c2, position0: c3, enemy0: c4, box1: c5 }
+        { bullet0: c1, box0: c2, position0: c3, enemy0: c6, box1: c7 }
+
+        { bullet0: c8, box0: c9, position0: c10, enemy0: c4, box1: c5 }
+        { bullet0: c8, box0: c9, position0: c10, enemy0: c6, box1: c7 }
+      ]
+      
+
+
