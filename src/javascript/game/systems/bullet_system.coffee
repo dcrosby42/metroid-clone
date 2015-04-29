@@ -1,60 +1,44 @@
-Common = require '../entity/components'
-_ = require 'lodash'
+Common = require '../entity/components2'
 AnchoredBox = require '../../utils/anchored_box'
 
-forComponentsWith = (estore, ctypes, fn) ->
-  typeL = ctypes.shift()
-  _.forEach estore.getComponentsOfType(typeL), (comp) ->
-    compsR = _.map ctypes, (t) -> estore.getComponent(comp.eid, t)
-    if _.every(compsR, (x) -> x?)
-      fn(comp, compsR...)
+module.exports =
+  config:
+    filters: [
+      { match: { type: 'bullet' }, as: 'bullet' }
+      { match: { type: 'hit_box' }, as: 'bullet_hit_box', join: "bullet.eid" }
+      { match: { type: 'position' }, as: 'bullet_position', join: "bullet.eid" }
+      #
+      { match: { type: 'enemy' }, as: 'enemy' }
+      # { match: { type: 'hit_box' }, as: 'enemy_hit_box', join: "enemy.eid" }
+    ]
 
+  update: (comps,input,u) ->
+    bullet = comps.get("bullet")
 
-  # if ctypes.length > 1
-  #   ctype = ctypes.pop()
-  #   forComponentsWith(estore, ctypes, newFn)
-  # else if ctypes.length > 0
-  #   _.forEach estore.getComponentsOfType(ctypes[0]), (comp) ->
-  #     fn(comp)
+    hit = bulletHitBox.get('touchingSomething')
 
-
-
-  # compsL = estore.getComponentsOfType(typeL)
-  # _.forEach compsL, (compL) ->
-  #   if compR = estore.getComponent(compL.eid, typeR)
-  #     fn(compL, compR)
-
-class BulletSystem
-
-  run: (estore, dt, input) ->
     shotEnemy = false
-    forComponentsWith estore, ['bullet', 'hit_box'], (bullet, bulletHitBox) ->
-      bulletBox = new AnchoredBox(bulletHitBox)
-      forComponentsWith estore, ['enemy', 'hit_box'], (enemy, enemyHitBox) ->
-        enemyBox = new AnchoredBox(enemyHitBox)
-        if bulletBox.overlaps(enemyBox)
-          shotEnemy = true
-          console.log "SHOT! bullet=#{bullet.eid} enemy=#{enemy.eid}"
-          # estore.pushEvent enemy.eid,
-          #   eventType: 'collision'
-          #   data:
-          #     eid: bullet.eid
+    bulletHitBox = comps.get('bullet_hit_box')
+    bulletBox = new AnchoredBox(bulletHitBox.toJS())
+    enemyBox = new AnchoredBox(comps.get('enemy_hit_box').toJS())
 
-      hitBox = estore.getComponent bullet.eid, 'hit_box'
-      if shotEnemy or hitBox.touchingSomething
-        position = estore.getComponent bullet.eid, 'position'
-        estore.createEntity [
-          new Common.Visual
-            layer: 'creatures'
-            spriteName: 'bullet'
-            state: 'splode'
-          new Common.Position
-            x: position.x
-            y: position.y
-          new Common.DeathTimer
-            time: 3 * (1000/60) # 3 frames is 50 ms
-        ]
+    if bulletBox.overlaps(enemyBox)
+      shotEnemy = true
+      console.log "SHOT! bullet=#{comps.get('bullet').get('eid')} enemy=#{comps.get('enemy').get('eid')}"
 
-        estore.destroyEntity bullet.eid
-module.exports = BulletSystem
-
+    if hit or shotEnemy
+      position = comps.get('bullet_position')
+      console.log "HIT @ #{position.toString()}"
+      u.newEntity [
+        Common.Visual.merge
+          layer: 'creatures'
+          spriteName: 'bullet'
+          state: 'splode'
+        Common.Position.merge
+          x: position.get('x')
+          y: position.get('y')
+        Common.DeathTimer.merge
+          time: 3 * (1000/60) # 3 frames is 50 ms
+      ]
+      
+      u.destroyEntity bullet.get('eid')

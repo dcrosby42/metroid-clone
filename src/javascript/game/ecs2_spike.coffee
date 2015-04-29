@@ -204,7 +204,7 @@ class Ecs2Spike
 
   setupSystemRunner: ->
     [
-      # 'death_timer_system'
+      'death_timer_system'
       'visual_timer_system'
       # 'sound_system'
       'samus_motion'
@@ -212,7 +212,7 @@ class Ecs2Spike
       # ['manual_mover_system'
       #   componentType: 'hit_box' ]
       'samus_controller_action'
-      # 'samus_weapon'
+      'samus_weapon'
       'samus_action_velocity'
       # 'samus_action_sounds'
       # 'skree_action'
@@ -220,7 +220,7 @@ class Ecs2Spike
       'gravity_system'
       'map_physics_system',
 
-      # 'bullet_system'
+      'bullet_system'
 
       'samus_animation'
       # 'skree_animation'
@@ -236,6 +236,7 @@ class Ecs2Spike
       SamusSystems.samus_action_velocity
       CommonSystems.gravity_system
       CommonSystems.map_physics_system
+      CommonSystems.bullet_system
       SamusSystems.samus_animation
     ]
 
