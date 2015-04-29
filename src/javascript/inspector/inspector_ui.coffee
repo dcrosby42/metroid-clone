@@ -108,7 +108,7 @@ PropRow = React.createClass
 PropValueCell = React.createClass
   displayName: 'PropValueCell'
   render: ->
-    val = if @props.value then @props.value.toString() else "?"
+    val = if @props.value? then @props.value.toString() else "?"
     React.createElement 'td', {className:'prop-value'}, val
     
 module.exports = InspectorUI
