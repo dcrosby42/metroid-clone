@@ -236,6 +236,7 @@ class Ecs2Spike
       SamusSystems.samus_action_velocity
       CommonSystems.gravity_system
       CommonSystems.map_physics_system
+      CommonSystems.bullet_enemy_system
       CommonSystems.bullet_system
       SamusSystems.samus_animation
     ]

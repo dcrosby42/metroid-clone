@@ -1,4 +1,5 @@
 module.exports =
+  bullet_enemy_system: require './bullet_enemy_system'
   bullet_system: require './bullet_system'
   controller_system: require './controller_system'
   death_timer_system: require './death_timer_system'
