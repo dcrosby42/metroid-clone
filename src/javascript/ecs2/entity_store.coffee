@@ -18,9 +18,17 @@ class EntityStore
         @createComponent eid, props
     eid
 
-  getEntityComponents: (eid) ->
+  getEntityComponents: (eid,type) ->
     # Shortcut: instead of searching, jump straight to the eid index:
-    (@indices.getIn(['eid',eid]) || Immutable.Set()).map (cid) => @componentsByCid.get(cid)
+    comps = (@indices.getIn(['eid',eid]) || Immutable.Set()).map (cid) => @componentsByCid.get(cid)
+    if type?
+      comps.filter (comp) -> comp.get('type') == type
+    else
+      comps
+
+  getEntityComponent: (eid,type) ->
+    @getEntityComponents(eid,type).first()
+    
 
   createComponent: (eid,props) ->
     cid = @_nextComponentId()

@@ -105,6 +105,48 @@ describe 'The new EntityStore', ->
       expect(Immutable.Set.isSet(comps)).to.be.true
       expect(comps.size).to.eq 0
 
+    it "optionally retrieves an entity's components by type", ->
+      estore = newEntityStore()
+
+      eid = estore.createEntity [
+        { type: 'player', name: 'Pit' }
+        { type: 'item', name: 'flaming-arrow' }
+        { type: 'item', name: 'sacred-bow' }
+      ]
+      eid2 = estore.createEntity [
+        { type: 'player', name: 'Samus' }
+        { type: 'item', name: 'wave-beam' }
+        { type: 'item', name: 'varia-suit' }
+      ]
+
+      names = (comps) -> comps.map (c) -> c.get('name')
+
+      pitPlayers = estore.getEntityComponents(eid, 'player')
+      pitItems = estore.getEntityComponents(eid, 'item')
+
+      expectIs names(pitPlayers), Set.of('Pit')
+      expectIs names(pitItems), Set.of('flaming-arrow', 'sacred-bow')
+
+      samusItems = estore.getEntityComponents(eid2, 'item')
+      expectIs names(samusItems), Set.of('wave-beam', 'varia-suit')
+
+    it "has convenience return-the-first method getEntityComponent", ->
+      estore = newEntityStore()
+
+      eid = estore.createEntity [
+        { type: 'player', name: 'Pit' }
+        { type: 'item', name: 'flaming-arrow' }
+        { type: 'item', name: 'sacred-bow' }
+      ]
+
+      player = estore.getEntityComponent(eid, 'player')
+      expectIs player, Map({eid:eid, cid:"c1", type: "player", name: "Pit"})
+
+      # This would be an illadvised approach; the idea would rather to stick to
+      # component types you never really plan to have n of....
+      flamingArrow = estore.getEntityComponent(eid, 'item')
+      expectIs flamingArrow, Map({eid:eid, cid:"c2", type: "item", name: "flaming-arrow"})
+
   describe "createComponent", ->
     it "converts properties into a new component and attaches it to the given entity", ->
       estore = newEntityStore()
@@ -131,7 +173,6 @@ describe 'The new EntityStore', ->
       expect(armor.get('type')).to.eq 'armor'
       expect(armor.get('name')).to.eq 'plate'
       expect(armor.get('defense')).to.eq 10
-
 
   describe "getComponent", ->
     it "retrieves a component by its cid", ->
