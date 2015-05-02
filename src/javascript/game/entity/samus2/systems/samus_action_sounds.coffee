@@ -22,7 +22,7 @@ module.exports =
       if !sound? or sound.get('soundId') != 'step2'
         s = Common.Sound.merge
           soundId: 'step2'
-          volume: 0.06
+          volume: 0.04
           playPosition: 0
           timeLimit: 20
           loop: true

@@ -17,18 +17,15 @@ updateContainerPosition = (container,position,viewportConfig) ->
   viewportX = -container.x
   viewportY = -container.y
 
-  viewportX = clamp keepWithin(viewportX, position.x, viewportConfig.trackBufLeft, viewportConfig.trackBufRight), viewportConfig.minX, viewportConfig.maxX
-  viewportY = clamp keepWithin(viewportY, position.y, viewportConfig.trackBufTop, viewportConfig.trackBufBottom), viewportConfig.minY, viewportConfig.maxY
+  viewportX = clamp keepWithin(viewportX, position.get('x'), viewportConfig.trackBufLeft, viewportConfig.trackBufRight), viewportConfig.minX, viewportConfig.maxX
+  viewportY = clamp keepWithin(viewportY, position.get('y'), viewportConfig.trackBufTop, viewportConfig.trackBufBottom), viewportConfig.minY, viewportConfig.maxY
   
   container.x = -viewportX
   container.y = -viewportY
   null
 
 module.exports =
-  # type: 'iterating-game-ui' # TODO 
-  #
-  # config:
-  #   filters: [ 'samus', 'position' ] # TODO
+  systemType: 'output'
 
   update: (entityFinder, input, ui) ->
     entityFinder.search([ 'samus', 'position' ]).forEach (comps) ->

@@ -79,7 +79,6 @@ class Ecs2Spike
       componentInspector: @componentInspector
     }
 
-
     @estore = new EntityStore()
     @entityFinder = new EntityStoreFinder(@estore)
     @entityUpdater = new EntityStoreUpdater(@estore)
@@ -207,7 +206,7 @@ class Ecs2Spike
     [
       'death_timer_system'
       'visual_timer_system'
-      # 'sound_system'
+      'sound_system'
       'samus_motion'
       'controller_system'
       # ['manual_mover_system'
@@ -215,7 +214,7 @@ class Ecs2Spike
       'samus_controller_action'
       'samus_weapon'
       'samus_action_velocity'
-      # 'samus_action_sounds'
+      'samus_action_sounds'
       # 'skree_action'
       # 'skree_velocity'
       'gravity_system'
@@ -253,7 +252,7 @@ class Ecs2Spike
       CommonSystems.debug_system
       CommonSystems.sound_sync_system,
       # CommonSystems.hit_box_visual_sync_system,
-      # SamusSystems.samus_viewport_tracker,
+      SamusSystems.samus_viewport_tracker,
     ]
 
       # ['sprite_sync_system',
