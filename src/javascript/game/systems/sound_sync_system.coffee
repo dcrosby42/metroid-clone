@@ -2,37 +2,35 @@ ArrayToCacheBinding = require '../../pixi_ext/array_to_cache_binding'
 SoundController = require '../../pixi_ext/sound_controller'
 
 
-class SoundSyncSystem
-  constructor: ({@soundCache}) ->
+module.exports =
+  systemType: 'output'
 
-  run: (estore, dt, input) ->
-    sounds = estore.getComponentsOfType('sound')
+  update: (entityFinder, input, ui) ->
+    sounds = entityFinder.search(['sound']).map (x) -> x.get('sound')
 
     ArrayToCacheBinding.update
-      source: sounds
-      cache: @soundCache
-      # identKey: 'eid'
-      identFn: (comp) -> "#{comp.eid}-#{comp.soundId}"
+      source: sounds.toArray()
+      cache: ui.soundCache
+      identFn: (s) -> s.get('cid')
 
-      addFn: (soundComp) =>
-        instance = SoundController.playSound soundComp.soundId
-        instance.volume = soundComp.volume if soundComp.volume?
-        if soundComp.loop
+      addFn: (sound) =>
+        soundId = sound.get('soundId')
+        volume = sound.get('volume')
+
+        instance = SoundController.playSound(soundId)
+        instance.volume = volume if volume?
+        if sound.get('loop')
           instance.loop = -1
-        if soundComp.resound
+
+        if sound.get('resound')
           instance._resound = true
         else
           instance._resound = false
+
         instance
 
       removeFn: (instance) =>
-        if instance?
-          instance.stop() unless instance._resound
-        else
-          console.log "SoundSyncSystem: ArrayToCacheBinding removeFn called with", instance
+        instance.stop() unless instance._resound
         
       syncFn: (soundComp,instance) =>
-        # if soundComp.restart? and soundComp.restart
         # TODO: sound component could indicate a change in play state that should affect the instance
-
-module.exports = SoundSyncSystem

@@ -75,6 +75,7 @@ class Ecs2Spike
       layers: layers
       map: map
       spriteCache: {}
+      soundCache: {}
       componentInspector: @componentInspector
     }
 
@@ -229,11 +230,13 @@ class Ecs2Spike
     systems = SystemExpander.expandSystems [
       CommonSystems.death_timer_system
       CommonSystems.visual_timer_system
+      CommonSystems.sound_system
       SamusSystems.samus_motion
       CommonSystems.controller_system
       SamusSystems.samus_controller_action
       SamusSystems.samus_weapon
       SamusSystems.samus_action_velocity
+      SamusSystems.samus_action_sounds
       CommonSystems.gravity_system
       CommonSystems.map_physics_system
       CommonSystems.bullet_enemy_system
@@ -248,8 +251,7 @@ class Ecs2Spike
     systems = SystemExpander.expandSystems [
       CommonSystems.sprite_sync_system
       CommonSystems.debug_system
-      
-      # CommonSystems.sound_sync_system,
+      CommonSystems.sound_sync_system,
       # CommonSystems.hit_box_visual_sync_system,
       # SamusSystems.samus_viewport_tracker,
     ]

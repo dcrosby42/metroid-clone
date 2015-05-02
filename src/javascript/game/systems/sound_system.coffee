@@ -1,16 +1,14 @@
-class SoundSystem
-  run: (estore, dt, input) ->
-    sounds = estore.getComponentsOfType('sound')
-    for sound in sounds
-      sound.playPosition += dt
-      if sound.playPosition >= sound.timeLimit
-        if sound.loop
-          sound.playPosition = 0
-          # sound.restart = true
-        else
-          estore.removeComponent sound.eid, sound
-      # else
-        # sound.restart = false
+module.exports =
+  config:
+    filters: [ 'sound' ]
 
-module.exports = SoundSystem
-
+  update: (comps, input, u) ->
+    sound = comps.get('sound')
+    newPlayPosition = sound.get('playPosition') + input.get('dt')
+    if newPlayPosition > sound.get('timeLimit')
+      if sound.get('loop')
+        u.update sound.set('playPosition', 0)
+      else
+        u.delete sound
+    else
+      u.update sound.set('playPosition', newPlayPosition)
