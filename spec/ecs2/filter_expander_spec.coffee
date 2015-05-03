@@ -7,6 +7,7 @@ assert = chai.assert
 expectIs = require('../helpers/expect_helpers').expectIs
 
 FilterExpander = require '../../src/javascript/ecs2/filter_expander'
+expandFilterGroups = FilterExpander.expandFilterGroups
 expandFilters = FilterExpander.expandFilters
 expandFilter  = FilterExpander.expandFilter
 expandLabel   = FilterExpander.expandLabel
@@ -63,6 +64,75 @@ describe 'expandFilters', ->
         join: 'character.eid'
       }
     ]
+
+  it 'can optionally prefix the labels of the following filters according to the label of the first filter', ->
+    q = [ { match: {type: 'character'}, as: 'flint' },
+          { match: {type: 'weapon'},    as: 'gun' },
+          'hitbox' ]
+
+    expectIs expandFilters(q, prefixGroup: true), imm [
+      {
+        match: { type: 'character' }
+        as: 'flint'
+      }
+      {
+        match: { type: 'weapon' }
+        as: 'flint-gun'
+        join: 'flint.eid'
+      }
+      {
+        match: { type: 'hitbox' }
+        as: 'flint-hitbox'
+        join: 'flint.eid'
+      }
+    ]
+
+describe 'expandFilterGroups', ->
+  it 'behaves just like expandFilters() if the argument is not a list of groups', ->
+    q = [ 'character', 'weapon' ]
+    expectIs expandFilterGroups(q), imm [
+      {
+        match: { type: 'character' }
+        as: 'character'
+      }
+      {
+        match: { type: 'weapon' }
+        as: 'weapon'
+        join: 'character.eid'
+      }
+    ]
+
+  it "expands and joins each group to itself, applying label prefixes according to each group's leader", ->
+    q = [ ['link', 'position'], ['enemy','name','position'] ]
+    expectIs expandFilterGroups(q), imm [
+      {
+        match: { type: 'link' }
+        as: 'link'
+      }
+      {
+        match: { type: 'position' }
+        as: 'link-position'
+        join: 'link.eid'
+      }
+
+      {
+        match: { type: 'enemy' }
+        as: 'enemy'
+      }
+      {
+        match: { type: 'name' }
+        as: 'enemy-name'
+        join: 'enemy.eid'
+      }
+      {
+        match: { type: 'position' }
+        as: 'enemy-position'
+        join: 'enemy.eid'
+      }
+    ]
+
+
+
 
 describe 'expandLabel', ->
   it 'does nothing if "as" is set already', ->

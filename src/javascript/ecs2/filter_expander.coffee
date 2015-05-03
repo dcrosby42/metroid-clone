@@ -1,9 +1,23 @@
 Immutable = require 'immutable'
+Map = Immutable.Map
+List = Immutable.List
 
 isString = (x) -> (typeof x) == 'string'
 
-expandFilters = (fs) ->
-  joinAll(Immutable.fromJS(fs).map(expandFilter), 'eid')
+expandFilterGroups = (filterGroups) ->
+  filterGroups = Immutable.fromJS(filterGroups)
+  if List.isList(filterGroups.first())
+    expandedGroups = filterGroups.flatMap (gr) -> expandFilters(gr, prefixGroup: true)
+  else
+    expandFilters filterGroups
+
+expandFilters = (fs,opts=Map()) ->
+  filters = Immutable.fromJS(fs)
+  opts = Immutable.fromJS(opts)
+  filters = filters.map(expandFilter)
+  if opts.get('prefixGroup')
+    filters = applyGroupPrefix(filters)
+  joinAll(filters, 'eid')
 
 expandFilter = (f) ->
   filter = if isString(f)
@@ -19,7 +33,7 @@ stringToFilter = (str) ->
 expandMatch = (filter) ->
   m = filter.get('match')
   if isString(m)
-    filter.set 'match', Immutable.Map(type: m)
+    filter.set 'match', Map(type: m)
   else
     filter
 
@@ -30,12 +44,23 @@ expandLabel = (filter) ->
   else
     filter.set 'as', filter.get('match').first()
 
+applyGroupPrefix = (filters) ->
+  return filters if filters.size <= 1
+
+  first = filters.first()
+
+  groupLabel = first.get('as')
+  rest = filters.shift().map (f) ->
+    f.update('as', (as) -> "#{groupLabel}-#{as}")
+
+  rest.unshift(first)
+
 joinAll = (filters,key) ->
   return filters if filters.size <= 1
 
   first = filters.first()
+
   join = "#{first.get('as')}.#{key}"
-  
   rest = filters.shift().map (f) ->
     return f if f.has('join')
     f.set('join', join)
@@ -43,6 +68,7 @@ joinAll = (filters,key) ->
   rest.unshift(first)
 
 module.exports =
+  expandFilterGroups: expandFilterGroups
   expandFilters: expandFilters
   expandFilter: expandFilter
   expandLabel: expandLabel
