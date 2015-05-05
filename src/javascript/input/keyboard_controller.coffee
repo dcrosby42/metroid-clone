@@ -1,4 +1,4 @@
-MouseTrap =require '../vendor/mousetrap_wrapper'
+MousetrapWrapper =require '../vendor/mousetrap_wrapper'
 
 class KeyboardWrapper
   constructor: (@keys) ->
@@ -12,8 +12,8 @@ class KeyboardWrapper
     @eventCount > 0
 
   _bind: (key) ->
-    Mousetrap.bind key, (=> @_keyDown(key)), 'keydown'
-    Mousetrap.bind key, (=> @_keyUp(key)), 'keyup'
+    MousetrapWrapper.bind key, (=> @_keyDown(key)), 'keydown'
+    MousetrapWrapper.bind key, (=> @_keyUp(key)), 'keyup'
   
   _keyDown: (key) ->
     @downs[key]['queued'].push(true)

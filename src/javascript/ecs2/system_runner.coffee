@@ -1,18 +1,20 @@
 
-searchAndUpdate = (system, entityFinder, input, entityUpdater) ->
+searchAndUpdate = (system, estore, input, entityUpdater) ->
   filters = system.getIn ['config','filters']
   update = system.get 'update'
-  entityFinder.search(filters).forEach (result) ->
+  estore.search(filters).forEach (result) ->
     update(result,input,entityUpdater)
 
 class SystemRunner
-  constructor: (@entityFinder, @entityUpdater, @systems) ->
+  constructor: (@estore, @entityUpdater, @systems) ->
+    # @systems.forEach (system) ->
+    #   console.log "System: #{system.getIn(['config','filters']).toString()}"
 
   run: (input) ->
     @systems.forEach (system) =>
       switch system.get('type')
         when 'iterating-updating'
-          searchAndUpdate system, @entityFinder, input, @entityUpdater
+          searchAndUpdate system, @estore, input, @entityUpdater
           
         else
           console.log "!! CAN'T RUN SYSTEM OF TYPE: #{system.get('type')} - #{system.toString()}"

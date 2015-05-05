@@ -1,31 +1,30 @@
 Enemy = require('./components')
-Common = require('../components')
+Common = require('../components2')
 
 F = {}
 
-# motion
-# action
-# velocity
-# animation
-
 F.basicSkree = (args) ->
   [
-    new Common.Enemy()
-    new Enemy.Skree
-      action: 'sleep'
-    new Common.Position(x: args.x, y: args.y)
-    new Common.Velocity(x: 0, y: 0)
-    new Common.HitBox
-      width: 16
-      height: 24
-      anchorX: 0.5 # halfway across
-      anchorY: 0   # all the way at the top
-    new Common.Visual
+    Common.Enemy
+    Enemy.Skree
+    Common.Visual.merge
       layer: 'creatures'
       spriteName: 'basic_skree'
       state: 'wait'
       time: 0
-    new Common.HitBoxVisual(color: 0x55FF55)
+    Common.Position.merge
+      x: args.x
+      y: args.y
+    Common.Velocity.merge
+      x: 0
+      y: 0
+    Common.HitBox.merge
+      width: 16
+      height: 24
+      anchorX: 0.5 # halfway across
+      anchorY: 0   # all the way at the top
+    Common.HitBoxVisual.merge
+      color: 0x55FF55
   ]
 
 

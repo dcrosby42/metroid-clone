@@ -3,6 +3,9 @@ jquery    = require 'jquery'
 PixiHarness = require './pixi_ext/pixi_harness'
 Immutable = require 'immutable'
 
+React = require 'react'
+ComponentSearchBox = require './inspector/component_search_box'
+
 # OneRoom = require './game/one_room'
 # MapSpike = require './game/map_spike'
 # BoxDrawSpike = require './game/box_draw_spike'
@@ -20,21 +23,21 @@ Inspector = require './inspector'
 inspectorConfig = Immutable.fromJS
   componentLayout:
     samus:      { open: true }
+    skree:      { open: true }
     controller: { open: true }
     visual:     { open: true }
     velocity:   { open: false }
     position:   { open: false }
 
 jquery ->
-  gameHolder = jquery('#game-holder')[0]
   inspectorHolder = jquery('#inspector-holder')[0]
-
   componentInspector = Inspector.createComponentInspector
     mountNode: inspectorHolder
     inspectorConfig: inspectorConfig
 
   del = new DelegateClass(componentInspector: componentInspector)
 
+  gameHolder = jquery('#game-holder')[0]
   harness = new PixiHarness
     domElement: gameHolder
     delegate: del

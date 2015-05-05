@@ -5,13 +5,17 @@ List = Immutable.List
 Set = Immutable.Set
 imm = Immutable.fromJS
 
+ComponentSearchBox = require './component_search_box'
+
 InspectorUI = React.createClass
   displayName: 'InspectorUI'
   render: ->
-    React.createElement 'div', {className: 'component-inspector'},
-      @props.entities.map((components,eid) =>
-        React.createElement Entity, {eid: eid, components: components, key: eid, inspectorConfig: @props.inspectorConfig}
-      ).toList()
+    React.DOM.div {className: 'component-inspector'},
+      React.DOM.div {className: 'entities'},
+        @props.entities.map((components,eid) =>
+          React.createElement Entity, {eid: eid, components: components, key: eid, inspectorConfig: @props.inspectorConfig}
+        ).toList()
+      React.createElement ComponentSearchBox, {key: 'component-search-box', entityStore: @props.entityStore}
 
 Entity = React.createClass
   displayName: 'Entity'
@@ -27,11 +31,11 @@ Entity = React.createClass
 
   render: ->
     folder = if @state.foldOpen
-        React.createElement 'span', {className: 'entity-folder open'}, "[ - ] "
+        React.DOM.span {className: 'entity-folder open'}, "[ - ] "
       else
-        React.createElement 'span', {className: 'entity-folder closed'}, "[ + ] "
+        React.DOM.span {className: 'entity-folder closed'}, "[ + ] "
 
-    header = React.createElement 'div', {className: "entity-header", onClick: @headerClicked},
+    header = React.DOM.div {className: "entity-header", onClick: @headerClicked},
       folder
       "Entity: "
       @props.eid
@@ -43,7 +47,7 @@ Entity = React.createClass
     else
       List()
 
-    React.createElement 'div', {className: 'entity'},
+    React.DOM.div {className: 'entity'},
       header,
       componentViews
 
@@ -68,16 +72,16 @@ Component = React.createClass
     comp = @props.component
 
     folder = if @state.foldOpen
-        React.createElement 'span', {className: 'component-folder open'}, "[ - ] "
+        React.DOM.span {className: 'component-folder open'}, "[ - ] "
       else
-        React.createElement 'span', {className: 'component-folder closed'}, "[ + ] "
+        React.DOM.span {className: 'component-folder closed'}, "[ + ] "
 
-    header = React.createElement 'div', {className: "component-header", onClick: @headerClicked},
+    header = React.DOM.div {className: "component-header", onClick: @headerClicked},
       folder
-      React.createElement 'span', {className: 'component-type'},
+      React.DOM.span {className: 'component-type'},
         comp.get('type')
       " "
-      React.createElement 'span', {className: 'component-cid'},
+      React.DOM.span {className: 'component-cid'},
         comp.get('cid')
 
     if @state.foldOpen
@@ -86,30 +90,30 @@ Component = React.createClass
         React.createElement PropRow, {key: key, name: key, value: value}
       ).toList()
 
-      props = React.createElement 'table', {className: 'component-props'},
-        React.createElement 'tbody', null,
+      props = React.DOM.table {className: 'component-props'},
+        React.DOM.tbody null,
         rows
 
-      React.createElement 'div', {className: 'component'},
+      React.DOM.div {className: 'component'},
         header,
         props
 
     else
-      React.createElement 'div', {className: 'component'},
+      React.DOM.div {className: 'component'},
         header
 
 PropRow = React.createClass
   displayName: 'PropRow'
   render: ->
-    React.createElement 'tr', null,
-      React.createElement 'td', {className:'prop-name'}, @props.name
+    React.DOM.tr null,
+      React.DOM.td {className:'prop-name'}, @props.name
       React.createElement PropValueCell, {value: @props.value}
 
 PropValueCell = React.createClass
   displayName: 'PropValueCell'
   render: ->
     val = if @props.value? then @props.value.toString() else "?"
-    React.createElement 'td', {className:'prop-value'}, val
+    React.DOM.td {className:'prop-value'}, val
     
 module.exports = InspectorUI
 

@@ -7,7 +7,6 @@ assert = chai.assert
 expectIs = require('../helpers/expect_helpers').expectIs
 
 FilterExpander = require '../../src/javascript/ecs2/filter_expander'
-expandFilters = FilterExpander.expandFilters
 # expandFilter  = FilterExpander.expandFilter
 # expandLabel   = FilterExpander.expandLabel
 # joinAll       = FilterExpander.joinAll
@@ -25,7 +24,7 @@ describe 'expandSystem', ->
       type: 'a'
     s1 = expandSystem(s0)
 
-    expectedFilters = expandFilters(filters)
+    expectedFilters = FilterExpander.expandFilterGroups(filters)
     expectedSystem = s0.setIn(['config','filters'],expectedFilters)
     expectIs s1, expectedSystem
 

@@ -2,7 +2,7 @@ PIXI = require 'pixi.js'
 _ = require 'lodash'
 Immutable = require 'immutable'
 
-Mousetrap = require '../vendor/mousetrap_wrapper'
+# Mousetrap = require '../vendor/mousetrap_wrapper'
 KeyboardController = require '../input/keyboard_controller'
 GamepadController = require('../input/gamepad_controller')
 
@@ -85,10 +85,8 @@ class Ecs2Spike
 
     @samusId = @estore.createEntity Samus.factory.createComponents('samus')
 
-    # TODO
-    # for x in [150, 200, 250, 300, 350]
-    #   @estore.createEntity Enemies.factory.createComponents('basicSkree', x:x, y: 32)
-
+    for x in [150, 200, 250, 300, 350]
+      @estore.createEntity Enemies.factory.createComponents('basicSkree', x:x, y: 32)
 
     @setupInput(map:map)
 
@@ -203,28 +201,6 @@ class Ecs2Spike
 
 
   setupSystemRunner: ->
-    [
-      'death_timer_system'
-      'visual_timer_system'
-      'sound_system'
-      'samus_motion'
-      'controller_system'
-      # ['manual_mover_system'
-      #   componentType: 'hit_box' ]
-      'samus_controller_action'
-      'samus_weapon'
-      'samus_action_velocity'
-      'samus_action_sounds'
-      # 'skree_action'
-      # 'skree_velocity'
-      'gravity_system'
-      'map_physics_system',
-
-      'bullet_system'
-
-      'samus_animation'
-      # 'skree_animation'
-    ]
 
     systems = SystemExpander.expandSystems [
       CommonSystems.death_timer_system
@@ -232,18 +208,23 @@ class Ecs2Spike
       CommonSystems.sound_system
       SamusSystems.samus_motion
       CommonSystems.controller_system
+      #CommonSystems.manual_mover_system
       SamusSystems.samus_controller_action
       SamusSystems.samus_weapon
       SamusSystems.samus_action_velocity
+      EnemiesSystems.skree_action
+      # EnemiesSystems.skree_velocity
       SamusSystems.samus_action_sounds
       CommonSystems.gravity_system
       CommonSystems.map_physics_system
       CommonSystems.bullet_enemy_system
       CommonSystems.bullet_system
       SamusSystems.samus_animation
+      EnemiesSystems.skree_animation
     ]
 
-    return new SystemRunner(@entityFinder, @entityUpdater, systems)
+    # return new SystemRunner(@entityFinder, @entityUpdater, systems)
+    return new SystemRunner(@estore, @entityUpdater, systems)
 
 
   setupOutputSystemRunner: ->
@@ -254,31 +235,6 @@ class Ecs2Spike
       # CommonSystems.hit_box_visual_sync_system,
       SamusSystems.samus_viewport_tracker,
     ]
-
-      # ['sprite_sync_system',
-      #   spriteConfigs: @spriteConfigs
-      #   spriteLookupTable: {}
-      #   layers: @layers ]
-      #
-      # ['samus_viewport_tracker',
-      #   container: @layers.base
-      #   tileGrid: @map.tileGrid
-      #   tileWidth: @map.tileWidth
-      #   tileHeight: @map.tileHeight
-      #   screenWidthInTiles: @map.screenWidthInTiles
-      #   screenHeightInTiles: @map.screenHeightInTiles
-      # ]
-
-      # ['hit_box_visual_sync_system'
-      #   cache: {}
-      #   layer: @layers.overlay
-      #   toggle: @boundingBoxToggle
-      # ]
-
-      # ['sound_sync_system',
-      #   soundCache: {}
-      # ]
-    
 
     new OutputSystemRunner
       entityFinder: @entityFinder
@@ -309,7 +265,10 @@ class Ecs2Spike
     unless @paused
       @systemRunner.run input
       @outputSystemRunner.run input
+
+      @ui.componentInspector.setEntityStore(@estore)
       @ui.componentInspector.sync()
+
     # Debug.scratch2 @estore.componentsByCid
 
   handleAdminControls: (ac) ->

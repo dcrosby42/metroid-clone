@@ -5,7 +5,7 @@ FilterExpander = require './filter_expander'
 expandFilters = (system) ->
   path = ['config','filters']
   if system.hasIn path
-    system.updateIn path, FilterExpander.expandFilters
+    system.updateIn path, FilterExpander.expandFilterGroups
   else
     system
 

@@ -1,15 +1,22 @@
-class SkreeAnimation
-  run: (estore, dt, input) ->
-    for skree in estore.getComponentsOfType('skree')
-      visual = estore.getComponent(skree.eid, 'visual')
-      oldState = visual.state
+module.exports =
+  config:
+    filters:
+      ['skree','visual']
 
-      if skree.action == 'sleep'
-        visual.state = 'wait'
-      else
-        visual.state = 'attack'
+  update: (comps,input,u) ->
+    skree = comps.get('skree')
+    visual = comps.get('visual')
 
-      if visual.state != oldState
-        visual.time = 0
+    state = if skree.get('action') == 'sleep'
+      'wait'
+    else
+      'attack'
 
-module.exports = SkreeAnimation
+    visual = if state != visual.get('state')
+      visual.set('time',0)
+    else
+      visual
+
+    u.update visual.set('state',state)
+
+

@@ -1,35 +1,36 @@
 Immutable = require 'immutable'
+imm = Immutable.fromJS
 
 C = {}
 
-C.Position = Immutable.fromJS
+C.Position = imm
   type: 'position'
   x: 0
   y: 0
 
-C.Velocity = Immutable.fromJS
+C.Velocity = imm
   type: 'velocity'
   x: 0
   y: 0
 
-C.Gravity = Immutable.fromJS
+C.Gravity = imm
   type: 'gravity'
   accel: 0
   max: 0
 
-C.Visual = Immutable.fromJS
+C.Visual = imm
   type: 'visual'
   time: 0
   spriteName: null
   layer: null
   state: null
 
-C.Controller = Immutable.fromJS
+C.Controller = imm
   type: 'controller'
   inputName: null
   states: {}
 
-C.HitBox = Immutable.fromJS
+C.HitBox = imm
   type: 'hit_box'
   x: 0
   y: 0
@@ -44,7 +45,7 @@ C.HitBox = Immutable.fromJS
     bottom: false
   touchingSomething: false
     
-C.Sound = Immutable.Map
+C.Sound = imm
   type: 'sound'
   soundId: null
   volume: 0.0
@@ -54,22 +55,22 @@ C.Sound = Immutable.Map
   restart: false
   resound: false
 
-C.DeathTimer = Immutable.Map
+C.DeathTimer = imm
   type: 'death_timer'
   time: 0
 
-C.Bullet = Immutable.Map
+C.Bullet = imm
   type: 'bullet'
 
-C.Enemy = Immutable.Map
+C.Enemy = imm
   type: 'enemy'
     
-C.HitBoxVisual = Immutable.Map
+C.HitBoxVisual = imm
   type: 'hit_box_visual'
   color: 0x0000ff
   anchorColor: 0xffffff
 
-C.Tags = Immutable.Map
+C.Tags = imm
   type: 'tags'
   names: Immutable.Set()
 

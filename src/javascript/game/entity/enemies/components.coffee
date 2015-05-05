@@ -1,11 +1,14 @@
+Immutable = require 'immutable'
+imm = Immutable.fromJS
 
-exports.Skree = class Skree
-  constructor: ({@action
-                 @direction
-                 @triggerRange
-                 @strafeSpeed}={}) ->
-    @ctype = 'skree'
-    @action ||= 'sleep' # attack | igniteFuse | explode
-    @direction ||= 'neither' # left | right | neither
-    @strafeSpeed ||= 50/1000
-    @triggerRange ||= 32
+C = {}
+module.exports = C
+
+C.Skree = imm
+  type: 'skree'
+  action: 'sleep'
+  direction: 'neither'
+  strafeSpeed: 50/1000
+  triggerRange: 32
+
+

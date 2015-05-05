@@ -1,2 +1,7 @@
 require 'mousetrap'
-module.exports = window.Mousetrap
+
+Mousetrap = window.Mousetrap
+
+module.exports =
+  bind: Mousetrap.bind
+  # bind: ->

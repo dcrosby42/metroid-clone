@@ -5,13 +5,14 @@ List = Immutable.List
 Set = Immutable.Set
 imm = Immutable.fromJS
 
-
 InspectorUI = require './inspector_ui'
 
 class ReactComponentInspector
   constructor: ({@mountNode,@inspectorConfig}) ->
     @_resetEntities()
     @_renderInspector()
+
+  setEntityStore: (@entityStore) ->
 
   update: (comp) ->
     eid = comp.get('eid')
@@ -20,17 +21,17 @@ class ReactComponentInspector
 
   sync: ->
     @_renderInspector()
-    
-  _renderInspector: ->
-    React.render(
-      React.createElement(InspectorUI, entities: @entities, inspectorConfig: @inspectorConfig)
-      @mountNode
-    )
-    @_resetEntities()
 
   _resetEntities: ->
     @entities = Map({})
     
+  _renderInspector: ->
+    React.render(
+      React.createElement(InspectorUI, entities: @entities, inspectorConfig: @inspectorConfig, entityStore: @entityStore)
+      @mountNode
+    )
+    @_resetEntities()
+
 module.exports = ReactComponentInspector
 
 # sampleData = Map

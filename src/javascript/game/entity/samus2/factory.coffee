@@ -4,8 +4,9 @@ S = require('./components')
 Common = require('../components2')
 
 
+F = {}
 
-samusComps = (args) ->
+F.samus = (args) ->
   [
     S.Samus
     Common.Position.merge
@@ -33,10 +34,7 @@ samusComps = (args) ->
       color: 0x0099ff
   ]
 
-componentFactories =
-  samus: samusComps
-
 module.exports =
   createComponents: (entityType, args) ->
-    componentFactories[entityType](args)
+    F[entityType](args)
 
