@@ -69,6 +69,7 @@ C.HitBoxVisual = imm
   type: 'hit_box_visual'
   color: 0x0000ff
   anchorColor: 0xffffff
+  layer: null
 
 C.Tags = imm
   type: 'tags'

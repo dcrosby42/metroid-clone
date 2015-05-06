@@ -70,13 +70,18 @@ class Ecs2Spike
 
     @ui = {
       stage: stage
-      spriteConfigs: @setupSpriteConfigs()
-      viewportConfig: @setupViewportConfig(map)
-      layers: layers
       map: map
-      spriteCache: {}
-      soundCache: {}
+      viewportConfig: @setupViewportConfig(map)
       componentInspector: @componentInspector
+
+      spriteConfigs: @setupSpriteConfigs()
+      spriteCache: {}
+      layers: layers
+
+      soundCache: {}
+
+      hitBoxVisualCache: {}
+      drawHitBoxes: false
     }
 
     @estore = new EntityStore()
@@ -175,7 +180,6 @@ class Ecs2Spike
     @useGamepad = false
     @p1Controller = @keyboardController
 
-    @boundingBoxToggle = {value:true}
     @adminMovers = [ 'mover1','mover2' ]
     @adminMoversIndex = 0
 
@@ -232,7 +236,7 @@ class Ecs2Spike
       CommonSystems.sprite_sync_system
       CommonSystems.debug_system
       CommonSystems.sound_sync_system,
-      # CommonSystems.hit_box_visual_sync_system,
+      CommonSystems.hit_box_visual_sync_system,
       SamusSystems.samus_viewport_tracker,
     ]
 
@@ -295,7 +299,7 @@ class Ecs2Spike
         @paused = true
 
     if ac.toggle_bounding_box
-      @boundingBoxToggle.value = !@boundingBoxToggle.value
+      @ui.drawHitBoxes = !@ui.drawHitBoxes
 
     if ac.cycle_admin_mover
       @adminMoversIndex += 1

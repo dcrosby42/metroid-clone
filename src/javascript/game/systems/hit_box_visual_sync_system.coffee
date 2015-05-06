@@ -2,25 +2,23 @@ ArrayToCacheBinding = require '../../pixi_ext/array_to_cache_binding'
 AnchoredBox = require '../../utils/anchored_box'
 PIXI = require 'pixi.js'
 
-createBoundingBoxGraphics = (estore,hitBoxVisual) ->
-  gfx
-  
+Defaults = {
+  boxColor: 0x0f0f0f
+  boxLineThickness: 1
+  anchorColor: 0x0f0fff
+  anchorLineThickness: 1
+}
 
-drawBoundingBox = (gfx,estore,hitBoxVisual) ->
-  hitBox = estore.getComponent(hitBoxVisual.eid, 'hit_box')
-  abox = new AnchoredBox(hitBox)
+drawBoundingBox = (gfx,hitBox,hitBoxVisual) ->
+  abox = new AnchoredBox(hitBox.toJS())
   abox.setXY 0,0
 
-  thickness = 1
-  color = hitBoxVisual.color || 0x0f0f0f
-  pinColor = hitBoxVisual.anchorColor || 0x0f0fff
-  
-
-  gfx.lineStyle thickness, color
-  # gfx.drawRect -32,-16,64,32
+  color = hitBoxVisual.get('color') || Defaults.boxColor
+  gfx.lineStyle Defaults.boxLineThickness, color
   gfx.drawRect abox.left, abox.top, abox.width, abox.height
 
-  gfx.lineStyle thickness, pinColor
+  anchorColor = hitBoxVisual.get('anchorColor') || Defaults.anchorColor
+  gfx.lineStyle Defaults.anchorLineThickness, anchorColor
   gfx.moveTo(0,4)
   gfx.lineTo(0,0)
   gfx.lineTo(4,0)
@@ -28,46 +26,46 @@ drawBoundingBox = (gfx,estore,hitBoxVisual) ->
 
 updateSidecar = (gfx, hitBoxVisual) ->
   gfx._sidecar ||= {}
-  gfx._sidecar.color = hitBoxVisual.color
-  gfx._sidecar.anchorColor = hitBoxVisual.anchorColor
+  gfx._sidecar.color = hitBoxVisual.get('color')
+  gfx._sidecar.anchorColor = hitBoxVisual.get('anchorColor')
   gfx
 
-removeFromParent = (gfx) ->
-  gfx.parent.removeChild gfx
 
-class HitBoxVisualSyncSystem
-  constructor: ({@cache,@layer,@toggle}) ->
-    @toggle ||= {value:true}
+module.exports =
+  systemType: 'output'
 
-  run: (estore,dt,input) ->
-    hitBoxVisuals = if @toggle.value
-      estore.getComponentsOfType('hit_box_visual')
+  update: (entityFinder, input, ui) -> 
+
+    res = if ui.drawHitBoxes
+      entityFinder.search(['hit_box','hit_box_visual']).toArray()
     else
       []
-
+      
     ArrayToCacheBinding.update
-      source: hitBoxVisuals
-      cache: @cache
-      identKey: 'eid'
-      addFn: (hitBoxVisual) =>
+      source: res
+      cache: ui.hitBoxVisualCache
+      identFn: (x) -> x.getIn ['hit_box','eid']
+      
+      addFn: (comps) =>
         gfx = new PIXI.Graphics()
-        drawBoundingBox(gfx, estore, hitBoxVisual)
-        @layer.addChild gfx
+        hitBox = comps.get('hit_box')
+        hitBoxVisual = comps.get('hit_box_visual')
+
+        drawBoundingBox(gfx, hitBox, hitBoxVisual)
+        
+        container = ui.layers[hitBoxVisual.get('layer')] || ui.layers.default
+        container.addChild gfx
         updateSidecar(gfx,hitBoxVisual)
         gfx
 
       removeFn: (gfx) =>
-        removeFromParent(gfx)
+        gfx.parent.removeChild gfx
 
-      syncFn: (hitBoxVisual,gfx) =>
-        hitBox = estore.getComponent(hitBoxVisual.eid, 'hit_box')
-        gfx.position.set hitBox.x, hitBox.y
+      syncFn: (comps,gfx) =>
+        hitBox = comps.get('hit_box')
+        hitBoxVisual = comps.get('hit_box_visual')
+        gfx.position.set hitBox.get('x'), hitBox.get('y')
 
-        if hitBoxVisual.color != gfx._sidecar.color or hitBoxVisual.anchorColor != gfx._sidecar.anchorColor
+        if hitBoxVisual.get('color') != gfx._sidecar.color or hitBoxVisual.get('anchorColor') != gfx._sidecar.anchorColor
           gfx.clear()
-          drawBoundingBox(gfx,estore,hitBoxVisual)
           updateSidecar(gfx,hitBoxVisual)
-
-
-module.exports = HitBoxVisualSyncSystem
-

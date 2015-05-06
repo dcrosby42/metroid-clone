@@ -46,6 +46,8 @@ module.exports =
             height: 4
             anchorX: 0.5
             anchorY: 0.5
+          Common.HitBoxVisual.merge
+            color: 0xffffff
 
           Common.Sound.merge
             soundId: 'short_beam'
