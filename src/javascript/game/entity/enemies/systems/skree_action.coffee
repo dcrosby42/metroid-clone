@@ -76,5 +76,6 @@ module.exports =
           u.update skree.set('countdown',t)
         
       when 'explode'
-        console.log "DEStrROY #{skreeEid}"
-        u.destroyEntity skreeEid
+        0
+        # console.log "Skree #{skreeEid} EXPLODES"
+        # u.destroyEntity skreeEid
