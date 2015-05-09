@@ -6,3 +6,4 @@ module.exports =
   samus_motion: require './samus_motion'
   samus_viewport_tracker: require './samus_viewport_tracker'
   samus_weapon: require './samus_weapon'
+  short_beam_controller_action: require './short_beam_controller_action'

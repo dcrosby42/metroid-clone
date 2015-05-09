@@ -48,22 +48,12 @@ module.exports =
         else if sideways
           'drift'
 
-    shortBeam = comps.get('short_beam')
-    weaponTrigger = if ctrl.get('action1')
-      if shortBeam.get('state') == 'released'
-        'pulled'
-      else
-        'held'
-    else
-      'released'
 
     u.update(samus
       .set('aim', aim)
       .set('direction', direction)
       .set('action', action))
 
-    u.update(shortBeam
-      .set('state', weaponTrigger))
 
      # TODO is this really necessary? Because this is kinda jank, updating the controller states like this...
     if samus.get('motion') == 'falling'
