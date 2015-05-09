@@ -149,8 +149,8 @@ class MainSpike
         "left": 'left'
         "up": 'up'
         "down": 'down'
-        "a": 'jump'
-        "s": 'shoot'
+        "a": 'action2'
+        "s": 'action1'
       mutually_exclusive_actions: [
         [ 'right', 'left' ]
         [ 'up', 'down' ]

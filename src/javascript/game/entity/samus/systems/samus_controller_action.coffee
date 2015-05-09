@@ -1,7 +1,7 @@
 
 module.exports =
   config:
-    filters: ['samus','controller']
+    filters: ['samus','short_beam','controller']
 
   update: (comps,input,u) ->
     samus = comps.get('samus')
@@ -21,13 +21,13 @@ module.exports =
 
     action = switch samus.get('motion')
       when 'standing'
-        if ctrl.get('jump')
+        if ctrl.get('action2')
           'jump'
         else if sideways
           'run'
 
       when 'running'
-        if ctrl.get('jump')
+        if ctrl.get('action2')
           'jump'
         else if sideways
           # If we don't re-iterate the run action, mid-run direction changes will not register
@@ -42,14 +42,15 @@ module.exports =
           'stop'
           
       when 'jumping'
-        if !ctrl.get('jump')
+        if !ctrl.get('action2')
           'fall'
 
         else if sideways
           'drift'
 
-    weaponTrigger = if ctrl.get('shoot')
-      if samus.get('weaponTrigger') == 'released'
+    shortBeam = comps.get('short_beam')
+    weaponTrigger = if ctrl.get('action1')
+      if shortBeam.get('state') == 'released'
         'pulled'
       else
         'held'
@@ -59,8 +60,10 @@ module.exports =
     u.update(samus
       .set('aim', aim)
       .set('direction', direction)
-      .set('action', action)
-      .set('weaponTrigger', weaponTrigger))
+      .set('action', action))
+
+    u.update(shortBeam
+      .set('state', weaponTrigger))
 
      # TODO is this really necessary? Because this is kinda jank, updating the controller states like this...
     if samus.get('motion') == 'falling'

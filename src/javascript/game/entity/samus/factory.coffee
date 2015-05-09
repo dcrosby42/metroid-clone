@@ -9,6 +9,7 @@ F = {}
 F.samus = (args) ->
   [
     S.Samus
+    S.ShortBeam
     Common.Position.merge
       x:50
       y:50
