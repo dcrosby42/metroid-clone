@@ -1,4 +1,4 @@
-Common = require '../entity/components2'
+Common = require '../entity/components'
 AnchoredBox = require '../../utils/anchored_box'
 
 module.exports =

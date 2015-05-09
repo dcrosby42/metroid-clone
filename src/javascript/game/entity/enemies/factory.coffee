@@ -1,5 +1,5 @@
 Enemy = require('./components')
-Common = require('../components2')
+Common = require('../components')
 
 F = {}
 

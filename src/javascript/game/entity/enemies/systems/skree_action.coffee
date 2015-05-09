@@ -1,4 +1,4 @@
-Common = require './../../components2'
+Common = require './../../components'
 
 module.exports =
   config:

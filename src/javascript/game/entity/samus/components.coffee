@@ -1,14 +1,13 @@
+Immutable = require 'immutable'
 
-exports.Samus = class Samus
-  constructor: ({@motion
-                 @action
-                 @direction
-                 @aim
-                 @runSpeed
-                 @jumpSpeed
-                 @floatSpeed}={}) ->
-    @ctype = 'samus'
-
-    @recoil = 'no'
-    @weaponTrigger = 'released'
-    # @weaponCooldown = null
+exports.Samus = Immutable.fromJS
+  type: 'samus'
+  action: null
+  motion: 'standing' # standing | running | jumping | falling
+  direction: 'right' # right | left
+  aim: 'straight' # up | straight
+  runSpeed: 88/1000 # 88 px/sec
+  jumpSpeed: 400/1000
+  floatSpeed: 60/1000
+  recoil: 'no'
+  weaponTrigger: 'released'

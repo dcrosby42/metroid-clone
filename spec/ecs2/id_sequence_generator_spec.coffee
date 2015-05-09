@@ -8,7 +8,7 @@ assert = chai.assert
 imm = Immutable.fromJS
 expectIs = require('../helpers/expect_helpers').expectIs
 
-IdSequenceGenerator = require '../../src/javascript/ecs2/id_sequence_generator'
+IdSequenceGenerator = require '../../src/javascript/ecs/id_sequence_generator'
 
 describe '.new', ->
   it "initializes the expected generator structure with default prefix and number", ->

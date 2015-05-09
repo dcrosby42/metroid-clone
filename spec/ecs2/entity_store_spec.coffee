@@ -14,7 +14,7 @@ chai = require('chai')
 expect = chai.expect
 assert = chai.assert
 
-EntityStore = require '../../src/javascript/ecs2/entity_store'
+EntityStore = require '../../src/javascript/ecs/entity_store'
 
 findEntityComponent = (estore, eid, key,val) ->
   found = estore.getEntityComponents(eid).filter((c) -> c.get(key) == val).first()

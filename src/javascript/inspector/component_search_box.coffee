@@ -3,7 +3,7 @@ Immutable = require 'immutable'
 List = Immutable.List
 Map = Immutable.Map
 
-FilterExpander = require '../ecs2/filter_expander'
+FilterExpander = require '../ecs/filter_expander'
 
 ComponentSearchBox = React.createClass
   displayName: 'ComponentSearchBox'

@@ -6,7 +6,7 @@ expect = chai.expect
 assert = chai.assert
 expectIs = require('../helpers/expect_helpers').expectIs
 
-FilterExpander = require '../../src/javascript/ecs2/filter_expander'
+FilterExpander = require '../../src/javascript/ecs/filter_expander'
 expandFilterGroups = FilterExpander.expandFilterGroups
 expandFilters = FilterExpander.expandFilters
 expandFilter  = FilterExpander.expandFilter

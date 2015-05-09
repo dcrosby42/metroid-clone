@@ -1,25 +1,20 @@
-class SamusMotion
-  run: (estore, dt, input) ->
-    # input: velocity[x,y] + hit_box[touching]
-    # output: samus[motion]
-    for samus in estore.getComponentsOfType('samus')
-      velocity = estore.getComponent(samus.eid, 'velocity')
-      hitBox = estore.getComponent(samus.eid, 'hit_box')
+module.exports =
+  config:
+    filters: ['samus', 'velocity', 'hit_box']
 
-      m = samus.motion
-      samus.motion = if velocity.y < 0
+  update: (comps, input, u) ->
+    velocity = comps.get('velocity')
+    hitBox = comps.get('hit_box')
+    u.update comps.get('samus').update 'motion', (m) ->
+      if velocity.get('y') < 0
         'jumping'
-      else if velocity.y > 0
+      else if velocity.get('y') > 0
         'falling'
-      else if hitBox.touching.bottom
-        if velocity.x == 0
+      else if hitBox.getIn(['touching','bottom'])
+        if velocity.get('x') == 0
           'standing'
         else
           'running'
-      else if hitBox.touching.top
+      else if hitBox.getIn(['touching','top'])
         'falling'
-
-      # if samus.motion != m
-        # console.log "Motion updated: #{samus.motion}"
-    
-module.exports = SamusMotion
+      

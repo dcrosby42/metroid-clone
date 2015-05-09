@@ -6,14 +6,8 @@ Immutable = require 'immutable'
 React = require 'react'
 ComponentSearchBox = require './inspector/component_search_box'
 
-# OneRoom = require './game/one_room'
-# MapSpike = require './game/map_spike'
-# BoxDrawSpike = require './game/box_draw_spike'
-# CollisionSpike = require './game/collision_spike'
-# SamusPreview = require './game/samus_preview'
-# SkreePreview = require './samus/skree_preview'
-Ecs2Spike = require './game/ecs2_spike'
-DelegateClass = Ecs2Spike
+MainSpike = require './game/main_spike'
+DelegateClass = MainSpike
 
 
 BigScreen = require './vendor/bigscreen_wrapper'

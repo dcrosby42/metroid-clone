@@ -6,31 +6,31 @@ Immutable = require 'immutable'
 KeyboardController = require '../input/keyboard_controller'
 GamepadController = require('../input/gamepad_controller')
 
-EntityStore = require '../ecs2/entity_store'
-EntityStoreFinder = require '../ecs2/entity_store_finder'
-EntityStoreUpdater = require '../ecs2/entity_store_updater'
+EntityStore = require '../ecs/entity_store'
+EntityStoreFinder = require '../ecs/entity_store_finder'
+EntityStoreUpdater = require '../ecs/entity_store_updater'
 
 
 # SystemRegistry = require '../ecs/system_registry'
-SystemRunner = require '../ecs2/system_runner'
-OutputSystemRunner = require '../ecs2/output_system_runner'
-SystemExpander = require '../ecs2/system_expander'
+SystemRunner = require '../ecs/system_runner'
+OutputSystemRunner = require '../ecs/output_system_runner'
+SystemExpander = require '../ecs/system_expander'
 
 CommonSystems = require './systems'
-SamusSystems =  require './entity/samus2/systems'
+SamusSystems =  require './entity/samus/systems'
 EnemiesSystems =  require './entity/enemies/systems'
 
 
 C = require './entity/components'
 
-Samus = require './entity/samus2'
+Samus = require './entity/samus'
 Enemies = require './entity/enemies'
 
 MapData = require './map/map_data'
 
 Debug = require '../utils/debug'
 
-class Ecs2Spike
+class MainSpike
   constructor: ({@componentInspector}) ->
 
   graphicsToPreload: ->
@@ -361,4 +361,4 @@ class Ecs2Spike
 
     
 
-module.exports = Ecs2Spike
+module.exports = MainSpike

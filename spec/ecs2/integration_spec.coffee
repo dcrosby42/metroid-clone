@@ -6,12 +6,12 @@ expect = chai.expect
 assert = chai.assert
 expectIs = require('../helpers/expect_helpers').expectIs
 
-EntityStore = require '../../src/javascript/ecs2/entity_store'
-EntityStoreFinder = require '../../src/javascript/ecs2/entity_store_finder'
-EntityStoreUpdater = require '../../src/javascript/ecs2/entity_store_updater'
-SystemRunner = require '../../src/javascript/ecs2/system_runner'
-FilterExpander = require '../../src/javascript/ecs2/filter_expander'
-SystemExpander = require '../../src/javascript/ecs2/system_expander'
+EntityStore = require '../../src/javascript/ecs/entity_store'
+EntityStoreFinder = require '../../src/javascript/ecs/entity_store_finder'
+EntityStoreUpdater = require '../../src/javascript/ecs/entity_store_updater'
+SystemRunner = require '../../src/javascript/ecs/system_runner'
+FilterExpander = require '../../src/javascript/ecs/filter_expander'
+SystemExpander = require '../../src/javascript/ecs/system_expander'
 
 newEntityStore = -> new EntityStore()
 

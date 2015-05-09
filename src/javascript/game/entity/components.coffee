@@ -1,76 +1,78 @@
+Immutable = require 'immutable'
+imm = Immutable.fromJS
+
 C = {}
+
+C.Position = imm
+  type: 'position'
+  x: 0
+  y: 0
+
+C.Velocity = imm
+  type: 'velocity'
+  x: 0
+  y: 0
+
+C.Gravity = imm
+  type: 'gravity'
+  accel: 0
+  max: 0
+
+C.Visual = imm
+  type: 'visual'
+  time: 0
+  spriteName: null
+  layer: null
+  state: null
+
+C.Controller = imm
+  type: 'controller'
+  inputName: null
+  states: {}
+
+C.HitBox = imm
+  type: 'hit_box'
+  x: 0
+  y: 0
+  width: 10
+  height: 10
+  anchorX: 0
+  anchorY: 0
+  touching:
+    left: false
+    right: false
+    top: false
+    bottom: false
+  touchingSomething: false
+    
+C.Sound = imm
+  type: 'sound'
+  soundId: null
+  volume: 0.0
+  playPosition: 0.0
+  timeLimit: 0
+  loop: false
+  restart: false
+  resound: false
+
+C.DeathTimer = imm
+  type: 'death_timer'
+  time: 0
+
+C.Bullet = imm
+  type: 'bullet'
+
+C.Enemy = imm
+  type: 'enemy'
+    
+C.HitBoxVisual = imm
+  type: 'hit_box_visual'
+  color: 0x0000ff
+  anchorColor: 0xffffff
+  layer: null
+
+C.Tags = imm
+  type: 'tags'
+  names: Immutable.Set()
+
 module.exports = C
-
-C.Position = class Position
-  constructor: ({@x,@y}={}) ->
-    @ctype = 'position'
-    @x ||= 0
-    @y ||= 0
-
-C.Velocity = class Velocity
-  constructor: ({@x,@y}={}) ->
-    @ctype = 'velocity'
-    @x ||= 0
-    @y ||= 0
-
-C.Gravity = class Gravity
-  constructor: ({@accel,@max}) ->
-    @ctype = 'gravity'
-
-C.Visual = class Visual
-  constructor: ({@spriteName,@state,@time}={}) ->
-    @ctype = 'visual'
-    @time ||= 0
-
-C.Controller = class Controller
-  constructor: ({@inputName,@states}={}) ->
-    @ctype = 'controller'
-    @states ||= {}
-
-C.HitBox = class HitBox
-  constructor: ({@x,@y,@width,@height,@anchorX,@anchorY}={}) ->
-    @ctype = 'hit_box'
-    @x ||= 0
-    @y ||= 0
-    @width ||= 10
-    @height ||= 10
-    @anchorX ||= 0
-    @anchorY ||= 0
-    @touching ||= {}
-    @touching.left ||= false
-    @touching.right ||= false
-    @touching.top ||= false
-    @touching.bottom ||= false
-    @touchingSomething = false
-    
-C.Sound = class Sound
-  constructor: ({@soundId,@volume,@playPosition,@timeLimit,@loop,@resound}) ->
-    @ctype = 'sound'
-    @restart = false
-    if !@loop?
-      @loop = false
-
-C.DeathTimer = class DeathTimer
-  constructor: ({@time}) ->
-    @ctype = 'death_timer'
-
-C.Bullet = class Bullet
-  constructor: ->
-    @ctype = 'bullet'
-
-C.Enemy = class Enemy
-  constructor: ->
-    @ctype = 'enemy'
-    
-C.HitBoxVisual = class HitBoxVisual
-  constructor: ({@color,@anchorColor})->
-    @ctype = 'hit_box_visual'
-    @color ||= 0x0000ff
-    @anchorColor ||= 0xffffff
-
-C.Tags = class Tags
-  constructor: (@names) ->
-    @ctype = 'tags'
-    @has = {}
-    for n in @names
-      @has[n] = true
