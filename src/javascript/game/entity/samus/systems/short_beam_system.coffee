@@ -60,7 +60,6 @@ newBullet = (position,direction) ->
 
 isShooting = (controller) -> controller.getIn(['states','action1'])
 
-
 module.exports =
   config:
     filters: ['samus', 'short_beam','controller', 'position']
@@ -71,7 +70,6 @@ module.exports =
     states:
 
       idle:
-        name: 'idle'
         enter: (comps,input,u)->
           u.update comps.get('short_beam').set('cooldown',0)
         update: (comps,input,u) ->
@@ -79,33 +77,22 @@ module.exports =
             'shoot'
 
       shoot:
-        name: 'shoot'
         enter: (comps,input,u) ->
           u.newEntity newBullet(comps.get('position'), comps.getIn(['samus','direction']))
           
         update: (comps,input,u) ->
           'cooldown'
-          # if isShooting(comps.get('controller'))
-          #   null
-          # else
-          #   'idle'
-
-          # if isShooting(comps.get('controller'))
-          #   'cooldown'
-          # else
-          #   'idle'
 
       cooldown:
-        name: 'cooldown'
         enter: (comps,input,u) ->
-          u.update comps.get('short_beam').set('cooldown',110)
+          u.update comps.get('short_beam').set('cooldown',150)
 
         update: (comps,input,u) ->
           if isShooting(comps.get('controller'))
             shortBeam = comps.get('short_beam')
             t = shortBeam.get('cooldown') - input.get('dt')
             if t <= 0
-              'idle'
+              'shoot'
             else
               u.update shortBeam.set('cooldown', t)
               null
