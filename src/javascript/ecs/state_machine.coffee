@@ -3,9 +3,9 @@ module.exports =
     fullProperty = fsm.get('property')
     states = fsm.get('states')
 
-    [type,property] = fullProperty.split('.')
+    [compName,property] = fullProperty.split('.')
 
-    component = comps.get(type)
+    component = comps.get(compName)
     s0 = component.get(property)
 
     s1 = null
@@ -14,7 +14,9 @@ module.exports =
       s1 = updateFn(comps,input,u)
 
     if s1? and s1 != s0
-      u.update component.set(property, s1)
+      updatedComponent = component.set(property, s1)
+      u.update updatedComponent
       enterFn = states.getIn([s1, 'enter'])
       if enterFn?
+        comps = comps.set compName, updatedComponent # Ensure any changes to component within enterFn are using the updated component
         enterFn(comps,input,u)

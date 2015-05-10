@@ -2,7 +2,6 @@ Common = require '../../components'
 Immutable = require 'immutable'
 StateMachine = require '../../../../ecs/state_machine'
 
-isShooting = (controller) -> controller.getIn(['states','action1'])
 
 GUN_SETTINGS =
   offsetX: 10
@@ -59,6 +58,7 @@ newBullet = (position,direction) ->
 
 
 
+isShooting = (controller) -> controller.getIn(['states','action1'])
 
 
 module.exports =
@@ -69,8 +69,11 @@ module.exports =
     property: 'short_beam.state'
     default: 'idle'
     states:
+
       idle:
         name: 'idle'
+        enter: (comps,input,u)->
+          u.update comps.get('short_beam').set('cooldown',0)
         update: (comps,input,u) ->
           if isShooting(comps.get('controller'))
             'shoot'
@@ -79,9 +82,33 @@ module.exports =
         name: 'shoot'
         enter: (comps,input,u) ->
           u.newEntity newBullet(comps.get('position'), comps.getIn(['samus','direction']))
-          null
+          
         update: (comps,input,u) ->
-          if !isShooting(comps.get('controller'))
-            'idle'
+          'cooldown'
+          # if isShooting(comps.get('controller'))
+          #   null
+          # else
+          #   'idle'
 
+          # if isShooting(comps.get('controller'))
+          #   'cooldown'
+          # else
+          #   'idle'
+
+      cooldown:
+        name: 'cooldown'
+        enter: (comps,input,u) ->
+          u.update comps.get('short_beam').set('cooldown',110)
+
+        update: (comps,input,u) ->
+          if isShooting(comps.get('controller'))
+            shortBeam = comps.get('short_beam')
+            t = shortBeam.get('cooldown') - input.get('dt')
+            if t <= 0
+              'idle'
+            else
+              u.update shortBeam.set('cooldown', t)
+              null
+          else
+            'idle'
 
