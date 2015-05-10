@@ -1,17 +1,20 @@
 module.exports =
-  update: (stateVarIndicator, stateConfigs, comps, input, u) ->
-    [type,prop] = stateVarIndicator.split('.')
+  update: (fsm, comps, input, u) ->
+    fullProperty = fsm.get('property')
+    states = fsm.get('states')
+
+    [type,property] = fullProperty.split('.')
 
     component = comps.get(type)
-    s0 = component.get(prop)
+    s0 = component.get(property)
 
     s1 = null
-    updateFn = stateConfigs.getIn([s0, 'update'])
+    updateFn = states.getIn([s0, 'update'])
     if updateFn?
       s1 = updateFn(comps,input,u)
 
     if s1? and s1 != s0
-      u.update component.set(prop, s1)
-      enterFn = stateConfigs.getIn([s1, 'enter'])
+      u.update component.set(property, s1)
+      enterFn = states.getIn([s1, 'enter'])
       if enterFn?
         enterFn(comps,input,u)

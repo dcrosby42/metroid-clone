@@ -61,12 +61,13 @@ newBullet = (position,direction) ->
 
 
 
-system =
+module.exports =
   config:
     filters: ['samus', 'short_beam','controller', 'position']
 
   fsm:
     property: 'short_beam.state'
+    default: 'idle'
     states:
       idle:
         name: 'idle'
@@ -80,22 +81,7 @@ system =
           u.newEntity newBullet(comps.get('position'), comps.getIn(['samus','direction']))
           null
         update: (comps,input,u) ->
-
           if !isShooting(comps.get('controller'))
             'idle'
 
-  # update: (comps,input,u) ->
-  #   doFsmThing 'short_beam.state', states, comps, input, u
-
-transformFsmSystem = (system) ->
-  system = Immutable.fromJS(system)
-  fsm = system.get('fsm')
-  if fsm?
-    property = fsm.get('property')
-    states = fsm.get('states')
-    system.set('update', (comps,input,u) -> StateMachine.update(property, states, comps, input, u))
-  else
-    system
-
-module.exports = transformFsmSystem(system)
 

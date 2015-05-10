@@ -214,7 +214,7 @@ class MainSpike
       CommonSystems.controller_system
       #CommonSystems.manual_mover_system
       SamusSystems.samus_controller_action
-      SamusSystems.short_beam_controller_action
+      SamusSystems.short_beam_system
       SamusSystems.samus_action_velocity
       EnemiesSystems.skree_action
       # EnemiesSystems.skree_velocity
