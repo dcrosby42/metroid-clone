@@ -1,7 +1,7 @@
 
 module.exports =
   config:
-    filters: ['samus','short_beam','controller']
+    filters: ['samus','controller']
 
   update: (comps,input,u) ->
     samus = comps.get('samus')
@@ -55,8 +55,5 @@ module.exports =
       .set('action', action))
 
 
-     # TODO is this really necessary? Because this is kinda jank, updating the controller states like this...
-    if samus.get('motion') == 'falling'
-      u.update(comps.get('controller').setIn(['states','jump'], false))
     
 
