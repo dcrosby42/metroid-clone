@@ -168,6 +168,7 @@ class MainSpike
         "j": 'down'
         "k": 'up'
         "l": 'right'
+        "space": 'step_forward'
 
     @gamepadController = new GamepadController
       "DPAD_RIGHT": 'right'
@@ -266,10 +267,18 @@ class MainSpike
     #     player1
 
     # TODO @systemsRunner.run(@estore, dt*@timeDilation, @input) unless @paused
-    unless @paused
+    if @paused
+      if @step_forward
+        input = input.set('dt', 17)
+        @systemRunner.run input
+        @outputSystemRunner.run input
+        @ui.componentInspector.setEntityStore(@estore)
+        @ui.componentInspector.sync()
+        @step_forward = false
+
+    else
       @systemRunner.run input
       @outputSystemRunner.run input
-
       @ui.componentInspector.setEntityStore(@estore)
       @ui.componentInspector.sync()
 
@@ -289,7 +298,7 @@ class MainSpike
         @bgmId = null
       else
         @bgmId = @estore.createEntity [
-          new C.Sound soundId: 'brinstar', timeLimit: 116000, volume: 0.3
+          C.Sound.merge soundId: 'brinstar', timeLimit: 116000, volume: 0.3
         ]
 
     if ac.toggle_pause
@@ -297,6 +306,11 @@ class MainSpike
         @paused = false
       else
         @paused = true
+
+      
+    if @paused
+      if ac.step_forward
+        @step_forward = true
 
     if ac.toggle_bounding_box
       @ui.drawHitBoxes = !@ui.drawHitBoxes
