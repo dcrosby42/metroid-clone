@@ -1,16 +1,42 @@
 Immutable = require 'immutable'
-# _ = require 'lodash'
 SeqGen = require './id_sequence_generator'
 Finder = require '../search/immutable_object_finder'
 
+DefaultState =
+  Immutable.Map
+    eidGen:          SeqGen.new('e', 0)
+    cidGen:          SeqGen.new('c', 0)
+    componentsByCid: Immutable.Map()
+    indices:         Immutable.Map()
+
 class EntityStore
+  @initialState: ->
+    Immutable.Map
+      componentsByCid: Immutable.Map()
+      indices:         Immutable.Map()
+      eidGen:          SeqGen.new('e', 0)
+      cidGen:          SeqGen.new('c', 0)
+
   constructor: ->
-    @eidGen = SeqGen.new 'e', 0
-    @cidGen = SeqGen.new 'c', 0
+    @restoreSnapshot EntityStore.initialState()
+    # @eidGen = SeqGen.new 'e', 0
+    # @cidGen = SeqGen.new 'c', 0
+    # @componentsByCid = Immutable.Map()
+    # @indices = Immutable.Map()
 
-    @componentsByCid = Immutable.Map()
-    @indices = Immutable.Map()
+  takeSnapshot: ->
+    Immutable.Map
+      componentsByCid: @componentsByCid
+      indices: @indices
+      eidGen: @eidGen
+      cidGen: @cidGen
 
+  restoreSnapshot: (state) ->
+    @componentsByCid = state.get('componentsByCid')
+    @indices = state.get('componentsByCid')
+    @eidGen = state.get('eidGen')
+    @cidGen = state.get('cidGen')
+  
   createEntity: (compProps) ->
     eid = @_nextEntityId()
     if compProps?
@@ -60,6 +86,8 @@ class EntityStore
     Finder.search @componentsByCid.toList(), filters
 
   allComponentsByCid: -> @componentsByCid
+
+
 
   #
   # PRIVATE

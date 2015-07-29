@@ -100,6 +100,11 @@ class MainSpike
     @systemRunner       = @setupSystemRunner()
     @outputSystemRunner = @setupOutputSystemRunner()
 
+    @time_walk_snapshots = Immutable.List()
+    @time_walk_snapshots_limit = 60
+    @time_walk_index = 0
+
+
     window.me = @
     window.estore = @estore
     window.samusId = @samusId
@@ -164,6 +169,8 @@ class MainSpike
         "p": 'toggle_pause'
         "d": 'toggle_bounding_box'
         "m": 'cycle_admin_mover'
+        ",": 'time_walk_back'
+        ".": 'time_walk_forward'
         "h": 'left'
         "j": 'down'
         "k": 'up'
@@ -269,12 +276,40 @@ class MainSpike
     # TODO @systemsRunner.run(@estore, dt*@timeDilation, @input) unless @paused
     if @paused
       if @step_forward
+        @step_forward = false
         input = input.set('dt', 17)
         @systemRunner.run input
         @outputSystemRunner.run input
         @ui.componentInspector.setEntityStore(@estore)
         @ui.componentInspector.sync()
-        @step_forward = false
+
+      if @time_walk_back
+        @time_walk_back = false
+        # [s0, s1, s2, s3, s4]
+        @time_walk_index -= 1
+        @time_walk_index = 0 if @time_walk_index < 0
+
+        snapshot = @time_walk_snapshots.get(@time_walk_index)
+        @estore.restoreSnapshot(snapshot)
+
+        @outputSystemRunner.run null # no meaningful input?
+        @ui.componentInspector.setEntityStore(@estore)
+        @ui.componentInspector.sync()
+
+        console.log "TIME WALK BACK!"
+
+      if @time_walk_forward
+        @time_walk_forward = false
+        # [s0, s1, s2, s3, s4]
+        @time_walk_index += 1
+        @time_walk_index = @time_walk_snapshots.size if @time_walk_index > @time_walk_snapshots.size
+        snapshot = @time_walk_snapshots.get(@time_walk_index)
+        @estore.restoreSnapshot(snapshot)
+
+        @outputSystemRunner.run null # no meaningful input?
+        @ui.componentInspector.setEntityStore(@estore)
+        @ui.componentInspector.sync()
+        console.log "TIME WALK FORWARD!"
 
     else
       @systemRunner.run input
@@ -307,10 +342,16 @@ class MainSpike
       else
         @paused = true
 
-      
     if @paused
       if ac.step_forward
         @step_forward = true
+
+      else if ac.time_walk_back
+        @time_walk_back = true
+
+      else if ac.time_walk_forward
+        @time_walk_forward = true
+
 
     if ac.toggle_bounding_box
       @ui.drawHitBoxes = !@ui.drawHitBoxes
