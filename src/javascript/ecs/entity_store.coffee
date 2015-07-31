@@ -2,13 +2,6 @@ Immutable = require 'immutable'
 SeqGen = require './id_sequence_generator'
 Finder = require '../search/immutable_object_finder'
 
-DefaultState =
-  Immutable.Map
-    eidGen:          SeqGen.new('e', 0)
-    cidGen:          SeqGen.new('c', 0)
-    componentsByCid: Immutable.Map()
-    indices:         Immutable.Map()
-
 class EntityStore
   @initialState: ->
     Immutable.Map
@@ -19,10 +12,6 @@ class EntityStore
 
   constructor: ->
     @restoreSnapshot EntityStore.initialState()
-    # @eidGen = SeqGen.new 'e', 0
-    # @cidGen = SeqGen.new 'c', 0
-    # @componentsByCid = Immutable.Map()
-    # @indices = Immutable.Map()
 
   takeSnapshot: ->
     Immutable.Map
@@ -33,7 +22,7 @@ class EntityStore
 
   restoreSnapshot: (state) ->
     @componentsByCid = state.get('componentsByCid')
-    @indices = state.get('componentsByCid')
+    @indices = state.get('indices')
     @eidGen = state.get('eidGen')
     @cidGen = state.get('cidGen')
   

@@ -282,6 +282,7 @@ class MainSpike
         @outputSystemRunner.run input
         @ui.componentInspector.setEntityStore(@estore)
         @ui.componentInspector.sync()
+        @captureTimeWalkSnapShot()
 
       if @time_walk_back
         @time_walk_back = false
@@ -289,8 +290,10 @@ class MainSpike
         @time_walk_index -= 1
         @time_walk_index = 0 if @time_walk_index < 0
 
-        snapshot = @time_walk_snapshots.get(@time_walk_index)
-        @estore.restoreSnapshot(snapshot)
+        if snapshot = @time_walk_snapshots.get(@time_walk_index)
+          @estore.restoreSnapshot(snapshot)
+        else
+          console.log "(null snapshot, not restoring)"
 
         @outputSystemRunner.run null # no meaningful input?
         @ui.componentInspector.setEntityStore(@estore)
@@ -302,9 +305,11 @@ class MainSpike
         @time_walk_forward = false
         # [s0, s1, s2, s3, s4]
         @time_walk_index += 1
-        @time_walk_index = @time_walk_snapshots.size if @time_walk_index > @time_walk_snapshots.size
-        snapshot = @time_walk_snapshots.get(@time_walk_index)
-        @estore.restoreSnapshot(snapshot)
+        @time_walk_index = @time_walk_snapshots.size - 1 if @time_walk_index >= @time_walk_snapshots.size
+        if snapshot = @time_walk_snapshots.get(@time_walk_index)
+          @estore.restoreSnapshot(snapshot)
+        else
+          console.log "(null snapshot, not restoring)"
 
         @outputSystemRunner.run null # no meaningful input?
         @ui.componentInspector.setEntityStore(@estore)
@@ -316,8 +321,18 @@ class MainSpike
       @outputSystemRunner.run input
       @ui.componentInspector.setEntityStore(@estore)
       @ui.componentInspector.sync()
+      @captureTimeWalkSnapShot()
 
     # Debug.scratch2 @estore.componentsByCid
+  captureTimeWalkSnapShot: ->
+    snaps = @time_walk_snapshots
+    snaps = snaps.push(@estore.takeSnapshot())
+    while snaps.size > @time_walk_snapshots_limit
+      snaps = snaps.shift()
+    @time_walk_snapshots = snaps
+    @time_walk_index = @time_walk_snapshots.size - 1
+
+
 
   handleAdminControls: (ac) ->
     if ac.toggle_gamepad
