@@ -169,8 +169,10 @@ class MainSpike
         "p": 'toggle_pause'
         "d": 'toggle_bounding_box'
         "m": 'cycle_admin_mover'
-        ",": 'time_walk_back'
-        ".": 'time_walk_forward'
+        "<": 'time_walk_back'
+        ">": 'time_walk_forward'
+        ",": 'time_scroll_back'
+        ".": 'time_scroll_forward'
         "h": 'left'
         "j": 'down'
         "k": 'up'
@@ -284,7 +286,7 @@ class MainSpike
         @ui.componentInspector.sync()
         @captureTimeWalkSnapShot()
 
-      if @time_walk_back
+      if @time_walk_back or @time_scroll_back
         @time_walk_back = false
         # [s0, s1, s2, s3, s4]
         @time_walk_index -= 1
@@ -301,7 +303,7 @@ class MainSpike
 
         console.log "TIME WALK BACK!"
 
-      if @time_walk_forward
+      if @time_walk_forward or @time_scroll_forward
         @time_walk_forward = false
         # [s0, s1, s2, s3, s4]
         @time_walk_index += 1
@@ -366,6 +368,19 @@ class MainSpike
 
       else if ac.time_walk_forward
         @time_walk_forward = true
+
+      else if ac.time_scroll_back
+        @time_scroll_forward = off
+        @time_scroll_back = true
+
+      else if ac.time_scroll_forward
+        @time_scroll_back = off
+        @time_scroll_forward = true
+
+      else
+        @time_scroll_back = off
+        @time_scroll_forward = off
+
 
 
     if ac.toggle_bounding_box
