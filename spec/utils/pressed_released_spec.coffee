@@ -47,6 +47,18 @@ describe "PressedReleased.update", ->
       goat: true
       goatPressed: true
 
+  it "removes *Released and *Pressed keys if inputs are null", ->
+    s = imm
+      sheep: true
+      sheepPressed: true
+      ram: false
+      ramReleased: true
+
+    s1 = PressedReleased.update(s, null)
+    expectIs s1, imm
+      sheep: true
+      ram: false
+
   it "can handle multiple vars and transitions simultaneously", ->
     s = imm
       ant: false
