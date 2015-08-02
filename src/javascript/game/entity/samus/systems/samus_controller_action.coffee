@@ -1,24 +1,24 @@
-Aim =
-  start: 'straight'
-  states:
-    straight:
-      events:
-        ctrlUpPressed: 'up'
-    up:
-      events:
-        ctrlUpReleased: 'straight'
-
-
-nextState = (fsm, s, e) ->
-  if sdef = fsm.states[s]
-    if edefs = sdef.events
-      if s1 = edefs[e]
-        action0 = sdef.exit
-        action1 = if sdef1 = fsm.states[s1]
-          sdef1.enter
-        return [s1, action0, action1]
-  return [s]
-
+# Aim =
+#   start: 'straight'
+#   states:
+#     straight:
+#       events:
+#         ctrlUpPressed: 'up'
+#     up:
+#       events:
+#         ctrlUpReleased: 'straight'
+#
+#
+# nextState = (fsm, s, e) ->
+#   if sdef = fsm.states[s]
+#     if edefs = sdef.events
+#       if s1 = edefs[e]
+#         action0 = sdef.exit
+#         action1 = if sdef1 = fsm.states[s1]
+#           sdef1.enter
+#         return [s1, action0, action1]
+#   return [s]
+#
 
 
 module.exports =
@@ -43,13 +43,13 @@ module.exports =
 
     action = switch samus.get('motion')
       when 'standing'
-        if ctrl.get('action2')
+        if ctrl.get('action2Pressed')
           'jump'
         else if sideways
           'run'
 
       when 'running'
-        if ctrl.get('action2')
+        if ctrl.get('action2Pressed')
           'jump'
         else if sideways
           # If we don't re-iterate the run action, mid-run direction changes will not register
