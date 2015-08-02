@@ -1,3 +1,25 @@
+Aim =
+  start: 'straight'
+  states:
+    straight:
+      events:
+        ctrlUpPressed: 'up'
+    up:
+      events:
+        ctrlUpReleased: 'straight'
+
+
+nextState = (fsm, s, e) ->
+  if sdef = fsm.states[s]
+    if edefs = sdef.events
+      if s1 = edefs[e]
+        action0 = sdef.exit
+        action1 = if sdef1 = fsm.states[s1]
+          sdef1.enter
+        return [s1, action0, action1]
+  return [s]
+
+
 
 module.exports =
   config:

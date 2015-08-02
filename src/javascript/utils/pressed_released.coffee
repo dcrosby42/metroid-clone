@@ -1,5 +1,12 @@
-
+endsWithPressedOrReleased = /(Pressed|Released)$/
 updatePressedReleased = (s, input) ->
+  s1 = s.reduce (map, x, key) ->
+    if key.match endsWithPressedOrReleased
+      map.delete(key)
+    else
+      map
+  , s
+
   input.reduce (map, val, key) ->
     kp = "#{key}Pressed"
     kr = "#{key}Released"
@@ -15,7 +22,7 @@ updatePressedReleased = (s, input) ->
 
     map3.set(key,val)
 
-  , s
+  , s1
 
 module.exports =
   update: updatePressedReleased
