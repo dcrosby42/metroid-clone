@@ -28,6 +28,7 @@ Enemies = require './entity/enemies'
 
 MapData = require './map/map_data'
 
+StateHistory = require '../utils/state_history'
 Debug = require '../utils/debug'
 
 class MainSpike
@@ -100,9 +101,8 @@ class MainSpike
     @systemRunner       = @setupSystemRunner()
     @outputSystemRunner = @setupOutputSystemRunner()
 
-    @time_walk_snapshots = Immutable.List()
-    @time_walk_snapshots_limit = 60
-    @time_walk_index = 0
+    @stateHistory = new StateHistory()
+
 
 
     window.me = @
@@ -288,11 +288,7 @@ class MainSpike
 
       if @time_walk_back or @time_scroll_back
         @time_walk_back = false
-        # [s0, s1, s2, s3, s4]
-        @time_walk_index -= 1
-        @time_walk_index = 0 if @time_walk_index < 0
-
-        if snapshot = @time_walk_snapshots.get(@time_walk_index)
+        if snapshot = @stateHistory.stepBack()
           @estore.restoreSnapshot(snapshot)
         else
           console.log "(null snapshot, not restoring)"
@@ -300,15 +296,10 @@ class MainSpike
         @outputSystemRunner.run null # no meaningful input?
         @ui.componentInspector.setEntityStore(@estore)
         @ui.componentInspector.sync()
-
-        console.log "TIME WALK BACK!"
 
       if @time_walk_forward or @time_scroll_forward
         @time_walk_forward = false
-        # [s0, s1, s2, s3, s4]
-        @time_walk_index += 1
-        @time_walk_index = @time_walk_snapshots.size - 1 if @time_walk_index >= @time_walk_snapshots.size
-        if snapshot = @time_walk_snapshots.get(@time_walk_index)
+        if snapshot = @stateHistory.stepForward()
           @estore.restoreSnapshot(snapshot)
         else
           console.log "(null snapshot, not restoring)"
@@ -316,7 +307,6 @@ class MainSpike
         @outputSystemRunner.run null # no meaningful input?
         @ui.componentInspector.setEntityStore(@estore)
         @ui.componentInspector.sync()
-        console.log "TIME WALK FORWARD!"
 
     else
       @systemRunner.run input
@@ -327,12 +317,9 @@ class MainSpike
 
     # Debug.scratch2 @estore.componentsByCid
   captureTimeWalkSnapShot: ->
-    snaps = @time_walk_snapshots
-    snaps = snaps.push(@estore.takeSnapshot())
-    while snaps.size > @time_walk_snapshots_limit
-      snaps = snaps.shift()
-    @time_walk_snapshots = snaps
-    @time_walk_index = @time_walk_snapshots.size - 1
+    @stateHistory.addState @estore.takeSnapshot()
+    
+
 
 
 
@@ -443,7 +430,5 @@ class MainSpike
     map
 
       
-
-    
 
 module.exports = MainSpike
