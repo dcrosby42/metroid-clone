@@ -17,6 +17,21 @@ sprites =
           "skree-green-03"
         ]
         fps: 30
+
+      "stunned-wait":
+        frames: [
+          "skree-stunned-01"
+          "skree-stunned-02"
+          "skree-stunned-03"
+        ]
+        fps: 7.5
+      "stunned-attack":
+        frames: [
+          "skree-stunned-01"
+          "skree-stunned-02"
+          "skree-stunned-03"
+        ]
+        fps: 30
     props:
       anchor: { x: 0.5, y: 0 }
 
