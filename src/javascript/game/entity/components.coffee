@@ -21,6 +21,7 @@ C.Gravity = imm
 C.Visual = imm
   type: 'visual'
   time: 0
+  paused: false
   spriteName: null
   layer: null
   state: null
