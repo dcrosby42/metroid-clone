@@ -8,7 +8,8 @@ module.exports =
   config:
     filters: [
       [ "bullet", "hit_box" ],
-      [ "enemy", "hit_box" ]
+      #[ "enemy", "hit_box" ]
+      [ "enemy", "hit_box", "visual"]
     ]
 
   update: (comps,input,u) ->
@@ -23,6 +24,7 @@ module.exports =
       enemy = comps.get('enemy')
       u.update bulletHitBox.set('touchingSomething',true)
 
+
       # Play hit sound:
       hitSound = Common.Sound.merge
         soundId: 'enemy_die1'
@@ -34,10 +36,12 @@ module.exports =
       # Deal damage to enemy:
       enemy = enemy.update 'hp', (hp) -> hp - bullet.get('damage')
 
-
       # Update or remove entity based on HP remaining:
       if enemy.get('hp') > 0
-        u.update enemy
+        
+        # visual = comps.get('enemy-visual') #XXX
+        # u.update visual.set('paused',true) #XXX
+        u.update enemy.set('stunned',200) #XXX
       else
         u.destroyEntity enemy.get('eid')
 
