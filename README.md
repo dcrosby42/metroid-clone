@@ -32,9 +32,25 @@ Dan Tello's blog post about getting Gulp + all-the-things up and running:
 (Note that the tut is circa Pixi 1.3 and I'm using 2.2 but whatevs)
 
 
-
 State machines in ECS article:
 
 http://www.richardlord.net/blog/finite-state-machines-with-ash
 
+Next steps:
 
+GAME FEATURES
+- Shoot up, shoot running, shoot while jumping
+- Skree: blow up on time
+- Skree: emit shrapnel
+- Samus: get hurt
+- Skree: react to shot
+- Skree: take damage, die
+- Zoomer!
+
+REFACTOR
+- Samus controller action: state machine that uses enter/exit transitions to manage sounds
+- Samus sounds: declare sound comps for running, jump etc. w volume etc already set, eg samus_sounds.coffee
+
+
+
+Tags?

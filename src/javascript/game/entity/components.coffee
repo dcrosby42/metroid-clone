@@ -61,9 +61,11 @@ C.DeathTimer = imm
 
 C.Bullet = imm
   type: 'bullet'
+  damage: 0
 
 C.Enemy = imm
   type: 'enemy'
+  hp: 100
     
 C.HitBoxVisual = imm
   type: 'hit_box_visual'

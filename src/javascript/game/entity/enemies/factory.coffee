@@ -5,7 +5,8 @@ F = {}
 
 F.basicSkree = (args) ->
   [
-    Common.Enemy
+    Common.Enemy.merge
+      hp: Enemy.Skree.get('max_hp')
     Enemy.Skree
     Common.Visual.merge
       layer: 'creatures'

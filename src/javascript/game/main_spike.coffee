@@ -25,6 +25,7 @@ C = require './entity/components'
 
 Samus = require './entity/samus'
 Enemies = require './entity/enemies'
+General = require './entity/general'
 
 MapData = require './map/map_data'
 
@@ -40,6 +41,7 @@ class MainSpike
     ]
     assets = assets.concat(Samus.assets)
     assets = assets.concat(Enemies.assets)
+    assets = assets.concat(General.assets)
 
     assets
 
@@ -197,6 +199,7 @@ class MainSpike
     spriteConfigs = {}
     _.merge spriteConfigs, Samus.sprites
     _.merge spriteConfigs, Enemies.sprites
+    _.merge spriteConfigs, General.sprites
     spriteConfigs
 
   setupViewportConfig: (map) ->

@@ -9,7 +9,7 @@ GUN_SETTINGS =
   muzzleVelocity: 200/1000
   bulletLife: 50 / (200/1000)
 
-newBullet = (position,direction) ->
+newBullet = (shortBeam, position,direction) ->
   offsetX = GUN_SETTINGS.offsetX
   offsetY = GUN_SETTINGS.offsetY
   velocity = GUN_SETTINGS.muzzleVelocity
@@ -22,7 +22,8 @@ newBullet = (position,direction) ->
   fireY = position.get('y') + offsetY
 
   return [
-    Common.Bullet
+    Common.Bullet.merge
+      damage: shortBeam.get('damage')
     Common.Visual.merge
       layer: 'creatures'
       spriteName: 'bullet'
@@ -78,7 +79,7 @@ module.exports =
 
       shoot:
         enter: (comps,input,u) ->
-          u.newEntity newBullet(comps.get('position'), comps.getIn(['samus','direction']))
+          u.newEntity newBullet(comps.get('short_beam'), comps.get('position'), comps.getIn(['samus','direction']))
           
         update: (comps,input,u) ->
           'cooldown'
