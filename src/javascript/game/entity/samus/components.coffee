@@ -15,7 +15,7 @@ exports.Samus = Immutable.fromJS
 
 exports.ShortBeam = Immutable.fromJS
   type: 'short_beam'
-  state: 'idle'
+  state: 'ready'
   damage: 5
   cooldown: 0
 
