@@ -3,10 +3,13 @@ AnimatedSprite = require '../../pixi_ext/animated_sprite'
 
 newAnimatedSprite = (ui, name) ->
   config = ui.spriteConfigs[name]
-  sprite = AnimatedSprite.create(config)
-  container = ui.layers[sprite.layer] || ui.layers.default
-  container.addChild sprite
-  sprite
+  if config?
+    sprite = AnimatedSprite.create(config)
+    container = ui.layers[sprite.layer] || ui.layers.default
+    container.addChild sprite
+    sprite
+  else
+    console.log "No sprite config defined for '#{name}'"
 
 removeSprite = (sprite) ->
   container = sprite.parent

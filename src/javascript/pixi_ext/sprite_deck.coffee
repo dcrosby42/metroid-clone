@@ -41,6 +41,9 @@ class SpriteDeck extends PIXI.DisplayObjectContainer
       arr[index]
 
   @createSprites: (config) ->
+    if !config?
+      console.log "Cannot create sprites with null config!"
+      return
     propsForAll = config.props || {}
     sprites = {}
     _.forOwn config.states, (data, state) ->
