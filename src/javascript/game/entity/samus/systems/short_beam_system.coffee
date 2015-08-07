@@ -1,7 +1,7 @@
 Common = require '../../components'
 Immutable = require 'immutable'
-StateMachine = require '../../../../ecs/state_machine'
-
+StateMachine = require '../../../../ecs/state_machine2'
+BaseSystem = require '../../../../ecs/base_system'
 
 GUN_SETTINGS =
   offsetX: 10
@@ -57,9 +57,6 @@ newBullet = (shortBeam, position,direction) ->
   ]
 
 
-
-isShooting = (controller) -> controller.getIn(['states','action1'])
-
 GunFsm = Immutable.fromJS
   start: 'ready'
   states:
@@ -76,104 +73,48 @@ GunFsm = Immutable.fromJS
         triggerReleased:
           nextState: 'ready'
 
-  actions:
-    shoot: ->
-      dir = @get('samus').get('direction')
-      shortBeam = @get('short_beam')
-      pos = @get('position')
-      @newEntity newBullet(shortBeam,pos,dir)
-      @update shortBeam.set('cooldown',500)
-      'coolDown'
-
-    repeat: ->
-      dir = @get('samus').get('direction')
-      shortBeam = @get('short_beam')
-      pos = @get('position')
-      @newEntity newBullet(shortBeam,pos,dir)
-      @update shortBeam.set('cooldown',150)
-      'coolDown'
-
-    chill: ->
-      shortBeam = @get('short_beam')
-      remain = shortBeam.get('cooldown') - @dt()
-      if remain > 0
-        @update shortBeam.set('cooldown', remain)
-        return null
-      else
-        @update shortBeam.set('cooldown', 0)
-        return 'ready'
-
-DefaultHandlerDef = Immutable.Map(action: null)
-
-nextState = (fsm, state, event, obj) ->
-  state ||= fsm.get('start')
-  s1 = null
-  handlerDef = fsm.getIn(['states',state,'events',event]) || DefaultHandlerDef
-  if actionName = handlerDef.get('action')
-    if action = fsm.getIn(['actions',actionName])
-      s1 = action.apply(obj)
-  return (s1 || handlerDef.get('nextState') || state)
-
-processEvents = (fsm, state, events, obj) ->
-  s = state
-  events.forEach (e) ->
-    s = nextState(fsm, s, e, obj)
-  s
-    
-class BaseSystem
-  constructor: ->
-    @reset()
-
-  setup: (@comps,@input,@updater) ->
-
-  process: ->
-    
-  reset: ->
-    @comps = null
-    @input = null
-    @updater = null
-    @cache = {}
-    @nameCache = {}
-    @updatedComps = {}
-    @updatedCompNames = []
-
-  handleUpdate: (comps, input, u) ->
-    @setup(comps,input,u)
-    @process()
-    @sync()
-    @reset()
-
-  dt: ->
-    @input.get('dt')
-
-  get: (compName) ->
-    comp = @cache[compName]
-    if !comp?
-      comp = @comps.get(compName)
-      @cache[compName] = comp
-      @nameCache[comp.get('cid')] = compName
-    comp
-
-  update: (comp) ->
-    compName = @nameCache[comp.get('cid')]
-    @cache[compName] = comp
-    @updatedComps[compName] = comp
-    @updatedCompNames.push compName
-
-  newEntity: (comps) ->
-    @updater.newEntity comps
-
-  sync: ->
-    for name in @updatedCompNames
-      @updater.update @updatedComps[name]
-
-
 class ShortBeamSystem extends BaseSystem
   constructor: ->
     super()
 
   process: ->
-    #################################################################
+    events = @_getEvents() #XXX
+
+    # Push events through the FSM for the short_beam
+    s = @get('short_beam').get('state')
+    s1 = StateMachine.processEvents(GunFsm, s, events, @)
+    unless s1 == s
+      @update @get('short_beam').set('state', s1)
+
+  shoot: ->
+    @_fireBullet()
+    return @_cooldown(500)
+
+  repeat: ->
+    @_fireBullet()
+    return @_cooldown(150)
+
+  chill: ->
+    remain = @getProp('short_beam', 'cooldown') - @dt()
+    if remain > 0
+      @_cooldown(remain)
+      return null
+    else
+      @_cooldown(0)
+      return 'ready'
+
+  _cooldown: (ms) ->
+    @update @get('short_beam').set('cooldown',ms)
+    'coolDown'
+
+  _fireBullet: ->
+    dir = @get('samus').get('direction')
+    shortBeam = @get('short_beam')
+    pos = @get('position')
+    @newEntity newBullet(shortBeam,pos,dir)
+
+
+  _getEvents: ->
     # XXX: Don't generate events here, generate them somewhere else
     events = Immutable.List()
     if @get('controller').getIn(['states','action1Pressed'])
@@ -183,14 +124,7 @@ class ShortBeamSystem extends BaseSystem
     else if @get('controller').getIn(['states','action1Released'])
       events = events.push('triggerReleased')
     events = events.push('time')
-    #################################################################
-
-    # Push events through the FSM for the short_beam
-    # shortBeam = comps.get('short_beam')
-    s = @get('short_beam').get('state')
-    s1 = processEvents(GunFsm, s, events, @)
-    unless s1 == s
-      @update @get('short_beam').set('state', s1)
+    return events
 
 shortBeamSystem = new ShortBeamSystem()
 
