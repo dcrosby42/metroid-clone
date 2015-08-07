@@ -56,6 +56,11 @@ C.Sound = imm
   restart: false
   resound: false
 
+C.Timer = imm
+  type: 'timer'
+  event: 'timeout'
+  time: 0
+
 C.DeathTimer = imm
   type: 'death_timer'
   time: 0

@@ -11,4 +11,5 @@ module.exports =
   sound_sync_system: require './sound_sync_system'
   sound_system: require './sound_system'
   sprite_sync_system: require './sprite_sync_system'
+  timer_system: require './timer_system'
   visual_timer_system: require './visual_timer_system'

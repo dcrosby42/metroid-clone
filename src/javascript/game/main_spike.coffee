@@ -220,6 +220,7 @@ class MainSpike
   setupSystemRunner: ->
 
     systems = [
+      CommonSystems.timer_system
       SystemExpander.expandSystem(CommonSystems.death_timer_system)
       CommonSystems.visual_timer_system
       SystemExpander.expandSystem(CommonSystems.sound_system)
