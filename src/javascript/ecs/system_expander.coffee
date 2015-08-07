@@ -1,6 +1,6 @@
 Immutable = require 'immutable'
 FilterExpander = require './filter_expander'
-StateMachine = require './state_machine'
+# StateMachine = require './state_machine'
 
 expandFilters = (system) ->
   path = ['config','filters']
@@ -15,20 +15,23 @@ expandType = (system) ->
   else
     system.set 'type', 'iterating-updating'
 
-expandStateMachine = (system) ->
-  fsm = system.get('fsm')
-  if fsm?
-    updateFsm = (comps,input,u) -> StateMachine.update(fsm, comps, input, u)
-    system.set('update', updateFsm)
-  else
-    system
+# expandStateMachine = (system) ->
+#   fsm = system.get('fsm')
+#   if fsm?
+#     updateFsm = (comps,input,u) -> StateMachine.update(fsm, comps, input, u)
+#     system.set('update', updateFsm)
+#   else
+#     system
 
 expandSystem = (system) ->
   if system?
-    expandStateMachine(
-      expandFilters(
-        expandType(
-          system)))
+    expandFilters(
+      expandType(
+        system))
+    # expandStateMachine(
+    #   expandFilters(
+    #     expandType(
+    #       system)))
   else
     console.log "!! SystemExpander.expandSystem invoked with null or undefined system"
 
