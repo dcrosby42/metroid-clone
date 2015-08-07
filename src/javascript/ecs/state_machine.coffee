@@ -1,22 +1,21 @@
-module.exports =
-  update: (fsm, comps, input, u) ->
-    fullProperty = fsm.get('property')
-    states = fsm.get('states')
+Immutable = require 'immutable'
 
-    [compName,property] = fullProperty.split('.')
+DefaultHandlerDef = Immutable.Map(action: null, nextState: null)
 
-    component = comps.get(compName)
-    s0 = component.get(property)
-
+StateMachine =
+  processEvent: (fsm, state, event, obj) ->
+    state ||= fsm.get('start')
     s1 = null
-    updateFn = states.getIn([s0, 'update'])
-    if updateFn?
-      s1 = updateFn(comps,input,u)
+    handlerDef = fsm.getIn(['states',state,'events',event]) || DefaultHandlerDef
+    if actionName = handlerDef.get('action')
+      if action = obj[actionName]
+        s1 = action.call(obj)
+    return (s1 || handlerDef.get('nextState') || state)
 
-    if s1? and s1 != s0
-      updatedComponent = component.set(property, s1)
-      u.update updatedComponent
-      enterFn = states.getIn([s1, 'enter'])
-      if enterFn?
-        comps = comps.set compName, updatedComponent # Ensure any changes to component within enterFn are using the updated component
-        enterFn(comps,input,u)
+  processEvents: (fsm, state, events, obj) ->
+    s = state
+    events.forEach (e) ->
+      s = StateMachine.processEvent(fsm, s, e, obj)
+    s
+
+module.exports = StateMachine

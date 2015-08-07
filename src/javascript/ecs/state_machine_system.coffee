@@ -1,6 +1,6 @@
 Immutable = require 'immutable'
 BaseSystem = require './base_system'
-StateMachine = require './state_machine2'
+StateMachine = require './state_machine'
 
 class StateMachineSystem extends BaseSystem
   @StateMachine:
