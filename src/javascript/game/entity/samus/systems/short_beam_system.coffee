@@ -1,7 +1,6 @@
 Common = require '../../components'
 Immutable = require 'immutable'
-StateMachine = require '../../../../ecs/state_machine2'
-BaseSystem = require '../../../../ecs/base_system'
+StateMachineSystem = require '../../../../ecs/state_machine_system'
 
 GUN_SETTINGS =
   offsetX: 10
@@ -57,34 +56,23 @@ newBullet = (shortBeam, position,direction) ->
   ]
 
 
-GunFsm = Immutable.fromJS
-  start: 'ready'
-  states:
-    ready:
-      events:
-        triggerPulled:
-          action:    'shoot'
-        triggerHeld:
-          action:    'repeat'
-    coolDown:
-      events:
-        triggerHeld:
-          action: 'chill'
-        triggerReleased:
-          nextState: 'ready'
-
-class ShortBeamSystem extends BaseSystem
-  constructor: ->
-    super()
-
-  process: ->
-    events = @_getEvents() #XXX
-
-    # Push events through the FSM for the short_beam
-    s = @get('short_beam').get('state')
-    s1 = StateMachine.processEvents(GunFsm, s, events, @)
-    unless s1 == s
-      @update @get('short_beam').set('state', s1)
+class ShortBeamSystem extends StateMachineSystem
+  @StateMachine:
+    componentProperty: ['short_beam','state']
+    start: 'ready'
+    states:
+      ready:
+        events:
+          triggerPulled:
+            action:    'shoot'
+          triggerHeld:
+            action:    'repeat'
+      coolDown:
+        events:
+          triggerHeld:
+            action: 'chill'
+          triggerReleased:
+            nextState: 'ready'
 
   shoot: ->
     @_fireBullet()
@@ -113,24 +101,11 @@ class ShortBeamSystem extends BaseSystem
     pos = @get('position')
     @newEntity newBullet(shortBeam,pos,dir)
 
-
-  _getEvents: ->
-    # XXX: Don't generate events here, generate them somewhere else
-    events = Immutable.List()
-    if @get('controller').getIn(['states','action1Pressed'])
-      events = events.push('triggerPulled')
-    else if @get('controller').getIn(['states','action1'])
-      events = events.push('triggerHeld')
-    else if @get('controller').getIn(['states','action1Released'])
-      events = events.push('triggerReleased')
-    events = events.push('time')
-    return events
-
-shortBeamSystem = new ShortBeamSystem()
+instance = new ShortBeamSystem()
 
 module.exports =
   config:
     filters: ['samus', 'short_beam','controller', 'position']
 
   update: (comps,input,u) ->
-    shortBeamSystem.handleUpdate(comps, input, u)
+    instance.handleUpdate(comps, input, u)

@@ -42,6 +42,14 @@ class BaseSystem
     @updatedComps[compName] = comp
     @updatedCompNames.push compName
 
+  setProp: (compName, propName, value) ->
+    comp = @get(compName)
+    comp2 = comp.set(propName, value)
+    if comp != comp2
+      @cache[compName] = comp2
+      @updatedComps[compName] = comp2
+      @updatedCompNames.push compName
+
   delete: (comp) ->
     @updater.delete(comp)
 
