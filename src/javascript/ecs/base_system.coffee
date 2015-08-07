@@ -70,8 +70,10 @@ class BaseSystem
   delete: (comp) ->
     @updater.delete(comp)
 
-  add: (eid, props) ->
+  addComponent: (eid, props) ->
+    # TODO: WAIT to add via @updater, cache first, then save on sync
     @updater.add(eid, props)
+    # TODO: cache component
 
   newEntity: (comps) ->
     @updater.newEntity comps
