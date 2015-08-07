@@ -39,12 +39,12 @@ http://www.richardlord.net/blog/finite-state-machines-with-ash
 Next steps:
 
 GAME FEATURES
-- Shoot up, shoot running, shoot while jumping
+
+- Skree: react to shot
 - Skree: blow up on time
 - Skree: emit shrapnel
 - Samus: get hurt
-- Skree: react to shot
-- Skree: take damage, die
+- Shoot up, shoot running, shoot while jumping
 - Zoomer!
 
 REFACTOR
