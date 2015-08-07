@@ -7,6 +7,11 @@ searchAndUpdate = (system, estore, input, entityUpdater,eventBucket) ->
   estore.search(filters).forEach (result) ->
     update(result,input,entityUpdater,eventBucket)
 
+processNewStyleSystem = (systemClass, estore, input, entityUpdater, eventBucket) ->
+  system = systemClass.Instance()
+  filters = system.componentFilters
+  estore.search(filters).forEach (comps) ->
+    system.handleUpdate(comps, input, entityUpdater, eventBucket)
 
 class SystemRunner
   constructor: (@estore, @entityUpdater, @systems) ->
@@ -20,12 +25,16 @@ class SystemRunner
       @eventBucket.addGlobalEvent('time')
 
     @systems.forEach (system) =>
-      switch system.get('type')
-        when 'iterating-updating'
-          searchAndUpdate system, @estore, input, @entityUpdater, @eventBucket
-          
-        else
-          console.log "!! CAN'T RUN SYSTEM OF TYPE: #{system.get('type')} - #{system.toString()}"
+      if Immutable.Map.isMap(system)
+        switch system.get('type')
+          when 'iterating-updating'
+            searchAndUpdate system, @estore, input, @entityUpdater, @eventBucket
+          else
+            console.log "!! CAN'T RUN SYSTEM OF TYPE: #{system.get('type')} - #{system.toString()}"
+      else
+        # Assume new-style system classes:
+        processNewStyleSystem(system, @estore, input, @entityUpdater, @eventBucket)
+
 
 module.exports = SystemRunner
 

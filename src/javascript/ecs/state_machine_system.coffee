@@ -3,6 +3,8 @@ BaseSystem = require './base_system'
 StateMachine = require './state_machine'
 
 class StateMachineSystem extends BaseSystem
+  @SystemType: 'StateMachineSystem'
+
   @StateMachine:
     componentProperty: ['UNSET_COMPONENT_NAME', 'UNSET_PROPERTY_NAME']
     start: 'default'
@@ -25,17 +27,5 @@ class StateMachineSystem extends BaseSystem
     s1 = StateMachine.processEvents(@_stateMachine, s, events, @)
     unless s1 == s
       @setProp(@_stateComponent,@_stateProperty, s1)
-
-  # getEvents: ->
-  #   # XXX: Don't generate events here, generate them somewhere else
-  #   events = Immutable.List()
-  #   if @get('controller').getIn(['states','action1Pressed'])
-  #     events = events.push('triggerPulled')
-  #   else if @get('controller').getIn(['states','action1'])
-  #     events = events.push('triggerHeld')
-  #   else if @get('controller').getIn(['states','action1Released'])
-  #     events = events.push('triggerReleased')
-  #   events = events.push('time')
-  #   return events
 
 module.exports = StateMachineSystem

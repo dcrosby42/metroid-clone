@@ -57,6 +57,8 @@ newBullet = (weapon, position,direction) ->
 
 
 class ShortBeamSystem extends StateMachineSystem
+  @Subscribe: ['samus', 'short_beam','controller', 'position']
+
   @StateMachine:
     componentProperty: ['short_beam','state']
     start: 'ready'
@@ -101,11 +103,5 @@ class ShortBeamSystem extends StateMachineSystem
     pos = @get('position')
     @newEntity newBullet(shortBeam,pos,dir)
 
-instance = new ShortBeamSystem()
+module.exports = ShortBeamSystem
 
-module.exports =
-  config:
-    filters: ['samus', 'short_beam','controller', 'position']
-
-  update: (comps,input,u,eventBucket) ->
-    instance.handleUpdate(comps, input, u, eventBucket)

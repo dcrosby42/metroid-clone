@@ -7,11 +7,4 @@ class VisualTimerSystem extends BaseSystem
     unless @getProp('visual','paused')
       @updateProp 'visual', 'time', (t) => t + @input.get('dt')
 
-instance = new VisualTimerSystem()
-
-module.exports =
-  config:
-    filters: VisualTimerSystem.Subscribe
-
-  update: (comps,input,u,eventBucket) ->
-    instance.handleUpdate(comps, input, u, eventBucket)
+module.exports = VisualTimerSystem

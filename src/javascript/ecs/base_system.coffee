@@ -1,6 +1,14 @@
+FilterExpander = require './filter_expander'
 
 class BaseSystem
+  @SystemType: 'BaseSystem'
+  @Subscribe: null
+
+  @Instance: ->
+    @_singleton_instance ||= new @()
+
   constructor: ->
+    @componentFilters = FilterExpander.expandFilterGroups(@constructor.Subscribe)
     @reset()
 
   setup: (@comps,@input,@updater,@eventBucket) ->

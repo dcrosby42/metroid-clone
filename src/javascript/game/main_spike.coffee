@@ -219,26 +219,47 @@ class MainSpike
 
   setupSystemRunner: ->
 
-    systems = SystemExpander.expandSystems [
-      CommonSystems.death_timer_system
+    systems = [
+      SystemExpander.expandSystem(CommonSystems.death_timer_system)
       CommonSystems.visual_timer_system
-      CommonSystems.sound_system
-      SamusSystems.samus_motion
-      CommonSystems.controller_system
+      SystemExpander.expandSystem(CommonSystems.sound_system)
+      SystemExpander.expandSystem(SamusSystems.samus_motion)
+      SystemExpander.expandSystem(CommonSystems.controller_system)
       #CommonSystems.manual_mover_system
-      SamusSystems.samus_controller_action
+      SystemExpander.expandSystem(SamusSystems.samus_controller_action)
       SamusSystems.short_beam_system
-      SamusSystems.samus_action_velocity
-      EnemiesSystems.skree_action
+      SystemExpander.expandSystem(SamusSystems.samus_action_velocity)
+      SystemExpander.expandSystem(EnemiesSystems.skree_action)
       # EnemiesSystems.skree_velocity
-      SamusSystems.samus_action_sounds
-      CommonSystems.gravity_system
-      CommonSystems.map_physics_system
-      CommonSystems.bullet_enemy_system
-      CommonSystems.bullet_system
-      SamusSystems.samus_animation
-      EnemiesSystems.skree_animation
+      SystemExpander.expandSystem(SamusSystems.samus_action_sounds)
+      SystemExpander.expandSystem(CommonSystems.gravity_system)
+      SystemExpander.expandSystem(CommonSystems.map_physics_system)
+      SystemExpander.expandSystem(CommonSystems.bullet_enemy_system)
+      SystemExpander.expandSystem(CommonSystems.bullet_system)
+      SystemExpander.expandSystem(SamusSystems.samus_animation)
+      SystemExpander.expandSystem(EnemiesSystems.skree_animation)
     ]
+    # systems = SystemExpander.expandSystems [
+    #   CommonSystems.death_timer_system
+    #   CommonSystems.visual_timer_system
+    #   CommonSystems.sound_system
+    #   SamusSystems.samus_motion
+    #   CommonSystems.controller_system
+    #   #CommonSystems.manual_mover_system
+    #   SamusSystems.samus_controller_action
+    #   SamusSystems.short_beam_system
+    #   SamusSystems.samus_action_velocity
+    #   EnemiesSystems.skree_action
+    #   # EnemiesSystems.skree_velocity
+    #   SamusSystems.samus_action_sounds
+    #   CommonSystems.gravity_system
+    #   CommonSystems.map_physics_system
+    #   CommonSystems.bullet_enemy_system
+    #   CommonSystems.bullet_system
+    #   SamusSystems.samus_animation
+    #   EnemiesSystems.skree_animation
+    # ]
+
 
     # return new SystemRunner(@entityFinder, @entityUpdater, systems)
     return new SystemRunner(@estore, @entityUpdater, systems)
