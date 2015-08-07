@@ -3,24 +3,25 @@ class BaseSystem
   constructor: ->
     @reset()
 
-  setup: (@comps,@input,@updater) ->
+  setup: (@comps,@input,@updater,@eventBucket) ->
 
-  process: ->
+  handleUpdate: (comps, input, u, eventBucket) ->
+    @setup(comps,input,u,eventBucket)
+    @process()
+    @sync()
+    @reset()
     
   reset: ->
     @comps = null
     @input = null
     @updater = null
+    @eventBucket = null
     @cache = {}
     @nameCache = {}
     @updatedComps = {}
     @updatedCompNames = []
 
-  handleUpdate: (comps, input, u) ->
-    @setup(comps,input,u)
-    @process()
-    @sync()
-    @reset()
+  process: ->
 
   dt: ->
     @input.get('dt')
@@ -41,6 +42,14 @@ class BaseSystem
     @cache[compName] = comp
     @updatedComps[compName] = comp
     @updatedCompNames.push compName
+
+  updateProp: (compName, propName, fn) ->
+    comp = @get(compName)
+    comp2 = comp.update(propName, fn)
+    if comp != comp2
+      @cache[compName] = comp2
+      @updatedComps[compName] = comp2
+      @updatedCompNames.push compName
 
   setProp: (compName, propName, value) ->
     comp = @get(compName)
@@ -74,5 +83,15 @@ class BaseSystem
   sync: ->
     for name in @updatedCompNames
       @updater.update @updatedComps[name]
+
+  getEvents: (eid) ->
+    @eventBucket.getEventsForEntity(eid)
+
+  publishEvent: (eid,event) ->
+    @eventBucket.addEventForEntity(eid,event)
+
+  broadcastEvent: (event) ->
+    @eventBucket.addGlobalEvent(event)
+  
 
 module.exports = BaseSystem

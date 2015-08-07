@@ -107,5 +107,5 @@ module.exports =
   config:
     filters: ['samus', 'short_beam','controller', 'position']
 
-  update: (comps,input,u) ->
-    instance.handleUpdate(comps, input, u)
+  update: (comps,input,u,eventBucket) ->
+    instance.handleUpdate(comps, input, u, eventBucket)

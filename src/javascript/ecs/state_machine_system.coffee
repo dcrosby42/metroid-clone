@@ -18,7 +18,7 @@ class StateMachineSystem extends BaseSystem
     @_stateMachine = Immutable.fromJS(@constructor.StateMachine)
 
   process: ->
-    @processStateMachine(@getEvents())
+    @processStateMachine(@getEvents(@getProp(@_stateComponent,'eid')))
 
   processStateMachine: (events) ->
     s = @getProp(@_stateComponent,@_stateProperty)
@@ -26,16 +26,16 @@ class StateMachineSystem extends BaseSystem
     unless s1 == s
       @setProp(@_stateComponent,@_stateProperty, s1)
 
-  getEvents: ->
-    # XXX: Don't generate events here, generate them somewhere else
-    events = Immutable.List()
-    if @get('controller').getIn(['states','action1Pressed'])
-      events = events.push('triggerPulled')
-    else if @get('controller').getIn(['states','action1'])
-      events = events.push('triggerHeld')
-    else if @get('controller').getIn(['states','action1Released'])
-      events = events.push('triggerReleased')
-    events = events.push('time')
-    return events
+  # getEvents: ->
+  #   # XXX: Don't generate events here, generate them somewhere else
+  #   events = Immutable.List()
+  #   if @get('controller').getIn(['states','action1Pressed'])
+  #     events = events.push('triggerPulled')
+  #   else if @get('controller').getIn(['states','action1'])
+  #     events = events.push('triggerHeld')
+  #   else if @get('controller').getIn(['states','action1Released'])
+  #     events = events.push('triggerReleased')
+  #   events = events.push('time')
+  #   return events
 
 module.exports = StateMachineSystem
