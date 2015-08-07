@@ -8,7 +8,7 @@ GUN_SETTINGS =
   muzzleVelocity: 200/1000
   bulletLife: 50 / (200/1000)
 
-newBullet = (shortBeam, position,direction) ->
+newBullet = (weapon, position,direction) ->
   offsetX = GUN_SETTINGS.offsetX
   offsetY = GUN_SETTINGS.offsetY
   velocity = GUN_SETTINGS.muzzleVelocity
@@ -22,7 +22,7 @@ newBullet = (shortBeam, position,direction) ->
 
   return [
     Common.Bullet.merge
-      damage: shortBeam.get('damage')
+      damage: weapon.get('damage')
     Common.Visual.merge
       layer: 'creatures'
       spriteName: 'bullet'
@@ -92,11 +92,11 @@ class ShortBeamSystem extends StateMachineSystem
       return 'ready'
 
   _cooldown: (ms) ->
-    @update @get('short_beam').set('cooldown',ms)
+    @setProp('short_beam','cooldown',ms)
     'coolDown'
 
   _fireBullet: ->
-    dir = @get('samus').get('direction')
+    dir = @getProp('samus','direction')
     shortBeam = @get('short_beam')
     pos = @get('position')
     @newEntity newBullet(shortBeam,pos,dir)
