@@ -8,7 +8,7 @@ roomTypes[0] = [
         
   [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
   [ 0x00,null,0x00,null, null,null,null,null, null,null,null,null, null,null,null,null ]
-  [ 0x00,null,0x00,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ 0x00,null,0x00,null, null,null,0x00,0x00, null,null,null,null, null,null,null,null ]
   [ 0x00,null,0x00,0x00, null,null,null,null, null,null,null,null, null,null,null,null ]
         
   [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,0x00,null ]
