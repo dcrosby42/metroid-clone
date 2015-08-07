@@ -11,8 +11,9 @@ class EntityStoreUpdater
   getEntityComponents: (eid,type) -> @estore.getEntityComponents(eid,type)
   getEntityComponent: (eid,type) -> @estore.getEntityComponent(eid,type)
 
-  updateEntityComponent: (eid,type,atts) ->
-    comp = @getEntityComponent(eid,type)
-    @update comp.merge(Immutable.fromJS(atts))
+  # TODO: rethink... try not to do this under normal circumstances:
+  # updateEntityComponent: (eid,type,atts) ->
+  #   comp = @getEntityComponent(eid,type)
+  #   @update comp.merge(Immutable.fromJS(atts))
 
 module.exports = EntityStoreUpdater

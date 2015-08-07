@@ -84,8 +84,8 @@ class BaseSystem
     @updater.getEntityComponent(eid, type)
 
   # TODO: rethink?  Systems reaching out to the estore breaks the pattern
-  updateEntityComponent: (eid, type, atts) ->
-    @updater.updateEntityComponent(eid,type,atts)
+  # updateEntityComponent: (eid, type, atts) ->
+  #   @updater.updateEntityComponent(eid,type,atts)
 
   _updated: (compName, comp) ->
     @cache[compName] = comp
