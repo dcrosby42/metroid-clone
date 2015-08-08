@@ -24,7 +24,6 @@ class EnemyHitSystem extends StateMachineSystem
             nextState: 'normal'
 
   damageAction: ->
-    console.log "damageAction IN"
     @_makeHitSound()
     @updateProp 'enemy', 'hp', (hp) => hp - 5  # TODO @getProp('bullet', 'damage')
     if @getProp('enemy', 'hp') > 0
@@ -32,12 +31,9 @@ class EnemyHitSystem extends StateMachineSystem
     else
       @destroyEntity @eid()
       @_makeSplode()
-    console.log "damageAction OUT"
 
   wakeUpAction: ->
-    console.log "wakeUpAction IN"
     @_unStun()
-    console.log "wakeUpAction OUT"
 
   #
   # HELPERS:
