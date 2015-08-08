@@ -67,28 +67,36 @@ class ShortBeamSystem extends StateMachineSystem
         events:
           triggerPulled:
             action:    'shoot'
+            nextState: 'cooling'
           triggerHeld:
             action:    'repeat'
-      coolDown:
+            nextState: 'cooling'
+      cooling:
         events:
           cooldownComplete:
             nextState: 'ready'
           triggerReleased:
-            action: 'resetCooldown'
+            action:    'reset'
+            nextState: 'ready'
 
-  shoot: ->
+  shootAction: ->
     @_fireBullet()
-    return @_startCooldown(500)
+    @_startCooldown(500)
 
-  repeat: ->
+  repeatAction: ->
     @_fireBullet()
-    return @_startCooldown(150)
+    @_startCooldown(150)
 
-  resetCooldown: ->
+  resetAction: ->
     @getEntityComponents(@getProp('short_beam','eid'), 'timer').forEach (comp) =>
       if comp.get('name') == 'shortBeamCooldown'
         @delete comp
-    'ready'
+
+  _fireBullet: ->
+    dir = @getProp('samus','direction')
+    shortBeam = @get('short_beam')
+    pos = @get('position')
+    @newEntity newBullet(shortBeam,pos,dir)
 
   _startCooldown: (ms) ->
     eid = @getProp('short_beam','eid')
@@ -96,13 +104,7 @@ class ShortBeamSystem extends StateMachineSystem
       time: ms
       event: 'cooldownComplete'
       name: 'shortBeamCooldown'
-    'coolDown'
 
-  _fireBullet: ->
-    dir = @getProp('samus','direction')
-    shortBeam = @get('short_beam')
-    pos = @get('position')
-    @newEntity newBullet(shortBeam,pos,dir)
 
 module.exports = ShortBeamSystem
 

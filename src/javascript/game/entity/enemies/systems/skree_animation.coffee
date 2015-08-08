@@ -8,7 +8,7 @@ module.exports =
     visual = comps.get('visual')
     enemy = comps.get('enemy')
 
-    state = if skree.get('action') == 'sleep'
+    state = if skree.get('action') == 'sleeping'
       'wait'
     else
       'attack'
@@ -18,8 +18,6 @@ module.exports =
     if stunned? and stunned > 0
       u.update visual.set('state',"stunned-#{state}").set('paused',true)
       u.update enemy.set('stunned', stunned - input.get('dt'))
-        # visual = comps.get('enemy-visual') #XXX
-        # u.update visual.set('paused',true) #XXX
 
     else
       visual = if state != visual.get('state')

@@ -76,6 +76,7 @@ class BaseSystem
     @entitiesToDelete.push eid
 
   # TODO: rethink?  Systems reaching out to the estore breaks the pattern
+  # BUT! Currently, there are systems that need to go find components.
   getEntityComponents: (eid, type) ->
     @updater.getEntityComponents(eid, type)
 

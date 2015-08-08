@@ -9,70 +9,63 @@ class SkreeActionSystem extends StateMachineSystem
 
   @StateMachine:
     componentProperty: ['skree', 'action']
-    start: 'sleep'
+    start: 'sleeping'
     states:
-      sleep:
+      sleeping:
         events:
-          time:
-            action: 'sleep'
-      attack:
+          approached:
+            action: 'launch'
+            nextState: 'tracking'
+      tracking:
         events:
-          time:
-            action: 'attack'
-      countdown:
+          grounded:
+            action: 'startCountdown'
+            nextState: 'destructing'
+      destructing:
         events:
-          time:
-            action: 'countdown'
+          destructTimerComplete:
+            action: 'detonate'
 
-  sleep: ->
+  sleepingState: ->
     dist = Math.abs(@getProp('skree-position','x') - @getProp('samus-position','x'))
     if dist <= @getProp('skree','triggerRange')
-      gravity = Common.Gravity.merge
-        max: 300/1000
-        accel: (200/1000)/10
-      @addComponent @getProp('skree','eid'), gravity
-      return 'attack'
-    else
-      return 'sleep'
-      
-  attack: ->
-    hitBox = @get('skree-hit_box')
-    velocity = @get('skree-velocity')
-    if hitBox.getIn(['touching','bottom'])
-      @update velocity.set('x',0).set('y',0)
-      @setProp 'skree','countdown',1000
-      return 'countdown'
+      @publishEvent @getProp('skree','eid'), 'approached'
 
+  launchAction: ->
+    gravity = Common.Gravity.merge
+      max: 300/1000
+      accel: (200/1000)/10
+    @addComponent @getProp('skree','eid'), gravity
+      
+  trackingState: ->
+    hitBox = @get('skree-hit_box')
+    if hitBox.getIn(['touching','bottom'])
+      @publishEvent @getProp('skree','eid'), 'grounded'
     else
       samusX = @getProp('samus-position','x')
       skreeX = @getProp('skree-position','x')
       speed = @getProp('skree', 'strafeSpeed')
-      
-      dir = vx = null
-      if samusX < skreeX
-        dir = 'left'
-        vx = -speed
+      vx = if samusX < skreeX
+        -speed
       else if samusX > skreeX
-        dir = 'right'
-        vx = speed
+        speed
       else
-        dir = 'neither'
-        vx = 0
+        0
+      @setProp 'skree-velocity', 'x', vx
+      
+  startCountdownAction: ->
+    @setProp 'skree-velocity','x',0
+    @setProp 'skree-velocity','y',0
+    @setProp 'skree','countdown',1000
 
-      # TODO: Remove or use dir!!
-      if vx != velocity.get('x')
-        @update velocity.set('x', vx)
-
-    null # no state change
-
-  countdown: ->
+  destructingState: ->
     @updateProp 'skree','countdown', (t) => t - @dt()
     if @getProp('skree','countdown') <= 0
-      # u.update skree.set('action', 'explode').set('countdown',t)
-      eid = @getProp('skree', 'eid')
-      console.log "Skree #{eid} EXPLODES"
-      @destroyEntity eid
-        
-    null
+      @publishEvent @getProp('skree','eid'), 'destructTimerComplete'
+
+  detonateAction: ->
+    eid = @getProp('skree', 'eid')
+    console.log "Skree #{eid} EXPLODES"
+    @destroyEntity eid
 
 module.exports = SkreeActionSystem
