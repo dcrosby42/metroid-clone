@@ -9,6 +9,7 @@ module.exports =
   hit_box_visual_sync_system: require './hit_box_visual_sync_system'
   manual_mover_system: require './manual_mover_system'
   map_physics_system: require './map_physics_system'
+  samus_damage_system: require './samus_damage_system'
   sound_sync_system: require './sound_sync_system'
   sound_system: require './sound_system'
   sprite_sync_system: require './sprite_sync_system'

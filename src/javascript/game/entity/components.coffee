@@ -72,6 +72,9 @@ C.Bullet = imm
 C.Enemy = imm
   type: 'enemy'
   hp: 100
+
+C.Harmful = imm
+  type: 'harmful'
     
 C.HitBoxVisual = imm
   type: 'hit_box_visual'

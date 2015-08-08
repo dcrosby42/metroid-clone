@@ -238,6 +238,7 @@ class MainSpike
       CommonSystems.bullet_system
       CommonSystems.enemy_hit_system
       EnemiesSystems.skree_action
+      CommonSystems.samus_damage_system
       SystemExpander.expandSystem(SamusSystems.samus_animation)
       # SystemExpander.expandSystem(EnemiesSystems.skree_animation)
     ]
