@@ -1,14 +1,20 @@
 FilterExpander = require './filter_expander'
 
 class BaseSystem
-  @SystemType: 'BaseSystem'
+  # Search pattern for components
   @Subscribe: null
 
+  # If not easily inferred from the Subscribe property, provides the component name
+  # from which to extract eid when performing convenience functions that assume an Entity.
+  @ImplyEntity: null
+
+  # Singleton instance of the system, instantiated on first use
   @Instance: ->
     @_singleton_instance ||= new @()
 
   constructor: ->
     @componentFilters = FilterExpander.expandFilterGroups(@constructor.Subscribe)
+    @_primaryComponentName = @constructor.ImplyEntity || @constructor.Subscribe[0]
     @reset()
 
   setup: (@comps,@input,@updater,@eventBucket) ->
@@ -38,10 +44,15 @@ class BaseSystem
   dt: ->
     @input.get('dt')
 
+  eid: ->
+    @getProp(@_primaryComponentName,'eid')
+
   get: (compName) ->
     comp = @cache[compName]
     if !comp?
       comp = @comps.get(compName)
+      unless comp?
+        console.log "!! BaseSystem#get: system not subscribed for '#{compName}'"
       @cache[compName] = comp
       @nameCache[comp.get('cid')] = compName
     comp
@@ -77,12 +88,12 @@ class BaseSystem
 
   # TODO: rethink?  Systems reaching out to the estore breaks the pattern
   # BUT! Currently, there are systems that need to go find components.
-  getEntityComponents: (eid, type) ->
-    @updater.getEntityComponents(eid, type)
+  getEntityComponents: (eid, type, matchKey=null, matchVal=null) ->
+    @updater.getEntityComponents(eid, type, matchKey, matchVal)
 
   # TODO: rethink?  Systems reaching out to the estore breaks the pattern
-  getEntityComponent: (eid, type) ->
-    @updater.getEntityComponent(eid, type)
+  getEntityComponent: (eid, type, matchKey=null, matchVal=null) ->
+    @updater.getEntityComponent(eid, type, matchKey, matchVal)
 
   # TODO: rethink?  Systems reaching out to the estore breaks the pattern
   # updateEntityComponent: (eid, type, atts) ->
