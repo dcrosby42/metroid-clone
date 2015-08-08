@@ -117,11 +117,17 @@ class EntityStore
     key = comp.get(indexName)
 
     @indices = @indices.update indexName, (index) ->
-      cids = index.get(key).delete(cid)
-      if cids.size > 0
-        index.set(key, cids)
+      if index
+        if bucket = index.get(key)
+          cids = bucket.delete(cid)
+          if cids.size > 0
+            index.set(key, cids)
+          else
+            index.delete(key)
+        else
+          console.log "!!EntityStore._deleteFromIndex: no bucket for index #{indexName}, key #{key}", comp.toJS()
       else
-        index.delete(key)
+        console.log "!!EntityStore._deleteFromIndex: no index #{indexName}, key #{key}", comp.toJS()
     
     
 

@@ -77,6 +77,9 @@ class BaseSystem
   delete: (comp) ->
     @compsToDelete.push comp
 
+  deleteComponent: (comp) ->
+    @compsToDelete.push comp
+
   addComponent: (eid, props) ->
     @compsToAdd.push [eid,props]
 
@@ -108,6 +111,7 @@ class BaseSystem
     for name in @updatedCompNames
       @updater.update @updatedComps[name]
     for comp in @compsToDelete
+      console.log "Deleting comp",comp.toJS()
       @updater.delete(comp)
     for [eid,props] in @compsToAdd
       @updater.add(eid, props)

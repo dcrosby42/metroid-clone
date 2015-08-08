@@ -36,10 +36,13 @@ State machines in ECS article:
 
 http://www.richardlord.net/blog/finite-state-machines-with-ash
 
-Next steps:
+TODO
 
-GAME FEATURES
 
+BaseSystem: imply eid in certain helpers
+
+
+-
 - Skree: react to shot
 - Skree: blow up on time
 - Skree: emit shrapnel
