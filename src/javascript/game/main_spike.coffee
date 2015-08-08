@@ -235,7 +235,7 @@ class MainSpike
       SystemExpander.expandSystem(SamusSystems.samus_action_sounds)
       SystemExpander.expandSystem(CommonSystems.gravity_system)
       SystemExpander.expandSystem(CommonSystems.map_physics_system)
-      SystemExpander.expandSystem(CommonSystems.bullet_enemy_system)
+      CommonSystems.bullet_enemy_system
       CommonSystems.bullet_system
       SystemExpander.expandSystem(SamusSystems.samus_animation)
       SystemExpander.expandSystem(EnemiesSystems.skree_animation)

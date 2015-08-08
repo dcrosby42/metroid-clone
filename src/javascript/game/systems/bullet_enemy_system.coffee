@@ -1,29 +1,22 @@
 Common = require '../entity/components'
 AnchoredBox = require '../../utils/anchored_box'
+BaseSystem = require '../../ecs/base_system'
 
-makeEnemyHitSound = (u) ->
-
-
-module.exports =
-  config:
-    filters: [
+class BulletEnemySystem extends BaseSystem
+  @Subscribe: [
       [ "bullet", "hit_box" ],
-      #[ "enemy", "hit_box" ]
       [ "enemy", "hit_box", "visual"]
     ]
 
-  update: (comps,input,u) ->
-    bulletHitBox = comps.get('bullet-hit_box')
-    enemyHitBox = comps.get('enemy-hit_box')
+  process: ->
+    bulletHitBox = @get('bullet-hit_box')
+    enemyHitBox = @get('enemy-hit_box')
     
     bulletBox = new AnchoredBox(bulletHitBox.toJS())
     enemyBox = new AnchoredBox(enemyHitBox.toJS())
 
     if bulletBox.overlaps(enemyBox)
-      bullet = comps.get('bullet')
-      enemy = comps.get('enemy')
-      u.update bulletHitBox.set('touchingSomething',true)
-
+      @update bulletHitBox.set('touchingSomething',true)
 
       # Play hit sound:
       hitSound = Common.Sound.merge
@@ -31,21 +24,19 @@ module.exports =
         volume: 0.15
         playPosition: 0
         timeLimit: 170
-      u.newEntity [ hitSound ]
+      @newEntity [ hitSound ]
 
       # Deal damage to enemy:
-      enemy = enemy.update 'hp', (hp) -> hp - bullet.get('damage')
+      @updateProp 'enemy', 'hp', (hp) => hp - @getProp('bullet', 'damage')
 
       # Update or remove entity based on HP remaining:
-      if enemy.get('hp') > 0
+      if @getProp('enemy', 'hp') > 0
+        @setProp 'enemy','stunned', 200
         
-        # visual = comps.get('enemy-visual') #XXX
-        # u.update visual.set('paused',true) #XXX
-        u.update enemy.set('stunned',200) #XXX
       else
-        u.destroyEntity enemy.get('eid')
+        @destroyEntity @getProp('enemy','eid')
 
-        u.newEntity [
+        @newEntity [
           Common.Visual.merge
             layer: 'creatures'
             spriteName: 'creature_explosion'
@@ -58,4 +49,4 @@ module.exports =
         ]
 
 
-
+module.exports = BulletEnemySystem
