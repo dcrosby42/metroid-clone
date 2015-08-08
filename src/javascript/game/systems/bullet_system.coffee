@@ -6,9 +6,9 @@ class BulletSystem extends BaseSystem
   @Subscribe: [ 'bullet', 'hit_box', 'visual', 'velocity', 'death_timer' ]
 
   process: ->
-    hitBox = @get('hit_box')
+    hitBox = @getComp('hit_box')
     if hitBox.get('touchingSomething')
-      @delete hitBox
+      @deleteComp hitBox
       @setProp 'visual', 'state', 'splode'
       @setProp 'velocity', 'x', 0
       @setProp 'velocity', 'y', 0

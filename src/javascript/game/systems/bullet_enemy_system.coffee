@@ -10,14 +10,14 @@ class BulletEnemySystem extends BaseSystem
   @ImplyEntity: 'enemy'
 
   process: ->
-    bulletHitBox = @get('bullet-hit_box')
-    enemyHitBox = @get('enemy-hit_box')
+    bulletHitBox = @getComp('bullet-hit_box')
+    enemyHitBox = @getComp('enemy-hit_box')
     
     bulletBox = new AnchoredBox(bulletHitBox.toJS())
     enemyBox = new AnchoredBox(enemyHitBox.toJS())
 
     if bulletBox.overlaps(enemyBox)
-      @update bulletHitBox.set('touchingSomething',true)
-      @publishEvent @eid(), 'shot'
+      @updateComp bulletHitBox.set('touchingSomething',true)
+      @publishEvent 'shot'
 
 module.exports = BulletEnemySystem

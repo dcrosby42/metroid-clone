@@ -41,13 +41,26 @@ class BaseSystem
 
   process: ->
 
+  sync: ->
+    for name in @updatedCompNames
+      @updater.update @updatedComps[name]
+    for comp in @compsToDelete
+      console.log "Deleting comp",comp.toJS()
+      @updater.delete(comp)
+    for [eid,props] in @compsToAdd
+      @updater.add(eid, props)
+    for comps in @entitiesToAdd
+      @updater.newEntity(comps)
+    for eid in @entitiesToDelete
+      @updater.destroyEntity(eid)
+
   dt: ->
     @input.get('dt')
 
   eid: ->
     @getProp(@_primaryComponentName,'eid')
 
-  get: (compName) ->
+  getComp: (compName) ->
     comp = @cache[compName]
     if !comp?
       comp = @comps.get(compName)
@@ -58,29 +71,34 @@ class BaseSystem
     comp
 
   getProp: (compName, propName) ->
-    @get(compName).get(propName)
-
-  update: (comp) ->
-    compName = @nameCache[comp.get('cid')]
-    @_updated(compName,comp) unless @cache[compName] == comp
-
-  updateProp: (compName, propName, fn) ->
-    comp = @get(compName)
-    comp2 = comp.update(propName, fn)
-    @_updated(compName,comp2) unless comp == comp2
+    @getComp(compName).get(propName)
 
   setProp: (compName, propName, value) ->
-    comp = @get(compName)
+    comp = @getComp(compName)
     comp2 = comp.set(propName, value)
     @_updated(compName,comp2) unless comp == comp2
 
-  delete: (comp) ->
+  updateProp: (compName, propName, fn) ->
+    comp = @getComp(compName)
+    comp2 = comp.update(propName, fn)
+    @_updated(compName,comp2) unless comp == comp2
+
+  updateComp: (comp) ->
+    compName = @nameCache[comp.get('cid')]
+    @_updated(compName,comp) unless @cache[compName] == comp
+
+  _updated: (compName, comp) ->
+    @cache[compName] = comp
+    @updatedComps[compName] = comp
+    @updatedCompNames.push compName
+
+  deleteComp: (comp) ->
     @compsToDelete.push comp
 
-  deleteComponent: (comp) ->
-    @compsToDelete.push comp
+  addComp: (props) ->
+    @compsToAdd.push [@eid(),props]
 
-  addComponent: (eid, props) ->
+  addEntityComp: (eid, props) ->
     @compsToAdd.push [eid,props]
 
   newEntity: (comps) ->
@@ -102,32 +120,18 @@ class BaseSystem
   # updateEntityComponent: (eid, type, atts) ->
   #   @updater.updateEntityComponent(eid,type,atts)
 
-  _updated: (compName, comp) ->
-    @cache[compName] = comp
-    @updatedComps[compName] = comp
-    @updatedCompNames.push compName
 
-  sync: ->
-    for name in @updatedCompNames
-      @updater.update @updatedComps[name]
-    for comp in @compsToDelete
-      console.log "Deleting comp",comp.toJS()
-      @updater.delete(comp)
-    for [eid,props] in @compsToAdd
-      @updater.add(eid, props)
-    for comps in @entitiesToAdd
-      @updater.newEntity(comps)
-    for eid in @entitiesToDelete
-      @updater.destroyEntity(eid)
+  #
+  # EVENTS
+  #
 
-  getEvents: (eid) ->
-    @eventBucket.getEventsForEntity(eid)
+  getEvents: -> @eventBucket.getEventsForEntity(@eid())
+  getEntityEvents: (eid) -> @eventBucket.getEventsForEntity(eid)
 
-  publishEvent: (eid,event) ->
-    @eventBucket.addEventForEntity(eid,event)
+  publishEvent: (event) -> @eventBucket.addEventForEntity(@eid(),event)
+  publishEntityEvent: (eid,event) -> @eventBucket.addEventForEntity(eid,event)
 
-  broadcastEvent: (event) ->
-    @eventBucket.addGlobalEvent(event)
+  publishGlobalEvent: (event) -> @eventBucket.addGlobalEvent(event)
   
 
 module.exports = BaseSystem

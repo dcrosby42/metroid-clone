@@ -88,17 +88,18 @@ class ShortBeamSystem extends StateMachineSystem
     @_startCooldown(150)
 
   resetAction: ->
+    # Clear cooldown timer(s):
     @getEntityComponents(@eid(), 'timer', 'name', 'shortBeamCooldown').forEach (comp) =>
-      @delete comp
+      @deleteComp comp
 
   _fireBullet: ->
     dir = @getProp('samus','direction')
-    shortBeam = @get('short_beam')
-    pos = @get('position')
+    shortBeam = @getComp('short_beam')
+    pos = @getComp('position')
     @newEntity newBullet(shortBeam,pos,dir)
 
   _startCooldown: (ms) ->
-    @addComponent @eid(), Common.Timer.merge
+    @addComp Common.Timer.merge
       time: ms
       event: 'cooldownComplete'
       name: 'shortBeamCooldown'

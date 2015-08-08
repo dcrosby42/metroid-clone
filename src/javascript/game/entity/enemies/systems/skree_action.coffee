@@ -6,6 +6,7 @@ class SkreeActionSystem extends StateMachineSystem
     ["skree", "position", "velocity", "hit_box", "visual"]
     ["samus", "position"]
   ]
+  @ImplyEntity: 'skree'
 
   @StateMachine:
     componentProperty: ['skree', 'action']
@@ -29,7 +30,7 @@ class SkreeActionSystem extends StateMachineSystem
   sleepingState: ->
     dist = Math.abs(@getProp('skree-position','x') - @getProp('samus-position','x'))
     if dist <= @getProp('skree','triggerRange')
-      @publishEvent @getProp('skree','eid'), 'approached'
+      @publishEvent 'approached'
 
   launchAction: ->
     @setProp 'skree-visual', 'state', 'spinFast'
@@ -37,12 +38,12 @@ class SkreeActionSystem extends StateMachineSystem
     gravity = Common.Gravity.merge
       max: 300/1000
       accel: (200/1000)/10
-    @addComponent @getProp('skree','eid'), gravity
+    @addComp gravity
       
   trackingState: ->
-    hitBox = @get('skree-hit_box')
+    hitBox = @getComp('skree-hit_box')
     if hitBox.getIn(['touching','bottom'])
-      @publishEvent @getProp('skree','eid'), 'grounded'
+      @publishEvent 'grounded'
     else
       samusX = @getProp('samus-position','x')
       skreeX = @getProp('skree-position','x')
@@ -63,11 +64,10 @@ class SkreeActionSystem extends StateMachineSystem
   destructingState: ->
     @updateProp 'skree','countdown', (t) => t - @dt()
     if @getProp('skree','countdown') <= 0
-      @publishEvent @getProp('skree','eid'), 'destructTimerComplete'
+      @publishEvent 'destructTimerComplete'
 
   detonateAction: ->
-    eid = @getProp('skree', 'eid')
-    console.log "Skree #{eid} EXPLODES"
-    @destroyEntity eid
+    console.log "Skree #{@eid()} EXPLODES"
+    @destroyEntity @eid()
 
 module.exports = SkreeActionSystem

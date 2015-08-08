@@ -62,11 +62,10 @@ class EnemyHitSystem extends StateMachineSystem
     # @publishEvent @eid(), 'stunned' # for other systems
 
   _setStunTimer: ->
-    timer = Common.Timer.merge
+    @addComp Common.Timer.merge
       time: 200
       event: 'stunRecovered'
       name: 'stun'
-    @addComponent @eid(), timer
 
   _unStun: ->
     @_clearStunTimer()
@@ -76,10 +75,10 @@ class EnemyHitSystem extends StateMachineSystem
   _clearStunTimer: ->
     timer = @getEntityComponent(@eid(), 'timer', 'name','stun')
     if timer?
-      @deleteComponent(timer)
+      @deleteComp timer
 
   _makeSplode: ->
-    enemyBox = new AnchoredBox(@get('hit_box').toJS())
+    enemyBox = new AnchoredBox(@getComp('hit_box').toJS())
     @newEntity [
       Common.Visual.merge
         layer: 'creatures'
@@ -93,37 +92,37 @@ class EnemyHitSystem extends StateMachineSystem
     ]
 
   _swapOutVisual: ->
-    visual = @get('visual')
+    visual = @getComp('visual')
     stashedVisual = visual
       .set('type', 'STASHED-visual')
-    @addComponent @eid(), stashedVisual
+    @addComp stashedVisual
     
     stunnedVisual = visual
       .update('state', (s) -> "stunned-#{s}")
       .set('paused',true)
-    @addComponent @eid(), stunnedVisual
+    @addComp stunnedVisual
     
-    @deleteComponent(visual)
+    @deleteComp visual
 
   _swapInVisual: ->
     if stashedVisual = @getEntityComponent @eid(), "STASHED-visual"
-      stunnedVisual = @get('visual')
+      stunnedVisual = @getComp('visual')
       restoredVisual = stashedVisual.set('type','visual')
-      @addComponent @eid(), restoredVisual
-      @deleteComponent stunnedVisual
-      @deleteComponent stashedVisual
+      @addComp restoredVisual
+      @deleteComp stunnedVisual
+      @deleteComp stashedVisual
 
   _swapOutVelocity: ->
     if velocity = @getEntityComponent @eid(), 'velocity'
       stashed = velocity.set('type', 'STASHED-velocity')
-      @addComponent @eid(), stashed
-      @deleteComponent(velocity)
+      @addComp stashed
+      @deleteComp velocity
     
   _swapInVelocity: ->
     if stashed = @getEntityComponent @eid(), "STASHED-velocity"
-      @deleteComponent(stashed)
+      @deleteComp stashed
       restored = stashed.set('type','velocity')
-      @addComponent @eid(), restored
+      @addComp restored
 
 module.exports = EnemyHitSystem
 

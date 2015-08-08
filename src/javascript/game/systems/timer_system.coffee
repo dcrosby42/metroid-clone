@@ -4,12 +4,12 @@ class TimerSystem extends BaseSystem
   @Subscribe: ['timer']
 
   process: ->
-    timer = @get('timer').update('time', (t) => t - @dt())
+    timer = @getComp('timer').update('time', (t) => t - @dt())
     if timer.get('time') > 0
-      @update timer
+      @updateComp timer
     else
-      @publishEvent timer.get('eid'), timer.get('event')
-      @delete timer
+      @publishEvent timer.get('event')
+      @deleteComp timer
 
 module.exports = TimerSystem
 
