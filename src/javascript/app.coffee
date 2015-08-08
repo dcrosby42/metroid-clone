@@ -16,12 +16,12 @@ Inspector = require './inspector'
 
 inspectorConfig = Immutable.fromJS
   componentLayout:
-    samus:      { open: true }
-    skree:      { open: true }
-    controller: { open: true }
-    visual:     { open: true }
-    velocity:   { open: false }
-    position:   { open: false }
+    samus:      { open: false }
+    skree:      { open: false }
+    controller: { open: false }
+    visual:     { open: false }
+    velocity:   { open: true }
+    position:   { open: true }
 
 jquery ->
   inspectorHolder = jquery('#inspector-holder')[0]

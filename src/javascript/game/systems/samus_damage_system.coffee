@@ -1,29 +1,55 @@
 Common = require '../entity/components'
-AnchoredBox = require '../../utils/anchored_box'
-BaseSystem = require '../../ecs/base_system'
+StateMachineSystem = require '../../ecs/state_machine_system'
 
-class SamusDamageSystem extends BaseSystem
-  @Subscribe: [
-      [ "samus", "vulnerable", "hit_box", "velocity" ],
-      [ "harmful", "hit_box"]
-    ]
-  @ImplyEntity: 'samus'
+class SamusDamageSystem extends StateMachineSystem
+  @Subscribe: [ "samus", "damaged", "velocity" ]
 
-  process: ->
-    samusHitBox = @getComp('samus-hit_box')
-    harmfulHitBox = @getComp('harmful-hit_box')
+  @StateMachine:
+    componentProperty: ['damaged','state']
+    start: 'new'
+    states:
+      new:
+        events:
+          hit:
+            action: 'damage'
+            nextState: 'recoiling'
+      recoiling:
+        events:
+          damageRecoilExpired:
+            nextState: 'gracePeriod'
+
+      gracePeriod:
+        events:
+          damageGracePeriodExpired:
+            action: 'backToNormal'
+            nextState: 'done'
+      done: {}
+
+
+
+  newState: ->
+    console.log "SamusDamageSystem newState"
+    @publishEvent 'hit'
+
+  damageAction: ->
+    console.log "SamusDamageSystem damageAction"
+    # TODO: subtract HP
     
-    samusBox = new AnchoredBox(samusHitBox.toJS())
-    harmfulBox = new AnchoredBox(harmfulHitBox.toJS())
+    @addComp Common.Timer.merge
+      time: 200
+      event: 'damageRecoilExpired'
 
-    if samusBox.overlaps(harmfulBox)
-      console.log ">> Samus harmed by #{@getProp('harmful','eid')}"
-      kickX = if samusBox.centerX > harmfulBox.centerX then -0.2 else 0.2
-      kickY = -0.5
-      @updateProp 'samus-velocity', 'x', (x) -> x + kickX
-      @updateProp 'samus-velocity', 'y', (y) -> y + kickY
-      @deleteComp @getComp('samus-vulnerable')
-      #XXX @updateComp samusHitBox.set('touchingSomething',true)
-      #XXX @publishEvent 'shot'
+    @addComp Common.Timer.merge
+      time: 400
+      event: 'damageGracePeriodExpired'
+
+  recoilingState: ->
+    @updateProp 'velocity', 'x', (x) => x + @getProp('damaged','impulseX')
+    @updateProp 'velocity', 'y', (y) => y + @getProp('damaged','impulseY')
+
+  backToNormalAction: ->
+    @addComp Common.Vulnerable
+    @deleteComp @getComp('damaged')
+
 
 module.exports = SamusDamageSystem

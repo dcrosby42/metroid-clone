@@ -78,6 +78,12 @@ C.Vulnerable = imm
 
 C.Harmful = imm
   type: 'harmful'
+
+C.Damaged = imm
+  type: 'damaged'
+  state: 'new'
+  impulseX: 0
+  impulseY: 0
     
 C.HitBoxVisual = imm
   type: 'hit_box_visual'
