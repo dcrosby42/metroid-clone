@@ -5,7 +5,7 @@ BaseSystem = require '../../ecs/base_system'
 class BulletEnemySystem extends BaseSystem
   @Subscribe: [
       [ "bullet", "hit_box" ],
-      [ "enemy", "hit_box", "visual"]
+      [ "enemy", "hit_box"]
     ]
   @ImplyEntity: 'enemy'
 
