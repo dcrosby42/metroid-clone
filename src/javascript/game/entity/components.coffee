@@ -73,6 +73,9 @@ C.Enemy = imm
   type: 'enemy'
   hp: 100
 
+C.Vulnerable = imm
+  type: "vulnerable"
+
 C.Harmful = imm
   type: 'harmful'
     

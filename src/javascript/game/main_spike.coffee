@@ -230,6 +230,7 @@ class MainSpike
       SystemExpander.expandSystem(SamusSystems.samus_controller_action)
       SamusSystems.short_beam_system
       SystemExpander.expandSystem(SamusSystems.samus_action_velocity)
+      CommonSystems.samus_damage_system
       # EnemiesSystems.skree_velocity
       SystemExpander.expandSystem(SamusSystems.samus_action_sounds)
       SystemExpander.expandSystem(CommonSystems.gravity_system)
@@ -238,7 +239,6 @@ class MainSpike
       CommonSystems.bullet_system
       CommonSystems.enemy_hit_system
       EnemiesSystems.skree_action
-      CommonSystems.samus_damage_system
       SystemExpander.expandSystem(SamusSystems.samus_animation)
       # SystemExpander.expandSystem(EnemiesSystems.skree_animation)
     ]

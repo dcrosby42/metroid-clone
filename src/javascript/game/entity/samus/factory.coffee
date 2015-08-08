@@ -17,6 +17,7 @@ F.samus = (args) ->
     Common.Gravity.merge
       max: 200/1000
       accel: (200/1000)/10
+    Common.Vulnerable
     Common.HitBox.merge
       x: 50
       y: 50

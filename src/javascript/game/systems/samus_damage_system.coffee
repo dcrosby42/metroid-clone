@@ -4,7 +4,7 @@ BaseSystem = require '../../ecs/base_system'
 
 class SamusDamageSystem extends BaseSystem
   @Subscribe: [
-      [ "samus", "hit_box" ],
+      [ "samus", "vulnerable", "hit_box", "velocity" ],
       [ "harmful", "hit_box"]
     ]
   @ImplyEntity: 'samus'
@@ -18,6 +18,11 @@ class SamusDamageSystem extends BaseSystem
 
     if samusBox.overlaps(harmfulBox)
       console.log ">> Samus harmed by #{@getProp('harmful','eid')}"
+      kickX = if samusBox.centerX > harmfulBox.centerX then -0.2 else 0.2
+      kickY = -0.5
+      @updateProp 'samus-velocity', 'x', (x) -> x + kickX
+      @updateProp 'samus-velocity', 'y', (y) -> y + kickY
+      @deleteComp @getComp('samus-vulnerable')
       #XXX @updateComp samusHitBox.set('touchingSomething',true)
       #XXX @publishEvent 'shot'
 
