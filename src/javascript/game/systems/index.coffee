@@ -4,6 +4,7 @@ module.exports =
   controller_system: require './controller_system'
   death_timer_system: require './death_timer_system'
   debug_system: require './debug_system'
+  enemy_hit_system: require './enemy_hit_system'
   gravity_system: require './gravity_system'
   hit_box_visual_sync_system: require './hit_box_visual_sync_system'
   manual_mover_system: require './manual_mover_system'

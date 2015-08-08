@@ -3,7 +3,7 @@ StateMachineSystem = require '../../../../ecs/state_machine_system'
 
 class SkreeActionSystem extends StateMachineSystem
   @Subscribe: [
-    ["skree", "position", "velocity", "hit_box"]
+    ["skree", "position", "velocity", "hit_box", "visual"]
     ["samus", "position"]
   ]
 
@@ -32,6 +32,8 @@ class SkreeActionSystem extends StateMachineSystem
       @publishEvent @getProp('skree','eid'), 'approached'
 
   launchAction: ->
+    @setProp 'skree-visual', 'state', 'spinFast'
+    @setProp 'skree-visual', 'time', 0
     gravity = Common.Gravity.merge
       max: 300/1000
       accel: (200/1000)/10

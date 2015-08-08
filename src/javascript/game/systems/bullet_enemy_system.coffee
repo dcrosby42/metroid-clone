@@ -7,6 +7,7 @@ class BulletEnemySystem extends BaseSystem
       [ "bullet", "hit_box" ],
       [ "enemy", "hit_box", "visual"]
     ]
+  @ImplyEntity: 'enemy'
 
   process: ->
     bulletHitBox = @get('bullet-hit_box')
@@ -17,36 +18,6 @@ class BulletEnemySystem extends BaseSystem
 
     if bulletBox.overlaps(enemyBox)
       @update bulletHitBox.set('touchingSomething',true)
-
-      # Play hit sound:
-      hitSound = Common.Sound.merge
-        soundId: 'enemy_die1'
-        volume: 0.15
-        playPosition: 0
-        timeLimit: 170
-      @newEntity [ hitSound ]
-
-      # Deal damage to enemy:
-      @updateProp 'enemy', 'hp', (hp) => hp - @getProp('bullet', 'damage')
-
-      # Update or remove entity based on HP remaining:
-      if @getProp('enemy', 'hp') > 0
-        @setProp 'enemy','stunned', 200
-        
-      else
-        @destroyEntity @getProp('enemy','eid')
-
-        @newEntity [
-          Common.Visual.merge
-            layer: 'creatures'
-            spriteName: 'creature_explosion'
-            state: 'explode'
-          Common.Position.merge
-            x: enemyBox.left + (enemyBox.width/2)
-            y: enemyBox.top + (enemyBox.height/2)
-          Common.DeathTimer.merge
-            time: 3 * (1000/20) # the splode anim lasts three or four twentieths of a second
-        ]
-
+      @publishEvent @eid(), 'shot'
 
 module.exports = BulletEnemySystem

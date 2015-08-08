@@ -3,14 +3,14 @@ sprites =
   basic_skree:
     spriteSheet: "images/skree.json"
     states:
-      "wait":
+      "spinSlow":
         frames: [
           "skree-green-01"
           "skree-green-02"
           "skree-green-03"
         ]
         fps: 7.5
-      "attack":
+      "spinFast":
         frames: [
           "skree-green-01"
           "skree-green-02"
@@ -18,14 +18,14 @@ sprites =
         ]
         fps: 30
 
-      "stunned-wait":
+      "stunned-spinSlow":
         frames: [
           "skree-stunned-01"
           "skree-stunned-02"
           "skree-stunned-03"
         ]
         fps: 7.5
-      "stunned-attack":
+      "stunned-spinFast":
         frames: [
           "skree-stunned-01"
           "skree-stunned-02"

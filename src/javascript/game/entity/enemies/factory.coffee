@@ -11,7 +11,7 @@ F.basicSkree = (args) ->
     Common.Visual.merge
       layer: 'creatures'
       spriteName: 'basic_skree'
-      state: 'wait'
+      state: 'spinSlow'
       time: 0
     Common.Position.merge
       x: args.x

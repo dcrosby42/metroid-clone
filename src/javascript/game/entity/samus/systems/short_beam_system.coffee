@@ -57,7 +57,7 @@ newBullet = (weapon, position,direction) ->
 
 
 class ShortBeamSystem extends StateMachineSystem
-  @Subscribe: ['samus', 'short_beam','controller', 'position']
+  @Subscribe: ['short_beam', 'samus', 'controller', 'position']
 
   @StateMachine:
     componentProperty: ['short_beam','state']
@@ -88,9 +88,8 @@ class ShortBeamSystem extends StateMachineSystem
     @_startCooldown(150)
 
   resetAction: ->
-    @getEntityComponents(@getProp('short_beam','eid'), 'timer').forEach (comp) =>
-      if comp.get('name') == 'shortBeamCooldown'
-        @delete comp
+    @getEntityComponents(@eid(), 'timer', 'name', 'shortBeamCooldown').forEach (comp) =>
+      @delete comp
 
   _fireBullet: ->
     dir = @getProp('samus','direction')
@@ -99,8 +98,7 @@ class ShortBeamSystem extends StateMachineSystem
     @newEntity newBullet(shortBeam,pos,dir)
 
   _startCooldown: (ms) ->
-    eid = @getProp('short_beam','eid')
-    @addComponent eid, Common.Timer.merge
+    @addComponent @eid(), Common.Timer.merge
       time: ms
       event: 'cooldownComplete'
       name: 'shortBeamCooldown'

@@ -237,8 +237,9 @@ class MainSpike
       SystemExpander.expandSystem(CommonSystems.map_physics_system)
       CommonSystems.bullet_enemy_system
       CommonSystems.bullet_system
+      CommonSystems.enemy_hit_system
       SystemExpander.expandSystem(SamusSystems.samus_animation)
-      SystemExpander.expandSystem(EnemiesSystems.skree_animation)
+      # SystemExpander.expandSystem(EnemiesSystems.skree_animation)
     ]
     # systems = SystemExpander.expandSystems [
     #   CommonSystems.death_timer_system
