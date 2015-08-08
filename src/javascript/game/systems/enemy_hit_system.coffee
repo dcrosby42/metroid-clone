@@ -81,8 +81,8 @@ class EnemyHitSystem extends StateMachineSystem
         spriteName: 'creature_explosion'
         state: 'explode'
       Common.Position.merge
-        x: enemyBox.left + (enemyBox.width/2)
-        y: enemyBox.top + (enemyBox.height/2)
+        x: enemyBox.centerX
+        y: enemyBox.centerY
       Common.DeathTimer.merge
         time: 3 * (1000/20) # the splode anim lasts three or four twentieths of a second
     ]

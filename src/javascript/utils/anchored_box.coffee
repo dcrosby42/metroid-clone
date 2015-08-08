@@ -38,10 +38,12 @@ class AnchoredBox
   _updateLeftRight: ->
     @left = @x + @leftOffset
     @right = @left + @width
+    @centerX = @left + (@width/2)
 
   _updateTopBottom: ->
     @top = @y + @topOffset
     @bottom = @top + @height
+    @centerY = @top + (@height/2)
 
   _updateLeftRightOffsets: ->
     @leftOffset   = -(@anchorX * @width)
