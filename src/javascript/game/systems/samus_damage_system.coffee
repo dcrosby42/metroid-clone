@@ -1,4 +1,5 @@
 Common = require '../entity/components'
+MathUtils = require '../../utils/math_utils'
 StateMachineSystem = require '../../ecs/state_machine_system'
 
 class SamusDamageSystem extends StateMachineSystem
@@ -36,16 +37,24 @@ class SamusDamageSystem extends StateMachineSystem
     # TODO: subtract HP
     
     @addComp Common.Timer.merge
-      time: 200
+      time: 300
       event: 'damageRecoilExpired'
 
     @addComp Common.Timer.merge
-      time: 400
+      time: 500
       event: 'damageGracePeriodExpired'
 
   recoilingState: ->
-    @updateProp 'velocity', 'x', (x) => x + @getProp('damaged','impulseX')
-    @updateProp 'velocity', 'y', (y) => y + @getProp('damaged','impulseY')
+    @updateProp 'velocity', 'x', (x) =>
+      MathUtils.clamp(
+        x + @getProp('damaged','impulseX'),
+        # -0.15, 0.15)
+        -0.088, 0.088)
+
+    @updateProp 'velocity', 'y', (y) =>
+      MathUtils.clamp(
+        y + @getProp('damaged','impulseY'),
+        -0.1, 0.2)
 
   backToNormalAction: ->
     @addComp Common.Vulnerable
