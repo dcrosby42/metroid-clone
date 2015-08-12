@@ -20,6 +20,7 @@ C.Gravity = imm
 
 C.Visual = imm
   type: 'visual'
+  visible: true
   time: 0
   paused: false
   spriteName: null
@@ -30,6 +31,10 @@ C.Controller = imm
   type: 'controller'
   inputName: null
   states: {}
+
+C.Health = imm
+  type: 'health'
+  hp: 10 
 
 C.HitBox = imm
   type: 'hit_box'
@@ -82,6 +87,7 @@ C.Harmful = imm
 C.Damaged = imm
   type: 'damaged'
   state: 'new'
+  hp: 5
   impulseX: 0
   impulseY: 0
     

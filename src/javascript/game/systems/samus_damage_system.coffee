@@ -3,7 +3,7 @@ MathUtils = require '../../utils/math_utils'
 StateMachineSystem = require '../../ecs/state_machine_system'
 
 class SamusDamageSystem extends StateMachineSystem
-  @Subscribe: [ "samus", "damaged", "velocity" ]
+  @Subscribe: [ "samus", "health", "damaged", "velocity" ]
 
   @StateMachine:
     componentProperty: ['damaged','state']
@@ -34,15 +34,23 @@ class SamusDamageSystem extends StateMachineSystem
 
   damageAction: ->
     console.log "SamusDamageSystem damageAction"
-    # TODO: subtract HP
-    
-    @addComp Common.Timer.merge
-      time: 300
-      event: 'damageRecoilExpired'
 
-    @addComp Common.Timer.merge
-      time: 500
-      event: 'damageGracePeriodExpired'
+    @updateProp 'health', 'hp', (hp) => hp - @getProp('damaged','hp')
+    if @getProp('health', 'hp') < 0
+      @_makeHurtSound()
+      @_makeDieSound()
+      # TODO: add Samus explode effect
+      @destroyEntity()
+    else
+      @_makeHurtSound()
+
+      @addComp Common.Timer.merge
+        time: 300
+        event: 'damageRecoilExpired'
+
+      @addComp Common.Timer.merge
+        time: 750
+        event: 'damageGracePeriodExpired'
 
   recoilingState: ->
     @updateProp 'velocity', 'x', (x) =>
@@ -59,6 +67,24 @@ class SamusDamageSystem extends StateMachineSystem
   backToNormalAction: ->
     @addComp Common.Vulnerable
     @deleteComp @getComp('damaged')
+
+  _makeHurtSound: ->
+    @newEntity [
+      Common.Sound.merge
+        soundId: 'samus_hurt'
+        volume: 0.15
+        playPosition: 0
+        timeLimit: 170
+    ]
+
+  _makeDieSound: ->
+    @newEntity [
+      Common.Sound.merge
+        soundId: 'samus_die'
+        volume: 0.15
+        playPosition: 0
+        timeLimit: 3000
+    ]
 
 
 module.exports = SamusDamageSystem

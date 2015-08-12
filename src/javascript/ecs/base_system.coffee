@@ -103,7 +103,8 @@ class BaseSystem
   newEntity: (comps) ->
     @entitiesToAdd.push comps
 
-  destroyEntity: (eid) ->
+  destroyEntity: (eid=null) ->
+    eid ?= @eid()
     @entitiesToDelete.push eid
 
   # TODO: rethink?  Systems reaching out to the estore breaks the pattern

@@ -36,6 +36,7 @@ module.exports =
       syncFn: (vp,sprite) =>
         visual = vp.get('visual')
         position = vp.get('position')
+        sprite.visible = visual.get('visible')
         sprite.displayAnimation visual.get('state'), visual.get('time')
         sprite.position.set position.get('x'), position.get('y')
 

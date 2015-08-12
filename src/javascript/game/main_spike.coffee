@@ -53,6 +53,7 @@ class MainSpike
       "step2"
       "jump"
       "samus_hurt"
+      "samus_die"
       "short_beam"
     ]
     assets = {}

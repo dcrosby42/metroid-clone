@@ -47,6 +47,8 @@ module.exports =
           'jump'
         else if sideways
           'run'
+        else
+          'stop'
 
       when 'running'
         if ctrl.get('action2Pressed')

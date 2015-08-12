@@ -18,6 +18,8 @@ F.samus = (args) ->
       max: 200/1000
       accel: (200/1000)/10
     Common.Vulnerable
+    Common.Health.merge
+      hp: 30
     Common.HitBox.merge
       x: 50
       y: 50

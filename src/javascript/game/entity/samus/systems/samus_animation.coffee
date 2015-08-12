@@ -69,7 +69,21 @@ module.exports =
     ]
     newState = ObjectUtils.getDeep states, keyPath
 
-    if newState != oldState
-      u.update visual.set('state',newState).set('time',0)
+    # TODO : refactor this gorpy implementation.
+    if damaged = u.getEntityComponent(samus.get('eid'), 'damaged')
+      visual = visual.update 'visible', (v) -> !v
+      visualChanged = true
+    else
+      visual = visual.set('visible',true)
+      visualChanged = true
 
-# module.exports = SamusAnimation
+    if newState != oldState
+      visual = visual.set('state',newState).set('time',0)
+      visualChanged = true
+
+    if visualChanged
+      u.update visual
+
+
+
+
