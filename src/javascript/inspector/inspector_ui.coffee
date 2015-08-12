@@ -9,13 +9,38 @@ ComponentSearchBox = require './component_search_box'
 
 InspectorUI = React.createClass
   displayName: 'InspectorUI'
+  getInitialState: ->
+    {
+      foldOpen: false
+    }
+
+  headerClicked: (e) ->
+    e.preventDefault()
+    @setState (prev) ->
+      { foldOpen: !prev.foldOpen }
+
   render: ->
-    React.DOM.div {className: 'component-inspector'},
+    folder = if @state.foldOpen
+        React.DOM.span {className: 'inspector-folder open'}, "- "
+      else
+        React.DOM.span {className: 'inspector-folder closed'}, "+ "
+
+    header = React.DOM.div {className: "inspector-header", onClick: @headerClicked}, folder, "Entity Inspector"
+
+    views = if @state.foldOpen
+      # List([
       React.DOM.div {className: 'entities'},
         @props.entities.map((components,eid) =>
           React.createElement Entity, {eid: eid, components: components, key: eid, inspectorConfig: @props.inspectorConfig}
         ).toList()
-      React.createElement ComponentSearchBox, {key: 'component-search-box', entityStore: @props.entityStore}
+        # React.createElement ComponentSearchBox, {key: 'component-search-box', entityStore: @props.entityStore}
+      # ])
+    else
+      List()
+
+    React.DOM.div {className: 'component-inspector'},
+      header,
+      views
 
 Entity = React.createClass
   displayName: 'Entity'
