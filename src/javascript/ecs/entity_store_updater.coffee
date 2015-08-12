@@ -8,8 +8,8 @@ class EntityStoreUpdater
   newEntity:     (comps) -> @estore.createEntity comps
   destroyEntity:   (eid) -> @estore.destroyEntity eid
 
-  getEntityComponents: (eid,type) -> @estore.getEntityComponents(eid,type)
-  getEntityComponent: (eid,type) -> @estore.getEntityComponent(eid,type)
+  getEntityComponents: (eid,type,matchKey,matchVal) -> @estore.getEntityComponents(eid,type,matchKey,matchVal)
+  getEntityComponent: (eid,type,matchKey,matchVal) -> @estore.getEntityComponent(eid,type,matchKey,matchVal)
 
   # TODO: rethink... try not to do this under normal circumstances:
   # updateEntityComponent: (eid,type,atts) ->
