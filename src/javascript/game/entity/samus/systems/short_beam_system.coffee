@@ -35,6 +35,7 @@ newBullet = (weapon, position,direction) ->
     Common.Velocity.merge
       x: velocity
       y: 0
+    Common.MapCollider
     Common.HitBox.merge
       width: 4
       height: 4

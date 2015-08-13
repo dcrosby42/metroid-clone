@@ -24,7 +24,7 @@ tileSearchHorizontal = (grid, tw,th, y, leftX, rightX) ->
 
 module.exports =
   config:
-    filters: ['velocity','hit_box','position']
+    filters: ['map_collider', 'velocity','hit_box','position']
 
   update: (comps,input,u) ->
     velocity = comps.get('velocity')

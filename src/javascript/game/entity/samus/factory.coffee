@@ -20,6 +20,7 @@ F.samus = (args) ->
     Common.Vulnerable
     Common.Health.merge
       hp: 30
+    Common.MapCollider
     Common.HitBox.merge
       x: 50
       y: 50

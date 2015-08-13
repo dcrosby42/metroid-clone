@@ -1,5 +1,6 @@
 Common = require '../../components'
 StateMachineSystem = require '../../../../ecs/state_machine_system'
+AnchoredBox = require '../../../../utils/anchored_box'
 
 class SkreeActionSystem extends StateMachineSystem
   @Subscribe: [
@@ -68,6 +69,48 @@ class SkreeActionSystem extends StateMachineSystem
 
   detonateAction: ->
     console.log "Skree #{@eid()} EXPLODES"
-    @destroyEntity @eid()
+
+    @destroyEntity() # kill the Skree
+    
+    box = new AnchoredBox(@getComp('skree-hit_box').toJS())
+    x = box.centerX
+    y = box.centerY
+
+    magnitude = 0.5
+    rad = Math.PI / 3
+    ax = magnitude * Math.cos(rad)
+    ay = magnitude * Math.sin(rad)
+
+    @_createShrapnel(x,y, magnitude, 0)
+    @_createShrapnel(x,y, -magnitude, 0)
+    @_createShrapnel(x,y, ax,-ay)
+    @_createShrapnel(x,y, -ax,-ay)
+
+
+  _createShrapnel: (x,y, vx,vy) ->
+    
+    @newEntity [
+      Common.Visual.merge
+        layer: 'creatures'
+        spriteName: 'skree_shrapnel'
+        state: 'normal'
+      Common.MapGhost
+      Common.Position.merge
+        x: x
+        y: y
+      Common.Velocity.merge
+        x: vx
+        y: vy
+      Common.Harmful
+      Common.HitBox.merge
+        width: 8
+        height: 8
+        anchorX: 0.5
+        anchorY: 0.5
+      Common.HitBoxVisual
+      Common.DeathTimer.merge
+        time: 100
+    ]
+
 
 module.exports = SkreeActionSystem

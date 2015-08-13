@@ -17,6 +17,7 @@ class SamusHitSystem extends BaseSystem
     harmfulBox = new AnchoredBox(harmfulHitBox.toJS())
 
     if samusBox.overlaps(harmfulBox)
+      console.log "HIT"
       samusEid = @getProp('samus','eid')
       console.log ">> Samus #{samusEid} harmed by #{@getProp('harmful','eid')}"
       @deleteComp @getComp('samus-vulnerable')

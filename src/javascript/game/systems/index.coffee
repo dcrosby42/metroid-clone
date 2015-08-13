@@ -8,6 +8,7 @@ module.exports =
   gravity_system: require './gravity_system'
   hit_box_visual_sync_system: require './hit_box_visual_sync_system'
   manual_mover_system: require './manual_mover_system'
+  map_ghost_system: require './map_ghost_system'
   map_physics_system: require './map_physics_system'
   samus_damage_system: require './samus_damage_system'
   samus_hit_system: require './samus_hit_system'

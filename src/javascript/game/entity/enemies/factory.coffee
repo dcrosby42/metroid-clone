@@ -20,6 +20,7 @@ F.basicSkree = (args) ->
     Common.Velocity.merge
       x: 0
       y: 0
+    Common.MapCollider
     Common.HitBox.merge
       width: 16
       height: 24

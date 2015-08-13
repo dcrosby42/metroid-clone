@@ -50,6 +50,12 @@ C.HitBox = imm
     top: false
     bottom: false
   touchingSomething: false
+
+C.MapCollider = imm
+  type: 'map_collider'
+
+C.MapGhost = imm
+  type: 'map_ghost'
     
 C.Sound = imm
   type: 'sound'

@@ -35,4 +35,16 @@ sprites =
     props:
       anchor: { x: 0.5, y: 0 }
 
+  skree_shrapnel:
+    spriteSheet: "images/skree.json"
+    states:
+      normal:
+        frame: "skree-shrapnel"
+        props:
+          anchor:
+            x: 0.5
+            y: 0.5
+
+
+
 module.exports = sprites

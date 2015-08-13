@@ -27,9 +27,18 @@
 	"sourceSize": {"w":16,"h":24},
 	"pivot": {"x":0.5,"y":0.5}
 },
+"skree-shrapnel":
+{
+	"frame": {"x":56,"y":2,"w":7,"h":7},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":7,"h":7},
+	"sourceSize": {"w":7,"h":7},
+	"pivot": {"x":0.5,"y":0.5}
+},
 "skree-stunned-01":
 {
-	"frame": {"x":56,"y":2,"w":8,"h":24},
+	"frame": {"x":65,"y":2,"w":8,"h":24},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":24},
@@ -38,7 +47,7 @@
 },
 "skree-stunned-02":
 {
-	"frame": {"x":66,"y":2,"w":8,"h":24},
+	"frame": {"x":75,"y":2,"w":8,"h":24},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":24},
@@ -47,7 +56,7 @@
 },
 "skree-stunned-03":
 {
-	"frame": {"x":76,"y":2,"w":16,"h":24},
+	"frame": {"x":85,"y":2,"w":16,"h":24},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":24},
@@ -59,8 +68,8 @@
 	"version": "1.0",
 	"image": "skree.png",
 	"format": "RGBA8888",
-	"size": {"w":94,"h":28},
+	"size": {"w":103,"h":28},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:a939f1f7f47773da2336332c99549a0a:0ad09612327751e9911f6d3ce7039796:6707f84dbb444af27c59550dfc369e4c$"
+	"smartupdate": "$TexturePacker:SmartUpdate:86aefab35c996e43f3d40e3572b22cbd:2241eceef7a1bdd3a3a0b60dbaa6c807:6707f84dbb444af27c59550dfc369e4c$"
 }
 }
