@@ -101,7 +101,8 @@ class SkreeActionSystem extends StateMachineSystem
       Common.Velocity.merge
         x: vx
         y: vy
-      Common.Harmful
+      Common.Harmful.merge
+        damage: 5
       Common.HitBox.merge
         width: 8
         height: 8

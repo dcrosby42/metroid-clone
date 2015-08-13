@@ -29,13 +29,11 @@ class SamusDamageSystem extends StateMachineSystem
 
 
   newState: ->
-    console.log "SamusDamageSystem newState"
     @publishEvent 'hit'
 
   damageAction: ->
-    console.log "SamusDamageSystem damageAction"
-
-    @updateProp 'health', 'hp', (hp) => hp - @getProp('damaged','hp')
+    damage = @getProp('damaged','damage')
+    @updateProp 'health', 'hp', (hp) => hp - damage
     if @getProp('health', 'hp') < 0
       @_makeHurtSound()
       @_makeDieSound()

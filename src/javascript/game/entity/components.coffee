@@ -89,11 +89,12 @@ C.Vulnerable = imm
 
 C.Harmful = imm
   type: 'harmful'
+  damage: 1
 
 C.Damaged = imm
   type: 'damaged'
   state: 'new'
-  hp: 5
+  damage: 1
   impulseX: 0
   impulseY: 0
     

@@ -8,7 +8,8 @@ F.basicSkree = (args) ->
     Common.Enemy.merge
       hp: Enemy.Skree.get('max_hp')
     Enemy.Skree
-    Common.Harmful
+    Common.Harmful.merge
+      damage: 8
     Common.Visual.merge
       layer: 'creatures'
       spriteName: 'basic_skree'

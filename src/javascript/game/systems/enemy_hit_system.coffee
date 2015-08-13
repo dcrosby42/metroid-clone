@@ -29,7 +29,7 @@ class EnemyHitSystem extends StateMachineSystem
     if @getProp('enemy', 'hp') > 0
       @_stun()
     else
-      @destroyEntity @eid()
+      @destroyEntity()
       @_makeSplode()
 
   wakeUpAction: ->

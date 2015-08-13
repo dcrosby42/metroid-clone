@@ -17,9 +17,10 @@ class SamusHitSystem extends BaseSystem
     harmfulBox = new AnchoredBox(harmfulHitBox.toJS())
 
     if samusBox.overlaps(harmfulBox)
-      console.log "HIT"
       samusEid = @getProp('samus','eid')
-      console.log ">> Samus #{samusEid} harmed by #{@getProp('harmful','eid')}"
+      damage = @getProp('harmful','damage')
+
+      console.log ">> Samus #{samusEid} harmed by for #{damage} HP by #{@getProp('harmful','eid')}"
       @deleteComp @getComp('samus-vulnerable')
 
       kickX = if samusBox.centerX > harmfulBox.centerX then 0.05 else -0.05
@@ -27,6 +28,7 @@ class SamusHitSystem extends BaseSystem
       @addEntityComp samusEid, Common.Damaged.merge
         impulseX: kickX
         impulseY: kickY
+        damage: damage
       #XXX @updateComp samusHitBox.set('touchingSomething',true)
       #XXX @publishEvent 'shot'
 
