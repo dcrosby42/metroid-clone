@@ -5,10 +5,11 @@ DefaultHandlerDef = Immutable.Map(action: null, nextState: null)
 StateMachine =
   processEvent: (fsm, state, event, obj) ->
     state ||= fsm.get('start')
-    handlerDef = fsm.getIn(['states',state,'events',event]) || DefaultHandlerDef
+    eventName = event.get('name')
+    handlerDef = fsm.getIn(['states',state,'events',eventName]) || DefaultHandlerDef
     if actionName = handlerDef.get('action')
       if action = obj[actionName+"Action"]
-        action.call(obj)
+        action.call(obj,event.get('data'))
     return (handlerDef.get('nextState') || state)
 
   processEvents: (fsm, state, events, obj) ->

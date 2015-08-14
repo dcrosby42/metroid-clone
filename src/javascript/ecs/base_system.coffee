@@ -128,10 +128,10 @@ class BaseSystem
   getEvents: -> @eventBucket.getEventsForEntity(@eid())
   getEntityEvents: (eid) -> @eventBucket.getEventsForEntity(eid)
 
-  publishEvent: (event) -> @eventBucket.addEventForEntity(@eid(),event)
-  publishEntityEvent: (eid,event) -> @eventBucket.addEventForEntity(eid,event)
+  publishEvent: (event,data=null) -> @eventBucket.addEventForEntity(@eid(),event,data)
+  publishEntityEvent: (eid,event,data=null) -> @eventBucket.addEventForEntity(eid,event,data)
 
-  publishGlobalEvent: (event) -> @eventBucket.addGlobalEvent(event)
+  publishGlobalEvent: (event,data=null) -> @eventBucket.addGlobalEvent(event,data)
   
 
 module.exports = BaseSystem
