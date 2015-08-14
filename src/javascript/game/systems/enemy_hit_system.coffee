@@ -23,9 +23,9 @@ class EnemyHitSystem extends StateMachineSystem
             action: 'wakeUp'
             nextState: 'normal'
 
-  damageAction: ->
+  damageAction: (damageVal) ->
     @_makeHitSound()
-    @updateProp 'enemy', 'hp', (hp) => hp - 5  # TODO @getProp('bullet', 'damage')
+    @updateProp 'enemy', 'hp', (hp) => hp - damageVal
     if @getProp('enemy', 'hp') > 0
       @_stun()
     else

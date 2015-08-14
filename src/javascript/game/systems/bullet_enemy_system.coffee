@@ -18,6 +18,6 @@ class BulletEnemySystem extends BaseSystem
 
     if bulletBox.overlaps(enemyBox)
       @updateComp bulletHitBox.set('touchingSomething',true)
-      @publishEvent 'shot'
+      @publishEvent 'shot', @getProp('bullet','damage')
 
 module.exports = BulletEnemySystem
