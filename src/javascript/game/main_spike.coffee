@@ -92,26 +92,24 @@ class MainSpike
     #
     layers = @setupLayers(stage, ['areaA','areaB'])
 
-    mapAreaA = @setupMap(
-      MapData.areas.a,
-      layers.maps.areaA,
-      MapData.info.tileWidth,
-      MapData.info.tileHeight)
-
-    mapAreaB = @setupMap(
-      MapData.areas.b,
-      layers.maps.areaB,
-      MapData.info.tileWidth,
-      MapData.info.tileHeight)
+    @maps = Immutable.Map(
+      areaA: @setupMap(
+        MapData.areas.a,
+        layers.maps.areaA,
+        MapData.info.tileWidth,
+        MapData.info.tileHeight)
+      areaB: @setupMap(
+        MapData.areas.b,
+        layers.maps.areaB,
+        MapData.info.tileWidth,
+        MapData.info.tileHeight)
+    )
 
     @ui = {
       stage: stage
-      maps:
-        areaA: mapAreaA
-        areaB: mapAreaB
       viewportConfigs:
-        areaA: @setupViewportConfig(mapAreaA)
-        areaB: @setupViewportConfig(mapAreaB)
+        areaA: @setupViewportConfig(@maps.get('areaA'))
+        areaB: @setupViewportConfig(@maps.get('areaB'))
       componentInspector: @componentInspector
 
       spriteConfigs: @setupSpriteConfigs()
@@ -302,8 +300,7 @@ class MainSpike
     input = @defaultInput
       .set('dt', dt*@timeDilation)
       .setIn(['controllers','player1'], Immutable.fromJS(p1in))
-      .setIn(['static','maps', 'areaA'], @ui.maps['areaA'])
-      .setIn(['static','maps', 'areaB'], @ui.maps['areaB'])
+      .setIn(['static','maps'], @maps)
     
     # input
     #   dt
