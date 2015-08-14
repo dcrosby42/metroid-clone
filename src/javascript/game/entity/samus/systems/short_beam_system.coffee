@@ -2,20 +2,27 @@ Common = require '../../components'
 Immutable = require 'immutable'
 StateMachineSystem = require '../../../../ecs/state_machine_system'
 
-GUN_SETTINGS =
-  offsetX: 10
-  offsetY: -22
-  muzzleVelocity: 200/1000
-  bulletLife: 50 / (200/1000)
+MuzzleVelocity = 200/1000
+BulletLifetime = 50 / (200/1000)
 
-newBullet = (weapon, position,direction) ->
-  offsetX = GUN_SETTINGS.offsetX
-  offsetY = GUN_SETTINGS.offsetY
-  velocity = GUN_SETTINGS.muzzleVelocity
+newBullet = (weapon, position,direction,shootUp) ->
+  offsetX = offsetY = vx = vy = 0
 
-  if direction == 'left'
-    offsetX = -offsetX
-    velocity = -velocity
+  if shootUp
+    offsetX = 2.5
+    offsetY = -35
+    vx = 0
+    vy = -MuzzleVelocity
+    if direction == 'left'
+      offsetX = -2
+  else
+    offsetX = 10
+    offsetY = -22
+    vx = MuzzleVelocity
+    vy = 0
+    if direction == 'left'
+      offsetX = -offsetX
+      vx = -vx
 
   fireX = position.get('x') + offsetX
   fireY = position.get('y') + offsetY
@@ -33,8 +40,8 @@ newBullet = (weapon, position,direction) ->
       y: fireY
       direction: direction
     Common.Velocity.merge
-      x: velocity
-      y: 0
+      x: vx
+      y: vy
     Common.MapCollider
     Common.HitBox.merge
       width: 4
@@ -52,7 +59,7 @@ newBullet = (weapon, position,direction) ->
       resound: true
 
     Common.DeathTimer.merge
-      time: GUN_SETTINGS.bulletLife
+      time: BulletLifetime
 
   ]
 
@@ -95,9 +102,10 @@ class ShortBeamSystem extends StateMachineSystem
 
   _fireBullet: ->
     dir = @getProp('samus','direction')
+    shootUp = @getProp('samus','aim') == 'up'
     shortBeam = @getComp('short_beam')
     pos = @getComp('position')
-    @newEntity newBullet(shortBeam,pos,dir)
+    @newEntity newBullet(shortBeam,pos,dir,shootUp)
 
   _startCooldown: (ms) ->
     @addComp Common.Timer.merge
