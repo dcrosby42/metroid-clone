@@ -226,7 +226,7 @@ class MainSpike
       CommonSystems.visual_timer_system
       CommonSystems.sound_system
       SystemExpander.expandSystem(SamusSystems.samus_motion)
-      SystemExpander.expandSystem(CommonSystems.controller_system)
+      CommonSystems.controller_system
       #CommonSystems.manual_mover_system
       SystemExpander.expandSystem(SamusSystems.samus_controller_action)
       SamusSystems.short_beam_system

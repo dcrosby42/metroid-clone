@@ -1,23 +1,21 @@
 PressedReleased = require '../../utils/pressed_released'
+BaseSystem = require '../../ecs/base_system'
 
-module.exports =
-  config:
-    filters: [ 'controller' ]
+class ControllerSystem extends BaseSystem
+  @Subscribe: [ 'controller' ]
 
-  update: (comps, input, u, eventBucket) ->
-    controller = comps.get('controller')
-    ins = input.getIn(['controllers', controller.get('inputName')])
-    controller = controller.update 'states', (s) -> PressedReleased.update(s, ins)
-    u.update controller
-
-    eid = controller.get('eid')
-    if controller.getIn(['states','action1Pressed'])
-      eventBucket.addEventForEntity(eid, 'triggerPulled')
-    else if controller.getIn(['states','action1'])
-      eventBucket.addEventForEntity(eid, 'triggerHeld')
-    else if controller.getIn(['states','action1Released'])
-      eventBucket.addEventForEntity(eid, 'triggerReleased')
+  process: ->
+    ins = @input.getIn(['controllers', @getProp('controller', 'inputName')])
+    states = @updateProp('controller', 'states', (s) -> PressedReleased.update(s, ins))
+    
+    if states.get('action1Pressed')
+      @publishEvent 'triggerPulled'
+    else if states.get('action1')
+      @publishEvent 'triggerHeld'
+    else if states.get('action1Released')
+      @publishEvent 'triggerReleased'
 
 
 
+module.exports = ControllerSystem
 
