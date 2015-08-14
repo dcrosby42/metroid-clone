@@ -241,31 +241,8 @@ class MainSpike
       CommonSystems.enemy_hit_system
       EnemiesSystems.skree_action
       SamusSystems.samus_animation
-      # SystemExpander.expandSystem(EnemiesSystems.skree_animation)
     ]
-    # systems = SystemExpander.expandSystems [
-    #   CommonSystems.death_timer_system
-    #   CommonSystems.visual_timer_system
-    #   CommonSystems.sound_system
-    #   SamusSystems.samus_motion
-    #   CommonSystems.controller_system
-    #   #CommonSystems.manual_mover_system
-    #   SamusSystems.samus_controller_action
-    #   SamusSystems.short_beam_system
-    #   SamusSystems.samus_action_velocity
-    #   EnemiesSystems.skree_action
-    #   # EnemiesSystems.skree_velocity
-    #   SamusSystems.samus_action_sounds
-    #   CommonSystems.gravity_system
-    #   CommonSystems.map_physics_system
-    #   CommonSystems.bullet_enemy_system
-    #   CommonSystems.bullet_system
-    #   SamusSystems.samus_animation
-    #   EnemiesSystems.skree_animation
-    # ]
 
-
-    # return new SystemRunner(@entityFinder, @entityUpdater, systems)
     return new SystemRunner(@estore, @entityUpdater, systems)
 
 
