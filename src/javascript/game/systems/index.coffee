@@ -10,6 +10,7 @@ module.exports =
   manual_mover_system: require './manual_mover_system'
   map_ghost_system: require './map_ghost_system'
   map_physics_system: require './map_physics_system'
+  map_sync_system: require './map_sync_system'
   samus_damage_system: require './samus_damage_system'
   samus_hit_system: require './samus_hit_system'
   sound_sync_system: require './sound_sync_system'

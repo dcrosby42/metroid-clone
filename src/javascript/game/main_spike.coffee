@@ -69,6 +69,10 @@ class MainSpike
     #
     @estore = new EntityStore()
 
+    # Create Map entity:
+    @estore.createEntity [
+      Immutable.fromJS(type: "map", name: "areaA")
+    ]
     # Create Samus entity:
     @estore.createEntity Samus.factory.createComponents('samus')
     # Create some enemies:
@@ -86,19 +90,28 @@ class MainSpike
     #
     # Setup Map and UI
     #
-    layers = @setupLayers(stage)
+    layers = @setupLayers(stage, ['areaA','areaB'])
 
-    map = @setupMap(
+    mapAreaA = @setupMap(
       MapData.areas.a,
-      layers.map,
+      layers.maps.areaA,
       MapData.info.tileWidth,
       MapData.info.tileHeight)
 
+    mapAreaB = @setupMap(
+      MapData.areas.b,
+      layers.maps.areaB,
+      MapData.info.tileWidth,
+      MapData.info.tileHeight)
 
     @ui = {
       stage: stage
-      map: map
-      viewportConfig: @setupViewportConfig(map)
+      maps:
+        areaA: mapAreaA
+        areaB: mapAreaB
+      viewportConfigs:
+        areaA: @setupViewportConfig(mapAreaA)
+        areaB: @setupViewportConfig(mapAreaB)
       componentInspector: @componentInspector
 
       spriteConfigs: @setupSpriteConfigs()
@@ -122,13 +135,17 @@ class MainSpike
     window.stage = @stage
     window.ui = @ui
 
-  setupLayers: (stage) ->
+  setupLayers: (stage, mapNames) ->
     scaler = new PIXI.DisplayObjectContainer()
     scaler.scale.set(2.5,2) # double size, and stretch the actual nintendo 256 px to look like 320
 
     base = new PIXI.DisplayObjectContainer()
 
-    map = new PIXI.DisplayObjectContainer()
+    maps = {}
+    _.forEach mapNames, (n) ->
+      map = new PIXI.DisplayObjectContainer()
+      maps[n] = map
+      base.addChild map
 
     creatures = new PIXI.DisplayObjectContainer()
 
@@ -136,14 +153,13 @@ class MainSpike
 
     stage.addChild scaler
     scaler.addChild base
-    base.addChild map
     base.addChild creatures
     base.addChild overlay
 
     layers =
       scaler: scaler
       base: base
-      map: map
+      maps: maps
       creatures: creatures
       overlay: overlay
       default: creatures
@@ -260,6 +276,7 @@ class MainSpike
 
   setupOutputSystemRunner: (entityStore,ui) ->
     systems = SystemExpander.expandSystems [
+      CommonSystems.map_sync_system
       CommonSystems.sprite_sync_system
       CommonSystems.debug_system
       CommonSystems.sound_sync_system,
@@ -285,7 +302,8 @@ class MainSpike
     input = @defaultInput
       .set('dt', dt*@timeDilation)
       .setIn(['controllers','player1'], Immutable.fromJS(p1in))
-      .setIn(['static','map'], @ui.map)
+      .setIn(['static','maps', 'areaA'], @ui.maps['areaA'])
+      .setIn(['static','maps', 'areaB'], @ui.maps['areaB'])
     
     # input
     #   dt

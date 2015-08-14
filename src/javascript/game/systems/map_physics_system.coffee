@@ -24,14 +24,22 @@ tileSearchHorizontal = (grid, tw,th, y, leftX, rightX) ->
   hits
 
 class MapPhysicsSystem extends BaseSystem
-  @Subscribe: ['map_collider', 'velocity','hit_box','position']
+  @Subscribe: [
+    ['map']
+    ['map_collider', 'velocity','hit_box','position']
+  ]
 
   process: ->
-    velocity = @getComp('velocity')
-    hitBox = @getComp('hit_box')
-    position = @getComp('position')
+    velocity = @getComp('map_collider-velocity')
+    hitBox = @getComp('map_collider-hit_box')
+    position = @getComp('map_collider-position')
 
-    map = @input.getIn(['static','map'])
+    mapName = @getProp('map', 'name')
+
+    map = @input.getIn(['static','maps', mapName])
+
+    if !map?
+      console.log "!! NO MAP NAMED '#{mapName}' in", @input.toJS()
     grid = map.tileGrid
     tileWidth = map.tileWidth
     tileHeight = map.tileHeight

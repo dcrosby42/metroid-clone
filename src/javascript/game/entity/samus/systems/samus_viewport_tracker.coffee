@@ -28,8 +28,14 @@ module.exports =
   systemType: 'output'
 
   update: (entityFinder, input, ui) ->
-    entityFinder.search([ 'samus', 'position' ]).forEach (comps) ->
-      position = comps.get('position')
-      viewportConfig = ui.viewportConfig
+    entityFinder.search([
+      [ 'map' ]
+      [ 'samus', 'position' ]
+    ]).forEach (comps) ->
+      map = comps.get('map')
+      mapName = map.get('name')
+      position = comps.get('samus-position')
+
+      viewportConfig = ui.viewportConfigs[mapName]
       container = ui.layers[viewportConfig.layerName]
       updateContainerPosition container, position, viewportConfig
