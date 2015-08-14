@@ -68,7 +68,7 @@ class MainSpike
 
     # Create Map entity:
     @estore.createEntity [
-      Immutable.fromJS(type: "map", name: "areaA")
+      Immutable.fromJS(type: "map", name: "areaC")
     ]
     # Create Samus entity:
     @estore.createEntity Samus.factory.createComponents('samus')
@@ -91,6 +91,7 @@ class MainSpike
     @maps = Immutable.Map(
       areaA: @setupMap( MapData.areas.a )
       areaB: @setupMap( MapData.areas.b )
+      areaC: @setupMap( MapData.areas.c )
     )
 
 

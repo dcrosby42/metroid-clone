@@ -15,9 +15,9 @@ class View
 
     @layers = @_createLayers(@stage, @maps)
 
-    @viewportConfigs =
-      areaA: @_setupViewportConfig(@maps.get('areaA'))
-      areaB: @_setupViewportConfig(@maps.get('areaB'))
+    @viewportConfigs = {}
+    @maps.forEach (map,mapName) =>
+      @viewportConfigs[mapName] = @_setupViewportConfig(map)
 
     @systems = @_createSystems()
     @_entityStoreFinder = new EntityStoreFinder()
