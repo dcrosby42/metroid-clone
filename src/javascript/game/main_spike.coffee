@@ -222,7 +222,7 @@ class MainSpike
 
     systems = [
       CommonSystems.timer_system
-      SystemExpander.expandSystem(CommonSystems.death_timer_system)
+      CommonSystems.death_timer_system
       CommonSystems.visual_timer_system
       SystemExpander.expandSystem(CommonSystems.sound_system)
       SystemExpander.expandSystem(SamusSystems.samus_motion)
