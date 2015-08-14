@@ -1,14 +1,17 @@
-module.exports =
-  config:
-    filters: [ 'sound' ]
+BaseSystem = require '../../ecs/base_system'
 
-  update: (comps, input, u) ->
-    sound = comps.get('sound')
-    newPlayPosition = sound.get('playPosition') + input.get('dt')
+class SoundSystem extends BaseSystem
+  @Subscribe: ['sound']
+
+  process: ->
+    sound = @getComp('sound')
+    newPlayPosition = sound.get('playPosition') + @dt()
     if newPlayPosition > sound.get('timeLimit')
       if sound.get('loop')
-        u.update sound.set('playPosition', 0)
+        @updateComp sound.set('playPosition', 0)
       else
-        u.delete sound
+        @deleteComp sound
     else
-      u.update sound.set('playPosition', newPlayPosition)
+      @updateComp sound.set('playPosition', newPlayPosition)
+
+module.exports = SoundSystem

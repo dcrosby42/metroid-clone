@@ -224,7 +224,7 @@ class MainSpike
       CommonSystems.timer_system
       CommonSystems.death_timer_system
       CommonSystems.visual_timer_system
-      SystemExpander.expandSystem(CommonSystems.sound_system)
+      CommonSystems.sound_system
       SystemExpander.expandSystem(SamusSystems.samus_motion)
       SystemExpander.expandSystem(CommonSystems.controller_system)
       #CommonSystems.manual_mover_system
