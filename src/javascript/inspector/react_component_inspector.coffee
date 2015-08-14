@@ -12,8 +12,6 @@ class ReactComponentInspector
     @_resetEntities()
     @_renderInspector()
 
-  setEntityStore: (@entityStore) ->
-
   update: (comp) ->
     eid = comp.get('eid')
     cid = comp.get('cid')
@@ -25,11 +23,9 @@ class ReactComponentInspector
   _resetEntities: ->
     @entities = Map({})
     
-  _renderInspector: ->
-    React.render(
-      React.createElement(InspectorUI, entities: @entities, inspectorConfig: @inspectorConfig, entityStore: @entityStore)
-      @mountNode
-    )
+  _renderInspector: (estore) ->
+    inspectorUI = React.createElement(InspectorUI, entities: @entities, inspectorConfig: @inspectorConfig, entityStore: estore)
+    React.render(inspectorUI, @mountNode)
     @_resetEntities()
 
 module.exports = ReactComponentInspector

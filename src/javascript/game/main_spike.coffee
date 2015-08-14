@@ -7,14 +7,11 @@ KeyboardController = require '../input/keyboard_controller'
 GamepadController = require('../input/gamepad_controller')
 
 EntityStore = require '../ecs/entity_store'
-EntityStoreFinder = require '../ecs/entity_store_finder'
 EntityStoreUpdater = require '../ecs/entity_store_updater'
 
+View = require './view'
 
-# SystemRegistry = require '../ecs/system_registry'
 SystemRunner = require '../ecs/system_runner'
-OutputSystemRunner = require '../ecs/output_system_runner'
-SystemExpander = require '../ecs/system_expander'
 
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
@@ -90,39 +87,18 @@ class MainSpike
     #
     # Setup Map and UI
     #
-    layers = @setupLayers(stage, ['areaA','areaB'])
 
     @maps = Immutable.Map(
-      areaA: @setupMap(
-        MapData.areas.a,
-        layers.maps.areaA,
-        MapData.info.tileWidth,
-        MapData.info.tileHeight)
-      areaB: @setupMap(
-        MapData.areas.b,
-        layers.maps.areaB,
-        MapData.info.tileWidth,
-        MapData.info.tileHeight)
+      areaA: @setupMap( MapData.areas.a )
+      areaB: @setupMap( MapData.areas.b )
     )
 
-    @ui = {
+
+    @view = new View
       stage: stage
-      viewportConfigs:
-        areaA: @setupViewportConfig(@maps.get('areaA'))
-        areaB: @setupViewportConfig(@maps.get('areaB'))
+      maps: @maps
+      spriteConfigs: @_getSpriteConfigs()
       componentInspector: @componentInspector
-
-      spriteConfigs: @setupSpriteConfigs()
-      spriteCache: {}
-      layers: layers
-
-      soundCache: {}
-
-      hitBoxVisualCache: {}
-      drawHitBoxes: false
-    }
-
-    @outputSystemRunner = @setupOutputSystemRunner(@estore, @ui)
 
     @stateHistory = new StateHistory()
 
@@ -133,35 +109,6 @@ class MainSpike
     window.stage = @stage
     window.ui = @ui
 
-  setupLayers: (stage, mapNames) ->
-    scaler = new PIXI.DisplayObjectContainer()
-    scaler.scale.set(2.5,2) # double size, and stretch the actual nintendo 256 px to look like 320
-
-    base = new PIXI.DisplayObjectContainer()
-
-    maps = {}
-    _.forEach mapNames, (n) ->
-      map = new PIXI.DisplayObjectContainer()
-      maps[n] = map
-      base.addChild map
-
-    creatures = new PIXI.DisplayObjectContainer()
-
-    overlay = new PIXI.DisplayObjectContainer()
-
-    stage.addChild scaler
-    scaler.addChild base
-    base.addChild creatures
-    base.addChild overlay
-
-    layers =
-      scaler: scaler
-      base: base
-      maps: maps
-      creatures: creatures
-      overlay: overlay
-      default: creatures
-    layers
 
   setupInput: ->
     @defaultInput = Immutable.fromJS
@@ -218,27 +165,12 @@ class MainSpike
     @adminMovers = [ 'mover1','mover2' ]
     @adminMoversIndex = 0
 
-  setupSpriteConfigs: ->
+  _getSpriteConfigs: ->
     spriteConfigs = {}
     _.merge spriteConfigs, Samus.sprites
     _.merge spriteConfigs, Enemies.sprites
     _.merge spriteConfigs, General.sprites
     spriteConfigs
-
-  setupViewportConfig: (map) ->
-   config =
-     layerName: "base"
-     minX: 0
-     maxX: (map.tileGrid[0].length - map.screenWidthInTiles) * map.tileWidth
-     minY: 0
-     maxY: (map.tileGrid.length - map.screenHeightInTiles) * map.tileHeight
-     trackBufLeft: 7 * map.tileWidth
-     trackBufRight: 9 * map.tileWidth
-     trackBufTop: 7 * map.tileHeight
-     trackBufBottom: 9 * map.tileHeight
-   config
-
-
 
   setupSystemRunner: (entityStore) ->
 
@@ -271,28 +203,10 @@ class MainSpike
       systems
     )
 
-
-  setupOutputSystemRunner: (entityStore,ui) ->
-    systems = SystemExpander.expandSystems [
-      CommonSystems.map_sync_system
-      CommonSystems.sprite_sync_system
-      CommonSystems.debug_system
-      CommonSystems.sound_sync_system,
-      CommonSystems.hit_box_visual_sync_system,
-      SamusSystems.samus_viewport_tracker,
-    ]
-
-    new OutputSystemRunner
-      entityFinder: new EntityStoreFinder(entityStore)
-      ui: ui
-      systems: systems
-
-
   update: (dt) ->
     p1in = @p1Controller.update()
     ac = @adminController.update()
     @handleAdminControls(ac) if ac?
-
     # @input.controllers.player1 = p1in
     # @input.controllers[@adminMovers[@adminMoversIndex]] = ac
     # @input.controllers.player2 = @p2Controller.update()
@@ -313,9 +227,7 @@ class MainSpike
         @step_forward = false
         input = input.set('dt', 17)
         @systemRunner.run input
-        @outputSystemRunner.run input
-        @ui.componentInspector.setEntityStore(@estore)
-        @ui.componentInspector.sync()
+        @view.update(@estore)
         @captureTimeWalkSnapShot()
 
       if @time_walk_back or @time_scroll_back
@@ -325,9 +237,7 @@ class MainSpike
         else
           console.log "(null snapshot, not restoring)"
 
-        @outputSystemRunner.run null # no meaningful input?
-        @ui.componentInspector.setEntityStore(@estore)
-        @ui.componentInspector.sync()
+        @view.update(@estore)
 
       if @time_walk_forward or @time_scroll_forward
         @time_walk_forward = false
@@ -336,15 +246,11 @@ class MainSpike
         else
           console.log "(null snapshot, not restoring)"
 
-        @outputSystemRunner.run null # no meaningful input?
-        @ui.componentInspector.setEntityStore(@estore)
-        @ui.componentInspector.sync()
+        @view.update(@estore)
 
     else
       @systemRunner.run input
-      @outputSystemRunner.run input
-      @ui.componentInspector.setEntityStore(@estore)
-      @ui.componentInspector.sync()
+      @view.update(@estore)
       @captureTimeWalkSnapShot()
 
     # Debug.scratch2 @estore.componentsByCid
@@ -411,15 +317,11 @@ class MainSpike
         @adminMoversIndex = 0
 
 
-  setupMap: (map, container, mapTileWidth, mapTileHeight) ->
-    roomWidth = 16
-    roomHeight = 15
-
-    getMapTileSprite = (n) ->
-      if n?
-        PIXI.Sprite.fromFrame("block-#{n}")
-      else
-        null
+  setupMap: (map) ->
+    mapTileHeight = MapData.info.tileHeight
+    mapTileWidth = MapData.info.tileWidth
+    roomWidth = MapData.info.screenWidthInTiles
+    roomHeight = MapData.info.screenHeightInTiles
 
     divRem = (numer,denom) -> [Math.floor(numer/denom), numer % denom]
 
@@ -444,11 +346,6 @@ class MainSpike
             width: mapTileWidth
             height: mapTileHeight
           
-          sprite = getMapTileSprite(tile.type)
-          if sprite?
-            sprite.position.set tile.x, tile.y
-            container.addChild sprite
-
           tileRow.push tile
         else
           tileRow.push null
@@ -461,6 +358,5 @@ class MainSpike
       screenHeightInTiles: roomHeight
     map
 
-      
 
 module.exports = MainSpike
