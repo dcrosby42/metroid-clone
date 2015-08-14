@@ -1,13 +1,14 @@
 MathUtils = require '../../utils/math_utils'
+BaseSystem = require '../../ecs/base_system'
 
-module.exports =
-  config:
-    filters: ['gravity','velocity']
+class GravitySystem extends BaseSystem
+  @Subscribe: ['gravity','velocity']
 
-  update: (comps, input, u) ->
-    velocity = comps.get('velocity')
-    gravity = comps.get('gravity')
-    velocity1 = velocity.update 'y', (y) ->
+  process: ->
+    gravity = @getComp('gravity')
+    @updateProp 'velocity', 'y', (y) =>
       MathUtils.min(y + gravity.get('accel'), gravity.get('max'))
-    u.update velocity1
+
+module.exports = GravitySystem
+
 

@@ -1,13 +1,12 @@
+BaseSystem = require '../../../../ecs/base_system'
 
-module.exports =
-  config:
-    filters: [ 'samus', 'velocity' ]
+class SamusActionVelocitySystem extends BaseSystem
+  @Subscribe: [ 'samus', 'velocity' ]
 
-  update: (comps,input,u) ->
+  process: ->
     # samus actions: run | drift | stand | jump | fall
-    samus = comps.get('samus')
-    # console.log "samus: #{samus}"
-    velocity = comps.get('velocity')
+    samus = @getComp('samus')
+    velocity = @getComp('velocity')
 
     direction = samus.get('direction')
 
@@ -34,8 +33,10 @@ module.exports =
         velocity.set('y', 0)
 
       else
-        velocity#.set('y',0).set('x',0)
+        velocity
 
     if v2 != velocity
-      u.update v2
+      @updateComp v2
+
+module.exports = SamusActionVelocitySystem
 

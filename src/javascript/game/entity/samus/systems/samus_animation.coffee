@@ -1,3 +1,4 @@
+BaseSystem = require '../../../../ecs/base_system'
 
 defs = [
   [['standing','right','straight','no'], 'stand-right']
@@ -52,13 +53,13 @@ _.forEach defs, ([path,state]) =>
   ObjectUtils.setDeep states, path, state
 
 
-module.exports =
-  config:
-    filters: ['samus','visual']
+class SamusAnimationSystem extends BaseSystem
+  @Subscribe: [ 'samus', 'visual' ]
 
-  update: (comps,input,u) ->
-    visual = comps.get('visual')
-    samus = comps.get('samus')
+  process: ->
+    visual = @getComp('visual')
+    samus = @getComp('samus')
+
     oldState = visual.get('state')
 
     keyPath = [
@@ -70,7 +71,7 @@ module.exports =
     newState = ObjectUtils.getDeep states, keyPath
 
     # TODO : refactor this gorpy implementation.
-    if damaged = u.getEntityComponent(samus.get('eid'), 'damaged')
+    if damaged = @getEntityComponent(@eid(), 'damaged')
       visual = visual.update 'visible', (v) -> !v
       visualChanged = true
     else
@@ -82,8 +83,7 @@ module.exports =
       visualChanged = true
 
     if visualChanged
-      u.update visual
+      @updateComp visual
 
-
-
+module.exports = SamusAnimationSystem
 

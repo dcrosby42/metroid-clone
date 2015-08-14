@@ -1,11 +1,12 @@
-module.exports =
-  config:
-    filters: ['samus', 'velocity', 'hit_box']
+BaseSystem = require '../../../../ecs/base_system'
 
-  update: (comps, input, u) ->
-    velocity = comps.get('velocity')
-    hitBox = comps.get('hit_box')
-    u.update comps.get('samus').update 'motion', (m) ->
+class SamusMotionSystem extends BaseSystem
+  @Subscribe: ['samus', 'velocity', 'hit_box']
+
+  process: ->
+    velocity = @getComp('velocity')
+    hitBox = @getComp('hit_box')
+    @updateProp 'samus', 'motion', (m) =>
       if velocity.get('y') < 0
         'jumping'
       else if velocity.get('y') > 0
@@ -18,3 +19,6 @@ module.exports =
       else if hitBox.getIn(['touching','top'])
         'falling'
       
+
+module.exports = SamusMotionSystem
+

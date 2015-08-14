@@ -1,4 +1,5 @@
 AnchoredBox = require '../../utils/anchored_box'
+BaseSystem = require '../../ecs/base_system'
 
 tileSearchVertical = (grid, tw,th, x, topY, bottomY) ->
   hits = []
@@ -22,18 +23,15 @@ tileSearchHorizontal = (grid, tw,th, y, leftX, rightX) ->
         hits.push hit
   hits
 
-module.exports =
-  config:
-    filters: ['map_collider', 'velocity','hit_box','position']
+class MapPhysicsSystem extends BaseSystem
+  @Subscribe: ['map_collider', 'velocity','hit_box','position']
 
-  update: (comps,input,u) ->
-    velocity = comps.get('velocity')
-    hitBox = comps.get('hit_box')
-    position = comps.get('position')
+  process: ->
+    velocity = @getComp('velocity')
+    hitBox = @getComp('hit_box')
+    position = @getComp('position')
 
-    dt = input.get('dt')
-
-    map = input.getIn(['static','map'])
+    map = @input.getIn(['static','map'])
     grid = map.tileGrid
     tileWidth = map.tileWidth
     tileHeight = map.tileHeight
@@ -52,7 +50,7 @@ module.exports =
       bottom: []
 
     # Apply & restrict VERTICAL movement
-    box.moveY(vy * dt)
+    box.moveY(vy * @dt())
 
     hits.top = tileSearchHorizontal(grid, tileWidth,tileHeight,box.top, box.left, box.right-1)
     if hits.top.length > 0
@@ -66,7 +64,7 @@ module.exports =
         box.setY(s.y - box.bottomOffset)
 
     # Step 2: apply & restrict horizontal movement
-    box.moveX(vx * dt)
+    box.moveX(vx * @dt())
 
     hits.left = tileSearchVertical(grid, tileWidth,tileHeight,box.left, box.top, box.bottom-1)
     if hits.left.length > 0
@@ -79,10 +77,8 @@ module.exports =
         box.setX(s.x - box.rightOffset)
     
     # Update position and hit_box components 
-    u.update position.set('x', box.x).set('y', box.y)
+    @updateComp position.set('x', box.x).set('y', box.y)
 
-    #XXX position.x = box.x
-    #XXX position.y = box.y
     # some systems will expect the hitBox to be up-to-date with current position
     hitBoxJS = {}
     hitBoxJS.x = box.x
@@ -94,7 +90,7 @@ module.exports =
     hitBoxJS.touching.bottom = hits.bottom.length > 0
     hitBoxJS.touchingSomething = hitBoxJS.touching.left or hitBoxJS.touching.right or hitBoxJS.touching.top or hitBoxJS.touching.bottom
 
-    u.update hitBox.merge(hitBoxJS)
+    @updateComp hitBox.merge(hitBoxJS)
 
     # Update velocity if needed based on running into objects:
     if hitBoxJS.touching.left or hitBoxJS.touching.right
@@ -103,4 +99,7 @@ module.exports =
     if hitBoxJS.touching.top or hitBoxJS.touching.bottom
       vy = 0
     
-    u.update velocity.set('x',vx).set('y',vy)
+    @updateComp velocity.set('x',vx).set('y',vy)
+
+module.exports = MapPhysicsSystem
+

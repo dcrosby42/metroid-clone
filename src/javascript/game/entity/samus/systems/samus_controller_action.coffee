@@ -1,34 +1,11 @@
-# Aim =
-#   start: 'straight'
-#   states:
-#     straight:
-#       events:
-#         ctrlUpPressed: 'up'
-#     up:
-#       events:
-#         ctrlUpReleased: 'straight'
-#
-#
-# nextState = (fsm, s, e) ->
-#   if sdef = fsm.states[s]
-#     if edefs = sdef.events
-#       if s1 = edefs[e]
-#         action0 = sdef.exit
-#         action1 = if sdef1 = fsm.states[s1]
-#           sdef1.enter
-#         return [s1, action0, action1]
-#   return [s]
-#
+BaseSystem = require '../../../../ecs/base_system'
 
+class SamusControllerActionSystem extends BaseSystem
+  @Subscribe: ['samus','controller']
 
-module.exports =
-  config:
-    filters: ['samus','controller']
-
-  update: (comps,input,u) ->
-    samus = comps.get('samus')
-    ctrl = comps.getIn(['controller','states'])
-
+  process: ->
+    samus = @getComp('samus')
+    ctrl = @getProp 'controller', 'states'
 
     aim = if ctrl.get('up') then 'up' else 'straight'
       
@@ -73,11 +50,11 @@ module.exports =
           'drift'
 
 
-    u.update(samus
+    @updateComp(samus
       .set('aim', aim)
       .set('direction', direction)
-      .set('action', action))
+      .set('action', action)
+    )
 
-
-    
+module.exports = SamusControllerActionSystem
 

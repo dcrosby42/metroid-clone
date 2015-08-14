@@ -225,24 +225,22 @@ class MainSpike
       CommonSystems.death_timer_system
       CommonSystems.visual_timer_system
       CommonSystems.sound_system
-      SystemExpander.expandSystem(SamusSystems.samus_motion)
+      SamusSystems.samus_motion
       CommonSystems.controller_system
-      #CommonSystems.manual_mover_system
-      SystemExpander.expandSystem(SamusSystems.samus_controller_action)
+      SamusSystems.samus_controller_action
       SamusSystems.short_beam_system
-      SystemExpander.expandSystem(SamusSystems.samus_action_velocity)
+      SamusSystems.samus_action_velocity
       CommonSystems.samus_hit_system
       CommonSystems.samus_damage_system
-      # EnemiesSystems.skree_velocity
-      SystemExpander.expandSystem(SamusSystems.samus_action_sounds)
-      SystemExpander.expandSystem(CommonSystems.gravity_system)
-      SystemExpander.expandSystem(CommonSystems.map_physics_system)
+      SamusSystems.samus_action_sounds
+      CommonSystems.gravity_system
+      CommonSystems.map_physics_system
       CommonSystems.map_ghost_system
       CommonSystems.bullet_enemy_system
       CommonSystems.bullet_system
       CommonSystems.enemy_hit_system
       EnemiesSystems.skree_action
-      SystemExpander.expandSystem(SamusSystems.samus_animation)
+      SamusSystems.samus_animation
       # SystemExpander.expandSystem(EnemiesSystems.skree_animation)
     ]
     # systems = SystemExpander.expandSystems [
