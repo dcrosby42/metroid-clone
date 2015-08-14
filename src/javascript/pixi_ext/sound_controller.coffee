@@ -1,10 +1,10 @@
 CompositeEvent = require '../utils/composite_event'
 
 window.createjs ||= {}
-createjs = window.createjs
 require '../vendor/soundjs-0.6.0.min'
+CreateJs = window.createjs
 
-createjs.Sound.alternateExtensions = ["mp3"]
+CreateJs.Sound.alternateExtensions = ["mp3"]
 
 class SoundController
   @wrapper: {}
@@ -23,12 +23,12 @@ class SoundController
     # Create an event that will invoke callback once all soundIds are reported as loaded
     soundsLoadedEvent = CompositeEvent.create ids, callback
 
-    createjs.Sound.addEventListener "fileload", (event) ->
+    CreateJs.Sound.addEventListener "fileload", (event) ->
       soundsLoadedEvent.notify event.id
-    createjs.Sound.registerSounds manifest
+    CreateJs.Sound.registerSounds manifest
 
   @playSound: (soundId) ->
-    createjs.Sound.play soundId
+    CreateJs.Sound.play soundId
 
 
 module.exports = SoundController
