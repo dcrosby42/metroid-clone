@@ -64,6 +64,28 @@ class MainSpike
     assets
 
   setupStage: (stage, width, height) ->
+    #
+    # Setup game simulation
+    #
+    @estore = new EntityStore()
+
+    # Create Samus entity:
+    @estore.createEntity Samus.factory.createComponents('samus')
+    # Create some enemies:
+    for x in [150, 200, 250, 300, 350]
+      @estore.createEntity Enemies.factory.createComponents('basicSkree', x:x, y: 32)
+
+    @systemRunner       = @setupSystemRunner(@estore)
+
+
+    #
+    # Setup keyboard and gamepad controls
+    #
+    @setupInput()
+
+    #
+    # Setup Map and UI
+    #
     layers = @setupLayers(stage)
 
     map = @setupMap(
@@ -71,6 +93,7 @@ class MainSpike
       layers.map,
       MapData.info.tileWidth,
       MapData.info.tileHeight)
+
 
     @ui = {
       stage: stage
@@ -88,29 +111,14 @@ class MainSpike
       drawHitBoxes: false
     }
 
-    @estore = new EntityStore()
-    @entityFinder = new EntityStoreFinder(@estore)
-    @entityUpdater = new EntityStoreUpdater(@estore)
-
-    @samusId = @estore.createEntity Samus.factory.createComponents('samus')
-
-    for x in [150, 200, 250, 300, 350]
-      @estore.createEntity Enemies.factory.createComponents('basicSkree', x:x, y: 32)
-
-    @setupInput(map:map)
-
-    @timeDilation = 1
-
-    @systemRunner       = @setupSystemRunner()
-    @outputSystemRunner = @setupOutputSystemRunner()
+    @outputSystemRunner = @setupOutputSystemRunner(@estore, @ui)
 
     @stateHistory = new StateHistory()
 
-
+    @timeDilation = 1
 
     window.me = @
     window.estore = @estore
-    window.samusId = @samusId
     window.stage = @stage
     window.ui = @ui
 
@@ -141,7 +149,7 @@ class MainSpike
       default: creatures
     layers
 
-  setupInput: ({map}) ->
+  setupInput: ->
     @defaultInput = Immutable.fromJS
       controllers:
         player1: {}
@@ -218,7 +226,7 @@ class MainSpike
 
 
 
-  setupSystemRunner: ->
+  setupSystemRunner: (entityStore) ->
 
     systems = [
       CommonSystems.timer_system
@@ -243,10 +251,14 @@ class MainSpike
       SamusSystems.samus_animation
     ]
 
-    return new SystemRunner(@estore, @entityUpdater, systems)
+    return new SystemRunner(
+      entityStore
+      new EntityStoreUpdater(entityStore)
+      systems
+    )
 
 
-  setupOutputSystemRunner: ->
+  setupOutputSystemRunner: (entityStore,ui) ->
     systems = SystemExpander.expandSystems [
       CommonSystems.sprite_sync_system
       CommonSystems.debug_system
@@ -256,8 +268,8 @@ class MainSpike
     ]
 
     new OutputSystemRunner
-      entityFinder: @entityFinder
-      ui: @ui
+      entityFinder: new EntityStoreFinder(entityStore)
+      ui: ui
       systems: systems
 
 
