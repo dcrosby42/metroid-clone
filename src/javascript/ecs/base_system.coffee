@@ -81,6 +81,7 @@ class BaseSystem
     comp = @getComp(compName)
     comp2 = comp.update(propName, fn)
     @_updated(compName,comp2) unless comp == comp2
+    return comp2.get(propName)
 
   updateComp: (comp) ->
     compName = @nameCache[comp.get('cid')]
