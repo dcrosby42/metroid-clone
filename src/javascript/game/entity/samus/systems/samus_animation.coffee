@@ -22,26 +22,26 @@ defs = [
   [['running','right','up','shoot'],        'run-right-aim-up']
 
 
-  [['jumping','right','up','no'],        'jump-right']
   [['jumping','right','straight','no'],  'jump-right']
-  [['jumping','left','up','no'],         'jump-left']
+  [['jumping','right','up','no'],        'jump-right-aim-up']
   [['jumping','left','straight','no'],   'jump-left']
+  [['jumping','left','up','no'],         'jump-left-aim-up']
 
-  [['jumping','right','up','shoot'],        'jump-right']
   [['jumping','right','straight','shoot'],  'jump-right']
-  [['jumping','left','up','shoot'],         'jump-left']
+  [['jumping','right','up','shoot'],        'jump-right-aim-up']
   [['jumping','left','straight','shoot'],   'jump-left']
+  [['jumping','left','up','shoot'],         'jump-left-aim-up']
 
 
-  [['falling','right','up','no'],        'jump-right']
   [['falling','right','straight','no'],  'jump-right']
-  [['falling','left','up','no'],         'jump-left']
+  [['falling','right','up','no'],        'jump-right-aim-up']
   [['falling','left','straight','no'],   'jump-left']
+  [['falling','left','up','no'],         'jump-left-aim-up']
 
-  [['falling','right','up','shoot'],        'jump-right']
   [['falling','right','straight','shoot'],  'jump-right']
-  [['falling','left','up','shoot'],         'jump-left']
+  [['falling','right','up','shoot'],        'jump-right-aim-up']
   [['falling','left','straight','shoot'],   'jump-left']
+  [['falling','left','up','shoot'],         'jump-left-aim-up']
 ]
 
 ObjectUtils = require '../../../../utils/object_utils'

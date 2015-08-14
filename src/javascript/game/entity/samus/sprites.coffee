@@ -76,8 +76,16 @@ sprites =
       "jump-right":
         frame: "samus1-jump-right"
 
+      "jump-right-aim-up":
+        frame: "samus1-jump-right-aim-up"
+
       "jump-left":
         frame: "samus1-jump-right"
+        props:
+          scale: { x: -1 }
+
+      "jump-left-aim-up":
+        frame: "samus1-jump-right-aim-up"
         props:
           scale: { x: -1 }
 

@@ -99,9 +99,18 @@
 	"sourceSize": {"w":26,"h":38},
 	"pivot": {"x":0.5,"y":0.5}
 },
+"samus1-jump-right-aim-up":
+{
+	"frame": {"x":2,"y":332,"w":22,"h":35},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":35},
+	"sourceSize": {"w":22,"h":35},
+	"pivot": {"x":0.5,"y":0.5}
+},
 "samus1-jump-right":
 {
-	"frame": {"x":2,"y":332,"w":26,"h":38},
+	"frame": {"x":2,"y":369,"w":26,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
@@ -110,7 +119,7 @@
 },
 "samus1-shoot-up":
 {
-	"frame": {"x":2,"y":372,"w":26,"h":38},
+	"frame": {"x":2,"y":409,"w":26,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
@@ -119,7 +128,7 @@
 },
 "samus1-stand-shoot":
 {
-	"frame": {"x":2,"y":412,"w":20,"h":38},
+	"frame": {"x":2,"y":449,"w":20,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":20,"h":38},
@@ -131,8 +140,8 @@
 	"version": "1.0",
 	"image": "samus.png",
 	"format": "RGBA8888",
-	"size": {"w":30,"h":452},
+	"size": {"w":30,"h":489},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:66aaea1913ac104ce2b1af048b21c4f0:1a053ec662f1d7dcb3079cd401b4caf2:ee3397b934a0f7ddedb37d84ef594e2f$"
+	"smartupdate": "$TexturePacker:SmartUpdate:5e9e63ec4a4f81bc64fc402a89c8806c:667db6f924f90216ec594ee633d6ac9d:ee3397b934a0f7ddedb37d84ef594e2f$"
 }
 }
