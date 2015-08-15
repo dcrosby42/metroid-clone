@@ -7,9 +7,9 @@ GamepadController = require('../input/gamepad_controller')
 
 EntityStore = require '../ecs/entity_store'
 
-ViewSim = require './view_sim'
 
 EcsMachine = require '../ecs/ecs_machine'
+ViewMachine = require './view_machine'
 
 
 CommonSystems = require './systems'
@@ -92,7 +92,7 @@ class MainSpike
 
 
   setupStage: (stage, width, height) ->
-    @view = new ViewSim
+    @view = new ViewMachine
       stage: stage
       maps: @maps
       spriteConfigs: @_getSpriteConfigs()
