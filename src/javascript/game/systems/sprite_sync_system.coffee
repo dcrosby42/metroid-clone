@@ -1,6 +1,8 @@
 ArrayToCacheBinding = require '../../pixi_ext/array_to_cache_binding'
 AnimatedSprite = require '../../pixi_ext/animated_sprite'
 
+FilterExpander = require '../../ecs/filter_expander'
+
 newAnimatedSprite = (ui, name) ->
   config = ui.spriteConfigs[name]
   if config?
@@ -15,12 +17,15 @@ removeSprite = (sprite) ->
   container = sprite.parent
   container.removeChild sprite
 
+
+filters = FilterExpander.expandFilterGroups([ 'visual', 'position' ])
+
 module.exports =
   systemType: 'output'
 
-  update: (entityFinder, input, ui) ->
+  update: (entityFinder, ui) ->
 
-    vps = entityFinder.search(['visual','position'])
+    vps = entityFinder.search(filters)
 
     ArrayToCacheBinding.update
       source: vps.toArray()

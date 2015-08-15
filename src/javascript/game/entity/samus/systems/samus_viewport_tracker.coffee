@@ -24,14 +24,17 @@ updateContainerPosition = (container,position,viewportConfig) ->
   container.y = -viewportY
   null
 
+FilterExpander = require '../../../../ecs/filter_expander'
+filters = FilterExpander.expandFilterGroups([
+  [ 'map' ]
+  [ 'samus', 'position' ]
+])
+
 module.exports =
   systemType: 'output'
 
-  update: (entityFinder, input, ui) ->
-    entityFinder.search([
-      [ 'map' ]
-      [ 'samus', 'position' ]
-    ]).forEach (comps) ->
+  update: (entityFinder, ui) ->
+    entityFinder.search(filters).forEach (comps) ->
       map = comps.get('map')
       mapName = map.get('name')
       position = comps.get('samus-position')

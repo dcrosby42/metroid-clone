@@ -1,6 +1,7 @@
 ArrayToCacheBinding = require '../../pixi_ext/array_to_cache_binding'
 AnchoredBox = require '../../utils/anchored_box'
 PIXI = require 'pixi.js'
+FilterExpander = require '../../ecs/filter_expander'
 
 Defaults = {
   boxColor: 0x0f0f0f
@@ -30,14 +31,15 @@ updateSidecar = (gfx, hitBoxVisual) ->
   gfx._sidecar.anchorColor = hitBoxVisual.get('anchorColor')
   gfx
 
+filters = FilterExpander.expandFilterGroups(['hit_box','hit_box_visual'])
 
 module.exports =
   systemType: 'output'
 
-  update: (entityFinder, input, ui) -> 
+  update: (entityFinder, ui) ->
 
     res = if ui.drawHitBoxes
-      entityFinder.search(['hit_box','hit_box_visual']).toArray()
+      entityFinder.search(filters).toArray()
     else
       []
       

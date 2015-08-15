@@ -1,6 +1,7 @@
+
 module.exports =
   systemType: 'output'
 
-  update: (entityFinder,input,ui) ->
+  update: (entityFinder,ui) ->
     entityFinder.allComponentsByCid().forEach (comp) ->
         ui.componentInspector.update comp

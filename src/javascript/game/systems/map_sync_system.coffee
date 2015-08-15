@@ -1,10 +1,13 @@
 
+FilterExpander = require '../../ecs/filter_expander'
+filters = FilterExpander.expandFilterGroups([ 'map' ])
+
 module.exports =
   systemType: 'output'
 
-  update: (entityFinder, input, ui) ->
+  update: (entityFinder, ui) ->
 
-    entityFinder.search(['map']).forEach (comps) ->
+    entityFinder.search(filters).forEach (comps) ->
       mapName = comps.getIn(['map','name'])
       if ui.currentMapName != mapName
         # Set the currently showing map in the UI:

@@ -26,7 +26,7 @@ class View
     @_entityStoreFinder.setEntityStore(estore)
 
     @systems.forEach (system) =>
-      system.get('update')?(@_entityStoreFinder, null, @)
+      system.get('update')?(@_entityStoreFinder, @)
 
     @_entityStoreFinder.unsetEntityStore()
 

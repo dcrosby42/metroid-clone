@@ -1,12 +1,15 @@
 ArrayToCacheBinding = require '../../pixi_ext/array_to_cache_binding'
 SoundController = require '../../pixi_ext/sound_controller'
 
+FilterExpander = require '../../ecs/filter_expander'
+ 
+filters = FilterExpander.expandFilterGroups([ 'sound' ])
 
 module.exports =
   systemType: 'output'
 
-  update: (entityFinder, input, ui) ->
-    sounds = entityFinder.search(['sound']).map (x) -> x.get('sound')
+  update: (entityFinder, ui) ->
+    sounds = entityFinder.search(filters).map (x) -> x.get('sound')
 
     ArrayToCacheBinding.update
       source: sounds.toArray()

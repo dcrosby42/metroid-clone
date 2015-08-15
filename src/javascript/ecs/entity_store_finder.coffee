@@ -8,13 +8,11 @@ class EntityStoreFinder
   setEntityStore: (@estore) ->
   unsetEntityStore: () -> @estore = null
 
-  search:      (filters) ->
+  search: (filters) ->
     unless @estore
       console.log "!! EntityStoreFinder#search: estore not set"
       return null
-    filters = Debug.imm(filters)
-    expanded = FilterExpander.expandFilterGroups(filters)
-    @estore.search expanded
+    @estore.search filters
 
   allComponentsByCid: ->
     unless @estore
