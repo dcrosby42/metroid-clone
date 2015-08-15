@@ -9,7 +9,7 @@ EntityStore = require '../ecs/entity_store'
 
 ViewSim = require './view_sim'
 
-EcsSimulation = require '../ecs/ecs_simulation'
+EcsMachine = require '../ecs/ecs_machine'
 
 
 CommonSystems = require './systems'
@@ -47,8 +47,8 @@ class MainSpike
 
     @_setupControllers()
 
-    # Setup game simulation:
-    @gameSim = new EcsSimulation(systems: @_createSystems())
+    # Setup game machine:
+    @gameMachine = new EcsMachine(systems: @_createSystems())
     @estore = new EntityStore()
     @estore.createEntity [
       Immutable.fromJS(type: "map", name: "areaA")
@@ -190,7 +190,7 @@ class MainSpike
         @step_forward = false
 
         input = input.set('dt', 17)
-        @gameSim.update(@estore,input)
+        @gameMachine.update(@estore,input)
         @captureTimeWalkSnapShot(@estore)
 
       if @time_walk_back or @time_scroll_back
@@ -209,7 +209,7 @@ class MainSpike
           console.log "(null snapshot, not restoring)"
 
     else
-      @gameSim.update(@estore, input)
+      @gameMachine.update(@estore, input)
       @captureTimeWalkSnapShot(@estore)
 
     @view.update(@estore)

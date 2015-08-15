@@ -1,7 +1,7 @@
 Immutable = require 'immutable'
 EventBucket = require './event_bucket'
 
-class EcsSimulation
+class EcsMachine
   constructor: ({systems}) ->
     @systems = Immutable.List(systems)
     @systemInstances = @systems.map (s) -> s.Instance()
@@ -16,5 +16,5 @@ class EcsSimulation
 
     null
 
-module.exports = EcsSimulation
+module.exports = EcsMachine
 
