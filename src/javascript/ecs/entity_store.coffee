@@ -80,7 +80,8 @@ class EntityStore
 
   allComponentsByCid: -> @componentsByCid
 
-
+  readOnly: ->
+    @_readOnly ?= new ReadOnlyEntityStore(@)
 
   #
   # PRIVATE
@@ -128,9 +129,17 @@ class EntityStore
           console.log "!!EntityStore._deleteFromIndex: no bucket for index #{indexName}, key #{key}", comp.toJS()
       else
         console.log "!!EntityStore._deleteFromIndex: no index #{indexName}, key #{key}", comp.toJS()
-    
-    
 
+class ReadOnlyEntityStore
+  constructor: (@estore) ->
+
+  search:             (filters) -> @estore.search(filters)
+  allComponentsByCid:           -> @estore.allComponentsByCid()
+  getEntityComponents: (eid,type,matchKey=null,matchVal=null) ->
+    @estore.getEntityComponents(eid,type,matchKey,matchVal)
+  getEntityComponent: (eid,type,matchKey=null,matchVal=null) ->
+    @estore.getEntityComponent(eid,type,matchKey,matchVal)
+    
 module.exports = EntityStore
 
 

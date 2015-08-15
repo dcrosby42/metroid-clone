@@ -92,7 +92,7 @@ class MainSpike
 
 
   setupStage: (stage, width, height) ->
-    @view = new ViewMachine
+    @viewMachine = new ViewMachine
       stage: stage
       maps: @maps
       spriteConfigs: @_getSpriteConfigs()
@@ -212,7 +212,7 @@ class MainSpike
       @gameMachine.update(@estore, input)
       @captureTimeWalkSnapShot(@estore)
 
-    @view.update(@estore)
+    @viewMachine.update(@estore.readOnly())
 
 
   captureTimeWalkSnapShot: (estore) ->
@@ -264,7 +264,7 @@ class MainSpike
         @time_scroll_forward = off
 
     if ac.toggle_bounding_box
-      @view.drawHitBoxes = !@view.drawHitBoxes
+      @viewMachine.drawHitBoxes = !@viewMachine.drawHitBoxes
 
 
   setupMap: (map) ->
