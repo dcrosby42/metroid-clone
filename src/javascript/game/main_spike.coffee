@@ -6,7 +6,6 @@ KeyboardController = require '../input/keyboard_controller'
 GamepadController = require('../input/gamepad_controller')
 
 EntityStore = require '../ecs/entity_store'
-EntityStoreUpdater = require '../ecs/entity_store_updater'
 
 ViewSim = require './view_sim'
 

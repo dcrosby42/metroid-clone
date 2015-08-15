@@ -15,21 +15,32 @@ class BaseSystem
   constructor: ->
     @componentFilters = FilterExpander.expandFilterGroups(@constructor.Subscribe)
     @_primaryComponentName = @constructor.ImplyEntity || @constructor.Subscribe[0]
-    @reset()
 
-  setup: (@comps,@input,@updater,@eventBucket) ->
+  update: (estore, input, eventBucket) ->
+    @estore = estore
+    @input = input
+    @eventBucket = eventBucket
+    estore.search(@componentFilters).forEach (comps) =>
+      @comps = comps
+
+      @resetCache()
+      @process()
+      @sync()
+      @resetCache() # for cleanliness; not strictly necessary
+
+      @comps = null
+
+    # for cleanliness; not strictly necessary:
+    @estore = null
+    @input = null
+    @eventBucket = null
 
   handleUpdate: (comps, input, u, eventBucket) ->
-    @setup(comps,input,u,eventBucket)
     @process()
     @sync()
     @reset()
     
-  reset: ->
-    @comps = null
-    @input = null
-    @updater = null
-    @eventBucket = null
+  resetCache: ->
     @cache = {}
     @nameCache = {}
     @updatedComps = {}
@@ -43,15 +54,15 @@ class BaseSystem
 
   sync: ->
     for name in @updatedCompNames
-      @updater.update @updatedComps[name]
+      @estore.updateComponent @updatedComps[name]
     for comp in @compsToDelete
-      @updater.delete(comp)
+      @estore.deleteComponent comp
     for [eid,props] in @compsToAdd
-      @updater.add(eid, props)
+      @estore.createComponent eid, props
     for comps in @entitiesToAdd
-      @updater.newEntity(comps)
+      @estore.createEntity comps
     for eid in @entitiesToDelete
-      @updater.destroyEntity(eid)
+      @estore.destroyEntity eid
 
   dt: ->
     @input.get('dt')
@@ -111,11 +122,11 @@ class BaseSystem
   # TODO: rethink?  Systems reaching out to the estore breaks the pattern
   # BUT! Currently, there are systems that need to go find components.
   getEntityComponents: (eid, type, matchKey=null, matchVal=null) ->
-    @updater.getEntityComponents(eid, type, matchKey, matchVal)
+    @estore.getEntityComponents(eid, type, matchKey, matchVal)
 
   # TODO: rethink?  Systems reaching out to the estore breaks the pattern
   getEntityComponent: (eid, type, matchKey=null, matchVal=null) ->
-    @updater.getEntityComponent(eid, type, matchKey, matchVal)
+    @estore.getEntityComponent(eid, type, matchKey, matchVal)
 
   # TODO: rethink?  Systems reaching out to the estore breaks the pattern
   # updateEntityComponent: (eid, type, atts) ->

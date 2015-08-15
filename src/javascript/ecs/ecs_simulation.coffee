@@ -1,6 +1,5 @@
 Immutable = require 'immutable'
 EventBucket = require './event_bucket'
-EntityStoreUpdater = require './entity_store_updater'
 
 class EcsSimulation
   constructor: ({systems}) ->
@@ -8,17 +7,13 @@ class EcsSimulation
     @systemInstances = @systems.map (s) -> s.Instance()
 
     @eventBucket = new EventBucket()
-    @entityStoreUpdater = new EntityStoreUpdater()
 
   update: (estore, input) ->
     @eventBucket.reset()
-    @entityStoreUpdater.setEntityStore(estore)
 
     @systemInstances.forEach (s) =>
-      estore.search(s.componentFilters).forEach (comps) =>
-        s.handleUpdate(comps, input, @entityStoreUpdater, @eventBucket)
+      s.update(estore, input, @eventBucket)
 
-    @entityStoreUpdater.unsetEntityStore()
     null
 
 module.exports = EcsSimulation
