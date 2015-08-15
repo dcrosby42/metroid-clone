@@ -15,3 +15,4 @@ module.exports =
         _.forEach _.keys(ui.layers.maps), (name) ->
             container = ui.layers.maps[name]
             container.visible = (name == ui.currentMapName)
+            null

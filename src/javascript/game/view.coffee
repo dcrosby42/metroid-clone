@@ -7,6 +7,8 @@ SamusSystems =  require './entity/samus/systems'
 
 class View
   constructor: ({@stage,@maps,@spriteConfigs,@componentInspector}) ->
+    @systems = @_createSystems()
+
     @spriteCache = {}
     @soundCache = {}
     @hitBoxVisualCache = {}
@@ -19,8 +21,9 @@ class View
     @maps.forEach (map,mapName) =>
       @viewportConfigs[mapName] = @_setupViewportConfig(map)
 
-    @systems = @_createSystems()
     @_entityStoreFinder = new EntityStoreFinder()
+
+    window.view = @
 
   update: (estore) ->
     @_entityStoreFinder.setEntityStore(estore)

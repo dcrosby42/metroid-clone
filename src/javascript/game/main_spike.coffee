@@ -2,7 +2,6 @@ PIXI = require 'pixi.js'
 _ = require 'lodash'
 Immutable = require 'immutable'
 
-# Mousetrap = require '../vendor/mousetrap_wrapper'
 KeyboardController = require '../input/keyboard_controller'
 GamepadController = require('../input/gamepad_controller')
 
@@ -11,7 +10,8 @@ EntityStoreUpdater = require '../ecs/entity_store_updater'
 
 View = require './view'
 
-SystemRunner = require '../ecs/system_runner'
+EcsSimulation = require '../ecs/ecs_simulation'
+
 
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
@@ -31,6 +31,36 @@ Debug = require '../utils/debug'
 
 class MainSpike
   constructor: ({@componentInspector}) ->
+    @maps = Immutable.Map(
+      areaA: @setupMap( MapData.areas.a )
+      areaB: @setupMap( MapData.areas.b )
+      areaC: @setupMap( MapData.areas.c )
+    )
+
+    @defaultInput = Immutable.fromJS
+      controllers:
+        player1: {}
+        player2: {}
+        admin: {}
+      dt: 0
+      static:
+        maps: @maps
+
+    @_setupControllers()
+
+    # Setup game simulation:
+    @gameSim = new EcsSimulation(systems: @_createSystems())
+    @estore = new EntityStore()
+    @estore.createEntity [
+      Immutable.fromJS(type: "map", name: "areaA")
+    ]
+    @estore.createEntity Samus.factory.createComponents('samus')
+    for x in [150, 200, 250, 300, 350]
+      @estore.createEntity Enemies.factory.createComponents('basicSkree', x:x, y: 32)
+
+
+    @stateHistory = new StateHistory()
+
 
   graphicsToPreload: ->
     assets = [
@@ -41,6 +71,7 @@ class MainSpike
     assets = assets.concat(General.assets)
 
     assets
+
 
   soundsToPreload: ->
     songs = ["brinstar"]
@@ -60,67 +91,16 @@ class MainSpike
       assets[effect] = "sounds/fx/#{effect}.wav"
     assets
 
+
   setupStage: (stage, width, height) ->
-    #
-    # Setup game simulation
-    #
-    @estore = new EntityStore()
-
-    # Create Map entity:
-    @estore.createEntity [
-      Immutable.fromJS(type: "map", name: "areaC")
-    ]
-    # Create Samus entity:
-    @estore.createEntity Samus.factory.createComponents('samus')
-    # Create some enemies:
-    for x in [150, 200, 250, 300, 350]
-      @estore.createEntity Enemies.factory.createComponents('basicSkree', x:x, y: 32)
-
-    @systemRunner       = @setupSystemRunner(@estore)
-
-
-    #
-    # Setup keyboard and gamepad controls
-    #
-    @setupInput()
-
-    #
-    # Setup Map and UI
-    #
-
-    @maps = Immutable.Map(
-      areaA: @setupMap( MapData.areas.a )
-      areaB: @setupMap( MapData.areas.b )
-      areaC: @setupMap( MapData.areas.c )
-    )
-
-
     @view = new View
       stage: stage
       maps: @maps
       spriteConfigs: @_getSpriteConfigs()
       componentInspector: @componentInspector
 
-    @stateHistory = new StateHistory()
 
-    @timeDilation = 1
-
-    window.me = @
-    window.estore = @estore
-    window.stage = @stage
-    window.ui = @ui
-
-
-  setupInput: ->
-    @defaultInput = Immutable.fromJS
-      controllers:
-        player1: {}
-        player2: {}
-        admin: {}
-      dt: 0
-      
-
-
+  _setupControllers: ->
     @keyboardController = new KeyboardController
       bindings:
         "right": 'right'
@@ -163,9 +143,6 @@ class MainSpike
     @useGamepad = false
     @p1Controller = @keyboardController
 
-    @adminMovers = [ 'mover1','mover2' ]
-    @adminMoversIndex = 0
-
   _getSpriteConfigs: ->
     spriteConfigs = {}
     _.merge spriteConfigs, Samus.sprites
@@ -173,9 +150,8 @@ class MainSpike
     _.merge spriteConfigs, General.sprites
     spriteConfigs
 
-  setupSystemRunner: (entityStore) ->
-
-    systems = [
+  _createSystems: ->
+    [
       CommonSystems.timer_system
       CommonSystems.death_timer_system
       CommonSystems.visual_timer_system
@@ -198,38 +174,25 @@ class MainSpike
       SamusSystems.samus_animation
     ]
 
-    return new SystemRunner(
-      entityStore
-      new EntityStoreUpdater(entityStore)
-      systems
-    )
-
   update: (dt) ->
-    p1in = @p1Controller.update()
     ac = @adminController.update()
     @handleAdminControls(ac) if ac?
-    # @input.controllers.player1 = p1in
-    # @input.controllers[@adminMovers[@adminMoversIndex]] = ac
-    # @input.controllers.player2 = @p2Controller.update()
+
+    p1ControllerInput = Immutable.fromJS(
+      @p1Controller.update()
+    )
 
     input = @defaultInput
-      .set('dt', dt*@timeDilation)
-      .setIn(['controllers','player1'], Immutable.fromJS(p1in))
-      .setIn(['static','maps'], @maps)
+      .set('dt', dt)
+      .setIn(['controllers','player1'], p1ControllerInput)
     
-    # input
-    #   dt
-    #   controllers
-    #     player1
-
-    # TODO @systemsRunner.run(@estore, dt*@timeDilation, @input) unless @paused
     if @paused
       if @step_forward
         @step_forward = false
+
         input = input.set('dt', 17)
-        @systemRunner.run input
-        @view.update(@estore)
-        @captureTimeWalkSnapShot()
+        @gameSim.update(@estore,input)
+        @captureTimeWalkSnapShot(@estore)
 
       if @time_walk_back or @time_scroll_back
         @time_walk_back = false
@@ -238,7 +201,6 @@ class MainSpike
         else
           console.log "(null snapshot, not restoring)"
 
-        @view.update(@estore)
 
       if @time_walk_forward or @time_scroll_forward
         @time_walk_forward = false
@@ -247,21 +209,16 @@ class MainSpike
         else
           console.log "(null snapshot, not restoring)"
 
-        @view.update(@estore)
-
     else
-      @systemRunner.run input
-      @view.update(@estore)
-      @captureTimeWalkSnapShot()
+      @gameSim.update(@estore, input)
+      @captureTimeWalkSnapShot(@estore)
 
-    # Debug.scratch2 @estore.componentsByCid
-  captureTimeWalkSnapShot: ->
-    @stateHistory.addState @estore.takeSnapshot()
+    @view.update(@estore)
+
+
+  captureTimeWalkSnapShot: (estore) ->
+    @stateHistory.addState estore.takeSnapshot()
     
-
-
-
-
   handleAdminControls: (ac) ->
     if ac.toggle_gamepad
       @useGamepad = !@useGamepad
@@ -307,15 +264,8 @@ class MainSpike
         @time_scroll_back = off
         @time_scroll_forward = off
 
-
-
     if ac.toggle_bounding_box
-      @ui.drawHitBoxes = !@ui.drawHitBoxes
-
-    if ac.cycle_admin_mover
-      @adminMoversIndex += 1
-      if @adminMoversIndex >= @adminMovers.length
-        @adminMoversIndex = 0
+      @view.drawHitBoxes = !@view.drawHitBoxes
 
 
   setupMap: (map) ->

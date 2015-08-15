@@ -1,7 +1,11 @@
 Immutable = require 'immutable'
 
 class EntityStoreUpdater
-  constructor: (@estore) ->
+  constructor: ->
+
+  setEntityStore: (@estore) ->
+  unsetEntityStore: -> @estore = null
+
   update:         (comp) -> @estore.updateComponent comp
   delete:         (comp) -> @estore.deleteComponent comp
   add:       (eid,props) -> @estore.createComponent eid, props
