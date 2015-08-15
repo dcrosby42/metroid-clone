@@ -113,6 +113,14 @@ class MainSpike
         [ 'up', 'down' ]
       ]
         
+    @gamepadController = new GamepadController
+      "DPAD_RIGHT": 'right'
+      "DPAD_LEFT": 'left'
+      "DPAD_UP": 'up'
+      "DPAD_DOWN": 'down'
+      "FACE_1": 'action2'
+      "FACE_3": 'action1'
+
 
     @adminController = new KeyboardController
       bindings:
@@ -130,14 +138,6 @@ class MainSpike
         "k": 'up'
         "l": 'right'
         "space": 'step_forward'
-
-    @gamepadController = new GamepadController
-      "DPAD_RIGHT": 'right'
-      "DPAD_LEFT": 'left'
-      "DPAD_UP": 'up'
-      "DPAD_DOWN": 'down'
-      "FACE_1": 'jump'
-      "FACE_3": 'shoot'
 
     @useGamepad = false
     @p1Controller = @keyboardController
