@@ -1,12 +1,11 @@
 PIXI = require 'pixi.js'
 
 SystemExpander = require '../ecs/system_expander'
-# EntityStoreFinder = require '../ecs/entity_store_finder'
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
 
 class ViewMachine
-  constructor: ({@stage,@maps,@spriteConfigs,@componentInspector}) ->
+  constructor: ({@stage,@mapDatabase,@spriteConfigs,@componentInspector}) ->
     @systems = @_createSystems()
 
     @spriteCache = {}
@@ -15,26 +14,48 @@ class ViewMachine
     @drawHitBoxes = false
     @currentMapName = null
 
-    @layers = @_createLayers(@stage, @maps)
+    @layers = @_createLayers(@stage)
 
     @viewportConfigs = {}
-    @maps.forEach (map,mapName) =>
-      @viewportConfigs[mapName] = @_setupViewportConfig(map)
-
-    # @_entityStoreFinder = new EntityStoreFinder()
 
     window.view = @
 
   update: (estore) ->
-    # @_entityStoreFinder.setEntityStore(estore)
-
     @systems.forEach (system) =>
-      # system.get('update')?(@_entityStoreFinder, @)
       system.get('update')?(estore, @)
 
-    # @_entityStoreFinder.unsetEntityStore()
-
     @componentInspector.sync(estore)
+
+  getMapLayer: (mapName) ->
+    console.log "getMapLayer #{mapName}"
+    layer = layers.maps[mapName]
+    unless layer?
+      layer = @_addMapLayer(layers, @mapDatabase, mapName)
+    layer
+
+  setMap: (mapName) ->
+    return if @currentMapName == mapName
+
+    # Hide existing maps
+    _.forEach _.values(@layers.maps), (container) ->
+      container.visible = false
+
+    # Get or create map layer:
+    container = @layers.maps[mapName]
+    unless container?
+      container = @_addMapLayer(@layers, @mapDatabase, mapName)
+
+    container.visible = true
+    @currentMapName = mapName
+    
+  getViewportConfig: (mapName) ->
+    cfg = @viewportConfigs[mapName]
+    unless cfg?
+      map = @mapDatabase.get(mapName)
+      cfg = @_setupViewportConfig(map)
+      @viewportConfigs[mapName] = cfg
+    cfg
+
 
 
   _createSystems: ->
@@ -62,18 +83,11 @@ class ViewMachine
      trackBufBottom: 9 * map.tileHeight
    config
 
-  _createLayers: (stage, maps) ->
+  _createLayers: (stage) ->
     scaler = new PIXI.DisplayObjectContainer()
     scaler.scale.set(2.5,2) # double size, and stretch the actual nintendo 256 px to look like 320
 
     base = new PIXI.DisplayObjectContainer()
-
-    mapLayers = {}
-    maps.forEach (map, mapName) =>
-      mapLayer = new PIXI.DisplayObjectContainer()
-      mapLayers[mapName] = mapLayer
-      base.addChild mapLayer
-      @_populateMapTileSprites map, mapLayer
 
     creatures = new PIXI.DisplayObjectContainer()
 
@@ -87,11 +101,23 @@ class ViewMachine
     layers =
       scaler: scaler
       base: base
-      maps: mapLayers
+      maps: {}
       creatures: creatures
       overlay: overlay
       default: creatures
     layers
+
+  _addMapLayer: (layers,mapDatabase,mapName) ->
+    mapLayer = new PIXI.DisplayObjectContainer()
+    layers.base.addChild mapLayer
+    layers.maps[mapName] = mapLayer
+    console.log "Added layer #{mapName}", mapLayer
+    window.wtf = layers
+
+    map = mapDatabase.get(mapName)
+    @_populateMapTileSprites map, mapLayer
+    mapLayer
+
 
   _getMapTileSprite: (n) ->
     if n?

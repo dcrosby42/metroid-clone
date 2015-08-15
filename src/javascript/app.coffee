@@ -4,7 +4,6 @@ PixiHarness = require './pixi_ext/pixi_harness'
 Immutable = require 'immutable'
 
 React = require 'react'
-ComponentSearchBox = require './inspector/component_search_box'
 
 MainSpike = require './game/main_spike'
 DelegateClass = MainSpike

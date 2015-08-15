@@ -120,17 +120,17 @@ roomTypes[5] = [
 
 areas = {}
 
-areas.a = [
+areas.areaA = [
   [ 0, 1, 2]
 ]
 
-areas.b = [
+areas.areaB = [
   [3]
   [4]
   [5]
 ]
 
-areas.c = [
+areas.areaC = [
   [3,3]
   [4,4]
   [4,4]

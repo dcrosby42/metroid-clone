@@ -39,6 +39,6 @@ module.exports =
       mapName = map.get('name')
       position = comps.get('samus-position')
 
-      viewportConfig = ui.viewportConfigs[mapName]
+      viewportConfig = ui.getViewportConfig(mapName)
       container = ui.layers[viewportConfig.layerName]
       updateContainerPosition container, position, viewportConfig

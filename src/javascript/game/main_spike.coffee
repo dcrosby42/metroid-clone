@@ -6,16 +6,11 @@ KeyboardController = require '../input/keyboard_controller'
 GamepadController = require('../input/gamepad_controller')
 
 EntityStore = require '../ecs/entity_store'
-
-
 EcsMachine = require '../ecs/ecs_machine'
 ViewMachine = require './view_machine'
-
-
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
 EnemiesSystems =  require './entity/enemies/systems'
-
 
 C = require './entity/components'
 
@@ -23,18 +18,15 @@ Samus = require './entity/samus'
 Enemies = require './entity/enemies'
 General = require './entity/general'
 
-MapData = require './map/map_data'
-
 StateHistory = require '../utils/state_history'
 Debug = require '../utils/debug'
 
+
+MapDatabase = require './map/map_database'
+
 class MainSpike
   constructor: ({@componentInspector}) ->
-    @maps = Immutable.Map(
-      areaA: @setupMap( MapData.areas.a )
-      areaB: @setupMap( MapData.areas.b )
-      areaC: @setupMap( MapData.areas.c )
-    )
+    @mapDatabase = MapDatabase.createDefault()
 
     @defaultInput = Immutable.fromJS
       controllers:
@@ -43,7 +35,7 @@ class MainSpike
         admin: {}
       dt: 0
       static:
-        maps: @maps
+        mapDatabase: @mapDatabase
 
     @_setupControllers()
 
@@ -94,7 +86,7 @@ class MainSpike
   setupStage: (stage, width, height) ->
     @viewMachine = new ViewMachine
       stage: stage
-      maps: @maps
+      mapDatabase: @mapDatabase
       spriteConfigs: @_getSpriteConfigs()
       componentInspector: @componentInspector
 
@@ -266,47 +258,6 @@ class MainSpike
     if ac.toggle_bounding_box
       @viewMachine.drawHitBoxes = !@viewMachine.drawHitBoxes
 
-
-  setupMap: (map) ->
-    mapTileHeight = MapData.info.tileHeight
-    mapTileWidth = MapData.info.tileWidth
-    roomWidth = MapData.info.screenWidthInTiles
-    roomHeight = MapData.info.screenHeightInTiles
-
-    divRem = (numer,denom) -> [Math.floor(numer/denom), numer % denom]
-
-    mapRowCount = map.length * roomHeight
-    mapColCount = map[0].length * roomWidth
-
-    tileGrid = []
-    for r in [0...mapRowCount]
-      tileRow = []
-      tileGrid.push tileRow
-      for c in [0...mapColCount]
-        [rr,tr] = divRem(r, roomHeight)
-        [rc,tc] = divRem(c, roomWidth)
-        roomType = map[rr][rc]
-        room = MapData.roomTypes[roomType]
-        tileType = room[tr][tc]
-        if tileType?
-          tile =
-            type: tileType
-            x: c * mapTileWidth
-            y: r * mapTileHeight
-            width: mapTileWidth
-            height: mapTileHeight
-          
-          tileRow.push tile
-        else
-          tileRow.push null
-
-    map =
-      tileGrid: tileGrid
-      tileWidth: mapTileWidth
-      tileHeight: mapTileHeight
-      screenWidthInTiles: roomWidth
-      screenHeightInTiles: roomHeight
-    map
 
 
 module.exports = MainSpike

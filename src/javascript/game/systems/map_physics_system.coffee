@@ -34,9 +34,9 @@ class MapPhysicsSystem extends BaseSystem
     hitBox = @getComp('map_collider-hit_box')
     position = @getComp('map_collider-position')
 
+    mapDatabase = @input.getIn(['static','mapDatabase'])
     mapName = @getProp('map', 'name')
-
-    map = @input.getIn(['static','maps', mapName])
+    map = mapDatabase.get(mapName)
 
     if !map?
       console.log "!! NO MAP NAMED '#{mapName}' in", @input.toJS()
