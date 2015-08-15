@@ -1,7 +1,7 @@
 PIXI = require 'pixi.js'
 
 SystemExpander = require '../ecs/system_expander'
-EntityStoreFinder = require '../ecs/entity_store_finder'
+# EntityStoreFinder = require '../ecs/entity_store_finder'
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
 
@@ -21,17 +21,18 @@ class ViewMachine
     @maps.forEach (map,mapName) =>
       @viewportConfigs[mapName] = @_setupViewportConfig(map)
 
-    @_entityStoreFinder = new EntityStoreFinder()
+    # @_entityStoreFinder = new EntityStoreFinder()
 
     window.view = @
 
   update: (estore) ->
-    @_entityStoreFinder.setEntityStore(estore)
+    # @_entityStoreFinder.setEntityStore(estore)
 
     @systems.forEach (system) =>
-      system.get('update')?(@_entityStoreFinder, @)
+      # system.get('update')?(@_entityStoreFinder, @)
+      system.get('update')?(estore, @)
 
-    @_entityStoreFinder.unsetEntityStore()
+    # @_entityStoreFinder.unsetEntityStore()
 
     @componentInspector.sync(estore)
 
