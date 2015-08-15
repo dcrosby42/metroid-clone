@@ -18,7 +18,7 @@ class StateMachineSystem extends BaseSystem
     @_stateMachine = Immutable.fromJS(@constructor.StateMachine)
 
   process: ->
-    state = @getProp(@_stateComponent,@_stateProperty)
+    state = @getProp(@_stateComponent,@_stateProperty) || @_stateMachine.get('start')
     
     # If defined, invoke the state handler, such as sleepState (for state 'sleep').
     # *State methods are best served by emitting events that can then be handled below.

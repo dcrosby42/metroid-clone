@@ -5,7 +5,7 @@ EntityStoreFinder = require '../ecs/entity_store_finder'
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
 
-class View
+class ViewSim
   constructor: ({@stage,@maps,@spriteConfigs,@componentInspector}) ->
     @systems = @_createSystems()
 
@@ -107,5 +107,5 @@ class View
             sprite.position.set tile.x, tile.y
             container.addChild sprite
 
-module.exports = View
+module.exports = ViewSim
 

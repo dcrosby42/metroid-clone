@@ -17,8 +17,8 @@ class ReactComponentInspector
     cid = comp.get('cid')
     @entities = @entities.setIn [eid,cid], comp
 
-  sync: ->
-    @_renderInspector()
+  sync: (estore) ->
+    @_renderInspector(estore)
 
   _resetEntities: ->
     @entities = Map({})

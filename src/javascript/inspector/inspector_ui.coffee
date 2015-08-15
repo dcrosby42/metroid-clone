@@ -28,13 +28,13 @@ InspectorUI = React.createClass
     header = React.DOM.div {className: "inspector-header", onClick: @headerClicked}, folder, "Entity Inspector"
 
     views = if @state.foldOpen
-      # List([
-      React.DOM.div {className: 'entities'},
-        @props.entities.map((components,eid) =>
-          React.createElement Entity, {eid: eid, components: components, key: eid, inspectorConfig: @props.inspectorConfig}
-        ).toList()
-        # React.createElement ComponentSearchBox, {key: 'component-search-box', entityStore: @props.entityStore}
-      # ])
+      List([
+        React.DOM.div {className: 'entities'},
+          @props.entities.map((components,eid) =>
+            React.createElement Entity, {eid: eid, components: components, key: eid, inspectorConfig: @props.inspectorConfig}
+          ).toList()
+        React.createElement ComponentSearchBox, {key: 'component-search-box', entityStore: @props.entityStore}
+      ])
     else
       List()
 

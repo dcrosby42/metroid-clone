@@ -21,8 +21,13 @@ ComponentSearchBox = React.createClass
   searchClicked: (e) ->
     filters = Immutable.fromJS(JSON.parse(@state.queryString))
     @state.expandedFilters = FilterExpander.expandFilterGroups(filters)
+    console.log "ComponentSearchBox: expanded filters: ",@state.expandedFilters.toJS()
     if @props.entityStore?
       @state.searchResults = @props.entityStore.search @state.expandedFilters
+      console.log "ComponentSearchBox: search results: ",@state.searchResults.toJS()
+    else
+      console.log "ComponentSearchBox: no estore to search!"
+      
 
 
   render: ->
