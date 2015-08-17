@@ -90,6 +90,6 @@ sprites =
           scale: { x: -1 }
 
     props:
-      anchor: { x: 0.5, y: 1 }
+      anchor: { x: 0.5, y: 0.95 }
 
 module.exports = sprites
