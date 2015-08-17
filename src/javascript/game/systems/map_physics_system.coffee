@@ -95,7 +95,6 @@ class MapPhysicsSystem extends BaseSystem
     else
       hits.right = tileSearchVertical(grid, tileWidth,tileHeight, Math.ceil(box.right), box.top, box.bottom-1)
       if hits.right.length > 0
-        console.log "hits.right",hits.right
         s = hits.right[0]
         box.setX(s.x - box.rightOffset-1)
         adjacent.right = hits.right
