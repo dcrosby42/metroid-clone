@@ -72,6 +72,30 @@ sprites =
           "zoomer-down-02"
         ]
         fps: 15
+      "stunned-crawl-up":
+        frames: [
+          "stunned-zoomer-up-01"
+          "stunned-zoomer-up-02"
+        ]
+        fps: 15
+      "stunned-crawl-left":
+        frames: [
+          "stunned-zoomer-left-01"
+          "stunned-zoomer-left-02"
+        ]
+        fps: 15
+      "stunned-crawl-right":
+        frames: [
+          "stunned-zoomer-right-01"
+          "stunned-zoomer-right-02"
+        ]
+        fps: 15
+      "stunned-crawl-down":
+        frames: [
+          "stunned-zoomer-down-01"
+          "stunned-zoomer-down-02"
+        ]
+        fps: 15
     props:
       anchor: { x: 0.5, y: 0.5 }
 
