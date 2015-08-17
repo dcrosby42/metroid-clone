@@ -118,6 +118,24 @@ roomTypes[5] = [
   [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
 ]
 
+roomTypes[6] = [
+  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, 0x00,0x00,0x00,0x00, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, 0x00,0x00,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,0x00 ]
+  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
+]
+
 areas = {}
 
 areas.areaA = [
@@ -135,6 +153,10 @@ areas.areaC = [
   [4,4]
   [4,4]
   [5,5]
+]
+
+areas.zoomerTest = [
+  [6]
 ]
 
 exports.roomTypes = roomTypes

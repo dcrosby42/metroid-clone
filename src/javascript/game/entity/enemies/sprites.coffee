@@ -45,6 +45,34 @@ sprites =
             x: 0.5
             y: 0.5
 
-
+  basic_zoomer:
+    spriteSheet: "images/zoomer.json"
+    states:
+      "crawl-up":
+        frames: [
+          "zoomer-up-01"
+          "zoomer-up-02"
+        ]
+        fps: 15
+      "crawl-left":
+        frames: [
+          "zoomer-left-01"
+          "zoomer-left-02"
+        ]
+        fps: 15
+      "crawl-right":
+        frames: [
+          "zoomer-right-01"
+          "zoomer-right-02"
+        ]
+        fps: 15
+      "crawl-down":
+        frames: [
+          "zoomer-down-01"
+          "zoomer-down-02"
+        ]
+        fps: 15
+    props:
+      anchor: { x: 0.5, y: 0.5 }
 
 module.exports = sprites

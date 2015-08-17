@@ -21,12 +21,14 @@ General = require './entity/general'
 StateHistory = require '../utils/state_history'
 Debug = require '../utils/debug'
 
-
 MapDatabase = require './map/map_database'
+
+# TestLevel = require './test_level'
+ZoomerLevel = require './zoomer_level'
 
 class MainSpike
   constructor: ({@componentInspector}) ->
-    @mapDatabase = MapDatabase.createDefault()
+    @level = ZoomerLevel
 
     @defaultInput = Immutable.fromJS
       controllers:
@@ -35,59 +37,30 @@ class MainSpike
         admin: {}
       dt: 0
       static:
-        mapDatabase: @mapDatabase
+        mapDatabase: @level.mapDatabase()
 
     @_setupControllers()
 
-    # Setup game machine:
-    @gameMachine = new EcsMachine(systems: @_createSystems())
-    @estore = new EntityStore()
-    @estore.createEntity [
-      Immutable.fromJS(type: "map", name: "areaA")
-    ]
-    @estore.createEntity Samus.factory.createComponents('samus')
-    for x in [150, 200, 250, 300, 350]
-      @estore.createEntity Enemies.factory.createComponents('basicSkree', x:x, y: 32)
+    @gameMachine = new EcsMachine(systems: @level.gameSystems())
 
+    @estore = new EntityStore()
+    @level.populateInitialEntities(@estore)
 
     @stateHistory = new StateHistory()
+    @captureTimeWalkSnapShot(@estore)
 
 
   graphicsToPreload: ->
-    assets = [
-      "images/brinstar.json"
-    ]
-    assets = assets.concat(Samus.assets)
-    assets = assets.concat(Enemies.assets)
-    assets = assets.concat(General.assets)
-
-    assets
-
+    @level.graphicsToPreload()
 
   soundsToPreload: ->
-    songs = ["brinstar"]
-    effects = [
-      "enemy_die1"
-      "health"
-      "step2"
-      "jump"
-      "samus_hurt"
-      "samus_die"
-      "short_beam"
-    ]
-    assets = {}
-    for song in songs
-      assets[song] = "sounds/music/#{song}.mp3"
-    for effect in effects
-      assets[effect] = "sounds/fx/#{effect}.wav"
-    assets
-
+    @level.soundsToPreload()
 
   setupStage: (stage, width, height) ->
     @viewMachine = new ViewMachine
       stage: stage
-      mapDatabase: @mapDatabase
-      spriteConfigs: @_getSpriteConfigs()
+      mapDatabase: @level.mapDatabase()
+      spriteConfigs: @level.spriteConfigs()
       componentInspector: @componentInspector
 
 
@@ -134,36 +107,7 @@ class MainSpike
     @useGamepad = false
     @p1Controller = @keyboardController
 
-  _getSpriteConfigs: ->
-    spriteConfigs = {}
-    _.merge spriteConfigs, Samus.sprites
-    _.merge spriteConfigs, Enemies.sprites
-    _.merge spriteConfigs, General.sprites
-    spriteConfigs
 
-  _createSystems: ->
-    [
-      CommonSystems.timer_system
-      CommonSystems.death_timer_system
-      CommonSystems.visual_timer_system
-      CommonSystems.sound_system
-      SamusSystems.samus_motion
-      CommonSystems.controller_system
-      SamusSystems.samus_controller_action
-      SamusSystems.short_beam_system
-      SamusSystems.samus_action_velocity
-      CommonSystems.samus_hit_system
-      CommonSystems.samus_damage_system
-      SamusSystems.samus_action_sounds
-      CommonSystems.gravity_system
-      CommonSystems.map_physics_system
-      CommonSystems.map_ghost_system
-      CommonSystems.bullet_enemy_system
-      CommonSystems.bullet_system
-      CommonSystems.enemy_hit_system
-      EnemiesSystems.skree_action
-      SamusSystems.samus_animation
-    ]
 
   update: (dt) ->
     ac = @adminController.update()

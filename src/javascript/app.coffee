@@ -17,6 +17,8 @@ inspectorConfig = Immutable.fromJS
   componentLayout:
     samus:      { open: false }
     skree:      { open: false }
+    zoomer:      { open: true }
+    hit_box:      { open: true }
     controller: { open: false }
     visual:     { open: false }
     velocity:   { open: true }

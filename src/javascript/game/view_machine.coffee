@@ -26,6 +26,9 @@ class ViewMachine
 
     @componentInspector.sync(estore)
 
+  getSpriteConfig: (name) ->
+    @spriteConfigs[name]
+
   getMapLayer: (mapName) ->
     console.log "getMapLayer #{mapName}"
     layer = layers.maps[mapName]

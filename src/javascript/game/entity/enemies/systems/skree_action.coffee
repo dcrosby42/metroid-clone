@@ -104,10 +104,10 @@ class SkreeActionSystem extends StateMachineSystem
       Common.Harmful.merge
         damage: 5
       Common.HitBox.merge
-        width: 8
-        height: 8
-        anchorX: 0.5
-        anchorY: 0.5
+        width: 7
+        height: 7
+        anchorX: 0.54
+        anchorY: 0.54
       Common.HitBoxVisual
       Common.DeathTimer.merge
         time: 100

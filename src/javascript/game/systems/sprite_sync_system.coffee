@@ -4,7 +4,7 @@ AnimatedSprite = require '../../pixi_ext/animated_sprite'
 FilterExpander = require '../../ecs/filter_expander'
 
 newAnimatedSprite = (ui, name) ->
-  config = ui.spriteConfigs[name]
+  config = ui.getSpriteConfig(name)
   if config?
     sprite = AnimatedSprite.create(config)
     container = ui.layers[sprite.layer] || ui.layers.default
