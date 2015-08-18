@@ -24,7 +24,8 @@ L.populateInitialEntities = (estore) ->
 
   # estore.createEntity Samus.factory.createComponents('samus')
   x = 100
-  y = 103.5
+  # y = 103.5
+  y = 95
   zoomerComps = Enemies.factory.createComponents('basicZoomer', x:x, y:y)
   zoomerComps.push Common.Controller.merge(inputName: 'player1')
   estore.createEntity zoomerComps
@@ -46,7 +47,7 @@ L.gameSystems = ->
     CommonSystems.sound_system
     SamusSystems.samus_motion
     CommonSystems.controller_system
-    # XXX EnemiesSystems.zoomer_controller_system
+    EnemiesSystems.zoomer_controller_system # XXX
     EnemiesSystems.zoomer_crawl_system
     SamusSystems.samus_controller_action
     SamusSystems.short_beam_system

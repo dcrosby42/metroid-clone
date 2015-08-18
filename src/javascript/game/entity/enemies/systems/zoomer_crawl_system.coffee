@@ -22,6 +22,58 @@ class ZoomerCrawlSystem extends BaseSystem
 
     orientation = zoomer.get('orientation')
 
+    if orientation == 'up'
+      @setProp 'velocity', 'y', 0.04
+      if hitBox.getIn(['adjacent','bottom'])
+        @setProp 'velocity', 'x', -0.04
+      else
+        @setProp 'velocity', 'x', 0.01
+
+    if orientation == 'left'
+      @setProp 'velocity', 'x', 0.04
+      if hitBox.getIn(['adjacent','right'])
+        @setProp 'velocity', 'y', 0.04
+      else
+        @setProp 'velocity', 'y', -0.01
+
+    if orientation == 'down'
+      @setProp 'velocity', 'y', -0.04
+      if hitBox.getIn(['adjacent','top'])
+        @setProp 'velocity', 'x', 0.04
+      else
+        @setProp 'velocity', 'x', -0.01
+
+    if orientation == 'right'
+      @setProp 'velocity', 'x', -0.04
+      if hitBox.getIn(['adjacent','left'])
+        @setProp 'velocity', 'y', -0.04
+      else
+        @setProp 'velocity', 'y', 0.01
+
+    if hitBox.getIn(['adjacent','right'])
+      @setProp('zoomer', 'orientation', 'left')
+    else if hitBox.getIn(['adjacent','top'])
+      @setProp('zoomer', 'orientation', 'down')
+    else if hitBox.getIn(['adjacent','left'])
+      @setProp('zoomer', 'orientation', 'right')
+    else if hitBox.getIn(['adjacent','bottom'])
+      @setProp('zoomer', 'orientation', 'up')
+      
+    # TODO: animation system?
+    visual = @getComp 'visual'
+    newOrient = @getProp('zoomer','orientation')
+    newState = "crawl-#{newOrient}"
+    priorState = visual.get('state')
+    if newState != priorState
+      @updateComp visual.set('state',newState).set('time',0)
+
+  process_2: ->
+    zoomer = @getComp('zoomer')
+    hitBox = @getComp('hit_box')
+    velocity = @getComp('velocity')
+
+    orientation = zoomer.get('orientation')
+
     if hitBox.getIn(['adjacent','bottom'])
       if orientation == 'up'
         @updateComp velocity.set('x', -0.04)

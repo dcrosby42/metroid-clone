@@ -66,13 +66,13 @@ class MapPhysicsSystem extends BaseSystem
     # Apply & restrict VERTICAL movement
     box.moveY(vy * @dt())
 
-    hits.top = tileSearchHorizontal(grid, tileWidth,tileHeight,box.top, box.left, box.right-1)
+    hits.top = tileSearchHorizontal(grid, tileWidth,tileHeight,box.top, box.left, Math.ceil(box.right))
     if hits.top.length > 0
       s = hits.top[0]
       box.setY(s.y+s.height - box.topOffset)
       adjacent.top = hits.top
     else
-      hits.bottom = tileSearchHorizontal(grid, tileWidth,tileHeight,Math.ceil(box.bottom), box.left, box.right-1)
+      hits.bottom = tileSearchHorizontal(grid, tileWidth,tileHeight,Math.ceil(box.bottom), box.left, Math.ceil(box.right))
       if hits.bottom.length > 0
         s = hits.bottom[0]
         box.setY(s.y - box.bottomOffset-1)
@@ -87,13 +87,13 @@ class MapPhysicsSystem extends BaseSystem
     # Step 2: apply & restrict horizontal movement
     box.moveX(vx * @dt())
 
-    hits.left = tileSearchVertical(grid, tileWidth,tileHeight,box.left, box.top, box.bottom-1)
+    hits.left = tileSearchVertical(grid, tileWidth,tileHeight,box.left, box.top, Math.ceil(box.bottom))
     if hits.left.length > 0
       s = hits.left[0]
       box.setX(s.x+s.width - box.leftOffset)
       adjacent.left = hits.left
     else
-      hits.right = tileSearchVertical(grid, tileWidth,tileHeight, Math.ceil(box.right), box.top, box.bottom-1)
+      hits.right = tileSearchVertical(grid, tileWidth,tileHeight, Math.ceil(box.right), box.top,Math.ceil(box.bottom))
       if hits.right.length > 0
         s = hits.right[0]
         box.setX(s.x - box.rightOffset-1)
