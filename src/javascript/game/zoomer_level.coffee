@@ -35,7 +35,7 @@ L.populateInitialEntities = (estore) ->
   zoomerComps2 = Enemies.factory.createComponents('basicZoomer', x:x, y:y)
   estore.createEntity zoomerComps2
 
-  estore.createEntity Samus.factory.createComponents('samus')
+  # estore.createEntity Samus.factory.createComponents('samus')
 
   estore
 

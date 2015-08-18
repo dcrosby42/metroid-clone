@@ -93,7 +93,7 @@ class MapPhysicsSystem extends BaseSystem
       box.setX(s.x+s.width - box.leftOffset)
       adjacent.left = hits.left
     else
-      hits.right = tileSearchVertical(grid, tileWidth,tileHeight, Math.ceil(box.right), box.top,Math.ceil(box.bottom))
+      hits.right = tileSearchVertical(grid, tileWidth,tileHeight, Math.ceil(box.right), box.top,box.bottom-1)
       if hits.right.length > 0
         s = hits.right[0]
         box.setX(s.x - box.rightOffset-1)
