@@ -23,12 +23,13 @@ Debug = require '../utils/debug'
 
 MapDatabase = require './map/map_database'
 
-# TestLevel = require './test_level'
-ZoomerLevel = require './zoomer_level'
+TestLevel = require './test_level'
+# ZoomerLevel = require './zoomer_level'
 
 class MainSpike
   constructor: ({@componentInspector}) ->
-    @level = ZoomerLevel
+    # @level = ZoomerLevel
+    @level = TestLevel
 
     @defaultInput = Immutable.fromJS
       controllers:

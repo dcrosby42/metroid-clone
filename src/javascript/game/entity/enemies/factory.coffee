@@ -52,9 +52,9 @@ F.basicZoomer = (args) ->
       y: 0
     Common.MapCollider
     Common.HitBox.merge
-      width: 16
-      height: 16
-      anchorX: 0.5 # halfway across
+      width: 14
+      height: 14
+      anchorX: 0.5
       anchorY: 0.5
     Common.HitBoxVisual.merge
       color: 0x55FF55

@@ -51,6 +51,10 @@ C.HitBox = imm
     bottom: false
   touchingSomething: false
 
+C.Map = imm
+  type: 'map'
+  name: 'UNSET'
+
 C.MapCollider = imm
   type: 'map_collider'
 

@@ -12,17 +12,33 @@ SamusSystems =  require './entity/samus/systems'
 General = require './entity/general'
 CommonSystems = require './systems'
 
+Common = require './entity/components'
+
 TestLevel = {}
 
 TestLevel.populateInitialEntities = (estore) ->
+  # Map
   estore.createEntity [
-    Immutable.fromJS(type: "map", name: "areaA")
+    Common.Map.set('name','areaA')
   ]
 
   estore.createEntity Samus.factory.createComponents('samus')
 
+  # Skrees:
   for x in [150, 200, 250, 300, 350]
     estore.createEntity Enemies.factory.createComponents('basicSkree', x:x, y: 32)
+
+  # Zoomers:
+  x = 100
+  y = 95
+  zoomerComps = Enemies.factory.createComponents('basicZoomer', x:x, y:y)
+  zoomerComps.push Common.Controller.merge(inputName: 'debug1')
+  estore.createEntity zoomerComps
+
+  x = 150
+  y = 151
+  zoomerComps2 = Enemies.factory.createComponents('basicZoomer', x:x, y:y)
+  estore.createEntity zoomerComps2
 
   estore
 
@@ -35,11 +51,14 @@ TestLevel.gameSystems = ->
     SamusSystems.samus_motion
     CommonSystems.controller_system
     SamusSystems.samus_controller_action
+    EnemiesSystems.zoomer_controller_system
     SamusSystems.short_beam_system
     SamusSystems.samus_action_velocity
     CommonSystems.samus_hit_system
     CommonSystems.samus_damage_system
     SamusSystems.samus_action_sounds
+
+    EnemiesSystems.zoomer_crawl_system
     CommonSystems.gravity_system
     CommonSystems.map_physics_system
     CommonSystems.map_ghost_system
