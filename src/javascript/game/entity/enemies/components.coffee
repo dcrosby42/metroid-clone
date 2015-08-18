@@ -14,6 +14,7 @@ C.Skree = imm
 C.Zoomer = imm
   type: 'zoomer'
   orientation: 'up'
+  crawlDir: 'forward'
 
 C.Crawl = imm
   type: 'crawl'

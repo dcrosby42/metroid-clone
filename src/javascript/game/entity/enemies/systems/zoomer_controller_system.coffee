@@ -10,28 +10,34 @@ class ZoomerControllerSystem extends BaseSystem
     position = @getComp('position')
 
     m = 0.05
-    if ctrl.get('action1')
+    if ctrl.get('mod1')
       m = 0.01
 
     dx = dy = 0
-    if ctrl.get('left')
+    if ctrl.get('moveLeft')
       dx = -m
-    else if ctrl.get('right')
+    else if ctrl.get('moveRight')
       dx = m
 
-    if ctrl.get('up')
+    if ctrl.get('moveUp')
       dy = -m
-    else if ctrl.get('down')
+    else if ctrl.get('moveDown')
       dy = m
 
     @updateProp 'velocity', 'x', (x) => dx 
     @updateProp 'velocity', 'y', (y) => dy 
 
-    if ctrl.get('action2Pressed')
+    if ctrl.get('toggleCrawlPressed')
+      console.log "HEY"
       if crawl = @getEntityComponent(@eid(), 'crawl')
         @deleteComp crawl
       else
         @addComp Immutable.Map(type: 'crawl')
+
+    if ctrl.get('toggleCrawlDirPressed')
+      @updateProp 'zoomer', 'crawlDir', (dir) ->
+        if dir == 'forward' then 'backward' else 'forward'
+
 
     # mx = 1
     # my = 1

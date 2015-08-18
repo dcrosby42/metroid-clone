@@ -21,6 +21,7 @@ class ZoomerCrawlSystem extends BaseSystem
     velocity = @getComp('velocity')
 
     orientation = zoomer.get('orientation')
+    crawlDir = @getProp 'zoomer', 'crawlDir'
 
     adjRight = hitBox.getIn(['adjacent','right'])
     adjLeft = hitBox.getIn(['adjacent','left'])
@@ -30,6 +31,9 @@ class ZoomerCrawlSystem extends BaseSystem
     fakeGrav = 0.04
     crawlSpeed = 0.04
     floorHug = 0.01
+    if crawlDir == 'backward'
+      crawlSpeed = -crawlSpeed
+      floorHug = -floorHug
 
     if orientation == 'up'
       @setProp 'velocity', 'y', fakeGrav
@@ -59,14 +63,24 @@ class ZoomerCrawlSystem extends BaseSystem
       else
         @setProp 'velocity', 'y', floorHug
 
-    if adjRight and !adjBottom
-      orientation = 'left'
-    else if adjTop
-      orientation = 'down'
-    else if adjLeft
-      orientation = 'right'
-    else if adjBottom
-      orientation = 'up'
+    if crawlDir == 'forward'
+      if adjRight and !adjBottom
+        orientation = 'left'
+      else if adjTop
+        orientation = 'down'
+      else if adjLeft
+        orientation = 'right'
+      else if adjBottom
+        orientation = 'up'
+    else
+      if adjBottom and !adjRight
+        orientation = 'up'
+      else if adjLeft
+        orientation = 'right'
+      else if adjTop
+        orientation = 'down'
+      else if adjRight
+        orientation = 'left'
 
     @setProp('zoomer', 'orientation', orientation)
       

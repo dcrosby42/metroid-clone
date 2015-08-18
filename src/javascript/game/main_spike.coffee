@@ -34,6 +34,7 @@ class MainSpike
       controllers:
         player1: {}
         player2: {}
+        debug1: {}
         admin: {}
       dt: 0
       static:
@@ -104,6 +105,16 @@ class MainSpike
         "l": 'right'
         "space": 'step_forward'
 
+    @debugController = new KeyboardController
+      bindings:
+        "h": 'moveLeft'
+        "j": 'moveDown'
+        "k": 'moveUp'
+        "l": 'moveRight'
+        "c": 'toggleCrawl'
+        "b": 'toggleCrawlDir'
+        "f": 'mod1'
+
     @useGamepad = false
     @p1Controller = @keyboardController
 
@@ -116,10 +127,14 @@ class MainSpike
     p1ControllerInput = Immutable.fromJS(
       @p1Controller.update()
     )
+    debugControllerInput = Immutable.fromJS(
+      @debugController.update()
+    )
 
     input = @defaultInput
       .set('dt', dt)
       .setIn(['controllers','player1'], p1ControllerInput)
+      .setIn(['controllers','debug1'], debugControllerInput)
     
     if @paused
       if @step_forward

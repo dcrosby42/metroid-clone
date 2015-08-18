@@ -27,7 +27,7 @@ L.populateInitialEntities = (estore) ->
   # y = 103.5
   y = 95
   zoomerComps = Enemies.factory.createComponents('basicZoomer', x:x, y:y)
-  zoomerComps.push Common.Controller.merge(inputName: 'player1')
+  zoomerComps.push Common.Controller.merge(inputName: 'debug1')
   estore.createEntity zoomerComps
 
   x = 150
