@@ -1,4 +1,3 @@
-PIXI = require 'pixi.js'
 _ = require 'lodash'
 Immutable = require 'immutable'
 

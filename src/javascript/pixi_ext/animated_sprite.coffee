@@ -1,4 +1,3 @@
-PIXI = require 'pixi.js'
 _    = require 'lodash'
 SpriteDeck = require './sprite_deck'
 Timeline = require './timeline'
