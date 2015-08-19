@@ -1,9 +1,15 @@
+RoomDefs = require './room_defs'
+ChunkDefs = require './chunk_defs'
+
+RoomWidth = 16
+RoomHeight = 15
+
 roomTypes = []
 
 roomTypes[0] = [
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
-  [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
+  [ 0x01,0x01,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
+  [ 0x01,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
+  [ 0x01,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
   [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
         
   [ 0x00,null,null,null, null,null,null,null, null,null,null,null, null,null,null,null ]
@@ -136,6 +142,34 @@ roomTypes[6] = [
   [ 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00 ]
 ]
 
+emptyGrid = -> ((null for [1..RoomWidth]) for [1..RoomHeight])
+
+expandChunkInto = (grid, colOff,rowOff, chunkDef) ->
+  for row, ri in chunkDef
+    r = ri + rowOff
+    if r >= 0 and r < RoomHeight
+      for t,ci in row
+        c = ci + colOff
+        if c >= 0 and c < RoomWidth
+          grid[r][c] = t
+  
+
+expandRoomDef = (roomDef) ->
+  grid = emptyGrid()
+  for [x,y,ch] in roomDef.chunks
+    expandChunkInto(grid, x,y, ChunkDefs[ch])
+  grid
+
+console.log RoomDefs
+for roomDef,i in RoomDefs
+  if roomDef?
+      console.log "Setting roomType #{i}"
+      roomTypes[i] = expandRoomDef(roomDef)
+# roomTypes[0x13] = expandRoomDef(RoomDefs[0x13])
+# roomTypes[0x14] = expandRoomDef(RoomDefs[0x14])
+# roomTypes[0x19] = expandRoomDef(RoomDefs[0x19])
+
+######################################################################
 areas = {}
 
 areas.areaA = [
@@ -159,11 +193,15 @@ areas.zoomerTest = [
   [6]
 ]
 
+areas.mapTest = [
+  [0x12, 0x14, 0x19, 0x13]
+]
+
 exports.roomTypes = roomTypes
 exports.areas = areas
 exports.info =
   tileWidth: 16
   tileHeight: 16
-  screenWidthInTiles: 16
-  screenHeightInTiles: 15
+  screenWidthInTiles: RoomWidth
+  screenHeightInTiles: RoomHeight
 

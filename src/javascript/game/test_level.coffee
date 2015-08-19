@@ -19,7 +19,8 @@ TestLevel = {}
 TestLevel.populateInitialEntities = (estore) ->
   # Map
   estore.createEntity [
-    Common.Map.set('name','areaA')
+    # Common.Map.set('name','areaA')
+    Common.Map.set('name','mapTest')
   ]
 
   estore.createEntity Samus.factory.createComponents('samus')
