@@ -18,8 +18,8 @@ C.Gravity = imm
   accel: 0
   max: 0
 
-C.Visual = imm
-  type: 'visual'
+C.Animation = imm
+  type: 'animation'
   visible: true
   time: 0
   paused: false

@@ -30,7 +30,7 @@ F.samus = (args) ->
       anchorY: 1   # all the way at the bottom
     Common.Controller.merge
       inputName: 'player1'
-    Common.Visual.merge
+    Common.Animation.merge
       layer: 'creatures'
       spriteName: 'samus'
       state: 'stand-right'

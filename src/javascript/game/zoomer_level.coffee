@@ -43,7 +43,7 @@ L.gameSystems = ->
   [
     CommonSystems.timer_system
     CommonSystems.death_timer_system
-    CommonSystems.visual_timer_system
+    CommonSystems.animation_timer_system
     CommonSystems.sound_system
     SamusSystems.samus_motion
     CommonSystems.controller_system

@@ -30,7 +30,7 @@ newBullet = (weapon, position,direction,shootUp) ->
   return [
     Common.Bullet.merge
       damage: weapon.get('damage')
-    Common.Visual.merge
+    Common.Animation.merge
       layer: 'creatures'
       spriteName: 'bullet'
       state: 'normal'
