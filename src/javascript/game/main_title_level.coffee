@@ -26,7 +26,7 @@ L.populateInitialEntities = (estore) ->
     Common.Controller.merge
       inputName: 'player1'
 
-    Common.Visual.merge
+    Common.Animation.merge
       layer: 'background'
       spriteName: 'main_title'
       state: 'start'
@@ -59,7 +59,7 @@ L.gameSystems = ->
   [
     CommonSystems.timer_system
     CommonSystems.death_timer_system
-    CommonSystems.visual_timer_system
+    CommonSystems.animation_timer_system
     CommonSystems.sound_system
     # SamusSystems.samus_motion
     CommonSystems.controller_system
