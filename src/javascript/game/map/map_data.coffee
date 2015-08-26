@@ -160,10 +160,8 @@ expandRoomDef = (roomDef) ->
     expandChunkInto(grid, x,y, ChunkDefs[ch])
   grid
 
-console.log RoomDefs
 for roomDef,i in RoomDefs
   if roomDef?
-      console.log "Setting roomType #{i}"
       roomTypes[i] = expandRoomDef(roomDef)
 # roomTypes[0x13] = expandRoomDef(RoomDefs[0x13])
 # roomTypes[0x14] = expandRoomDef(RoomDefs[0x14])

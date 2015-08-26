@@ -1,5 +1,8 @@
 
 sprites =
+  main_title:
+    image: "images/main_title.png"
+
   creature_explosion:
     spriteSheet: "images/general.json"
     states:

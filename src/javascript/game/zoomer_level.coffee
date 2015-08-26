@@ -3,8 +3,6 @@ Immutable = require 'immutable'
 
 TestLevel = require './test_level'
 
-# MapDatabase = require './map/map_database'
-
 Enemies = require './entity/enemies'
 EnemiesSystems =  require './entity/enemies/systems'
 

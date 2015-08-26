@@ -7,6 +7,8 @@ module.exports =
   enemy_hit_system: require './enemy_hit_system'
   gravity_system: require './gravity_system'
   hit_box_visual_sync_system: require './hit_box_visual_sync_system'
+  label_sync_system: require './label_sync_system'
+  main_title_system: require './main_title_system'
   manual_mover_system: require './manual_mover_system'
   map_ghost_system: require './map_ghost_system'
   map_physics_system: require './map_physics_system'

@@ -1,4 +1,3 @@
-_ = require 'lodash'
 Immutable = require 'immutable'
 
 KeyboardController = require '../input/keyboard_controller'
@@ -24,11 +23,12 @@ MapDatabase = require './map/map_database'
 
 TestLevel = require './test_level'
 # ZoomerLevel = require './zoomer_level'
+MainTitleLevel = require './main_title_level'
 
 class MainSpike
   constructor: ({@componentInspector}) ->
     # @level = ZoomerLevel
-    @level = TestLevel
+    @level = MainTitleLevel
 
     @defaultInput = Immutable.fromJS
       controllers:
@@ -74,6 +74,7 @@ class MainSpike
         "down": 'down'
         "a": 'action2'
         "s": 'action1'
+        "enter": 'start'
       mutually_exclusive_actions: [
         [ 'right', 'left' ]
         [ 'up', 'down' ]

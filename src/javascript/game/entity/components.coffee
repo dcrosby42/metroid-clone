@@ -27,6 +27,15 @@ C.Visual = imm
   layer: null
   state: null
 
+C.Label = imm
+  type: 'label'
+  content: 'A Label'
+  visible: true
+
+C.Name = imm
+  type: 'name'
+  name: null
+
 C.Controller = imm
   type: 'controller'
   inputName: null
@@ -34,7 +43,7 @@ C.Controller = imm
 
 C.Health = imm
   type: 'health'
-  hp: 10 
+  hp: 10
 
 C.HitBox = imm
   type: 'hit_box'
