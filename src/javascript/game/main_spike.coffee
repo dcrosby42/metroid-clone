@@ -27,8 +27,9 @@ MainTitleLevel = require './main_title_level'
 
 class MainSpike
   constructor: ({@componentInspector}) ->
+    @titleLevel = MainTitleLevel
     # @level = ZoomerLevel
-    @level = MainTitleLevel
+    @level = TestLevel
 
     @defaultInput = Immutable.fromJS
       controllers:
@@ -42,27 +43,39 @@ class MainSpike
 
     @_setupControllers()
 
-    @gameMachine = new EcsMachine(systems: @level.gameSystems())
-
-    @estore = new EntityStore()
-    @level.populateInitialEntities(@estore)
-
-    @stateHistory = new StateHistory()
-    @captureTimeWalkSnapShot(@estore)
-
-
   graphicsToPreload: ->
-    @level.graphicsToPreload()
+    assets = @level.graphicsToPreload()
+    assets = assets.concat(@titleLevel.graphicsToPreload())
+    assets
 
   soundsToPreload: ->
-    @level.soundsToPreload()
+    sounds = @level.soundsToPreload()
+    sounds = _.merge(sounds, @titleLevel.soundsToPreload())
+    sounds
 
   setupStage: (stage, width, height) ->
+    @_activateTitleScreen()
+    # @_activateMainGame()
+
     @viewMachine = new ViewMachine
       stage: stage
       mapDatabase: @level.mapDatabase()
       spriteConfigs: @level.spriteConfigs()
       componentInspector: @componentInspector
+
+  _activateMainGame: ->
+    @gameMachine = new EcsMachine(systems: @level.gameSystems())
+    @estore = new EntityStore()
+    @level.populateInitialEntities(@estore)
+    @stateHistory = new StateHistory()
+    @captureTimeWalkSnapShot(@estore)
+
+  _activateTitleScreen: ->
+    @gameMachine = new EcsMachine(systems: @titleLevel.gameSystems())
+    @estore = new EntityStore()
+    @titleLevel.populateInitialEntities(@estore)
+    @stateHistory = new StateHistory()
+    @captureTimeWalkSnapShot(@estore)
 
 
   _setupControllers: ->
@@ -137,12 +150,13 @@ class MainSpike
       .setIn(['controllers','player1'], p1ControllerInput)
       .setIn(['controllers','debug1'], debugControllerInput)
     
+    events = null
     if @paused
       if @step_forward
         @step_forward = false
 
         input = input.set('dt', 17)
-        @gameMachine.update(@estore,input)
+        [@estore,events] = @gameMachine.update(@estore,input)
         @captureTimeWalkSnapShot(@estore)
 
       if @time_walk_back or @time_scroll_back
@@ -161,10 +175,25 @@ class MainSpike
           console.log "(null snapshot, not restoring)"
 
     else
-      @gameMachine.update(@estore, input)
+      [@estore,events] = @gameMachine.update(@estore, input)
       @captureTimeWalkSnapShot(@estore)
 
     @viewMachine.update(@estore.readOnly())
+
+    if events? and events.size > 0
+      if e = events.find((e) -> e.get('name') == 'StartNewGame')
+        console.log "NEW GAME!",e.toJS()
+        @_activateMainGame()
+      if e = events.find((e) -> e.get('name') == 'ContinueGame')
+        console.log "CONTINUE GAME!",e.toJS()
+        @_activateMainGame()
+      if e = events.find((e) -> e.get('name') == 'Killed')
+        console.log "KILLED!",e.toJS()
+        @_activateTitleScreen()
+
+      # else
+      #   console.log events.toJS()
+
 
 
   captureTimeWalkSnapShot: (estore) ->

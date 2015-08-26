@@ -26,10 +26,14 @@ L.populateInitialEntities = (estore) ->
     Common.Controller.merge
       inputName: 'player1'
 
-    # Common.Visual.merge
-    #   layer: 'background'
-    #   spriteName: 'main_title'
-    #   state: 'start'
+    Common.Visual.merge
+      layer: 'background'
+      spriteName: 'main_title'
+      state: 'start'
+
+    Common.Position.merge
+      x: 0
+      y: 0
 
   ]
 

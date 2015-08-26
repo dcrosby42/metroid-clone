@@ -14,6 +14,7 @@ module.exports =
   map_physics_system: require './map_physics_system'
   map_sync_system: require './map_sync_system'
   samus_damage_system: require './samus_damage_system'
+  samus_death_system: require './samus_death_system'
   samus_hit_system: require './samus_hit_system'
   sound_sync_system: require './sound_sync_system'
   sound_system: require './sound_system'

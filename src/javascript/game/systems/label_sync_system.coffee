@@ -41,7 +41,7 @@ module.exports =
 
     ArrayToCacheBinding.update
       source: res.toArray()
-      cache: ui.spriteCache
+      cache: ui.labelCache
       identFn: (comps) -> comps.getIn ['label','cid']
 
       addFn: (comps) =>

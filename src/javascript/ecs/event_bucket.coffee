@@ -22,7 +22,7 @@ class EventBucket
     @entityEvents = @entityEvents.set eid, es.push(mkEvent(event,data))
 
   addGlobalEvent: (event,data=null) ->
-    @globalEvents = @globalEvents.push(mkEvent(data))
+    @globalEvents = @globalEvents.push(mkEvent(event,data))
 
 module.exports = EventBucket
 

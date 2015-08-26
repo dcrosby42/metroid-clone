@@ -34,11 +34,10 @@ class SamusDamageSystem extends StateMachineSystem
   damageAction: ->
     damage = @getProp('damaged','damage')
     @updateProp 'health', 'hp', (hp) => hp - damage
+    @_makeHurtSound()
     if @getProp('health', 'hp') < 0
-      @_makeHurtSound()
-      @_makeDieSound()
-      # TODO: add Samus explode effect
-      @destroyEntity()
+      @_startBeingDead()
+
     else
       @_makeHurtSound()
 
@@ -75,13 +74,15 @@ class SamusDamageSystem extends StateMachineSystem
         timeLimit: 170
     ]
 
-  _makeDieSound: ->
+  _startBeingDead: ->
+    @destroyEntity()
     @newEntity [
       Common.Sound.merge
         soundId: 'samus_die'
         volume: 0.15
         playPosition: 0
         timeLimit: 3000
+      Common.Death
     ]
 
 

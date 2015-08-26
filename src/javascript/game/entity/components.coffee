@@ -45,6 +45,10 @@ C.Health = imm
   type: 'health'
   hp: 10
 
+C.Death = imm
+  type: 'death'
+  state: 'new'
+
 C.HitBox = imm
   type: 'hit_box'
   x: 0

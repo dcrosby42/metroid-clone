@@ -9,6 +9,7 @@ class ViewMachine
     @systems = @_createSystems()
 
     @spriteCache = {}
+    @labelCache = {}
     @soundCache = {}
     @hitBoxVisualCache = {}
     @drawHitBoxes = false
@@ -93,6 +94,8 @@ class ViewMachine
 
     base = new PIXI.DisplayObjectContainer()
 
+    background = new PIXI.DisplayObjectContainer()
+
     creatures = new PIXI.DisplayObjectContainer()
 
     overlay = new PIXI.DisplayObjectContainer()
@@ -106,6 +109,7 @@ class ViewMachine
       scaler: scaler
       base: base
       maps: {}
+      background: background
       creatures: creatures
       overlay: overlay
       default: creatures

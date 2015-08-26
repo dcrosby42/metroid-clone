@@ -14,7 +14,7 @@ class EcsMachine
     @systems.forEach (system) =>
       system.update(estore, input, @eventBucket)
 
-    estore
+    return [estore,@eventBucket.globalEvents]
 
 module.exports = EcsMachine
 

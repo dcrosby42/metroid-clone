@@ -57,6 +57,7 @@ TestLevel.gameSystems = ->
     SamusSystems.samus_action_velocity
     CommonSystems.samus_hit_system
     CommonSystems.samus_damage_system
+    CommonSystems.samus_death_system
     SamusSystems.samus_action_sounds
 
     EnemiesSystems.zoomer_crawl_system
