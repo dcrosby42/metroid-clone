@@ -10,7 +10,7 @@ LeftRot = {
 
 # class ZoomerCrawlSystem extends StateMachineSystem
 class ZoomerCrawlSystem extends BaseSystem
-  @Subscribe: ['zoomer','crawl','hit_box','velocity','position','visual']
+  @Subscribe: ['zoomer','crawl','hit_box','velocity','position','animation']
 
   # @StateMachine:
   #   componentProperty: ['zoomer','rotation']
@@ -85,11 +85,11 @@ class ZoomerCrawlSystem extends BaseSystem
     @setProp('zoomer', 'orientation', orientation)
       
     # TODO: animation system?
-    visual = @getComp 'visual'
+    animation = @getComp 'animation'
     newState = "crawl-#{orientation}"
-    priorState = visual.get('state')
+    priorState = animation.get('state')
     if newState != priorState
-      @updateComp visual.set('state',newState).set('time',0)
+      @updateComp animation.set('state',newState).set('time',0)
 
 
 

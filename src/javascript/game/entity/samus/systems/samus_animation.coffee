@@ -54,13 +54,13 @@ _.forEach defs, ([path,state]) =>
 
 
 class SamusAnimationSystem extends BaseSystem
-  @Subscribe: [ 'samus', 'visual' ]
+  @Subscribe: [ 'samus', 'animation' ]
 
   process: ->
-    visual = @getComp('visual')
+    animation = @getComp('animation')
     samus = @getComp('samus')
 
-    oldState = visual.get('state')
+    oldState = animation.get('state')
 
     keyPath = [
       samus.get('motion')
@@ -72,18 +72,18 @@ class SamusAnimationSystem extends BaseSystem
 
     # TODO : refactor this gorpy implementation.
     if damaged = @getEntityComponent(@eid(), 'damaged')
-      visual = visual.update 'visible', (v) -> !v
-      visualChanged = true
+      animation = animation.update 'visible', (v) -> !v
+      animationChanged = true
     else
-      visual = visual.set('visible',true)
-      visualChanged = true
+      animation = animation.set('visible',true)
+      animationChanged = true
 
     if newState != oldState
-      visual = visual.set('state',newState).set('time',0)
-      visualChanged = true
+      animation = animation.set('state',newState).set('time',0)
+      animationChanged = true
 
-    if visualChanged
-      @updateComp visual
+    if animationChanged
+      @updateComp animation
 
 module.exports = SamusAnimationSystem
 

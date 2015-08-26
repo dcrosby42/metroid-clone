@@ -10,7 +10,7 @@ F.basicSkree = (args) ->
     Enemy.Skree
     Common.Harmful.merge
       damage: 8
-    Common.Visual.merge
+    Common.Animation.merge
       layer: 'creatures'
       spriteName: 'basic_skree'
       state: 'spinSlow'
@@ -39,7 +39,7 @@ F.basicZoomer = (args) ->
     Enemy.Crawl
     Common.Harmful.merge
       damage: 8
-    Common.Visual.merge
+    Common.Animation.merge
       layer: 'creatures'
       spriteName: 'basic_zoomer'
       state: 'crawl-up'

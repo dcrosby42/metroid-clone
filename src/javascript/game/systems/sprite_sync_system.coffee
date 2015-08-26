@@ -18,7 +18,7 @@ removeSprite = (sprite) ->
   container.removeChild sprite
 
 
-filters = FilterExpander.expandFilterGroups([ 'visual', 'position' ])
+filters = FilterExpander.expandFilterGroups([ 'animation', 'position' ])
 
 module.exports =
   systemType: 'output'
@@ -30,18 +30,18 @@ module.exports =
     ArrayToCacheBinding.update
       source: vps.toArray()
       cache: ui.spriteCache
-      identFn: (vp) -> vp.getIn ['visual','cid']
+      identFn: (vp) -> vp.getIn ['animation','cid']
 
       addFn: (vp) =>
-        newAnimatedSprite ui, vp.getIn ['visual','spriteName']
+        newAnimatedSprite ui, vp.getIn ['animation','spriteName']
 
       removeFn: (sprite) =>
         removeSprite(sprite)
 
       syncFn: (vp,sprite) =>
-        visual = vp.get('visual')
+        animation = vp.get('animation')
         position = vp.get('position')
-        sprite.visible = visual.get('visible')
-        sprite.displayAnimation visual.get('state'), visual.get('time')
+        sprite.visible = animation.get('visible')
+        sprite.displayAnimation animation.get('state'), animation.get('time')
         sprite.position.set position.get('x'), position.get('y')
 

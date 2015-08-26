@@ -4,7 +4,7 @@ AnchoredBox = require '../../../../utils/anchored_box'
 
 class SkreeActionSystem extends StateMachineSystem
   @Subscribe: [
-    ["skree", "position", "velocity", "hit_box", "visual"]
+    ["skree", "position", "velocity", "hit_box", "animation"]
     ["samus", "position"]
   ]
   @ImplyEntity: 'skree'
@@ -34,8 +34,8 @@ class SkreeActionSystem extends StateMachineSystem
       @publishEvent 'approached'
 
   launchAction: ->
-    @setProp 'skree-visual', 'state', 'spinFast'
-    @setProp 'skree-visual', 'time', 0
+    @setProp 'skree-animation', 'state', 'spinFast'
+    @setProp 'skree-animation', 'time', 0
     gravity = Common.Gravity.merge
       max: 300/1000
       accel: (200/1000)/10
@@ -90,7 +90,7 @@ class SkreeActionSystem extends StateMachineSystem
   _createShrapnel: (x,y, vx,vy) ->
     
     @newEntity [
-      Common.Visual.merge
+      Common.Animation.merge
         layer: 'creatures'
         spriteName: 'skree_shrapnel'
         state: 'normal'

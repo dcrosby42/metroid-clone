@@ -1,4 +1,5 @@
 module.exports =
+  animation_timer_system: require './animation_timer_system'
   bullet_enemy_system: require './bullet_enemy_system'
   bullet_system: require './bullet_system'
   controller_system: require './controller_system'
@@ -20,4 +21,3 @@ module.exports =
   sound_system: require './sound_system'
   sprite_sync_system: require './sprite_sync_system'
   timer_system: require './timer_system'
-  visual_timer_system: require './visual_timer_system'

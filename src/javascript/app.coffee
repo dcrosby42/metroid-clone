@@ -20,7 +20,7 @@ inspectorConfig = Immutable.fromJS
     zoomer:      { open: true }
     hit_box:      { open: true }
     controller: { open: false }
-    visual:     { open: false }
+    animation:     { open: false }
     velocity:   { open: true }
     position:   { open: true }
 

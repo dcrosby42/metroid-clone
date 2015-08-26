@@ -3,7 +3,7 @@ AnchoredBox = require '../../utils/anchored_box'
 StateMachineSystem = require '../../ecs/state_machine_system'
 
 class EnemyHitSystem extends StateMachineSystem
-  @Subscribe: ['enemy', 'hit_box', 'visual']
+  @Subscribe: ['enemy', 'hit_box', 'animation']
 
   @StateMachine:
     componentProperty: ['enemy','hitState']
@@ -52,7 +52,7 @@ class EnemyHitSystem extends StateMachineSystem
     @_clearStunTimer()
     @_setStunTimer()
     
-    @_swapOutVisual()
+    @_swapOutAnimation()
     @_swapOutVelocity()
     
     # @publishEvent @eid(), 'stunned' # for other systems
@@ -65,7 +65,7 @@ class EnemyHitSystem extends StateMachineSystem
 
   _unStun: ->
     @_clearStunTimer()
-    @_swapInVisual()
+    @_swapInAnimation()
     @_swapInVelocity()
 
   _clearStunTimer: ->
@@ -76,7 +76,7 @@ class EnemyHitSystem extends StateMachineSystem
   _makeSplode: ->
     enemyBox = new AnchoredBox(@getComp('hit_box').toJS())
     @newEntity [
-      Common.Visual.merge
+      Common.Animation.merge
         layer: 'creatures'
         spriteName: 'creature_explosion'
         state: 'explode'
@@ -87,26 +87,26 @@ class EnemyHitSystem extends StateMachineSystem
         time: 3 * (1000/20) # the splode anim lasts three or four twentieths of a second
     ]
 
-  _swapOutVisual: ->
-    visual = @getComp('visual')
-    stashedVisual = visual
-      .set('type', 'STASHED-visual')
-    @addComp stashedVisual
+  _swapOutAnimation: ->
+    animation = @getComp('animation')
+    stashedAnimation = animation
+      .set('type', 'STASHED-animation')
+    @addComp stashedAnimation
     
-    stunnedVisual = visual
+    stunnedAnimation = animation
       .update('state', (s) -> "stunned-#{s}")
       .set('paused',true)
-    @addComp stunnedVisual
+    @addComp stunnedAnimation
     
-    @deleteComp visual
+    @deleteComp animation
 
-  _swapInVisual: ->
-    if stashedVisual = @getEntityComponent @eid(), "STASHED-visual"
-      stunnedVisual = @getComp('visual')
-      restoredVisual = stashedVisual.set('type','visual')
-      @addComp restoredVisual
-      @deleteComp stunnedVisual
-      @deleteComp stashedVisual
+  _swapInAnimation: ->
+    if stashedAnimation = @getEntityComponent @eid(), "STASHED-animation"
+      stunnedAnimation = @getComp('animation')
+      restoredAnimation = stashedAnimation.set('type','animation')
+      @addComp restoredAnimation
+      @deleteComp stunnedAnimation
+      @deleteComp stashedAnimation
 
   _swapOutVelocity: ->
     if velocity = @getEntityComponent @eid(), 'velocity'
