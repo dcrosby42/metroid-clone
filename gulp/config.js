@@ -42,6 +42,10 @@ module.exports = {
     src: src + "/sounds/**",
     dest: dest + "/sounds"
   },
+  fonts: {
+    src: src + "/fonts/**",
+    dest: dest + "/fonts"
+  },
   markup: {
     src: src + "/htdocs/**",
     dest: dest
