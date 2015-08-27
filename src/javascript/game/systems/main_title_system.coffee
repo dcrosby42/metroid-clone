@@ -48,10 +48,22 @@ class MainTitleSystem extends StateMachineSystem
     @publishEvent 'ready'
 
   showMainTitleAction: ->
-    @_newLabel(50,50,'PUSH START BUTTON', name:'mainMenu')
+    @newEntity [
+      Common.Animation.merge
+        spriteName: 'main_title'
+        state: 'main'
+      Common.Position.merge
+        x: 0
+        y: 0
+      Common.Name.merge
+        name: 'mainTitleImg'
+    ]
+
+    @_newLabel(5*16,9*16,'PUSH START BUTTON', name:'mainTitleLabel')
 
   showMainMenuAction: ->
-    @_destroyEntityWithName 'mainMenu'
+    @_destroyEntityWithName 'mainTitleImg'
+    @_destroyEntityWithName 'mainTitleLabel'
     @_createSubMenu()
 
   selectNewGameAction: ->

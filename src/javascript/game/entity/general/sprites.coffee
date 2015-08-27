@@ -1,7 +1,10 @@
 
 sprites =
   main_title:
-    image: "images/main_title.png"
+    spriteSheet: "images/general.json"
+    states:
+      main:
+        frame: "main_title"
 
   creature_explosion:
     spriteSheet: "images/general.json"

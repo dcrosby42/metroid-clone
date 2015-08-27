@@ -20,11 +20,20 @@
 },
 "creature_explode_a2":
 {
-	"frame": {"x":2,"y":20,"w":32,"h":32},
+	"frame": {"x":29,"y":2,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"main_title":
+{
+	"frame": {"x":2,"y":36,"w":256,"h":256},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":256},
+	"sourceSize": {"w":256,"h":256},
 	"pivot": {"x":0.5,"y":0.5}
 }},
 "meta": {
@@ -32,8 +41,8 @@
 	"version": "1.0",
 	"image": "general.png",
 	"format": "RGBA8888",
-	"size": {"w":36,"h":54},
+	"size": {"w":260,"h":294},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:7336e9e5071bc987db19f58f1ab8aad9:1e4f84da51e6a22d7a8dbdd11b0721f7:49afdaefc8003509a7dad15a6a269fdc$"
+	"smartupdate": "$TexturePacker:SmartUpdate:9e7e265d79d831322a8580b234d930a3:c7f638a5b76d7d1fdce6e98ac20f6509:49afdaefc8003509a7dad15a6a269fdc$"
 }
 }
