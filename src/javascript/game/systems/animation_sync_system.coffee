@@ -3,7 +3,7 @@ AnimatedSprite = require '../../pixi_ext/animated_sprite'
 
 FilterExpander = require '../../ecs/filter_expander'
 
-newAnimatedSprite = (ui, name) ->
+newSprite = (ui, name) ->
   config = ui.getSpriteConfig(name)
   if config?
     sprite = AnimatedSprite.create(config)
@@ -11,7 +11,7 @@ newAnimatedSprite = (ui, name) ->
     container.addChild sprite
     sprite
   else
-    console.log "No sprite config defined for '#{name}'"
+    console.log "!! AnimationSyncSystem: No sprite config defined for '#{name}'"
 
 removeSprite = (sprite) ->
   container = sprite.parent
@@ -33,7 +33,7 @@ module.exports =
       identFn: (vp) -> vp.getIn ['animation','cid']
 
       addFn: (vp) =>
-        newAnimatedSprite ui, vp.getIn ['animation','spriteName']
+        newSprite ui, vp.getIn ['animation','spriteName']
 
       removeFn: (sprite) =>
         removeSprite(sprite)

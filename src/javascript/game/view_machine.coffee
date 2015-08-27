@@ -65,7 +65,7 @@ class ViewMachine
   _createSystems: ->
     SystemExpander.expandSystems [
       CommonSystems.map_sync_system
-      CommonSystems.sprite_sync_system
+      CommonSystems.animation_sync_system
       CommonSystems.label_sync_system
       CommonSystems.hit_box_visual_sync_system
       SamusSystems.samus_viewport_tracker
