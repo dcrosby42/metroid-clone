@@ -18,6 +18,7 @@ module.exports =
   samus_damage_system: require './samus_damage_system'
   samus_death_system: require './samus_death_system'
   samus_hit_system: require './samus_hit_system'
+  samus_pickup_system: require './samus_pickup_system'
   sound_sync_system: require './sound_sync_system'
   sound_system: require './sound_system'
   timer_system: require './timer_system'

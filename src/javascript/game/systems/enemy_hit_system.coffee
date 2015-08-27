@@ -1,5 +1,7 @@
 Common = require '../entity/components'
+General = require '../entity/general'
 AnchoredBox = require '../../utils/anchored_box'
+Rng = require '../../utils/park_miller_rng'
 StateMachineSystem = require '../../ecs/state_machine_system'
 
 class EnemyHitSystem extends StateMachineSystem
@@ -29,6 +31,7 @@ class EnemyHitSystem extends StateMachineSystem
     if @getProp('enemy', 'hp') > 0
       @_stun()
     else
+      @_dropSomething()
       @destroyEntity()
       @_makeSplode()
 
@@ -119,6 +122,27 @@ class EnemyHitSystem extends StateMachineSystem
       @deleteComp stashed
       restored = stashed.set('type','velocity')
       @addComp restored
+
+  _dropSomething: ->
+    if @_randBool()
+      hitBoxComp = @getComp 'hit_box'
+      box = new AnchoredBox(hitBoxComp.toJS())
+      x = box.centerX
+      y = box.centerY
+      @newEntity General.factory.createComponents('healthPickup', x: x, y: y, value: 5, time: 7000)
+
+
+  _randBool: ->
+    i = @_withRng 'mainRandom', (s) -> Rng.nextInt(s, 0, 1)
+    return (i == 1)
+
+  _withRng: (name,fn) ->
+    eid = @firstEntityNamed('mainRandom')
+    rngComp = @getEntityComponent eid, 'rng'
+    g = rngComp.get('state')
+    [x,g1] = fn(g)
+    @updateComp rngComp.set('state',g1)
+    return x
 
 module.exports = EnemyHitSystem
 

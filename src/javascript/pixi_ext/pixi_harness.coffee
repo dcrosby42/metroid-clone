@@ -4,7 +4,7 @@ CompositeEvent = require '../utils/composite_event'
 SoundController = require './sound_controller'
 
 class PixiHarness
-  constructor: ({@domElement, @delegate, stageBgColor, width, height})->
+  constructor: ({@domElement, @delegate, stageBgColor, width, height,@zoom})->
     @stage = new PIXI.Stage(stageBgColor)
     @renderer = PIXI.autoDetectRenderer(width,height)
     @view = @renderer.view
@@ -15,7 +15,7 @@ class PixiHarness
   start: ->
     @_loadAssets =>
       console.log "Assets loaded."
-      @delegate.setupStage @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight
+      @delegate.setupStage @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight, @zoom
       @stopWatch.start()
       requestAnimationFrame => @update()
 

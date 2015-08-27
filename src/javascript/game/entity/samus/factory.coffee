@@ -16,7 +16,8 @@ F.samus = (args) ->
     Common.Velocity
     Common.Gravity.merge
       max: 200/1000
-      accel: (200/1000)/10
+      # accel: (200/1000)/10
+      accel: (200/1000)/15
     Common.Vulnerable
     Common.Health.merge
       hp: 30

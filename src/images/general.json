@@ -27,6 +27,24 @@
 	"sourceSize": {"w":32,"h":32},
 	"pivot": {"x":0.5,"y":0.5}
 },
+"health_drop_01":
+{
+	"frame": {"x":63,"y":2,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"health_drop_02":
+{
+	"frame": {"x":97,"y":2,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32},
+	"pivot": {"x":0.5,"y":0.5}
+},
 "main_title":
 {
 	"frame": {"x":2,"y":36,"w":256,"h":256},
@@ -43,6 +61,6 @@
 	"format": "RGBA8888",
 	"size": {"w":260,"h":294},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:9e7e265d79d831322a8580b234d930a3:c7f638a5b76d7d1fdce6e98ac20f6509:49afdaefc8003509a7dad15a6a269fdc$"
+	"smartupdate": "$TexturePacker:SmartUpdate:6ce31fd671def9425ada01ee31fc1006:8f3dbf8a70daa1749c259c72865931c3:49afdaefc8003509a7dad15a6a269fdc$"
 }
 }

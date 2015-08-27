@@ -53,7 +53,7 @@ class MainSpike
     sounds = _.merge(sounds, @titleLevel.soundsToPreload())
     sounds
 
-  setupStage: (stage, width, height) ->
+  setupStage: (stage, width, height,zoom) ->
     @_activateTitleScreen()
     # @_activateMainGame()
 
@@ -62,6 +62,7 @@ class MainSpike
       mapDatabase: @level.mapDatabase()
       spriteConfigs: @level.spriteConfigs()
       componentInspector: @componentInspector
+      zoomScale: zoom
 
   _activateMainGame: ->
     @gameMachine = new EcsMachine(systems: @level.gameSystems())

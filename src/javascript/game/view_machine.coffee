@@ -4,8 +4,13 @@ SystemExpander = require '../ecs/system_expander'
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
 
+BaseScale =
+  x: 1.25
+  y: 1.0
+
 class ViewMachine
-  constructor: ({@stage,@mapDatabase,@spriteConfigs,@componentInspector}) ->
+  constructor: ({@stage,@mapDatabase,@spriteConfigs,@componentInspector,@zoomScale}) ->
+    @zoomScale ?= 2.0
     @systems = @_createSystems()
 
     @spriteCache = {}
@@ -93,7 +98,7 @@ class ViewMachine
 
   _createLayers: (stage) ->
     scaler = new PIXI.DisplayObjectContainer()
-    scaler.scale.set(2.5,2) # double size, and stretch the actual nintendo 256 px to look like 320
+    scaler.scale.set(BaseScale.x * @zoomScale, BaseScale.y * @zoomScale) 
 
     base = new PIXI.DisplayObjectContainer()
 

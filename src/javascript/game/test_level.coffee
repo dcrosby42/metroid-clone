@@ -33,13 +33,19 @@ TestLevel.populateInitialEntities = (estore) ->
   x = 100
   y = 200
   zoomerComps = Enemies.factory.createComponents('basicZoomer', x:x, y:y)
-  zoomerComps.push Common.Controller.merge(inputName: 'debug1')
+  # zoomerComps.push Common.Controller.merge(inputName: 'debug1')
   estore.createEntity zoomerComps
 
   x = 150
   y = 200
   zoomerComps2 = Enemies.factory.createComponents('basicZoomer', x:x, y:y)
   estore.createEntity zoomerComps2
+
+  estore.createEntity [
+    Common.Name.merge(name: 'mainRandom')
+    Common.Rng.merge(state: 123123123)
+  ]
+
 
   estore
 
@@ -55,6 +61,7 @@ TestLevel.gameSystems = ->
     EnemiesSystems.zoomer_controller_system
     SamusSystems.short_beam_system
     SamusSystems.samus_action_velocity
+    CommonSystems.samus_pickup_system
     CommonSystems.samus_hit_system
     CommonSystems.samus_damage_system
     CommonSystems.samus_death_system

@@ -1,10 +1,10 @@
 StateMachineSystem = require '../../ecs/state_machine_system'
 Common = require '../entity/components'
 
-forEidsByName = (estore, name, fn) ->
-  res = estore.search([{match: { type: 'name', name: name}, as: 'nameComp'}])
-  res.forEach (comps) ->
-    fn(comps.getIn(['nameComp', 'eid']))
+# forEidsByName = (estore, name, fn) ->
+#   res = estore.search([{match: { type: 'name', name: name}, as: 'nameComp'}])
+#   res.forEach (comps) ->
+#     fn(comps.getIn(['nameComp', 'eid']))
 
 
 class MainTitleSystem extends StateMachineSystem
@@ -67,12 +67,12 @@ class MainTitleSystem extends StateMachineSystem
     @_createSubMenu()
 
   selectNewGameAction: ->
-    forEidsByName @estore, 'cursor', (eid) =>
+    @eachEntityNamed 'cursor', (eid) =>
       if pos = @getEntityComponent eid, 'position'
         @updateComp pos.set('y',50)
 
   selectContinueAction: ->
-    forEidsByName @estore, 'cursor', (eid) =>
+    @eachEntityNamed 'cursor', (eid) =>
       if pos = @getEntityComponent eid, 'position'
         @updateComp pos.set('y',66)
 
@@ -111,7 +111,7 @@ class MainTitleSystem extends StateMachineSystem
     @newEntity comps
 
   _destroyEntityWithName: (name) ->
-    forEidsByName @estore, name, (eid) => @destroyEntity(eid)
+    @eachEntityNamed name, (eid) => @destroyEntity(eid)
 
 
 module.exports = MainTitleSystem

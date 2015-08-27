@@ -132,6 +132,19 @@ class BaseSystem
   # updateEntityComponent: (eid, type, atts) ->
   #   @updater.updateEntityComponent(eid,type,atts)
 
+  # Searches for Name components by name value, yields eid of each entity having such a Name component
+  eachEntityNamed: (name,fn) ->
+    res = @estore.search([{match: { type: 'name', name: name}, as: 'nameComp'}])
+    if fn?
+      res.forEach (comps) ->
+        fn(comps.getIn(['nameComp', 'eid']))
+      return null
+    else
+      return res.map (comps) ->
+        comps.getIn(['nameComp', 'eid'])
+
+  firstEntityNamed: (name) ->
+    return @eachEntityNamed(name).first()
 
   #
   # EVENTS

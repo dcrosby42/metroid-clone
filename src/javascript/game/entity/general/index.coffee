@@ -1,6 +1,6 @@
 _ = require 'lodash'
 sprites = require './sprites'
-# factory = require './factory'
+factory = require './factory'
 
 assets = _.uniq _.map _.values(sprites), (info) ->
   return info.image if info.image?
@@ -13,6 +13,6 @@ assets = _.without(assets,null)
 module.exports =
   sprites: sprites
   assets: assets
-  # factory: factory
+  factory: factory
   # components: components
 
