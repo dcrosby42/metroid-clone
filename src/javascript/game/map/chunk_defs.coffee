@@ -38,6 +38,13 @@ ChunkDefs[0x1F] = [
   [ 1, 8, 1, 1 ]
   [ 8, 1, 8, 8 ]
 ]
+
+# Door Stand-in
+ChunkDefs[0xF0] = [
+  [ 5 ]
+  [ 5 ]
+  [ 5 ]
+]
   
 
 module.exports = ChunkDefs

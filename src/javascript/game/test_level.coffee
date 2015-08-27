@@ -31,13 +31,13 @@ TestLevel.populateInitialEntities = (estore) ->
 
   # Zoomers:
   x = 100
-  y = 95
+  y = 200
   zoomerComps = Enemies.factory.createComponents('basicZoomer', x:x, y:y)
   zoomerComps.push Common.Controller.merge(inputName: 'debug1')
   estore.createEntity zoomerComps
 
   x = 150
-  y = 151
+  y = 200
   zoomerComps2 = Enemies.factory.createComponents('basicZoomer', x:x, y:y)
   estore.createEntity zoomerComps2
 

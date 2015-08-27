@@ -40,9 +40,7 @@ class ViewMachine
   setMap: (mapName) ->
     return if @currentMapName == mapName
 
-    # Hide existing maps
-    _.forEach _.values(@layers.maps), (container) ->
-      container.visible = false
+    @hideMaps()
 
     # Get or create map layer:
     container = @layers.maps[mapName]
@@ -51,6 +49,11 @@ class ViewMachine
 
     container.visible = true
     @currentMapName = mapName
+
+  hideMaps: ->
+    @currentMapName = null
+    _.forEach _.values(@layers.maps), (container) ->
+      container.visible = false
     
   getViewportConfig: (mapName) ->
     cfg = @viewportConfigs[mapName]
