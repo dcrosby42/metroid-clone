@@ -5,6 +5,7 @@ F = {}
 
 F.basicSkree = (args) ->
   [
+    Common.Name.merge(name: 'Skree')
     Common.Enemy.merge
       hp: Enemy.Skree.get('max_hp')
     Enemy.Skree
@@ -33,6 +34,7 @@ F.basicSkree = (args) ->
 
 F.basicZoomer = (args) ->
   [
+    Common.Name.merge(name: 'Zoomer')
     Common.Enemy.merge
       hp: 10 # TODO
     Enemy.Zoomer

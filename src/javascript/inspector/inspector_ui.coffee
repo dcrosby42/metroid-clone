@@ -60,17 +60,23 @@ Entity = React.createClass
       else
         React.DOM.span {className: 'entity-folder closed'}, "[ + ] "
 
+    nameLabel = "Entity #{@props.eid}"
+    @props.components.forEach (comp,cid) =>
+      if comp.get('type') == 'name'
+        nameLabel = comp.get('name') + " (#{@props.eid})"
+
     header = React.DOM.div {className: "entity-header", onClick: @headerClicked},
       folder
-      "Entity: "
-      @props.eid
+      nameLabel
 
     componentViews = if @state.foldOpen
       @props.components.map((comp,cid) =>
+        console.log comp
         React.createElement Component, {component: comp, key: cid, inspectorConfig: @props.inspectorConfig}
       ).toList()
     else
       List()
+
 
     React.DOM.div {className: 'entity'},
       header,
