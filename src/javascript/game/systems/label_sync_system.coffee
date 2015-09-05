@@ -4,30 +4,25 @@ PIXI = require 'pixi.js'
 
 FilterExpander = require '../../ecs/filter_expander'
 
+Defaults =
+  font: "normal 10pt Arial"
+  fillColor: "white"
+
 newLabel = (ui, labelComp) ->
   textContent = labelComp.get('content')
   style =
-    fill: 'white'
-    # font: "normal 10pt narpassword00000_regular_20"
-    # font: "narpassword00000_regular_20"
-    font: "regular 10pt Arial"
+    font: labelComp.get('font', Defaults.font)
+    fill: labelComp.get('fill_color', Defaults.fillColor)
 
+  console.log style
   label = new PIXI.Text(textContent, style)
   container = ui.layers[labelComp.get('layer')] || ui.layers.overlay || ui.layers.default
   container.addChild label
-    # container.addChild sprite
-  # config = ui.getSpriteConfig(name)
-  # if config?
-    # sprite = AnimatedSprite.create(config)
-    # container = ui.layers[sprite.layer] || ui.layers.default
-    # container.addChild sprite
-    # sprite
-  # else
-  #   console.log "No sprite config defined for '#{name}'"
 
-removeSprite = (sprite) ->
-  container = sprite.parent
-  container.removeChild sprite
+
+# TODO: Refactor/reuse: this is the same code for removing any Pixi display object.
+removeDisplayObject = (x) ->
+  x.parent.removeChild x
 
 
 filters = FilterExpander.expandFilterGroups([ 'label', 'position' ])
@@ -48,7 +43,7 @@ module.exports =
         newLabel ui, comps.get('label')
 
       removeFn: (label) =>
-        removeSprite(label)
+        removeDisplayObject(label)
 
       syncFn: (comps,label) =>
         labelComp = comps.get('label')

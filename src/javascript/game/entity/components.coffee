@@ -31,6 +31,8 @@ C.Label = imm
   type: 'label'
   content: 'A Label'
   visible: true
+  fill_color: 'white'
+  font: 'normal 10pt Arial'
 
 C.Name = imm
   type: 'name'
