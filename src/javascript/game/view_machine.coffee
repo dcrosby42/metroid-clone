@@ -4,13 +4,14 @@ SystemExpander = require '../ecs/system_expander'
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
 
-BaseScale =
+DefaultAspectScale =
   x: 1.25
   y: 1.0
 
 class ViewMachine
-  constructor: ({@stage,@mapDatabase,@spriteConfigs,@componentInspector,@zoomScale}) ->
+  constructor: ({@stage,@mapDatabase,@spriteConfigs,@componentInspector,@zoomScale,@aspectScale}) ->
     @zoomScale ?= 2.0
+    @aspectScale ?= DefaultAspectScale
     @systems = @_createSystems()
 
     @spriteCache = {}
@@ -98,7 +99,7 @@ class ViewMachine
 
   _createLayers: (stage) ->
     scaler = new PIXI.DisplayObjectContainer()
-    scaler.scale.set(BaseScale.x * @zoomScale, BaseScale.y * @zoomScale) 
+    scaler.scale.set(@aspectScale.x * @zoomScale, @aspectScale.y * @zoomScale) 
 
     base = new PIXI.DisplayObjectContainer()
 
