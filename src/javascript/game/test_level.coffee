@@ -50,8 +50,8 @@ TestLevel.populateInitialEntities = (estore) ->
 
   # Samus status HUD
   estore.createEntity [
+    Common.Hud
     Common.Name.merge(name: 'hud')
-    {type:'hud'}
     Common.Label.merge
       content: "E.?"
       layer: 'overlay'

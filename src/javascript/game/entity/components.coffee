@@ -134,4 +134,10 @@ C.Rng = imm
   type: 'rng'
   state: 1234567890
 
+C.ViewportTarget = imm
+  type: 'viewport_target'
+
+C.Hud = imm
+  type: 'hud'
+
 module.exports = C

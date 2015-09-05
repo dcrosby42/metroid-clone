@@ -36,12 +36,12 @@ jquery ->
   harness = new PixiHarness
     domElement: gameHolder
     delegate: del
-    # width: 1280
     width: 640
     height: 480
+    zoom: 2.0
     # width: 320
     # height: 240
-    zoom: 2.0
+    # zoom: 1.0
     stage_background: 0x000000
 
   harness.start()

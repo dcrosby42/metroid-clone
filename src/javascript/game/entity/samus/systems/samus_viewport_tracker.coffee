@@ -27,7 +27,7 @@ updateContainerPosition = (container,position,viewportConfig) ->
 FilterExpander = require '../../../../ecs/filter_expander'
 filters = FilterExpander.expandFilterGroups([
   [ 'map' ]
-  [ 'samus', 'position' ]
+  [ 'viewport_target', 'position' ]
 ])
 
 module.exports =
@@ -37,7 +37,7 @@ module.exports =
     entityFinder.search(filters).forEach (comps) ->
       map = comps.get('map')
       mapName = map.get('name')
-      position = comps.get('samus-position')
+      position = comps.get('viewport_target-position')
 
       viewportConfig = ui.getViewportConfig(mapName)
       container = ui.layers[viewportConfig.layerName]
