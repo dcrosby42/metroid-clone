@@ -13,7 +13,7 @@ newLabel = (ui, labelComp) ->
     font: "regular 10pt Arial"
 
   label = new PIXI.Text(textContent, style)
-  container = ui.layers.overlay || ui.layers.default
+  container = ui.layers[labelComp.get('layer')] || ui.layers.overlay || ui.layers.default
   container.addChild label
     # container.addChild sprite
   # config = ui.getSpriteConfig(name)

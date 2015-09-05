@@ -19,8 +19,9 @@ TestLevel = {}
 TestLevel.populateInitialEntities = (estore) ->
   # Map
   estore.createEntity [
+    Common.Name.merge(name: 'Map')
     # Common.Map.set('name','areaA')
-    Common.Map.set('name','mapTest')
+    Common.Map.merge(name: 'mapTest')
   ]
 
   estore.createEntity Samus.factory.createComponents('samus')
@@ -41,9 +42,22 @@ TestLevel.populateInitialEntities = (estore) ->
   zoomerComps2 = Enemies.factory.createComponents('basicZoomer', x:x, y:y)
   estore.createEntity zoomerComps2
 
+  # RNG
   estore.createEntity [
     Common.Name.merge(name: 'mainRandom')
     Common.Rng.merge(state: 123123123)
+  ]
+
+  # Samus status HUD
+  estore.createEntity [
+    Common.Name.merge(name: 'hud')
+    {type:'hud'}
+    Common.Label.merge
+      content: "E.?"
+      layer: 'overlay'
+    Common.Position.merge
+      x: 25
+      y: 35
   ]
 
 
@@ -66,6 +80,7 @@ TestLevel.gameSystems = ->
     CommonSystems.samus_damage_system
     CommonSystems.samus_death_system
     SamusSystems.samus_action_sounds
+    SamusSystems.samus_hud_system
 
     EnemiesSystems.zoomer_crawl_system
     CommonSystems.gravity_system

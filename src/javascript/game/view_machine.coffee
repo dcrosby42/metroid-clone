@@ -111,7 +111,7 @@ class ViewMachine
     stage.addChild scaler
     scaler.addChild base
     base.addChild creatures
-    base.addChild overlay
+    scaler.addChild overlay
 
     layers =
       scaler: scaler

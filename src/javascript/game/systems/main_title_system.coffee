@@ -52,6 +52,7 @@ class MainTitleSystem extends StateMachineSystem
       Common.Animation.merge
         spriteName: 'main_title'
         state: 'main'
+        layer: 'overlay'
       Common.Position.merge
         x: 0
         y: 0
