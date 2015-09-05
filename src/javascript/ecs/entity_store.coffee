@@ -13,12 +13,9 @@ class EntityStore
   constructor: ->
     @restoreSnapshot EntityStore.initialState()
 
-  takeSnapshot: ->
-    Immutable.Map
-      componentsByCid: @componentsByCid
-      indices: @indices
-      eidGen: @eidGen
-      cidGen: @cidGen
+  #
+  # WRITE
+  #
 
   restoreSnapshot: (state) ->
     @componentsByCid = state.get('componentsByCid')
@@ -33,31 +30,12 @@ class EntityStore
         @createComponent eid, props
     eid
 
-  getEntityComponents: (eid,type,matchKey=null,matchVal=null) ->
-    # Shortcut: instead of searching, jump straight to the eid index:
-    comps = (@indices.getIn(['eid',eid]) || Immutable.Set()).map (cid) => @componentsByCid.get(cid)
-    if type?
-      if matchKey? and matchVal?
-        comps.filter (comp) ->
-          (comp.get('type') == type) and (comp.get(matchKey) == matchVal)
-      else
-        comps.filter (comp) -> comp.get('type') == type
-    else
-      comps
-
-  getEntityComponent: (eid,type,matchKey=null,matchVal=null) ->
-    @getEntityComponents(eid,type,matchKey,matchVal).first()
-    
-
   createComponent: (eid,props) ->
     cid = @_nextComponentId()
     comp = @_newComponent eid, cid, props
     @componentsByCid = @componentsByCid.set cid, comp
     @_addToIndex 'eid', comp
     comp
-
-  getComponent: (cid) ->
-    @componentsByCid.get cid
 
   updateComponent: (comp) ->
     # ASSUMES NO INDEXABLE FIELDS ON COMP CAN BE CHANGED... otherwise our indices are now invalid
@@ -75,13 +53,44 @@ class EntityStore
     @getEntityComponents(eid).forEach (comp) =>
       @deleteComponent(comp)
 
+  #
+  # READ
+  #
+
+  getEntityComponents: (eid,type,matchKey=null,matchVal=null) ->
+    # Shortcut: instead of searching, jump straight to the eid index:
+    comps = (@indices.getIn(['eid',eid]) || Immutable.Set()).map (cid) => @componentsByCid.get(cid)
+    if type?
+      if matchKey? and matchVal?
+        comps.filter (comp) ->
+          (comp.get('type') == type) and (comp.get(matchKey) == matchVal)
+      else
+        comps.filter (comp) -> comp.get('type') == type
+    else
+      comps
+
+  getEntityComponent: (eid,type,matchKey=null,matchVal=null) ->
+    @getEntityComponents(eid,type,matchKey,matchVal).first()
+    
+
+  getComponent: (cid) ->
+    @componentsByCid.get cid
+
   search: (filters) ->
     Finder.search @componentsByCid.toList(), filters
 
   allComponentsByCid: -> @componentsByCid
 
+  takeSnapshot: ->
+    Immutable.Map
+      componentsByCid: @componentsByCid
+      indices: @indices
+      eidGen: @eidGen
+      cidGen: @cidGen
+
   readOnly: ->
     @_readOnly ?= new ReadOnlyEntityStore(@)
+
 
   #
   # PRIVATE
@@ -130,6 +139,11 @@ class EntityStore
       else
         console.log "!!EntityStore._deleteFromIndex: no index #{indexName}, key #{key}", comp.toJS()
 
+notAvailable = (fname) ->
+  f = (args...) ->
+    console.log("!! Cannot invoke #{fname} on ReadOnlyEntityStore", args)
+  f
+
 class ReadOnlyEntityStore
   constructor: (@estore) ->
 
@@ -139,6 +153,16 @@ class ReadOnlyEntityStore
     @estore.getEntityComponents(eid,type,matchKey,matchVal)
   getEntityComponent: (eid,type,matchKey=null,matchVal=null) ->
     @estore.getEntityComponent(eid,type,matchKey,matchVal)
+  takeSnapshot: -> @estore.takeSnapshot()
+  readOnly: -> @
+
+  restoreSnapshot: notAvailable('restoreSnapshot')
+  createEntity:    notAvailable('createEntity')
+  createComponent: notAvailable('createComponent')
+  updateComponent: notAvailable('updateComponent')
+  deleteComponent: notAvailable('deleteComponent')
+  destroyEntity:   notAvailable('destroyEntity')
+
     
 module.exports = EntityStore
 
