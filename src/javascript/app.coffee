@@ -5,8 +5,8 @@ Immutable = require 'immutable'
 
 React = require 'react'
 
-MainSpike = require './game/main_spike'
-DelegateClass = MainSpike
+MetroidCloneDelegate = require './game/metroid_clone_delegate'
+DelegateClass = MetroidCloneDelegate
 
 
 BigScreen = require './vendor/bigscreen_wrapper'

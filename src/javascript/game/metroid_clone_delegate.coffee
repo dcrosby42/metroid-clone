@@ -25,7 +25,7 @@ TestLevel = require './test_level'
 # ZoomerLevel = require './zoomer_level'
 MainTitleLevel = require './main_title_level'
 
-class MainSpike
+class MetroidCloneDelegate
   constructor: ({@componentInspector}) ->
     @titleLevel = MainTitleLevel
     # @level = ZoomerLevel
@@ -250,4 +250,4 @@ class MainSpike
 
 
 
-module.exports = MainSpike
+module.exports = MetroidCloneDelegate
