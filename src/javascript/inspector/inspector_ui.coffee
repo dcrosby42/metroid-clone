@@ -71,7 +71,6 @@ Entity = React.createClass
 
     componentViews = if @state.foldOpen
       @props.components.map((comp,cid) =>
-        console.log comp
         React.createElement Component, {component: comp, key: cid, inspectorConfig: @props.inspectorConfig}
       ).toList()
     else
