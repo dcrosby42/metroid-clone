@@ -5,5 +5,6 @@ module.exports =
   hit_box_visual_sync_system: require './hit_box_visual_sync_system'
   label_sync_system: require './label_sync_system'
   map_sync_system: require './map_sync_system'
+  rectangle_sync_system: require './rectangle_sync_system'
   sound_sync_system: require './sound_sync_system'
   viewport_target_tracker_system: require './viewport_target_tracker_system'

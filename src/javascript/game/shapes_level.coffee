@@ -54,6 +54,26 @@ ShapesLevel.populateInitialEntities = (estore) ->
       fillAlpha: 0.5
       visible: true
 
+    # Common.Controller.merge
+    #   inputName: 'debug1'
+    {type: 'debuggable'}
+  ]
+
+  estore.createEntity [
+    Common.Name.merge(name: 'MyRectangle')
+    Common.Position.merge
+      x: 80
+      y: 20
+    Common.Rectangle.merge
+      width: 80
+      height: 40
+      lineWidth: 2
+      lineAlpha: 0.5
+      lineColor: 0x33ffcc
+      fillColor: 0x330066
+      fillAlpha: 0.5
+      visible: true
+
     Common.Controller.merge
       inputName: 'debug1'
     {type: 'debuggable'}

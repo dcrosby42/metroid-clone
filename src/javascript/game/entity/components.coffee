@@ -154,5 +154,18 @@ C.Ellipse = imm
   fillColor: null
   fillAlpha: 1
   visible: true
+
+C.Rectangle = imm
+  type: 'rectangle'
+  x: 0
+  y: 0
+  width: 0
+  height: 0
+  lineWidth: 1
+  lineColor: 0xFFFFFF
+  lineAlpha: 1
+  fillColor: null
+  fillAlpha: 1
+  visible: true
     
 module.exports = C

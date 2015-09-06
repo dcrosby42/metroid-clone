@@ -7,8 +7,8 @@ React = require 'react'
 
 MetroidCloneDelegate = require './game/metroid_clone_delegate'
 ShapesUiDelegate = require './game/shapes_ui_delegate'
-DelegateClass = MetroidCloneDelegate
-# DelegateClass = ShapesUiDelegate
+# DelegateClass = MetroidCloneDelegate
+DelegateClass = ShapesUiDelegate
 
 
 BigScreen = require './vendor/bigscreen_wrapper'
@@ -40,7 +40,7 @@ jquery ->
     delegate: del
     width: 640
     height: 480
-    zoom: 2.0
+    zoom: 1.0
     # width: 320
     # height: 240
     # zoom: 1.0

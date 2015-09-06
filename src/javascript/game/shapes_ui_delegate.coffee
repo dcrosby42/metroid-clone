@@ -6,7 +6,7 @@ GamepadController = require('../input/gamepad_controller')
 EntityStore = require '../ecs/entity_store'
 EcsMachine = require '../ecs/ecs_machine'
 # ViewMachine = require './view_machine'
-ViewMachine2 = require '../view/view_machine2'
+ViewMachine = require '../view/view_machine'
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
 EnemiesSystems =  require './entity/enemies/systems'
@@ -55,7 +55,7 @@ class ShapesUiDelegate
     # @_activateTitleScreen()
     @_activateMainGame()
 
-    @viewMachine = new ViewMachine2
+    @viewMachine = new ViewMachine
       stage: stage
       zoomScale: zoom
       aspectScale:
@@ -154,18 +154,27 @@ class ShapesUiDelegate
       .setIn(['controllers','debug1'], debugControllerInput)
     
     events = null
-    if @paused
+    if !@paused
+      [@estore,events] = @gameMachine.update(@estore, input)
+
+      @captureTimeWalkSnapShot(@estore)
+
+      @viewMachine.update(@estore.readOnly())
+
+    else # Paused:
       if @step_forward
         @step_forward = false
 
         input = input.set('dt', 17)
         [@estore,events] = @gameMachine.update(@estore,input)
         @captureTimeWalkSnapShot(@estore)
+        @viewMachine.update(@estore.readOnly())
 
       if @time_walk_back or @time_scroll_back
         @time_walk_back = false
         if snapshot = @stateHistory.stepBack()
           @estore.restoreSnapshot(snapshot)
+          @viewMachine.update(@estore.readOnly())
         else
           console.log "(null snapshot, not restoring)"
 
@@ -174,14 +183,10 @@ class ShapesUiDelegate
         @time_walk_forward = false
         if snapshot = @stateHistory.stepForward()
           @estore.restoreSnapshot(snapshot)
+          @viewMachine.update(@estore.readOnly())
         else
           console.log "(null snapshot, not restoring)"
 
-    else
-      [@estore,events] = @gameMachine.update(@estore, input)
-      @captureTimeWalkSnapShot(@estore)
-
-    @viewMachine.update(@estore.readOnly())
 
     if events? and events.size > 0
       0

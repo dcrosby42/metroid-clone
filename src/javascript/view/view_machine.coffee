@@ -94,6 +94,7 @@ class ViewMachine
       ViewSystems.animation_sync_system
       ViewSystems.label_sync_system
       ViewSystems.ellipse_sync_system
+      ViewSystems.rectangle_sync_system
       ViewSystems.hit_box_visual_sync_system
       ViewSystems.viewport_target_tracker_system
       ViewSystems.sound_sync_system
