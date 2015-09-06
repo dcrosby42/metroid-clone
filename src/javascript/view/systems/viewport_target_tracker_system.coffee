@@ -1,3 +1,5 @@
+require '../view_system'
+
 clamp = (x,min,max) ->
   return min if x < min
   return max if x > max
@@ -24,21 +26,21 @@ updateContainerPosition = (container,position,viewportConfig) ->
   container.y = -viewportY
   null
 
-FilterExpander = require '../../../../ecs/filter_expander'
-filters = FilterExpander.expandFilterGroups([
-  [ 'map' ]
-  [ 'viewport_target', 'position' ]
-])
+class ViewportTargetTrackerSystem extends ViewSystem
+  @Subscribe: [
+    [ 'map' ]
+    [ 'viewport_target', 'position' ]
+  ]
 
-module.exports =
-  systemType: 'output'
-
-  update: (entityFinder, ui) ->
-    entityFinder.search(filters).forEach (comps) ->
+  process: ->
+    @searchComponents().forEach (comps) ->
       map = comps.get('map')
       mapName = map.get('name')
       position = comps.get('viewport_target-position')
 
-      viewportConfig = ui.getViewportConfig(mapName)
-      container = ui.layers[viewportConfig.layerName]
+      viewportConfig = @ui.getViewportConfig(mapName)
+      container = @ui.layers[viewportConfig.layerName]
       updateContainerPosition container, position, viewportConfig
+
+module.exports = ViewportTargetTrackerSystem
+

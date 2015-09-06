@@ -94,16 +94,14 @@ class ViewMachine2
   _createSystems: ->
     window.vs = ViewSystems
     systemDefs = [
-      # CommonSystems.map_sync_system
-      # CommonSystems.animation_sync_system
+      # ViewSystems.map_sync_system
+      # ViewSystems.animation_sync_system
       ViewSystems.label_sync_system
       ViewSystems.ellipse_sync_system
-      # CommonSystems.hit_box_visual_sync_system
-      # SamusSystems.samus_viewport_tracker
-
-      # CommonSystems.sound_sync_system
-
-      ViewSystems.debug_system
+      # ViewSystems.hit_box_visual_sync_system
+      # ViewSystems.viewport_target_tracker_system
+      # ViewSystems.sound_sync_system
+      ViewSystems.component_inspector_system
     ]
     Immutable.List(systemDefs).map (s) -> s.createInstance()
 
