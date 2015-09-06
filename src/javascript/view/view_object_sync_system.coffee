@@ -54,7 +54,9 @@ class ViewObjectSyncSystem extends ViewSystem
   # Default implementation is to remove the given displayObject from it's parent.
   # Optionally (infrquently) overridden by subclasses.
   removeObject: (displayObject) ->
-    obj.parent.removeChild obj
+    if displayObject?
+      if displayObject.parent?
+        displayObject.parent.removeChild displayObject
 
 module.exports = ViewObjectSyncSystem
 

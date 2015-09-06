@@ -1,4 +1,5 @@
-ViewObjectSyncSystem = '../view_object_sync_system'
+Immutable = require 'immutable'
+ViewObjectSyncSystem = require '../view_object_sync_system'
 
 AnimatedSprite = require '../../pixi_ext/animated_sprite'
 
@@ -7,7 +8,7 @@ class AnimationSyncSystem extends ViewObjectSyncSystem
   @SyncComponent: 'animation'
 
   newObject: (comps) ->
-    name = comps.getIn(['animation','name'])
+    name = comps.getIn(['animation','spriteName'])
     config = @ui.getSpriteConfig(name)
     if config?
       sprite = AnimatedSprite.create(config)
@@ -34,4 +35,4 @@ class AnimationSyncSystem extends ViewObjectSyncSystem
       prev.position = position
 
 module.exports = AnimationSyncSystem
-
+window.ass = AnimationSyncSystem

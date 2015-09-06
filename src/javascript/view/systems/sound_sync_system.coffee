@@ -8,8 +8,8 @@ class SoundSyncSystem extends ViewObjectSyncSystem
 
   newObject: (comps) ->
     soundComp = comps.get('sound')
-    soundId = sound.get('soundId')
-    volume = sound.get('volume')
+    soundId = soundComp.get('soundId')
+    volume = soundComp.get('volume')
 
     soundInstance = SoundController.playSound(soundId)
     soundInstance.volume = volume if volume?

@@ -5,7 +5,7 @@ GamepadController = require('../input/gamepad_controller')
 
 EntityStore = require '../ecs/entity_store'
 EcsMachine = require '../ecs/ecs_machine'
-ViewMachine = require './view_machine'
+ViewMachine = require '../view/view_machine'
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
 EnemiesSystems =  require './entity/enemies/systems'
@@ -63,6 +63,9 @@ class MetroidCloneDelegate
       spriteConfigs: @level.spriteConfigs()
       componentInspector: @componentInspector
       zoomScale: zoom
+      aspectScale:
+        x: 1.25
+        y: 1
 
   _activateMainGame: ->
     @gameMachine = new EcsMachine(systems: @level.gameSystems())

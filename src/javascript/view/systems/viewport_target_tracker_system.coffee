@@ -33,7 +33,7 @@ class ViewportTargetTrackerSystem extends ViewSystem
   ]
 
   process: ->
-    @searchComponents().forEach (comps) ->
+    @searchComponents().forEach (comps) =>
       map = comps.get('map')
       mapName = map.get('name')
       position = comps.get('viewport_target-position')

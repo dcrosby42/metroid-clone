@@ -6,4 +6,3 @@ class ComponentInspectorSystem extends ViewSystem
       @ui.componentInspector.update comp
 
 module.exports = ComponentInspectorSystem
-

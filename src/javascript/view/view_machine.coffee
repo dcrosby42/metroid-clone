@@ -9,7 +9,7 @@ DefaultAspectScale =
   x: 1.25
   y: 1.0
 
-class ViewMachine2
+class ViewMachine
   constructor: ({@stage,@mapDatabase,@spriteConfigs,@componentInspector,@zoomScale,@aspectScale}) ->
     @zoomScale ?= 2.0
     @aspectScale ?= DefaultAspectScale
@@ -17,10 +17,6 @@ class ViewMachine2
 
     @displayObjectCaches = {}
 
-    @spriteCache = {}
-    # @labelCache = {}
-    @soundCache = {}
-    @hitBoxVisualCache = {}
     @drawHitBoxes = false
     @currentMapName = null
 
@@ -94,13 +90,13 @@ class ViewMachine2
   _createSystems: ->
     window.vs = ViewSystems
     systemDefs = [
-      # ViewSystems.map_sync_system
-      # ViewSystems.animation_sync_system
+      ViewSystems.map_sync_system
+      ViewSystems.animation_sync_system
       ViewSystems.label_sync_system
       ViewSystems.ellipse_sync_system
-      # ViewSystems.hit_box_visual_sync_system
-      # ViewSystems.viewport_target_tracker_system
-      # ViewSystems.sound_sync_system
+      ViewSystems.hit_box_visual_sync_system
+      ViewSystems.viewport_target_tracker_system
+      ViewSystems.sound_sync_system
       ViewSystems.component_inspector_system
     ]
     Immutable.List(systemDefs).map (s) -> s.createInstance()
@@ -172,5 +168,5 @@ class ViewMachine2
             sprite.position.set tile.x, tile.y
             container.addChild sprite
 
-module.exports = ViewMachine2
+module.exports = ViewMachine
 
