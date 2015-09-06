@@ -103,7 +103,7 @@ class ViewMachine2
 
       # CommonSystems.sound_sync_system
 
-      # CommonSystems.debug_system
+      ViewSystems.debug_system
     ]
     Immutable.List(systemDefs).map (s) -> s.createInstance()
 

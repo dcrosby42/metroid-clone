@@ -153,5 +153,6 @@ C.Ellipse = imm
   lineAlpha: 1
   fillColor: null
   fillAlpha: 1
+  visible: true
     
 module.exports = C

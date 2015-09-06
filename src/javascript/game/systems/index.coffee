@@ -5,7 +5,7 @@ module.exports =
   bullet_system: require './bullet_system'
   controller_system: require './controller_system'
   death_timer_system: require './death_timer_system'
-  debug_system: require './debug_system'
+  debuggable_controller_system: require './debuggable_controller_system'
   enemy_hit_system: require './enemy_hit_system'
   gravity_system: require './gravity_system'
   hit_box_visual_sync_system: require './hit_box_visual_sync_system'

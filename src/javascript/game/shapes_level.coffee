@@ -52,6 +52,11 @@ ShapesLevel.populateInitialEntities = (estore) ->
       lineColor: 0x33ffcc
       fillColor: 0x330066
       fillAlpha: 0.5
+      visible: true
+
+    Common.Controller.merge
+      inputName: 'debug1'
+    {type: 'debuggable'}
   ]
 
 
@@ -59,6 +64,8 @@ ShapesLevel.populateInitialEntities = (estore) ->
 
 ShapesLevel.gameSystems = ->
   [
+    CommonSystems.controller_system
+    CommonSystems.debuggable_controller_system
   ]
 
 ShapesLevel.spriteConfigs = ->

@@ -1,3 +1,4 @@
+Immutable = require 'immutable'
 FilterExpander = require '../ecs/filter_expander'
 
 class ViewSystem
@@ -6,10 +7,14 @@ class ViewSystem
   @createInstance: (args...) -> new @(args...)
 
   constructor: ->
-    @componentFilters = FilterExpander.expandFilterGroups(@constructor.Subscribe)
+    if @constructor.Subscribe?
+      @componentFilters = FilterExpander.expandFilterGroups(@constructor.Subscribe)
 
   searchComponents: ->
-    @entityFinder.search(@componentFilters)
+    if @componentFilters?
+      @entityFinder.search(@componentFilters)
+    else
+      Immutable.List()
 
   update: (ui, entityFinder) ->
     @ui = ui
