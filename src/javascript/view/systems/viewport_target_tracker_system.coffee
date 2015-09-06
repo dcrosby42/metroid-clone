@@ -1,4 +1,4 @@
-require '../view_system'
+ViewSystem = require '../view_system'
 
 clamp = (x,min,max) ->
   return min if x < min
