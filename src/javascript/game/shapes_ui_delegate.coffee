@@ -5,7 +5,8 @@ GamepadController = require('../input/gamepad_controller')
 
 EntityStore = require '../ecs/entity_store'
 EcsMachine = require '../ecs/ecs_machine'
-ViewMachine = require './view_machine'
+# ViewMachine = require './view_machine'
+ViewMachine2 = require '../view/view_machine2'
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
 EnemiesSystems =  require './entity/enemies/systems'
@@ -54,7 +55,7 @@ class ShapesUiDelegate
     # @_activateTitleScreen()
     @_activateMainGame()
 
-    @viewMachine = new ViewMachine
+    @viewMachine = new ViewMachine2
       stage: stage
       zoomScale: zoom
       aspectScale:
@@ -73,6 +74,8 @@ class ShapesUiDelegate
 
     @stateHistory = new StateHistory()
     @captureTimeWalkSnapShot(@estore)
+
+    window.estore = @estore
 
   #
   # _activateTitleScreen: ->

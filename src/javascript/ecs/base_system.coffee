@@ -35,11 +35,6 @@ class BaseSystem
     @input = null
     @eventBucket = null
 
-  handleUpdate: (comps, input, u, eventBucket) ->
-    @process()
-    @sync()
-    @reset()
-    
   resetCache: ->
     @cache = {}
     @nameCache = {}
