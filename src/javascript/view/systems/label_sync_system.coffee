@@ -7,8 +7,9 @@ StyleDefaults =
 
 class LabelSyncSystem extends ViewObjectSyncSystem
   @Subscribe: ['label', 'position']
-  @CacheName: 'label'
-  @Ident: ['label', 'cid']
+  @SyncComponent: 'label'
+  # @CacheName: 'label'
+  # @Ident: ['label', 'cid']
 
   newObject: (comps) ->
     labelComp = comps.get('label')
@@ -18,8 +19,11 @@ class LabelSyncSystem extends ViewObjectSyncSystem
       fill: labelComp.get('fill_color', StyleDefaults.fillColor)
 
     label = new PIXI.Text(textContent, style)
-    container = @ui.layers[labelComp.get('layer')] || @ui.layers.overlay || @ui.layers.default
-    container.addChild label
+    @ui.addObjectToLayer(label, labelComp.get('layer'))
+
+    # container = @ui.layers[labelComp.get('layer')] || @ui.layers.overlay || @ui.layers.default
+    # container.addChild label
+    label
 
   updateObject: (comps, label) ->
     labelComp = comps.get('label')

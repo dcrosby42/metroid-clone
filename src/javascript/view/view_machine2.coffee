@@ -30,12 +30,6 @@ class ViewMachine2
 
     window.view = @
 
-  objectCacheFor: (cacheName) ->
-    cache = @displayObjectCaches[cacheName]
-    unless cache?
-      cache = {}
-      @displayObjectCaches[cacheName] = cache
-    cache
 
   # TODO: accept "ui state" as a paramter instead of using ViewMachine itself?
   update: (estore) ->
@@ -46,6 +40,18 @@ class ViewMachine2
     @componentInspector.sync(estore)
 
     #TODO: return [uiState, events] ??
+
+  objectCacheFor: (cacheName) ->
+    cache = @displayObjectCaches[cacheName]
+    unless cache?
+      cache = {}
+      @displayObjectCaches[cacheName] = cache
+    cache
+
+  addObjectToLayer: (object,layer) ->
+    container = @layers[layer] || @layers['default']
+    container.addChild object
+    object
 
   getSpriteConfig: (name) ->
     @spriteConfigs[name]
@@ -91,6 +97,7 @@ class ViewMachine2
       # CommonSystems.map_sync_system
       # CommonSystems.animation_sync_system
       ViewSystems.label_sync_system
+      ViewSystems.ellipse_sync_system
       # CommonSystems.hit_box_visual_sync_system
       # SamusSystems.samus_viewport_tracker
 

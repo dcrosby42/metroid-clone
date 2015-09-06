@@ -142,4 +142,16 @@ C.ViewportTarget = imm
 C.Hud = imm
   type: 'hud'
 
+C.Ellipse = imm
+  type: 'ellipse'
+  x: 0
+  y: 0
+  width: 0
+  height: 0
+  lineWidth: 1
+  lineColor: 0xFFFFFF
+  lineAlpha: 1
+  fillColor: null
+  fillAlpha: 1
+    
 module.exports = C

@@ -39,6 +39,21 @@ ShapesLevel.populateInitialEntities = (estore) ->
       anchorY: 0
   ]
 
+  estore.createEntity [
+    Common.Name.merge(name: 'MyEllipse')
+    Common.Position.merge
+      x: 40
+      y: 20
+    Common.Ellipse.merge
+      width: 40
+      height: 20
+      lineWidth: 2
+      lineAlpha: 0.5
+      lineColor: 0x33ffcc
+      fillColor: 0x330066
+      fillAlpha: 0.5
+  ]
+
 
   estore
 
