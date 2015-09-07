@@ -1,0 +1,70 @@
+@displayObjectCaches
+  constructor
+  objectCacheFor
+    (many systems)
+
+@currentMapName
+  constructor
+  setMap
+  hideMaps
+    setMap
+    MapSyncSystem
+    
+
+@drawHitBoxes
+  HitBoxVisualSyncSystem
+
+@stage, @zoomScale, @aspectScale
+  constructor
+  _createLayers
+
+@layers
+  constructor
+  addObjectToLayer
+  getLayer
+  setMap
+  hideMaps
+  
+-----------------------------------
+
+ViewMachine is currently a blob of data and methods that provide services to the superset of "view systems".
+  - Systems end up interacting with each other blindly through ViewMachine state
+  - Presence or absence of systems isn't known by ViewMachine, but it still provides for them.
+  - The services are NOT generic "view-ish" things, they're built in support of game-specific 
+
+-----------------------------------
+Semantically part of the UI:
+  layers
+  sprites
+  sounds
+-----------------------------------
+General to 2D games:
+- sprites / graphical items
+  create / destroy
+  add / remove from layers
+  show / hide
+  mutate
+  animate
+
+- sound effects / music 
+  create
+  add / remove
+  loop / expire
+
+- layers
+  scale
+  nest w other layers
+  add/remove children
+  show / hide
+  move
+
+- viewport
+  track target
+  move / animate
+  
+
+
+-----------------------------------
+Game Systems are like Mappers
+View Systems are like Reducers (??)
+

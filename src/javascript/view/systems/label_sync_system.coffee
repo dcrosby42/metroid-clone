@@ -20,9 +20,6 @@ class LabelSyncSystem extends ViewObjectSyncSystem
 
     label = new PIXI.Text(textContent, style)
     @ui.addObjectToLayer(label, labelComp.get('layer'))
-
-    # container = @ui.layers[labelComp.get('layer')] || @ui.layers.overlay || @ui.layers.default
-    # container.addChild label
     label
 
   updateObject: (comps, label) ->

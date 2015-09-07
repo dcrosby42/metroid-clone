@@ -41,16 +41,17 @@ class ViewMachine
       @displayObjectCaches[cacheName] = cache
     cache
 
+  getLayer: (layerName) ->
+    @layers[layerName] || @layers.default
+
   addObjectToLayer: (object,layer) ->
-    container = @layers[layer] || @layers['default']
-    container.addChild object
+    @getLayer(layer).addChild object
     object
 
   getSpriteConfig: (name) ->
     @spriteConfigs[name]
 
   getMapLayer: (mapName) ->
-    console.log "getMapLayer #{mapName}"
     layer = layers.maps[mapName]
     unless layer?
       layer = @_addMapLayer(layers, @mapDatabase, mapName)
@@ -85,7 +86,6 @@ class ViewMachine
 
 
   _createSystems: ->
-    window.vs = ViewSystems
     systemDefs = [
       ViewSystems.map_sync_system
       ViewSystems.animation_sync_system
@@ -113,7 +113,7 @@ class ViewMachine
 
   _createLayers: (stage) ->
     scaler = new PIXI.DisplayObjectContainer()
-    scaler.scale.set(@aspectScale.x * @zoomScale, @aspectScale.y * @zoomScale) 
+    scaler.scale.set(@aspectScale.x * @zoomScale, @aspectScale.y * @zoomScale)
 
     base = new PIXI.DisplayObjectContainer()
 

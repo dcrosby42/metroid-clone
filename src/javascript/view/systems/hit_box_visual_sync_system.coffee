@@ -47,8 +47,7 @@ class HitBoxVisualSyncSystem extends ViewObjectSyncSystem
 
     drawBoundingBox(gfx, hitBox, hitBoxVisual)
     
-    container = ui.layers[hitBoxVisual.get('layer')] || ui.layers.default
-    container.addChild gfx
+    @ui.addObjectToLayer(gfx, hitBoxVisual.get('layer'))
     updateSidecar(gfx,hitBoxVisual)
     gfx
 
