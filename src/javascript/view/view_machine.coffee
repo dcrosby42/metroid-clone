@@ -32,9 +32,6 @@ class ViewMachine
     @systems.forEach (system) =>
       system.update(@, estore)
 
-    # TODO: move this out of viewMachine altogether?
-    # XXX @componentInspector.sync(estore)
-
     #TODO: return [uiState, events] ??
 
   objectCacheFor: (cacheName) ->
@@ -98,7 +95,6 @@ class ViewMachine
       ViewSystems.hit_box_visual_sync_system
       ViewSystems.viewport_target_tracker_system
       ViewSystems.sound_sync_system
-      #XXX ViewSystems.component_inspector_system
     ]
     Immutable.List(systemDefs).map (s) -> s.createInstance()
 
