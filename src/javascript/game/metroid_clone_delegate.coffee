@@ -6,6 +6,7 @@ GamepadController = require('../input/gamepad_controller')
 EntityStore = require '../ecs/entity_store'
 EcsMachine = require '../ecs/ecs_machine'
 ViewMachine = require '../view/view_machine'
+ComponentInspectorMachine = require '../view/component_inspector_machine'
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
 EnemiesSystems =  require './entity/enemies/systems'
@@ -26,7 +27,7 @@ TestLevel = require './test_level'
 MainTitleLevel = require './main_title_level'
 
 class MetroidCloneDelegate
-  constructor: ({@componentInspector}) ->
+  constructor: ({componentInspector}) ->
     @titleLevel = MainTitleLevel
     # @level = ZoomerLevel
     @level = TestLevel
@@ -42,6 +43,8 @@ class MetroidCloneDelegate
         mapDatabase: @level.mapDatabase()
 
     @_setupControllers()
+
+    @componentInspectorMachine = new ComponentInspectorMachine(componentInspector: componentInspector)
 
   graphicsToPreload: ->
     assets = @level.graphicsToPreload()
@@ -61,7 +64,6 @@ class MetroidCloneDelegate
       stage: stage
       mapDatabase: @level.mapDatabase()
       spriteConfigs: @level.spriteConfigs()
-      componentInspector: @componentInspector
       zoomScale: zoom
       aspectScale:
         x: 1.25
@@ -183,6 +185,10 @@ class MetroidCloneDelegate
       @captureTimeWalkSnapShot(@estore)
 
     @viewMachine.update(@estore.readOnly())
+
+    @componentInspectorMachine.update(@estore.readOnly())
+
+    
 
     if events? and events.size > 0
       if e = events.find((e) -> e.get('name') == 'StartNewGame')

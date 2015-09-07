@@ -1,6 +1,5 @@
 module.exports =
   animation_sync_system: require './animation_sync_system'
-  component_inspector_system: require './component_inspector_system'
   ellipse_sync_system: require './ellipse_sync_system'
   hit_box_visual_sync_system: require './hit_box_visual_sync_system'
   label_sync_system: require './label_sync_system'

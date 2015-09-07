@@ -10,7 +10,7 @@ DefaultAspectScale =
   y: 1.0
 
 class ViewMachine
-  constructor: ({@stage,@mapDatabase,@spriteConfigs,@componentInspector,@zoomScale,@aspectScale}) ->
+  constructor: ({@stage,@mapDatabase,@spriteConfigs,@zoomScale,@aspectScale}) ->
     @zoomScale ?= 2.0
     @aspectScale ?= DefaultAspectScale
     @systems = @_createSystems()
@@ -33,7 +33,7 @@ class ViewMachine
       system.update(@, estore)
 
     # TODO: move this out of viewMachine altogether?
-    @componentInspector.sync(estore)
+    # XXX @componentInspector.sync(estore)
 
     #TODO: return [uiState, events] ??
 
@@ -98,7 +98,7 @@ class ViewMachine
       ViewSystems.hit_box_visual_sync_system
       ViewSystems.viewport_target_tracker_system
       ViewSystems.sound_sync_system
-      ViewSystems.component_inspector_system
+      #XXX ViewSystems.component_inspector_system
     ]
     Immutable.List(systemDefs).map (s) -> s.createInstance()
 
