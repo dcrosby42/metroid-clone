@@ -16,14 +16,16 @@ class ViewSystem
     else
       Immutable.List()
 
-  update: (ui, entityFinder) ->
-    @ui = ui
+  update: (uiState, entityFinder, uiConfig) ->
+    @ui = uiState
     @entityFinder = entityFinder
+    @config = uiConfig
 
     @process()
 
     @ui = null
     @entityFinder = null
+    @config = null
 
   process: ->
     console.log "!! ViewSystem requires you to implement a process() method"

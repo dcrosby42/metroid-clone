@@ -38,9 +38,9 @@ class ViewportTargetTrackerSystem extends ViewSystem
       mapName = map.get('name')
       position = comps.get('viewport_target-position')
 
-      viewportConfig = @ui.getViewportConfig(mapName)
-      container = @ui.getLayer(viewportConfig.layerName)
-      updateContainerPosition container, position, viewportConfig
+      viewportConfig = @config.getViewportConfig(mapName)
+      layer = @ui.getLayer(viewportConfig.layerName)
+      updateContainerPosition layer, position, viewportConfig
 
 module.exports = ViewportTargetTrackerSystem
 

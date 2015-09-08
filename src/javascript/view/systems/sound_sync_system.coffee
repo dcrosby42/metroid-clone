@@ -1,6 +1,4 @@
 ViewObjectSyncSystem = require '../view_object_sync_system'
-SoundController = require '../../pixi_ext/sound_controller'
-
 
 class SoundSyncSystem extends ViewObjectSyncSystem
   @Subscribe: ['sound']
@@ -11,7 +9,7 @@ class SoundSyncSystem extends ViewObjectSyncSystem
     soundId = soundComp.get('soundId')
     volume = soundComp.get('volume')
 
-    soundInstance = SoundController.playSound(soundId)
+    soundInstance = @ui.playSound(soundId)
     soundInstance.volume = volume if volume?
     if soundComp.get('loop')
       soundInstance.loop = -1

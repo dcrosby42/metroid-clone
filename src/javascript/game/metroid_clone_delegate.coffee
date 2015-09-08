@@ -5,7 +5,12 @@ GamepadController = require('../input/gamepad_controller')
 
 EntityStore = require '../ecs/entity_store'
 EcsMachine = require '../ecs/ecs_machine'
+
 ViewMachine = require '../view/view_machine'
+ViewSystems = require '../view/systems'
+UIState = require '../view/ui_state'
+UIConfig = require '../view/ui_config'
+
 ComponentInspectorMachine = require '../view/component_inspector_machine'
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
@@ -60,14 +65,23 @@ class MetroidCloneDelegate
     @_activateTitleScreen()
     # @_activateMainGame()
 
-    @viewMachine = new ViewMachine
+    uiState = UIState.create
       stage: stage
-      mapDatabase: @level.mapDatabase()
-      spriteConfigs: @level.spriteConfigs()
       zoomScale: zoom
       aspectScale:
         x: 1.25
         y: 1
+
+    uiConfig = UIConfig.create
+      mapDatabase: @level.mapDatabase()
+      spriteConfigs: @level.spriteConfigs()
+      
+    viewSystems = @_createViewSystems()
+
+    @viewMachine = new ViewMachine
+      systems: viewSystems
+      uiConfig: uiConfig
+      uiState: uiState
 
   _activateMainGame: ->
     @gameMachine = new EcsMachine(systems: @level.gameSystems())
@@ -255,8 +269,21 @@ class MetroidCloneDelegate
         @time_scroll_forward = off
 
     if ac.toggle_bounding_box
-      @viewMachine.drawHitBoxes = !@viewMachine.drawHitBoxes
+      # TODO: not beautiful. HitBoxVisualSyncSystem uses this.
+      @viewMachine.uiState.drawHitBoxes = !@viewMachine.uiState.drawHitBoxes
 
+  _createViewSystems: ->
+    systemDefs = [
+      ViewSystems.map_sync_system
+      ViewSystems.animation_sync_system
+      ViewSystems.label_sync_system
+      ViewSystems.ellipse_sync_system
+      ViewSystems.rectangle_sync_system
+      ViewSystems.hit_box_visual_sync_system
+      ViewSystems.viewport_target_tracker_system
+      ViewSystems.sound_sync_system
+    ]
+    Immutable.List(systemDefs).map (s) -> s.createInstance()
 
 
 module.exports = MetroidCloneDelegate

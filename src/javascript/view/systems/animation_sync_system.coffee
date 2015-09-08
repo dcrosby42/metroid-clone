@@ -9,7 +9,7 @@ class AnimationSyncSystem extends ViewObjectSyncSystem
 
   newObject: (comps) ->
     name = comps.getIn(['animation','spriteName'])
-    config = @ui.getSpriteConfig(name)
+    config = @config.getSpriteConfig(name)
     if config?
       sprite = AnimatedSprite.create(config)
       sprite._sidecar =

@@ -7,7 +7,8 @@ class MapSyncSystem extends ViewSystem
     found = false
     @searchComponents().forEach (comps) =>
       found = true
-      @ui.setMap comps.getIn(['map','name'])
+      mapName = comps.getIn(['map','name'])
+      @ui.setMap @config.getMapDatabase(), mapName
 
     if !found
       @ui.hideMaps()
