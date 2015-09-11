@@ -139,6 +139,19 @@ C.Rng = imm
 C.ViewportTarget = imm
   type: 'viewport_target'
 
+C.Viewport = imm
+  type: 'viewport'
+  config:
+    minX: 0
+    maxX: 0
+    minY: 0
+    maxY: 0
+    trackBufLeft: 7 * 16
+    trackBufRight: 9 * 16
+    trackBufTop: 7 * 16
+    trackBufBottom: 9 * 16
+
+
 C.Hud = imm
   type: 'hud'
 

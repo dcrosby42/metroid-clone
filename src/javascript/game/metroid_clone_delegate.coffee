@@ -27,15 +27,16 @@ Debug = require '../utils/debug'
 
 MapDatabase = require './map/map_database'
 
-TestLevel = require './test_level'
+# TestLevel = require './test_level'
 # ZoomerLevel = require './zoomer_level'
+RoomsLevel = require './rooms_level'
 MainTitleLevel = require './main_title_level'
 
 class MetroidCloneDelegate
   constructor: ({componentInspector}) ->
     @titleLevel = MainTitleLevel
     # @level = ZoomerLevel
-    @level = TestLevel
+    @level = RoomsLevel
 
     @defaultInput = Immutable.fromJS
       controllers:
@@ -280,7 +281,8 @@ class MetroidCloneDelegate
       ViewSystems.ellipse_sync_system
       ViewSystems.rectangle_sync_system
       ViewSystems.hit_box_visual_sync_system
-      ViewSystems.viewport_target_tracker_system
+      # ViewSystems.viewport_target_tracker_system
+      ViewSystems.viewport_sync_system
       ViewSystems.sound_sync_system
     ]
     Immutable.List(systemDefs).map (s) -> s.createInstance()

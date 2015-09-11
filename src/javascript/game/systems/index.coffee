@@ -17,3 +17,4 @@ module.exports =
   samus_pickup_system: require './samus_pickup_system'
   sound_system: require './sound_system'
   timer_system: require './timer_system'
+  viewport_system: require './viewport_system'

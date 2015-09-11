@@ -68,3 +68,14 @@ General to 2D games:
 Game Systems are like Mappers
 View Systems are like Reducers (??)
 
+-----------------------------------
+
+system.update
+  IN:
+    state (entities or ui objects)
+    input events (time, controllers)
+    config (sprite config, map defs etc)
+  OUT:
+    state (updated entities or ui objects)
+    events (eg, KILLED or RESTART)
+   
