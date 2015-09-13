@@ -25,7 +25,8 @@ General = require './entity/general'
 StateHistory = require '../utils/state_history'
 Debug = require '../utils/debug'
 
-MapDatabase = require './map/map_database'
+# MapDatabase = require './map/map_database'
+NewMapStuff = require './map/new'
 
 # TestLevel = require './test_level'
 # ZoomerLevel = require './zoomer_level'
@@ -37,6 +38,7 @@ class MetroidCloneDelegate
     @titleLevel = MainTitleLevel
     # @level = ZoomerLevel
     @level = RoomsLevel
+    worldMap = NewMapStuff.getDefaultWorldMap()
 
     @defaultInput = Immutable.fromJS
       controllers:
@@ -46,6 +48,7 @@ class MetroidCloneDelegate
         admin: {}
       dt: 0
       static:
+        worldMap: worldMap
         mapDatabase: @level.mapDatabase()
 
     @_setupControllers()
@@ -275,7 +278,7 @@ class MetroidCloneDelegate
 
   _createViewSystems: ->
     systemDefs = [
-      ViewSystems.map_sync_system
+      # ViewSystems.map_sync_system
       ViewSystems.animation_sync_system
       ViewSystems.label_sync_system
       ViewSystems.ellipse_sync_system

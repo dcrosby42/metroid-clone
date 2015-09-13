@@ -7,4 +7,3 @@ module.exports =
   rectangle_sync_system: require './rectangle_sync_system'
   sound_sync_system: require './sound_sync_system'
   viewport_sync_system: require './viewport_sync_system'
-  viewport_target_tracker_system: require './viewport_target_tracker_system'

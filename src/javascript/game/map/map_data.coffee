@@ -163,9 +163,6 @@ expandRoomDef = (roomDef) ->
 for roomDef,i in RoomDefs
   if roomDef?
       roomTypes[i] = expandRoomDef(roomDef)
-# roomTypes[0x13] = expandRoomDef(RoomDefs[0x13])
-# roomTypes[0x14] = expandRoomDef(RoomDefs[0x14])
-# roomTypes[0x19] = expandRoomDef(RoomDefs[0x19])
 
 ######################################################################
 areas = {}

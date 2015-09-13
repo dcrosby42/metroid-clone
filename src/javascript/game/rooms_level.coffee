@@ -45,8 +45,17 @@ RoomsLevel.populateInitialEntities = (estore) ->
   ]
 
   # Viewport
+  vpConf = Immutable.fromJS
+    width:          16*16       # 16 tiles wide, 16 px per tile
+    height:         15*16       # 15 tiles wide, 16 px per tile
+    trackBufLeft:   (8*18) - 16
+    trackBufRight:  (8*18) + 16
+    trackBufTop:    (8*18) - 16
+    trackBufBottom: (8*18) + 16
+  viewport = Common.Viewport.set('config', vpConf)
   estore.createEntity [
-    Common.Viewport
+    Common.Name.merge(name: "Viewport")
+    viewport
     Common.Position
   ]
 
@@ -74,15 +83,14 @@ RoomsLevel.gameSystems = ->
 
     EnemiesSystems.zoomer_crawl_system
     CommonSystems.gravity_system
-    CommonSystems.map_physics_system
+    CommonSystems.map_physics_system2
     CommonSystems.map_ghost_system
     CommonSystems.bullet_enemy_system
     CommonSystems.bullet_system
     CommonSystems.enemy_hit_system
     EnemiesSystems.skree_action
     SamusSystems.samus_animation
-
-    CommonSystems.viewport_system
+    CommonSystems.viewport_system2
   ]
 
 RoomsLevel.spriteConfigs = ->

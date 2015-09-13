@@ -78,4 +78,20 @@ system.update
   OUT:
     state (updated entities or ui objects)
     events (eg, KILLED or RESTART)
-   
+  
+------------------------------------
+ROOMS UPDATE
+  map_physics_system2
+  viewport_system2
+  viewport_room_system
+
+  Sync Rooms In View  (find roomIds)
+  Room components -- add / remove
+    view system that instantiates and positions "room sprites"
+      tile sprite pools
+      moving room sprites around
+
+  Sync Area
+    Relocate viewport to a new area
+    Transition movement 
+

@@ -142,14 +142,12 @@ C.ViewportTarget = imm
 C.Viewport = imm
   type: 'viewport'
   config:
-    minX: 0
-    maxX: 0
-    minY: 0
-    maxY: 0
-    trackBufLeft: 7 * 16
-    trackBufRight: 9 * 16
-    trackBufTop: 7 * 16
-    trackBufBottom: 9 * 16
+    width: 0
+    height: 0
+    trackBufLeft: 0
+    trackBufRight: 0
+    trackBufTop: 0
+    trackBufBottom: 0
 
 
 C.Hud = imm
