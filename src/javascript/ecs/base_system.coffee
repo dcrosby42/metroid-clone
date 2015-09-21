@@ -114,12 +114,9 @@ class BaseSystem
     eid ?= @eid()
     @entitiesToDelete.push eid
 
-  # TODO: rethink?  Systems reaching out to the estore breaks the pattern
-  # BUT! Currently, there are systems that need to go find components.
   getEntityComponents: (eid, type, matchKey=null, matchVal=null) ->
     @estore.getEntityComponents(eid, type, matchKey, matchVal)
 
-  # TODO: rethink?  Systems reaching out to the estore breaks the pattern
   getEntityComponent: (eid, type, matchKey=null, matchVal=null) ->
     @estore.getEntityComponent(eid, type, matchKey, matchVal)
 

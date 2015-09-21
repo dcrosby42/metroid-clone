@@ -17,11 +17,19 @@ class ViewportRoomSystem extends BaseSystem
     worldMap = @input.getIn(['static','worldMap'])
     rooms = worldMap.searchRooms(
       position.get('y'), position.get('x'),
-      position.get('y')+config.get('height'), position.get('x')+config.get('width')
+      position.get('y')+config.get('height') - 1, position.get('x')+config.get('width') - 1 # -1 stops from over-reaching TODO: adjust this box to be something more than an exact screen fit?
     )
 
-    roomIds = Immutable.Set(_.map(rooms, (r) -> r.id()))
-    @setProp 'room_watcher', 'roomIds', roomIds
+    prevRoomIds = @getProp('room_watcher', 'roomIds')
+    currRoomIds = Immutable.Set(_.map(rooms, (r) -> r.id()))
+
+    @_reconcileRoomPresence(worldMap, prevRoomIds, currRoomIds)
+
+    @setProp 'room_watcher', 'roomIds', currRoomIds
+
+  @_reconcileRoomPresence: (worldMap, prevRoomIds, currRoomIds) ->
+    goneIds = prevRoomIds.subtract(currRoomIds)
+    newIds = currRoomIds.subtract(prevRoomIds)
 
 
 module.exports = ViewportRoomSystem

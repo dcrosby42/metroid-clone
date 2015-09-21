@@ -59,6 +59,15 @@ RoomsLevel.populateInitialEntities = (estore) ->
     Common.Position
   ]
 
+  # RoomWatcher
+  estore.createEntity [
+    Common.Name.merge(name: "Room Watcher")
+    Immutable.Map
+      type: 'room_watcher'
+      roomIds: Immutable.Set()
+  ]
+
+
   estore
 
 RoomsLevel.gameSystems = ->
@@ -91,6 +100,7 @@ RoomsLevel.gameSystems = ->
     EnemiesSystems.skree_action
     SamusSystems.samus_animation
     CommonSystems.viewport_system2
+    CommonSystems.viewport_room_system
   ]
 
 RoomsLevel.spriteConfigs = ->
