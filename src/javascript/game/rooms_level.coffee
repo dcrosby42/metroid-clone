@@ -101,6 +101,7 @@ RoomsLevel.gameSystems = ->
     SamusSystems.samus_animation
     CommonSystems.viewport_system2
     CommonSystems.viewport_room_system
+    CommonSystems.room_system
   ]
 
 RoomsLevel.spriteConfigs = ->

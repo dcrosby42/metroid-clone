@@ -1,6 +1,10 @@
 
+isFunction = (functionToCheck) ->
+  functionToCheck and ({}.toString.call(functionToCheck) == '[object Function]')
 
-propReaderFn = (prop) -> (comp) -> comp[prop]
+
+propReaderFn = (prop) ->
+  (comp) -> comp[prop]
 
 detectAdded = (source,cache,keyFn) ->
   _.reject source, (c) -> cache[keyFn(c)]?
@@ -29,13 +33,17 @@ _updateStatefulBinding = (source,cache,keyFn,addFn,syncFn,removeFn) ->
 
 updateStatefulBinding = ({source,cache,addFn,removeFn,syncFn,keyFn,keyProp}) ->
   if keyProp? and !keyFn?
-    keyFN = propReaderFn(keyProp)
-  return _updateStateuflBinding(source,cache,keyFn,addFn,syncFn,removeFn)
+    keyFn = propReaderFn(keyProp)
+  if !isFunction(keyFn)
+    console.log "updateStatefulBinding: keyFn not a fn:",keyFn
+  return _updateStatefulBinding(source,cache,keyFn,addFn,syncFn,removeFn)
 
 
 makeUpdater = ({addFn,removeFn,syncFn,keyFn,keyProp}) ->
   if keyProp? and !keyFn?
     keyFn = propReaderFn(keyProp)
+  if !isFunction(keyFn)
+    console.log "makeUpdater: keyFn not a fn:",keyFn
   fn = (source,cache) ->
     _updateStatefulBinding(source,cache,keyFn,addFn,syncFn,removeFn)
 

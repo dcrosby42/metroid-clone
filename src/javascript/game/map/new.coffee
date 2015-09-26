@@ -5,11 +5,17 @@ emptyGrid = (rows,cols) -> ((null for [1..cols]) for [1..rows])
 
 divRem = (numer,denom) -> [Math.floor(numer/denom), numer % denom]
 
-mapLayoutToRoomGrid = (mapLayout) ->
+mapLayoutToRoomGrid = (mapLayout, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
   roomGrid = emptyGrid(mapLayout.rows, mapLayout.cols)
   for row,r in mapLayout.data
     for roomType,c in row
-      room = Room.create(row:r,col:c,roomType:roomType)
+      room = Room.create(
+        roomType:roomType
+        row:r
+        col:c
+        x: c * roomWidthInTiles * tileWidth
+        y: r * roomHeightInTiles * tileHeight
+      )
       roomGrid[r][c] = room
   roomGrid
 
@@ -43,7 +49,7 @@ roomGridToTileGrid = (roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, 
 
 
 class Room
-  constructor: ({@row,@col,@roomType}) ->
+  constructor: ({@row,@col,@roomType,@x,@y}) ->
     @roomId = "room_r#{@row}_c#{@col}"
 
   id: -> @roomId
@@ -67,10 +73,14 @@ class WorldMap
       left: 0 * @roomWidthInPx
       right: 3 * @roomWidthInPx
       bottom: 3 * @roomHeightInPx
+    @_roomsById = @_indexRoomGrid(@roomGrid)
 
   # Return an array of Rooms that overlap the given px rectangle
   searchRooms: (top,left,bottom,right) ->
     TileSearch.search2d(@roomGrid,@roomWidthInPx,@roomHeightInPx,top,left,bottom,right)
+
+  getRoomById: (roomId) ->
+    @_roomsById[roomId]
 
   # Return an array of tiles that overlap the given horizontal line
   tileSearchHorizontal: (y,left,right) ->
@@ -85,13 +95,22 @@ class WorldMap
     # TODO: Areas!
     @_tempArea
 
+
+  _indexRoomGrid: (roomGrid) ->
+    index = {}
+    for row in roomGrid
+      for room in row
+        if room?
+          index[room.roomId]
+    index
+
   @create: (layout) ->
     roomWidthInTiles = 16 # TODO: receive as params
     roomHeightInTiles = 15 # TODO: receive as params
     tileWidth = tileHeight = 16 # TODO: receive as params
     roomTypes = MapData.roomTypes
 
-    roomGrid = mapLayoutToRoomGrid(layout)
+    roomGrid = mapLayoutToRoomGrid(layout, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
     console.log "roomGrid",roomGrid
     tileGrid = roomGridToTileGrid(roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
     console.log "tileGrid",tileGrid

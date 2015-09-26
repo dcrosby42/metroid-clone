@@ -33,7 +33,7 @@ class ViewObjectSyncSystem extends ViewSystem
     ArrayToCacheBinding.update
       source: @searchComponents().toArray()
       cache: @ui.objectCacheFor(@_cacheName)
-      identFn: (comps) => comps.getIn @_identPath
+      keyFn: (comps) => comps.getIn @_identPath
       addFn: (comps) => @newObject comps
       removeFn: (label) => @removeObject label
       syncFn: (comps,label) => @updateObject(comps,label)

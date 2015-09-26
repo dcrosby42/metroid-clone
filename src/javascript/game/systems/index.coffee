@@ -12,6 +12,7 @@ module.exports =
   map_ghost_system: require './map_ghost_system'
   map_physics_system: require './map_physics_system'
   map_physics_system2: require './map_physics_system2'
+  room_system: require './room_system'
   samus_damage_system: require './samus_damage_system'
   samus_death_system: require './samus_death_system'
   samus_hit_system: require './samus_hit_system'
