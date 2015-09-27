@@ -7,14 +7,13 @@ emptyGrid = (rows,cols) -> ((null for [1..cols]) for [1..rows])
 # Convert a grid of room types into a grid of room data objects
 mapLayoutToRoomGrid = (mapLayout, roomTypes, roomDefs, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
 
-  console.log "WorldMap.mapLayoutToRoomGrid roomDefs",roomDefs
+# Convert a grid of room types into a grid of room data objects
+mapLayoutToRoomGrid = (mapLayout, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
   roomGrid = emptyGrid(mapLayout.rows, mapLayout.cols)
   for row,r in mapLayout.data
     for roomType,c in row
-      console.log "roomType", roomType
       roomDef = roomDefs[roomType]
       enemies = if roomDef?
-        console.log "WorldMap.mapLayoutToRoomGrid enemies",roomDef.enemies
         roomDef.enemies
       room = Room.create(
         roomType:roomType
@@ -139,7 +138,7 @@ class WorldMap
     roomTypes = MapData.roomTypes
     roomDefs = MapData.roomDefs
 
-    roomGrid = mapLayoutToRoomGrid(layout, roomTypes, roomDefs, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
+    roomGrid = mapLayoutToRoomGrid(layout, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
     tileGrid = roomGridToTileGrid(roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
     new @(
       roomGrid: roomGrid
