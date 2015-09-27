@@ -3,7 +3,7 @@ ViewObjectSyncSystem = require "../view_object_sync_system"
 
 StyleDefaults =
   font: "normal 10pt Arial"
-  fillColor: "white"
+  fill: "white"
 
 class LabelSyncSystem extends ViewObjectSyncSystem
   @Subscribe: ['label', 'position']
@@ -16,7 +16,7 @@ class LabelSyncSystem extends ViewObjectSyncSystem
     textContent = labelComp.get('content')
     style =
       font: labelComp.get('font', StyleDefaults.font)
-      fill: labelComp.get('fill_color', StyleDefaults.fillColor)
+      fill: labelComp.get('fill_color', StyleDefaults.fill)
 
     label = new PIXI.Text(textContent, style)
     @ui.addObjectToLayer(label, labelComp.get('layer'))

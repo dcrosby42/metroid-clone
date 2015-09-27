@@ -5,7 +5,8 @@ emptyGrid = (rows,cols) -> ((null for [1..cols]) for [1..rows])
 
 divRem = (numer,denom) -> [Math.floor(numer/denom), numer % denom]
 
-mapLayoutToRoomGrid = (mapLayout, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
+# Convert a grid of room types into a grid of room data objects
+mapLayoutToRoomGrid = (mapLayout, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
   roomGrid = emptyGrid(mapLayout.rows, mapLayout.cols)
   for row,r in mapLayout.data
     for roomType,c in row
@@ -15,9 +16,29 @@ mapLayoutToRoomGrid = (mapLayout, roomWidthInTiles, roomHeightInTiles, tileWidth
         col:c
         x: c * roomWidthInTiles * tileWidth
         y: r * roomHeightInTiles * tileHeight
+        tiles: tilesForRoom(roomTypes[roomType], tileWidth, tileHeight)
       )
       roomGrid[r][c] = room
   roomGrid
+
+# Convert a grid of tile types into a grid of tile data objects
+tilesForRoom = (roomTiles, tileWidth, tileHeight) ->
+  outRows = []
+  for row,r in roomTiles
+    outRow = []
+    outRows.push outRow
+    for tileType,c in row
+      if tileType?
+        tile =
+          type: tileType
+          x: c * tileWidth
+          y: r * tileHeight
+          width: tileWidth
+          height: tileHeight
+        outRow.push tile
+      else
+        outRow.push null
+  outRows
 
 roomGridToTileGrid = (roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
   mapRowCount = roomGrid.length * roomHeightInTiles
@@ -49,7 +70,7 @@ roomGridToTileGrid = (roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, 
 
 
 class Room
-  constructor: ({@row,@col,@roomType,@x,@y}) ->
+  constructor: ({@row,@col,@roomType,@x,@y,@tiles}) ->
     @roomId = "room_r#{@row}_c#{@col}"
 
   id: -> @roomId
@@ -72,7 +93,7 @@ class WorldMap
       top: 0 * @roomHeightInPx
       left: 0 * @roomWidthInPx
       right: 3 * @roomWidthInPx
-      bottom: 3 * @roomHeightInPx
+      bottom: 0 * @roomHeightInPx
     @_roomsById = @_indexRoomGrid(@roomGrid)
 
   # Return an array of Rooms that overlap the given px rectangle
@@ -101,7 +122,7 @@ class WorldMap
     for row in roomGrid
       for room in row
         if room?
-          index[room.roomId]
+          index[room.roomId] = room
     index
 
   @create: (layout) ->
@@ -110,7 +131,7 @@ class WorldMap
     tileWidth = tileHeight = 16 # TODO: receive as params
     roomTypes = MapData.roomTypes
 
-    roomGrid = mapLayoutToRoomGrid(layout, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
+    roomGrid = mapLayoutToRoomGrid(layout, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
     console.log "roomGrid",roomGrid
     tileGrid = roomGridToTileGrid(roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
     console.log "tileGrid",tileGrid
