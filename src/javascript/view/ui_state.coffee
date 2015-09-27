@@ -54,6 +54,7 @@ class UIState
       scaler: scaler
       base: base
       maps: {}
+      rooms: rooms
       background: background
       creatures: creatures
       overlay: overlay

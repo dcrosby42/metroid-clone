@@ -38,7 +38,6 @@ class RoomSystem extends StateMachineSystem
         
 
   teardownRoomAction: ->
-    console.log "RoomSystem.teardownRoomAction", @getComp('room')
     # TODO: de-spawn creatures 
     @destroyEntity()
 

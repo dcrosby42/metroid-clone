@@ -75,6 +75,7 @@ class MetroidCloneDelegate
       aspectScale:
         x: 1.25
         y: 1
+    window.uiState = uiState
 
     uiConfig = UIConfig.create
       worldMap: @worldMap

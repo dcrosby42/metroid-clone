@@ -35,4 +35,3 @@ class AnimationSyncSystem extends ViewObjectSyncSystem
       prev.position = position
 
 module.exports = AnimationSyncSystem
-window.ass = AnimationSyncSystem

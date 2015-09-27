@@ -76,6 +76,3 @@ RoomDefs[0x19] =
   ]
 
 module.exports = RoomDefs
-
-window.RoomDefs = RoomDefs
-

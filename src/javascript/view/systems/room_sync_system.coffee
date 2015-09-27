@@ -28,6 +28,8 @@ class RoomSyncSystem extends ViewObjectSyncSystem
       for tile in row
         if tile and tile.type?
           sprite = PIXI.Sprite.fromFrame("block-#{tile.type}")
+          sprite.width = 16.5
+          sprite.height = 16.5
           sprite.position.set tile.x, tile.y
           sprite.visible = true
           container.addChild sprite
