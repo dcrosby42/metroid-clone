@@ -1,27 +1,6 @@
 AnchoredBox = require '../../utils/anchored_box'
 BaseSystem = require '../../ecs/base_system'
 
-tileSearchVertical = (grid, tw,th, x, topY, bottomY) ->
-  hits = []
-  c = Math.floor(x/tw)
-  for r in [Math.floor(topY/th)..Math.floor(bottomY/th)]
-    row = grid[r]
-    if row?
-      hit = grid[r][c]
-      if hit?
-        hits.push hit
-  hits
-
-tileSearchHorizontal = (grid, tw,th, y, leftX, rightX) ->
-  hits = []
-  r = Math.floor(y/th)
-  row = grid[r]
-  if row?
-    for c in [Math.floor(leftX/tw)..Math.floor(rightX/tw)]
-      hit = grid[r][c]
-      if hit?
-        hits.push hit
-  hits
 
 class MapPhysicsSystem extends BaseSystem
   @Subscribe: [
@@ -33,16 +12,7 @@ class MapPhysicsSystem extends BaseSystem
     velocity = @getComp('map_collider-velocity')
     hitBox = @getComp('map_collider-hit_box')
     position = @getComp('map_collider-position')
-
-    mapDatabase = @input.getIn(['static','mapDatabase'])
-    mapName = @getProp('map', 'name')
-    map = mapDatabase.get(mapName)
-
-    if !map?
-      console.log "!! NO MAP NAMED '#{mapName}' in", @input.toJS()
-    grid = map.tileGrid
-    tileWidth = map.tileWidth
-    tileHeight = map.tileHeight
+    worldMap = @input.getIn(['static','worldMap'])
 
     vx = velocity.get('x')
     vy = velocity.get('y')
@@ -66,43 +36,43 @@ class MapPhysicsSystem extends BaseSystem
     # Apply & restrict VERTICAL movement
     box.moveY(vy * @dt())
 
-    hits.top = tileSearchHorizontal(grid, tileWidth,tileHeight,box.top, box.left, Math.ceil(box.right))
+    hits.top = worldMap.tileSearchHorizontal(box.top, box.left, Math.ceil(box.right))
     if hits.top.length > 0
       s = hits.top[0]
       box.setY(s.y+s.height - box.topOffset)
       adjacent.top = hits.top
     else
-      hits.bottom = tileSearchHorizontal(grid, tileWidth,tileHeight,Math.ceil(box.bottom), box.left, Math.ceil(box.right))
+      hits.bottom = worldMap.tileSearchHorizontal(Math.ceil(box.bottom), box.left, Math.ceil(box.right))
       if hits.bottom.length > 0
         s = hits.bottom[0]
         box.setY(s.y - box.bottomOffset-1)
         adjacent.bottom = hits.bottom
 
     unless adjacent.top?
-      adjacent.top = tileSearchHorizontal(grid, tileWidth,tileHeight, box.top-1, box.left, box.right-1)
+      adjacent.top = worldMap.tileSearchHorizontal(box.top-1, box.left, box.right-1)
     unless adjacent.bottom?
-      adjacent.bottom = tileSearchHorizontal(grid, tileWidth,tileHeight,Math.ceil(box.bottom+1), box.left, box.right-1)
+      adjacent.bottom = worldMap.tileSearchHorizontal(Math.ceil(box.bottom+1), box.left, box.right-1)
 
 
     # Step 2: apply & restrict horizontal movement
     box.moveX(vx * @dt())
 
-    hits.left = tileSearchVertical(grid, tileWidth,tileHeight,box.left, box.top, Math.ceil(box.bottom))
+    hits.left = worldMap.tileSearchVertical(box.left, box.top, Math.ceil(box.bottom))
     if hits.left.length > 0
       s = hits.left[0]
       box.setX(s.x+s.width - box.leftOffset)
       adjacent.left = hits.left
     else
-      hits.right = tileSearchVertical(grid, tileWidth,tileHeight, Math.ceil(box.right), box.top,box.bottom-1)
+      hits.right = worldMap.tileSearchVertical(Math.ceil(box.right), box.top,box.bottom-1)
       if hits.right.length > 0
         s = hits.right[0]
         box.setX(s.x - box.rightOffset-1)
         adjacent.right = hits.right
 
     unless adjacent.left?
-      adjacent.left = tileSearchVertical(grid, tileWidth,tileHeight,box.left-1, box.top, box.bottom-1)
+      adjacent.left = worldMap.tileSearchVertical(box.left-1, box.top, box.bottom-1)
     unless adjacent.right?
-      adjacent.right = tileSearchVertical(grid, tileWidth,tileHeight, Math.ceil(box.right+1), box.top, box.bottom-1)
+      adjacent.right = worldMap.tileSearchVertical(Math.ceil(box.right+1), box.top, box.bottom-1)
     
     # Update position and hit_box components 
     @updateComp position.set('x', box.x).set('y', box.y)

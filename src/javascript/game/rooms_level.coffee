@@ -92,14 +92,14 @@ RoomsLevel.gameSystems = ->
 
     EnemiesSystems.zoomer_crawl_system
     CommonSystems.gravity_system
-    CommonSystems.map_physics_system2
+    CommonSystems.map_physics_system
     CommonSystems.map_ghost_system
     CommonSystems.bullet_enemy_system
     CommonSystems.bullet_system
     CommonSystems.enemy_hit_system
     EnemiesSystems.skree_action
     SamusSystems.samus_animation
-    CommonSystems.viewport_system2
+    CommonSystems.viewport_system
     CommonSystems.viewport_room_system
     CommonSystems.room_system
   ]
