@@ -8,7 +8,7 @@ emptyGrid = (rows,cols) -> ((null for [1..cols]) for [1..rows])
 mapLayoutToRoomGrid = (mapLayout, roomTypes, roomDefs, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
 
 # Convert a grid of room types into a grid of room data objects
-mapLayoutToRoomGrid = (mapLayout, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
+mapLayoutToRoomGrid = (mapLayout, roomTypes, roomDefs, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
   roomGrid = emptyGrid(mapLayout.rows, mapLayout.cols)
   for row,r in mapLayout.data
     for roomType,c in row
@@ -138,7 +138,7 @@ class WorldMap
     roomTypes = MapData.roomTypes
     roomDefs = MapData.roomDefs
 
-    roomGrid = mapLayoutToRoomGrid(layout, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
+    roomGrid = mapLayoutToRoomGrid(layout, roomTypes, roomDefs, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
     tileGrid = roomGridToTileGrid(roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
     new @(
       roomGrid: roomGrid

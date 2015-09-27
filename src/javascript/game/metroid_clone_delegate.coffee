@@ -213,13 +213,13 @@ class MetroidCloneDelegate
 
     if events? and events.size > 0
       if e = events.find((e) -> e.get('name') == 'StartNewGame')
-        console.log "NEW GAME!",e.toJS()
+        # console.log "NEW GAME!",e.toJS()
         @_activateMainGame()
       if e = events.find((e) -> e.get('name') == 'ContinueGame')
-        console.log "CONTINUE GAME!",e.toJS()
+        # console.log "CONTINUE GAME!",e.toJS()
         @_activateMainGame()
       if e = events.find((e) -> e.get('name') == 'Killed')
-        console.log "KILLED!",e.toJS()
+        # console.log "KILLED!",e.toJS()
         @_activateTitleScreen()
 
       # else
