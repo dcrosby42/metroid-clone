@@ -17,8 +17,11 @@ keepWithin = (x,target,minDist,maxDist) ->
     return target - maxDist
   x # x is already at comfortable distance to target
 
+divRem = (numer,denom) -> [Math.floor(numer/denom), numer % denom]
+
 module.exports =
   max: max
   min: min
   clamp: clamp
   keepWithin: keepWithin
+  divRem: divRem

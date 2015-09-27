@@ -26,7 +26,7 @@ StateHistory = require '../utils/state_history'
 Debug = require '../utils/debug'
 
 # MapDatabase = require './map/map_database'
-NewMapStuff = require './map/new'
+WorldMap = require './map/world_map'
 
 # TestLevel = require './test_level'
 # ZoomerLevel = require './zoomer_level'
@@ -38,7 +38,7 @@ class MetroidCloneDelegate
     @titleLevel = MainTitleLevel
     # @level = ZoomerLevel
     @level = RoomsLevel
-    @worldMap = NewMapStuff.getDefaultWorldMap()
+    @worldMap = WorldMap.getDefaultWorldMap()
 
     @defaultInput = Immutable.fromJS
       controllers:

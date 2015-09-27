@@ -1,9 +1,8 @@
 TileSearch = require('./tile_search')
 MapData = require('./map_data')
+MathUtils = require('../../utils/math_utils')
 
 emptyGrid = (rows,cols) -> ((null for [1..cols]) for [1..rows])
-
-divRem = (numer,denom) -> [Math.floor(numer/denom), numer % denom]
 
 # Convert a grid of room types into a grid of room data objects
 mapLayoutToRoomGrid = (mapLayout, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
@@ -49,8 +48,8 @@ roomGridToTileGrid = (roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, 
     tileRow = []
     tileGrid.push tileRow
     for c in [0...mapColCount]
-      [rr,tr] = divRem(r, roomHeightInTiles)
-      [rc,tc] = divRem(c, roomWidthInTiles)
+      [rr,tr] = MathUtils.divRem(r, roomHeightInTiles)
+      [rc,tc] = MathUtils.divRem(c, roomWidthInTiles)
       room = roomGrid[rr][rc]
       if room? and room.roomType?
         roomTiles = roomTypes[room.roomType]
@@ -132,9 +131,7 @@ class WorldMap
     roomTypes = MapData.roomTypes
 
     roomGrid = mapLayoutToRoomGrid(layout, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
-    console.log "roomGrid",roomGrid
     tileGrid = roomGridToTileGrid(roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
-    console.log "tileGrid",tileGrid
     new @(
       roomGrid: roomGrid
       tileGrid: tileGrid
@@ -143,7 +140,6 @@ class WorldMap
       roomWidthInTiles: roomWidthInTiles
       roomHeightInTiles: roomHeightInTiles
     )
-
 
 defaultWorldMapLayout =
   rows: 10
