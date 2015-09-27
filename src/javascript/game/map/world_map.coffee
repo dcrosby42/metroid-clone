@@ -5,10 +5,17 @@ MathUtils = require('../../utils/math_utils')
 emptyGrid = (rows,cols) -> ((null for [1..cols]) for [1..rows])
 
 # Convert a grid of room types into a grid of room data objects
-mapLayoutToRoomGrid = (mapLayout, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
+mapLayoutToRoomGrid = (mapLayout, roomTypes, roomDefs, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
+
+  console.log "WorldMap.mapLayoutToRoomGrid roomDefs",roomDefs
   roomGrid = emptyGrid(mapLayout.rows, mapLayout.cols)
   for row,r in mapLayout.data
     for roomType,c in row
+      console.log "roomType", roomType
+      roomDef = roomDefs[roomType]
+      enemies = if roomDef?
+        console.log "WorldMap.mapLayoutToRoomGrid enemies",roomDef.enemies
+        roomDef.enemies
       room = Room.create(
         roomType:roomType
         row:r
@@ -16,6 +23,7 @@ mapLayoutToRoomGrid = (mapLayout, roomTypes, roomWidthInTiles, roomHeightInTiles
         x: c * roomWidthInTiles * tileWidth
         y: r * roomHeightInTiles * tileHeight
         tiles: tilesForRoom(roomTypes[roomType], tileWidth, tileHeight)
+        enemies: enemies
       )
       roomGrid[r][c] = room
   roomGrid
@@ -69,7 +77,7 @@ roomGridToTileGrid = (roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, 
 
 
 class Room
-  constructor: ({@row,@col,@roomType,@x,@y,@tiles}) ->
+  constructor: ({@row,@col,@roomType,@x,@y,@tiles,@enemies}) ->
     @roomId = "room_r#{@row}_c#{@col}"
 
   id: -> @roomId
@@ -129,8 +137,9 @@ class WorldMap
     roomHeightInTiles = 15 # TODO: receive as params
     tileWidth = tileHeight = 16 # TODO: receive as params
     roomTypes = MapData.roomTypes
+    roomDefs = MapData.roomDefs
 
-    roomGrid = mapLayoutToRoomGrid(layout, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
+    roomGrid = mapLayoutToRoomGrid(layout, roomTypes, roomDefs, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
     tileGrid = roomGridToTileGrid(roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
     new @(
       roomGrid: roomGrid

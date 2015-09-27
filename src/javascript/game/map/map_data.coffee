@@ -162,7 +162,7 @@ expandRoomDef = (roomDef) ->
 
 for roomDef,i in RoomDefs
   if roomDef?
-      roomTypes[i] = expandRoomDef(roomDef)
+    roomTypes[i] = expandRoomDef(roomDef)
 
 ######################################################################
 areas = {}
@@ -200,3 +200,4 @@ exports.info =
   screenWidthInTiles: RoomWidth
   screenHeightInTiles: RoomHeight
 
+exports.roomDefs = RoomDefs

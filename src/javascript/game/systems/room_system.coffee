@@ -1,8 +1,9 @@
 StateMachineSystem = require '../../ecs/state_machine_system'
 Common = require '../entity/components'
+Enemies = require '../entity/enemies'
 
 class RoomSystem extends StateMachineSystem
-  @Subscribe: [ 'room' ]
+  @Subscribe: [ 'room', 'position' ]
   @StateMachine:
     componentProperty: ['room','state']
     start: 'begin'
@@ -22,8 +23,19 @@ class RoomSystem extends StateMachineSystem
     @publishEvent 'ready'
 
   setupRoomAction: ->
-    console.log "RoomSystem.setupRoomAction", @getComp('room')
-    # TODO: spawn creatures
+    roomId = @getProp 'room', 'roomId'
+    pos = @getComp 'position'
+    worldMap = @input.getIn(['static','worldMap'])
+    roomDef = worldMap.getRoomById(roomId)
+    for [col,row,id] in (roomDef.enemies || [])
+      x = pos.get('x') + (col * worldMap.tileWidth)
+      y = pos.get('y') + (row * worldMap.tileHeight)
+      ecomps = Enemies.factory.createComponents(id, x:x, y:y)
+      @newEntity ecomps
+      
+
+    
+        
 
   teardownRoomAction: ->
     console.log "RoomSystem.teardownRoomAction", @getComp('room')

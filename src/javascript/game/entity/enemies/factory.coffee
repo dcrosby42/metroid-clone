@@ -4,6 +4,8 @@ Common = require('../components')
 F = {}
 
 F.basicSkree = (args) ->
+  pos_x = args.x + 8
+  pos_y = args.y
   [
     Common.Name.merge(name: 'Skree')
     Common.Enemy.merge
@@ -17,14 +19,14 @@ F.basicSkree = (args) ->
       state: 'spinSlow'
       time: 0
     Common.Position.merge
-      x: args.x
-      y: args.y
+      x: pos_x
+      y: pos_y
     Common.Velocity.merge
       x: 0
       y: 0
     Common.MapCollider
     Common.HitBox.merge
-      width: 16
+      width: 14
       height: 24
       anchorX: 0.5 # halfway across
       anchorY: 0   # all the way at the top
@@ -33,6 +35,8 @@ F.basicSkree = (args) ->
   ]
 
 F.basicZoomer = (args) ->
+  pos_x = args.x + 8
+  pos_y = args.y + 8
   [
     Common.Name.merge(name: 'Zoomer')
     Common.Enemy.merge
@@ -47,8 +51,8 @@ F.basicZoomer = (args) ->
       state: 'crawl-up'
       time: 0
     Common.Position.merge
-      x: args.x
-      y: args.y
+      x: pos_x
+      y: pos_y
     Common.Velocity.merge
       x: 0
       y: 0
