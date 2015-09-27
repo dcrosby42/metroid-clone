@@ -38,7 +38,7 @@ class MetroidCloneDelegate
     @titleLevel = MainTitleLevel
     # @level = ZoomerLevel
     @level = RoomsLevel
-    worldMap = NewMapStuff.getDefaultWorldMap()
+    @worldMap = NewMapStuff.getDefaultWorldMap()
 
     @defaultInput = Immutable.fromJS
       controllers:
@@ -48,7 +48,7 @@ class MetroidCloneDelegate
         admin: {}
       dt: 0
       static:
-        worldMap: worldMap
+        worldMap: @worldMap
         mapDatabase: @level.mapDatabase()
 
     @_setupControllers()
@@ -77,8 +77,10 @@ class MetroidCloneDelegate
         y: 1
 
     uiConfig = UIConfig.create
-      mapDatabase: @level.mapDatabase()
+      worldMap: @worldMap
       spriteConfigs: @level.spriteConfigs()
+      # mapDatabase: @level.mapDatabase()
+    window.uiConfig = uiConfig
       
     viewSystems = @_createViewSystems()
 
@@ -287,6 +289,7 @@ class MetroidCloneDelegate
       # ViewSystems.viewport_target_tracker_system
       ViewSystems.viewport_sync_system
       ViewSystems.sound_sync_system
+      ViewSystems.room_sync_system
     ]
     Immutable.List(systemDefs).map (s) -> s.createInstance()
 

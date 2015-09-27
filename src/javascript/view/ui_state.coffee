@@ -40,11 +40,14 @@ class UIState
 
     creatures = new PIXI.DisplayObjectContainer()
 
+    rooms = new PIXI.DisplayObjectContainer()
+
     overlay = new PIXI.DisplayObjectContainer()
 
     stage.addChild scaler
     scaler.addChild base
     base.addChild creatures
+    base.addChild rooms
     scaler.addChild overlay
 
     layers =

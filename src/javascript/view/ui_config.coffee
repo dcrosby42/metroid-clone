@@ -1,12 +1,14 @@
 class UIConfig
-  constructor: ({spriteConfigs, mapDatabase}) ->
+  constructor: ({spriteConfigs, worldMap, mapDatabase}) ->
     @_spriteConfigs = spriteConfigs
+    @_worldMap = worldMap
     @_mapDatabase = mapDatabase # XXX ?
 
   getSpriteConfig: (name) ->
     @_spriteConfigs[name]
 
-# XXX  getMapDatabase: -> @_mapDatabase
+  getRoom: (roomId) ->
+    @_worldMap.getRoomById(roomId)
 
   @create: (a...) -> new @(a...)
 
