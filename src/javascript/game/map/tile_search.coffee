@@ -1,5 +1,12 @@
 MathUtils = require '../../utils/math_utils'
 
+tileSearchXY = (grid, cellW, cellH, x, y) ->
+  r = Math.floor(y/cellH)
+  c = Math.floor(x/cellW)
+  if row = grid[r]
+    return row[c]
+  null
+
 tileSearch2d = (grid, cellW, cellH, top,left,bottom,right) ->
   hits = []
   minR = minC = 0
@@ -47,3 +54,4 @@ module.exports =
   search2d: tileSearch2d
   searchHorizontal: tileSearchHorizontal
   searchVertical: tileSearchVertical
+  searchXY: tileSearchXY

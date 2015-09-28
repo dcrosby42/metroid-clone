@@ -85,7 +85,7 @@ class Room
 
 # TODO: Areas!
 class Area
-  constructor: ({@top,@left,@right,@bottom}) ->
+  constructor: ({@name,@top,@left,@right,@bottom}) ->
   leftPx: -> @left
   rightPx: -> @right
   topPx: -> @top
@@ -96,6 +96,7 @@ class WorldMap
     @roomWidthInPx = @tileWidth * @roomWidthInTiles
     @roomHeightInPx = @tileHeight * @roomHeightInTiles
     @_tempArea = new Area # TODO Areas!
+      name: "A"
       top: 0 * @roomHeightInPx
       left: 0 * @roomWidthInPx
       right: 3 * @roomWidthInPx
@@ -105,6 +106,9 @@ class WorldMap
   # Return an array of Rooms that overlap the given px rectangle
   searchRooms: (top,left,bottom,right) ->
     TileSearch.search2d(@roomGrid,@roomWidthInPx,@roomHeightInPx,top,left,bottom,right)
+
+  getRoomAt: (x,y) ->
+    TileSearch.searchXY(@roomGrid,@roomWidthInPx,@roomHeightInPx, x,y)
 
   getRoomById: (roomId) ->
     @_roomsById[roomId]
@@ -118,7 +122,7 @@ class WorldMap
     TileSearch.searchVertical(@tileGrid, @tileWidth, @tileHeight, x, top, bottom)
 
   # Return the Area containing the given px location
-  searchArea: (top,left) ->
+  getAreaAt: (x,y) ->
     # TODO: Areas!
     @_tempArea
 

@@ -9,22 +9,51 @@ class ViewportSystem extends BaseSystem
   ]
 
   process: ->
-    viewport = @getComp('viewport')
-    config = viewport.get('config')
     viewportPosition = @getComp('viewport-position')
     targetPosition = @getComp('viewport_target-position')
 
     worldMap = @input.getIn(['static','worldMap'])
-    area = worldMap.searchArea(viewportPosition.get('x'), viewportPosition.get('y'))
+    viewportArea = worldMap.getAreaAt(viewportPosition.get('x'), viewportPosition.get('y'))
+    targetArea = worldMap.getAreaAt(targetPosition.get('x'), targetPosition.get('y'))
     
+    if targetArea.name != viewportArea.name
+      # What room are we shuttling to?
+      nextRoom = worldMap.getRoomAt(targetPosition.get('x'), targetPosition.get('y'))
+      # What entity should be re-targeted once we're there?
+      viewportTarget = @getComp('viewport_target')
+      targetEid = viewportTarget.get('eid')
+      # Remove target from entity
+      @deleteComp viewportTarget
+
+      # Create a "shuttle"
+      @newEntity [
+        Common.Name.merge
+          name: "Viewport Shuttle"
+        Immutable.Map().merge  # TODO: ViewportShuttle component
+          type: 'viewport_shuttle'
+          destArea: targetArea.name
+          thenTarget: targetEid
+        Common.Position.merge
+          x: viewportPosition.get('x')
+          y: viewportPosition.get('y')
+        Immutable.Map().merge  # TODO: Destination component
+          type: 'destination'
+          x: nextRoom.col * worldMap.roomWidthInPx
+          y: nextRoom.row * worldMap.roomHeightInPx
+      ]
+      return
+
+    viewport = @getComp('viewport')
+    config = viewport.get('config')
+
     viewportX = MathUtils.clamp(
       MathUtils.keepWithin(
         viewportPosition.get('x')
         targetPosition.get('x')
         config.get('trackBufLeft')
         config.get('trackBufRight'))
-      area.leftPx()
-      area.rightPx())
+      viewportArea.leftPx()
+      viewportArea.rightPx())
     
     viewportY = MathUtils.clamp(
       MathUtils.keepWithin(
@@ -32,8 +61,8 @@ class ViewportSystem extends BaseSystem
         targetPosition.get('y')
         config.get('trackBufTop')
         config.get('trackBufBottom'))
-      area.topPx()
-      area.bottomPx())
+      viewportArea.topPx()
+      viewportArea.bottomPx())
 
     @updateComp viewportPosition.set('x',viewportX).set('y',viewportY)
     
