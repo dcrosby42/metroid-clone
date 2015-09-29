@@ -19,4 +19,5 @@ module.exports =
   sound_system: require './sound_system'
   timer_system: require './timer_system'
   viewport_room_system: require './viewport_room_system'
+  viewport_shuttle_system: require './viewport_shuttle_system'
   viewport_system: require './viewport_system'

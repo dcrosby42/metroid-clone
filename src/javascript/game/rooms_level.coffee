@@ -24,7 +24,7 @@ RoomsLevel.populateInitialEntities = (estore) ->
     Common.Map.merge(name: 'mapTest')
   ]
 
-  estore.createEntity Samus.factory.createComponents('samus')
+  estore.createEntity Samus.factory.createComponents('samus', position: {x:780,y:50})
 
   # RNG
   estore.createEntity [
@@ -99,6 +99,7 @@ RoomsLevel.gameSystems = ->
     CommonSystems.enemy_hit_system
     EnemiesSystems.skree_action
     SamusSystems.samus_animation
+    CommonSystems.viewport_shuttle_system
     CommonSystems.viewport_system
     CommonSystems.viewport_room_system
     CommonSystems.room_system

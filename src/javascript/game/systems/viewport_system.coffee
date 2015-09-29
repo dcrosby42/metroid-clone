@@ -1,6 +1,7 @@
 Immutable = require 'immutable'
 BaseSystem = require '../../ecs/base_system'
 MathUtils = require '../../utils/math_utils'
+Common = require '../entity/components'
 
 class ViewportSystem extends BaseSystem
   @Subscribe: [
@@ -15,6 +16,7 @@ class ViewportSystem extends BaseSystem
     worldMap = @input.getIn(['static','worldMap'])
     viewportArea = worldMap.getAreaAt(viewportPosition.get('x'), viewportPosition.get('y'))
     targetArea = worldMap.getAreaAt(targetPosition.get('x'), targetPosition.get('y'))
+    console.log "ViewportSystem targetArea.name=#{targetArea.name}, viewportArea.name=#{viewportArea.name}"
     
     if targetArea.name != viewportArea.name
       # What room are we shuttling to?
@@ -53,7 +55,8 @@ class ViewportSystem extends BaseSystem
         config.get('trackBufLeft')
         config.get('trackBufRight'))
       viewportArea.leftPx()
-      viewportArea.rightPx())
+      viewportArea.rightPx() - config.get('width')
+    )
     
     viewportY = MathUtils.clamp(
       MathUtils.keepWithin(
@@ -62,7 +65,8 @@ class ViewportSystem extends BaseSystem
         config.get('trackBufTop')
         config.get('trackBufBottom'))
       viewportArea.topPx()
-      viewportArea.bottomPx())
+      viewportArea.bottomPx() - config.get('height')
+    )
 
     @updateComp viewportPosition.set('x',viewportX).set('y',viewportY)
     

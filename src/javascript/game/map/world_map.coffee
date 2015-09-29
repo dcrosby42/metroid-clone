@@ -6,9 +6,6 @@ emptyGrid = (rows,cols) -> ((null for [1..cols]) for [1..rows])
 
 # Convert a grid of room types into a grid of room data objects
 mapLayoutToRoomGrid = (mapLayout, roomTypes, roomDefs, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
-
-# Convert a grid of room types into a grid of room data objects
-mapLayoutToRoomGrid = (mapLayout, roomTypes, roomDefs, roomWidthInTiles, roomHeightInTiles, tileWidth, tileHeight) ->
   roomGrid = emptyGrid(mapLayout.rows, mapLayout.cols)
   for row,r in mapLayout.data
     for roomType,c in row
@@ -85,23 +82,25 @@ class Room
 
 # TODO: Areas!
 class Area
-  constructor: ({@name,@top,@left,@right,@bottom}) ->
-  leftPx: -> @left
-  rightPx: -> @right
-  topPx: -> @top
-  bottomPx: -> @bottom
+  constructor: ({@name,@topRow,@leftCol,@rightCol,@bottomRow,@roomWidthInPx,@roomHeightInPx}) ->
+    @_leftPx   = @leftCol * @roomWidthInPx
+    @_topPx    = @topRow * @roomWidthInPx
+    @_rightPx  = (@rightCol+1) * @roomWidthInPx
+    @_bottomPx = (@bottomRow+1) * @roomHeightInPx
+    console.log "Area ctor",@
+
+  leftPx: -> @_leftPx
+  rightPx: -> @_rightPx
+  topPx: -> @_topPx
+  bottomPx: -> @_bottomPx
+
 
 class WorldMap
-  constructor: ({@roomGrid,@tileGrid,@tileWidth,@tileHeight,@roomWidthInTiles,@roomHeightInTiles}) ->
+  constructor: ({@roomGrid,@tileGrid,@tileWidth,@tileHeight,@roomWidthInTiles,@roomHeightInTiles,@areas}) ->
     @roomWidthInPx = @tileWidth * @roomWidthInTiles
     @roomHeightInPx = @tileHeight * @roomHeightInTiles
-    @_tempArea = new Area # TODO Areas!
-      name: "A"
-      top: 0 * @roomHeightInPx
-      left: 0 * @roomWidthInPx
-      right: 3 * @roomWidthInPx
-      bottom: 0 * @roomHeightInPx
     @_roomsById = @_indexRoomGrid(@roomGrid)
+    @_setRoomAreas @roomGrid, @areas
 
   # Return an array of Rooms that overlap the given px rectangle
   searchRooms: (top,left,bottom,right) ->
@@ -123,8 +122,10 @@ class WorldMap
 
   # Return the Area containing the given px location
   getAreaAt: (x,y) ->
-    # TODO: Areas!
-    @_tempArea
+    if room = @getRoomAt(x,y)
+      room.area
+    else
+      null
 
 
   _indexRoomGrid: (roomGrid) ->
@@ -135,6 +136,16 @@ class WorldMap
           index[room.roomId] = room
     index
 
+  _setRoomAreas: (roomGrid,areas) ->
+    for row in roomGrid
+      for room in row
+        if room?
+          for area in areas
+            if room.row >= area.topRow && room.row <= area.bottomRow && room.col >= area.leftCol && room.col <= area.rightCol
+              room.area = area
+
+
+
   @create: (layout) ->
     roomWidthInTiles = 16 # TODO: receive as params
     roomHeightInTiles = 15 # TODO: receive as params
@@ -142,8 +153,21 @@ class WorldMap
     roomTypes = MapData.roomTypes
     roomDefs = MapData.roomDefs
 
+
+    areas = _.map layout.areas, ([name, [top,left],[bottom,right]]) ->
+      new Area(
+        name: name
+        topRow: top
+        bottomRow: bottom
+        leftCol: left
+        rightCol: right
+        roomWidthInPx: roomWidthInTiles * tileWidth
+        roomHeightInPx: roomHeightInTiles * tileHeight
+      )
+
     roomGrid = mapLayoutToRoomGrid(layout, roomTypes, roomDefs, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
     tileGrid = roomGridToTileGrid(roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, tileWidth,tileHeight)
+
     new @(
       roomGrid: roomGrid
       tileGrid: tileGrid
@@ -151,7 +175,10 @@ class WorldMap
       tileWidth: tileWidth
       roomWidthInTiles: roomWidthInTiles
       roomHeightInTiles: roomHeightInTiles
+      areas: areas
     )
+
+defArea = (name, [topRow,leftCol], [bottomRow, rightCol]) ->
 
 defaultWorldMapLayout =
   rows: 10
@@ -161,8 +188,8 @@ defaultWorldMapLayout =
     [0x12, 0x14, 0x19, 0x13,  0x12, 0x14, 0x14, 0x14, 0x13]
   ]
   areas: [
-    ["roomA",[0,0],[0,3]]
-    ["roomB",[0,4],[0,8]]
+    ["roomA", [0,0], [0,3]]
+    ["roomB", [0,4], [0,8]]
   ]
 
 defaultWorldMap = null

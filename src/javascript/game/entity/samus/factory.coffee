@@ -7,14 +7,15 @@ Common = require('../components')
 F = {}
 
 F.samus = (args) ->
+  pos = args.position || {x:50,y:50}
   [
     S.Samus
     S.ShortBeam
     Common.ViewportTarget
     Common.Name.merge(name: 'Samus')
     Common.Position.merge
-      x:50
-      y:50
+      x:pos.x
+      y:pos.y
     Common.Velocity
     Common.Gravity.merge
       max: 200/1000

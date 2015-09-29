@@ -39,6 +39,7 @@ class MetroidCloneDelegate
     # @level = ZoomerLevel
     @level = RoomsLevel
     @worldMap = WorldMap.getDefaultWorldMap()
+    window.map = @worldMap
 
     @defaultInput = Immutable.fromJS
       controllers:
