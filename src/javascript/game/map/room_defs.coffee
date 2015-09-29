@@ -24,6 +24,9 @@ RoomDefs[0x12] =
   ]
   items: [
   ]
+  doors: [
+    ['leftExit', 0x0, 0x5]
+  ]
 
 # hall, door on right
 RoomDefs[0x13] =
@@ -39,6 +42,9 @@ RoomDefs[0x13] =
     # [0xF,0x5, 0xF0] # XXX stand-in for the door
   ]
   items: [
+  ]
+  doors: [
+    ['rightExit', 0xF, 0x5]
   ]
 
 # Skree hall
