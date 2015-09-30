@@ -25,7 +25,7 @@ RoomDefs[0x12] =
   items: [
   ]
   doors: [
-    ['leftExit', 0x0, 0x5]
+    ['blue-right', 0x0, 0x5]
   ]
 
 # hall, door on right

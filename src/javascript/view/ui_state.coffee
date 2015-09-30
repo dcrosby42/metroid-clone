@@ -42,12 +42,15 @@ class UIState
 
     rooms = new PIXI.DisplayObjectContainer()
 
+    doors = new PIXI.DisplayObjectContainer()
+
     overlay = new PIXI.DisplayObjectContainer()
 
     stage.addChild scaler
     scaler.addChild base
     base.addChild creatures
     base.addChild rooms
+    base.addChild doors
     scaler.addChild overlay
 
     layers =
@@ -55,6 +58,7 @@ class UIState
       base: base
       maps: {}
       rooms: rooms
+      doors: doors
       background: background
       creatures: creatures
       overlay: overlay

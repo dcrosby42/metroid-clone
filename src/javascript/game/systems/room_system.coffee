@@ -37,6 +37,23 @@ class RoomSystem extends StateMachineSystem
       y = roomPos.get('y') + (row * worldMap.tileHeight)
       ecomps = Enemies.factory.createComponents(id, x:x, y:y)
       @newEntity ecomps
+
+    # Spawn doors:
+    for [style,col,row] in (roomDef.doors || [])
+      # console.log style,col,row
+      x = roomPos.get('x') + (col * worldMap.tileWidth)
+      y = roomPos.get('y') + (row * worldMap.tileHeight)
+      dcomps = [
+        Common.Position.merge
+          x:x
+          y:y
+        Common.Animation.merge
+          layer: 'doors'
+          spriteName: 'door_frame'
+          state: 'main'
+      ]
+      @newEntity dcomps
+
       
   teardownRoomAction: ->
     roomId = @getProp 'room', 'roomId'

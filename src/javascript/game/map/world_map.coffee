@@ -12,6 +12,8 @@ mapLayoutToRoomGrid = (mapLayout, roomTypes, roomDefs, roomWidthInTiles, roomHei
       roomDef = roomDefs[roomType]
       enemies = if roomDef?
         roomDef.enemies
+      doors = if roomDef?
+        roomDef.doors
       room = Room.create(
         roomType:roomType
         row:r
@@ -20,6 +22,7 @@ mapLayoutToRoomGrid = (mapLayout, roomTypes, roomDefs, roomWidthInTiles, roomHei
         y: r * roomHeightInTiles * tileHeight
         tiles: tilesForRoom(roomTypes[roomType], tileWidth, tileHeight)
         enemies: enemies
+        doors: doors
       )
       roomGrid[r][c] = room
   roomGrid
@@ -73,7 +76,7 @@ roomGridToTileGrid = (roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, 
 
 
 class Room
-  constructor: ({@row,@col,@roomType,@x,@y,@tiles,@enemies}) ->
+  constructor: ({@row,@col,@roomType,@x,@y,@tiles,@enemies,@doors}) ->
     @roomId = "room_r#{@row}_c#{@col}"
 
   id: -> @roomId

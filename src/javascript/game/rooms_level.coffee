@@ -6,6 +6,8 @@ MapDatabase = require './map/map_database'
 Enemies = require './entity/enemies'
 EnemiesSystems =  require './entity/enemies/systems'
 
+Doors = require './entity/doors'
+
 Samus = require './entity/samus'
 SamusSystems =  require './entity/samus/systems'
 
@@ -110,6 +112,7 @@ RoomsLevel.spriteConfigs = ->
   _.merge spriteConfigs, Samus.sprites
   _.merge spriteConfigs, Enemies.sprites
   _.merge spriteConfigs, General.sprites
+  _.merge spriteConfigs, Doors.sprites
   spriteConfigs
 
 _mapDb = MapDatabase.createDefault()
@@ -123,6 +126,7 @@ RoomsLevel.graphicsToPreload = ->
   assets = assets.concat(Samus.assets)
   assets = assets.concat(Enemies.assets)
   assets = assets.concat(General.assets)
+  assets = assets.concat(Doors.assets)
 
   assets
 
