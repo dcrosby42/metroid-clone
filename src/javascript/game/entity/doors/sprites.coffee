@@ -3,24 +3,29 @@ sprites =
   door_frame:
     spriteSheet: "images/doors.json"
     states:
-      "main":
+      "default":
         frame: "door-frame"
-  door_gel:
+  blue_gel_left:
     spriteSheet: "images/doors.json"
     states:
-      "closed-left":
+      "closed":
         frame: "door-gel-01"
-      "opening-left":
+      "opening":
         frame: "door-gel-02"
-      "closed-right":
-        frame: "door-gel-01"
-        props:
-          scale: { x: -1 }
-      "opening-right":
-        frame: "door-gel-02"
-        props:
-          scale: { x: -1 }
     props:
-      anchor: { x: 0.5, y: 0 }
+      anchor: { x: 1, y: 0 }
+  blue_gel_right:
+    spriteSheet: "images/doors.json"
+    states:
+      "closed":
+        frame: "door-gel-01"
+        props:
+          scale: { x: -1 }
+      "opening":
+        frame: "door-gel-02"
+        props:
+          scale: { x: -1 }
+    # props:
+    #   anchor: { x: 0.5, y: 0 }
 
 module.exports = sprites

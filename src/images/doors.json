@@ -11,20 +11,20 @@
 },
 "door-gel-01":
 {
-	"frame": {"x":20,"y":2,"w":16,"h":48},
+	"frame": {"x":2,"y":52,"w":8,"h":48},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":48},
-	"sourceSize": {"w":16,"h":48},
+	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":48},
+	"sourceSize": {"w":8,"h":48},
 	"pivot": {"x":0.5,"y":0.5}
 },
 "door-gel-02":
 {
-	"frame": {"x":38,"y":2,"w":16,"h":48},
+	"frame": {"x":12,"y":52,"w":6,"h":48},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":48},
-	"sourceSize": {"w":16,"h":48},
+	"spriteSourceSize": {"x":0,"y":0,"w":6,"h":48},
+	"sourceSize": {"w":6,"h":48},
 	"pivot": {"x":0.5,"y":0.5}
 }},
 "meta": {
@@ -32,8 +32,8 @@
 	"version": "1.0",
 	"image": "doors.png",
 	"format": "RGBA8888",
-	"size": {"w":56,"h":52},
+	"size": {"w":20,"h":102},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:e400f3df3a1772ce92b3292c6efa4c9c:c75b40c121c725b56d0aa6fc9469de34:cc5c92f828d81c3078c7b0d2ee7791c4$"
+	"smartupdate": "$TexturePacker:SmartUpdate:a9cb661e9ddb3e6533713c26592c4fc5:243a20aae887462f87ca1bdbc81486bc:cc5c92f828d81c3078c7b0d2ee7791c4$"
 }
 }

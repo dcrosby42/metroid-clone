@@ -44,7 +44,7 @@ RoomDefs[0x13] =
   items: [
   ]
   doors: [
-    ['rightExit', 0xF, 0x5]
+    ['blue-left', 0xF, 0x5]
   ]
 
 # Skree hall

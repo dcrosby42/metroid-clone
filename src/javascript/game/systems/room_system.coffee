@@ -43,16 +43,34 @@ class RoomSystem extends StateMachineSystem
       # console.log style,col,row
       x = roomPos.get('x') + (col * worldMap.tileWidth)
       y = roomPos.get('y') + (row * worldMap.tileHeight)
-      dcomps = [
+      frameComps = [
         Common.Position.merge
           x:x
           y:y
         Common.Animation.merge
           layer: 'doors'
           spriteName: 'door_frame'
-          state: 'main'
+          state: 'default'
       ]
-      @newEntity dcomps
+      @newEntity frameComps
+      gx = if style == 'blue-left'
+        x
+      else
+        x
+      sname = if style == 'blue-left'
+        'blue_gel_left'
+      else
+        'blue_gel_right'
+      gelComps = [
+        Common.Position.merge
+          x:gx
+          y:y
+        Common.Animation.merge
+          layer: 'doors'
+          spriteName: sname
+          state: 'closed'
+      ]
+      @newEntity gelComps
 
       
   teardownRoomAction: ->
@@ -70,6 +88,9 @@ class RoomSystem extends StateMachineSystem
       epos = comps.get('position')
       if epos.get('x') >= roomLeft and epos.get('x') < roomRight and epos.get('y') >= roomTop and epos.get('y') < roomBottom
         @destroyEntity epos.get('eid')
+    
+    # Remove doors
+    # TODO
 
     # Remove room
     @destroyEntity()
