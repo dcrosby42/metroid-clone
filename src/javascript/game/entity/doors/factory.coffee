@@ -1,38 +1,47 @@
-# General = require('./components')
 Common = require('../components')
 
 F = {}
 
-# F.healthPickup = (args) ->
-#   x = args.x - 16
-#   y = args.y - 16
-#   value = args.value
-#   value ?= 5
-#   comps = [
-#     Common.Animation.merge
-#       layer: 'creatures'
-#       spriteName: 'health_drop'
-#       state: 'default'
-#     Common.Position.merge
-#       x: x
-#       y: y
-#     Common.Pickup.merge
-#       item: 'health'
-#       value: value
-#     Common.HitBoxVisual.merge
-#       layer: 'creatures'
-#       color: 0xcccccc
-#     Common.HitBox.merge
-#       x: x
-#       y: y
-#       width: 8
-#       height: 8
-#       anchorX: -1.75 + 2.5*(0.0625)
-#       anchorY: -1.75 + 0.0625
-#   ]
-#   if args.time?
-#     comps.push Common.DeathTimer.merge(time: args.time)
-#   comps
+F.doorEnclosure = ({x,y,style}) ->
+  [
+    Common.Position.merge
+      x:x
+      y:y
+    Common.Animation.merge
+      layer: 'doors'
+      spriteName: 'door_frame'
+      state: 'default'
+  ]
+
+F.doorGel = ({x,y,style}) ->
+  gx = if style == 'blue-left'
+    x + 1  # scoot closer to the door enclosure
+  else
+    x + 23 # move over to the right edge of the door enclosure
+  spriteName = if style == 'blue-left'
+    'blue_gel_left'
+  else
+    'blue_gel_right'
+
+  [
+    Common.Position.merge
+      x:gx
+      y:y
+    Common.Animation.merge
+      layer: 'doors'
+      spriteName: spriteName
+      state: 'closed'
+    Common.HitBox.merge
+      x: gx
+      y: y
+      width: 8
+      height: 48
+      anchorX: 1
+      anchorY: 0
+    Common.HitBoxVisual.merge
+      color: 0x999922
+      layer: 'doors'
+  ]
 
 module.exports =
   createComponents: (entityType, args) ->

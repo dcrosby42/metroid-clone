@@ -1,6 +1,7 @@
 StateMachineSystem = require '../../ecs/state_machine_system'
 Common = require '../entity/components'
 Enemies = require '../entity/enemies'
+Doors = require '../entity/doors'
 
 FilterExpander = require '../../ecs/filter_expander'
 enemyFilter = FilterExpander.expandFilterGroups(['enemy','position'])
@@ -35,42 +36,15 @@ class RoomSystem extends StateMachineSystem
     for [col,row,id] in (roomDef.enemies || [])
       x = roomPos.get('x') + (col * worldMap.tileWidth)
       y = roomPos.get('y') + (row * worldMap.tileHeight)
-      ecomps = Enemies.factory.createComponents(id, x:x, y:y)
-      @newEntity ecomps
+      @newEntity Enemies.factory.createComponents(id, x:x, y:y)
 
     # Spawn doors:
     for [style,col,row] in (roomDef.doors || [])
-      # console.log style,col,row
       x = roomPos.get('x') + (col * worldMap.tileWidth)
       y = roomPos.get('y') + (row * worldMap.tileHeight)
-      frameComps = [
-        Common.Position.merge
-          x:x
-          y:y
-        Common.Animation.merge
-          layer: 'doors'
-          spriteName: 'door_frame'
-          state: 'default'
-      ]
-      @newEntity frameComps
-      gx = if style == 'blue-left'
-        x
-      else
-        x
-      sname = if style == 'blue-left'
-        'blue_gel_left'
-      else
-        'blue_gel_right'
-      gelComps = [
-        Common.Position.merge
-          x:gx
-          y:y
-        Common.Animation.merge
-          layer: 'doors'
-          spriteName: sname
-          state: 'closed'
-      ]
-      @newEntity gelComps
+      @newEntity Doors.factory.createComponents('doorEnclosure', x:x,y:y, style:style)
+      @newEntity Doors.factory.createComponents('doorGel', x:x, y:y, style:style)
+
 
       
   teardownRoomAction: ->
