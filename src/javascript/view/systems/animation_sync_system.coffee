@@ -8,7 +8,10 @@ class AnimationSyncSystem extends ViewObjectSyncSystem
   @SyncComponent: 'animation'
 
   newObject: (comps) ->
-    name = comps.getIn(['animation','spriteName'])
+    animation = comps.get('animation')
+    name = animation.get('spriteName')
+    layer = animation.get('layer')
+    # name = comps.getIn(['animation','spriteName'])
     config = @config.getSpriteConfig(name)
     if config?
       sprite = AnimatedSprite.create(config)
@@ -16,7 +19,8 @@ class AnimationSyncSystem extends ViewObjectSyncSystem
       sprite._sidecar =
         animation: null
         position: null
-      @ui.addObjectToLayer sprite, sprite.layer
+      layer ?= sprite.layer
+      @ui.addObjectToLayer sprite, layer
       return sprite
     else
       console.log "!! AnimationSyncSystem: No sprite config defined for '#{name}'"
