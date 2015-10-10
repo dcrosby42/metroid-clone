@@ -6,6 +6,7 @@ SoundController = require './sound_controller'
 class PixiHarness
   constructor: ({@domElement, @delegate, stageBgColor, width, height,@zoom})->
     @stage = new PIXI.Stage(stageBgColor)
+    @stage._name = "Stage"
     @renderer = PIXI.autoDetectRenderer(width,height)
     @view = @renderer.view
     @domElement.appendChild @view

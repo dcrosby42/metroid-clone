@@ -19,6 +19,7 @@ class LabelSyncSystem extends ViewObjectSyncSystem
       fill: labelComp.get('fill_color', StyleDefaults.fill)
 
     label = new PIXI.Text(textContent, style)
+    label._name = "Label '#{textContent}'"
     @ui.addObjectToLayer(label, labelComp.get('layer'))
     label
 

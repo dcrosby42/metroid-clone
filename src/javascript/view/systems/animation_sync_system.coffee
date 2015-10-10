@@ -12,6 +12,7 @@ class AnimationSyncSystem extends ViewObjectSyncSystem
     config = @config.getSpriteConfig(name)
     if config?
       sprite = AnimatedSprite.create(config)
+      sprite._name = "Animated Sprite - #{name}"
       sprite._sidecar =
         animation: null
         position: null

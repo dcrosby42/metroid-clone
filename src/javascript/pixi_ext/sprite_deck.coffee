@@ -66,9 +66,11 @@ class SpriteDeck extends PIXI.DisplayObjectContainer
 
   @_buildSprite: (frame, mods) ->
     sprite = if frame == "_BLANK_"
-      new FauxSprite()
+      sp = new FauxSprite()
     else
-      PIXI.Sprite.fromFrame(frame)
+      sp = PIXI.Sprite.fromFrame(frame)
+      sp._name = "Sprite Frame - #{frame}"
+      sp
 
     sprite.visible = false
     if mods?

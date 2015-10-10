@@ -56,7 +56,32 @@ jquery ->
   $('#fullscreen').on "click", ->
     BigScreen.doTheBigThing harness.view
 
+  window.stage = harness.stage
+  
+  window.Scene =
+    nodes: ->
+      sceneToNames(harness.stage)
+    printNodes: ->
+      printTree(sceneToNames(harness.stage))
+ 
 
 # for console debugging and messing around:
 window.$  = jquery
 window._  = require 'lodash'
+
+sceneToNames = (obj) ->
+  n = {}
+  n.name = obj._name or "??"
+  if obj.children
+    n.children = _.map(obj.children, sceneToNames)
+  n
+
+printTree = (node, indent=0) ->
+  s = ""
+  s += "  " for [0...indent]
+  s += node.name
+  console.log s
+  if node.children
+    printTree(c, indent+1) for c in node.children
+  null
+

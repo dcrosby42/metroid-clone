@@ -33,18 +33,25 @@ class UIState
 
     scaler = new PIXI.DisplayObjectContainer()
     scaler.scale.set(aspectScale.x * zoomScale, aspectScale.y * zoomScale)
+    scaler._name = "Scaler Layer - (#{scaler.scale.x},#{scaler.scale.y})"
 
     base = new PIXI.DisplayObjectContainer()
+    base._name = "Base Layer"
 
     background = new PIXI.DisplayObjectContainer()
+    background._name = "Background Layer"
 
     creatures = new PIXI.DisplayObjectContainer()
+    creatures._name = "Creatures Layer"
 
     rooms = new PIXI.DisplayObjectContainer()
+    rooms._name = "Rooms Layer"
 
     doors = new PIXI.DisplayObjectContainer()
+    doors._name = "Doors Layer"
 
     overlay = new PIXI.DisplayObjectContainer()
+    overlay._name = "Overlay Layer"
 
     stage.addChild scaler
     scaler.addChild base
@@ -90,6 +97,7 @@ class UIState
 
   _addMapLayer: (mapDatabase,mapName) ->
     mapLayer = new PIXI.DisplayObjectContainer()
+    mapLayer._name = "Map Layer - #{mapName}"
     @_layers.base.addChild mapLayer
     @_layers.maps[mapName] = mapLayer
 
@@ -104,6 +112,7 @@ class UIState
           sprite = @_getMapTileSprite(tile.type)
           if sprite?
             sprite.position.set tile.x, tile.y
+            sprite._name = "Sprite #{tile.type}"
             layer.addChild sprite
 
   _getMapTileSprite: (n) ->

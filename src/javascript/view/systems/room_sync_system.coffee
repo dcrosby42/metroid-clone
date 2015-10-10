@@ -12,18 +12,10 @@ class RoomSyncSystem extends ViewObjectSyncSystem
 
     container = new PIXI.DisplayObjectContainer()
     container.position.set position.get('x'), position.get('y')
+    container._name = roomComp.get('roomId')
 
     room = @config.getRoom(roomComp.get('roomId'))
     @_populateTiles container, room.tiles
-
-    # XXX: temp label
-    # style =
-    #   font: "normal 10pt arial"
-    #   fill: "white"
-    # txt = new PIXI.Text(roomComp.get('roomId'), style)
-    # txt.position.set 0,0
-    # txt.visible = true
-    # container.addChild txt
 
     @ui.addObjectToLayer container, 'rooms'
     return container
@@ -36,7 +28,9 @@ class RoomSyncSystem extends ViewObjectSyncSystem
     for row in tiles
       for tile in row
         if tile and tile.type?
-          sprite = PIXI.Sprite.fromFrame("block-#{tile.type}")
+          name = "block-#{tile.type}"
+          sprite = PIXI.Sprite.fromFrame(name)
+          sprite._name = name
           sprite.width = 16.5
           sprite.height = 16.5
           sprite.position.set tile.x, tile.y
