@@ -11,6 +11,7 @@ view = "#{root}/src/javascript/view"
   "#{game}/systems",
   "#{game}/entity/samus/systems",
   "#{game}/entity/enemies/systems",
+  "#{game}/entity/doors/systems",
   "#{view}/systems",
 ].each do |dir|
   MkIndex.run(dir)

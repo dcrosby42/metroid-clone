@@ -1,9 +1,13 @@
 Common = require('../components')
+DoorComponents = require('./components')
 
 F = {}
 
-F.doorEnclosure = ({x,y,style}) ->
+F.doorEnclosure = ({x,y,style, roomId}) ->
   [
+    Common.Name.merge(name: 'Door Frame')
+    DoorComponents.DoorFrame.merge
+      roomId: roomId
     Common.Position.merge
       x:x
       y:y
@@ -13,7 +17,7 @@ F.doorEnclosure = ({x,y,style}) ->
       state: 'default'
   ]
 
-F.doorGel = ({x,y,style}) ->
+F.doorGel = ({x,y,style,roomId}) ->
   gx = if style == 'blue-left'
     x + 1  # scoot closer to the door enclosure
   else
@@ -24,6 +28,9 @@ F.doorGel = ({x,y,style}) ->
     'blue_gel_right'
 
   [
+    Common.Name.merge(name: 'Door Gel')
+    DoorComponents.DoorGel.merge
+      roomId: roomId
     Common.Position.merge
       x:gx
       y:y
@@ -41,6 +48,7 @@ F.doorGel = ({x,y,style}) ->
     Common.HitBoxVisual.merge
       color: 0x999922
       layer: 'doors'
+    Common.MapFixture
   ]
 
 module.exports =

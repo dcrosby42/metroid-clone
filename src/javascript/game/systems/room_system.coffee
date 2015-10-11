@@ -42,8 +42,8 @@ class RoomSystem extends StateMachineSystem
     for [style,col,row] in (roomDef.doors || [])
       x = roomPos.get('x') + (col * worldMap.tileWidth)
       y = roomPos.get('y') + (row * worldMap.tileHeight)
-      @newEntity Doors.factory.createComponents('doorEnclosure', x:x,y:y, style:style)
-      @newEntity Doors.factory.createComponents('doorGel', x:x, y:y, style:style)
+      @newEntity Doors.factory.createComponents('doorEnclosure', x:x,y:y, style:style, roomId: roomId)
+      @newEntity Doors.factory.createComponents('doorGel', x:x, y:y, style:style, roomId: roomId)
 
 
       
@@ -64,7 +64,10 @@ class RoomSystem extends StateMachineSystem
         @destroyEntity epos.get('eid')
     
     # Remove doors
-    # TODO
+    @estore.search([{match:{type:'door_gel',roomId:roomId}, as: 'door_gel'}]).forEach (comps) =>
+      @destroyEntity comps.getIn(['door_gel','eid'])
+    @estore.search([{match:{type:'door_frame',roomId:roomId}, as: 'door_frame'}]).forEach (comps) =>
+      @destroyEntity comps.getIn(['door_frame','eid'])
 
     # Remove room
     @destroyEntity()

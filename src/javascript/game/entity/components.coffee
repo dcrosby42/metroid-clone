@@ -72,6 +72,8 @@ C.Map = imm
 
 C.MapCollider = imm
   type: 'map_collider'
+C.MapFixture = imm
+  type: 'map_fixture'
 
 C.MapGhost = imm
   type: 'map_ghost'

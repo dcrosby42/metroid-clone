@@ -11,7 +11,19 @@ sprites =
       "closed":
         frame: "door-gel-01"
       "opening":
-        frame: "door-gel-02"
+        frames: [
+          "door-gel-02"
+          "blank"
+        ]
+        fps: 5
+        loop: false
+      "closing":
+        frames: [
+          "door-gel-02"
+          "door-gel-01"
+        ]
+        fps: 5
+        loop: false
     props:
       anchor: { x: 1, y: 0 }
   blue_gel_right:
@@ -22,7 +34,21 @@ sprites =
         props:
           scale: { x: -1 }
       "opening":
-        frame: "door-gel-02"
+        frames: [
+          "door-gel-02"
+          "blank"
+        ]
+        fps: 5
+        loop: false
+        props:
+          scale: { x: -1 }
+      "closing":
+        frames: [
+          "door-gel-02"
+          "door-gel-01"
+        ]
+        fps: 5
+        loop: false
         props:
           scale: { x: -1 }
     # props:

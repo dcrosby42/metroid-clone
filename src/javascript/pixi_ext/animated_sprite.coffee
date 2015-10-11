@@ -25,7 +25,8 @@ class AnimatedSprite extends SpriteDeck
 
       frameDelayMillis = 1000 / data.fps
       frameIndices = _.range(0,frameCount)
-      timeline = Timeline.createTimedEvents(frameDelayMillis, frameIndices, true)
+      looped = if data.loop? then data.loop else true
+      timeline = Timeline.createTimedEvents(frameDelayMillis, frameIndices, looped)
       timelines[state] = timeline
     timelines
 

@@ -1,10 +1,11 @@
 AnchoredBox = require '../../utils/anchored_box'
 BaseSystem = require '../../ecs/base_system'
+FilterExpander = require '../../ecs/filter_expander'
 
+fixtureFilter = FilterExpander.expandFilterGroups(['map_fixture', 'hit_box'])
 
 class MapPhysicsSystem extends BaseSystem
   @Subscribe: [
-    ['map']
     ['map_collider', 'velocity','hit_box','position']
   ]
 
@@ -20,6 +21,10 @@ class MapPhysicsSystem extends BaseSystem
 
     box = new AnchoredBox(hitBoxJS)
     box.setXY position.get('x'), position.get('y')
+
+    fboxes = []
+    @estore.search(fixtureFilter).forEach (comps) ->
+      fboxes.push( new AnchoredBox(comps.get('hit_box').toJS()) )
 
     hits =
       left: []
@@ -48,6 +53,7 @@ class MapPhysicsSystem extends BaseSystem
         box.setY(s.y - box.bottomOffset-1)
         adjacent.bottom = hits.bottom
 
+
     unless adjacent.top?
       adjacent.top = worldMap.tileSearchHorizontal(box.top-1, box.left, box.right-1)
     unless adjacent.bottom?
@@ -57,6 +63,17 @@ class MapPhysicsSystem extends BaseSystem
     # Step 2: apply & restrict horizontal movement
     box.moveX(vx * @dt())
 
+    # (check non-map-tile map fixture collisions, like doors and disappearing blocks)
+    for fbox in fboxes
+      if box.overlaps(fbox)
+        if box.centerX < fbox.centerX
+          box.moveX(fbox.left - box.right)#- 1)
+          adjacent.right = [fbox]
+        else
+          box.moveX(fbox.right - box.left)#+ 1)
+          adjacent.left = [fbox]
+          
+    # (check map tiles)
     hits.left = worldMap.tileSearchVertical(box.left, box.top, Math.ceil(box.bottom))
     if hits.left.length > 0
       s = hits.left[0]
@@ -86,13 +103,13 @@ class MapPhysicsSystem extends BaseSystem
     hitBoxJS.touching.right = hits.right.length > 0
     hitBoxJS.touching.top = hits.top.length > 0
     hitBoxJS.touching.bottom = hits.bottom.length > 0
-    hitBoxJS.touchingSomething = hitBoxJS.touching.left or hitBoxJS.touching.right or hitBoxJS.touching.top or hitBoxJS.touching.bottom
 
     hitBoxJS.adjacent = {}
     hitBoxJS.adjacent.top = adjacent.top.length > 0
     hitBoxJS.adjacent.bottom = adjacent.bottom.length > 0
     hitBoxJS.adjacent.left = adjacent.left.length > 0
     hitBoxJS.adjacent.right = adjacent.right.length > 0
+    hitBoxJS.touchingSomething = hitBoxJS.touching.left or hitBoxJS.touching.right or hitBoxJS.touching.top or hitBoxJS.touching.bottom or hitBoxJS.adjacent.left or hitBoxJS.adjacent.right or hitBoxJS.adjacent.top or hitBoxJS.adjacent.bottom
 
     @updateComp hitBox.merge(hitBoxJS)
 
