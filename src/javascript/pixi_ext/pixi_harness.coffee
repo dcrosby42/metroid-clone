@@ -1,7 +1,12 @@
 PIXI = require 'pixi.js'
 StopWatch = require './stop_watch'
 CompositeEvent = require '../utils/composite_event'
+ProfilerThing = require '../utils/profiler_thing'
+BufferedPusher = require '../utils/buffered_pusher'
 SoundController = require './sound_controller'
+
+jquery = require 'jquery'
+profilingCaptureUrl = "http://127.0.0.1:5012/capture-data"
 
 class PixiHarness
   constructor: ({@domElement, @delegate, stageBgColor, width, height,@zoom})->
@@ -10,12 +15,18 @@ class PixiHarness
     @view = @renderer.view
     @domElement.appendChild @view
     @stopWatch = new StopWatch()
+    @prof = new ProfilerThing()
 
+    flushToServer = (buffer,_) -> jquery.post profilingCaptureUrl, JSON.stringify(data: buffer)
+    flushToConsole = (buffer,_) -> console.log buffer
+    every60 = BufferedPusher.Conditions.length(60)
+    # @dataSender = new BufferedPusher(flushToConsole, every60)
+    @dataSender = new BufferedPusher(flushToServer, every60)
 
   start: ->
     @_loadAssets =>
       console.log "Assets loaded."
-      @delegate.setupStage @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight, @zoom
+      @delegate.setupStage @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight, @zoom, @prof
       @stopWatch.start()
       requestAnimationFrame => @update()
 
@@ -53,9 +64,15 @@ class PixiHarness
     if dt > 1000
       console.log "SKIPPING UPDATE, long dt: #{dt}"
     else
+      updateStart = @stopWatch.currentTimeMillis()
       @delegate.update dt
+      updateTime = @stopWatch.currentTimeMillis() - updateStart
 
     @renderer.render(@stage)
+
+    item = @prof.tear(dt: dt, updateTime: updateTime)
+    @dataSender.push item
+
     requestAnimationFrame => @update()
 
 module.exports = PixiHarness

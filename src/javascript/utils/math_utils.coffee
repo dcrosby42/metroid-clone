@@ -19,9 +19,22 @@ keepWithin = (x,target,minDist,maxDist) ->
 
 divRem = (numer,denom) -> [Math.floor(numer/denom), numer % denom]
 
+sum = (arr) ->
+  s = 0
+  for x in arr
+    s += x
+  s
+
+mean = (arr) ->
+  sum(arr) / arr.length
+
+
 module.exports =
   max: max
   min: min
   clamp: clamp
   keepWithin: keepWithin
   divRem: divRem
+  sum: sum
+  mean: mean
+
