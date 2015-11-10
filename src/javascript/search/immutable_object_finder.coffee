@@ -1,4 +1,5 @@
 Immutable = require 'immutable'
+Profiler = require '../profiler'
 
 searchWithJoins = (comps,filters,row=Immutable.Map()) ->
   if filters.size == 0
@@ -13,6 +14,8 @@ searchWithJoins = (comps,filters,row=Immutable.Map()) ->
   ).flatten(1)
 
 filterObjects = (comps,filter) ->
+  Profiler.count("filterObjects")
+  Profiler.sample("filterObjects_numComps",comps.size)
   matchProps = filter.get('match')
   comps.filter (obj) ->
     matchProps.every (v,k) -> obj.get(k) == v
