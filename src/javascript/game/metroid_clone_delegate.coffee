@@ -163,6 +163,8 @@ class MetroidCloneDelegate
 
 
   update: (dt) ->
+    Debug.bencher.updateBegin(dt)
+
     ac = @adminController.update()
     @handleAdminControls(ac) if ac?
 
@@ -225,7 +227,7 @@ class MetroidCloneDelegate
 
       # else
       #   console.log events.toJS()
-
+    Debug.bencher.updateEnd()
 
 
   captureTimeWalkSnapShot: (estore) ->

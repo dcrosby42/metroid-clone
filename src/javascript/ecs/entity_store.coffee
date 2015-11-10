@@ -35,6 +35,8 @@ class EntityStore
     comp = @_newComponent eid, cid, props
     @componentsByCid = @componentsByCid.set cid, comp
     @_addToIndex 'eid', comp
+    # @_addToIndex 'type', comp
+    # @_addToIndex2 ['eid','type'], comp
     comp
 
   updateComponent: (comp) ->
@@ -47,6 +49,8 @@ class EntityStore
     cid = comp.get('cid')
     @componentsByCid = @componentsByCid.delete cid
     @_deleteFromIndex 'eid', comp
+    # @_deleteFromIndex 'type', comp
+    # @_deleteFromIndex2 ['eid','type'], comp
     null
 
   destroyEntity: (eid) ->
@@ -77,7 +81,8 @@ class EntityStore
     @componentsByCid.get cid
 
   search: (filters) ->
-    Finder.search @componentsByCid.toList(), filters
+    # Finder.search @componentsByCid.toList(), @indices, filters
+    Finder.search @componentsByCid, @indices, Immutable.fromJS(filters)
 
   allComponentsByCid: -> @componentsByCid
 
