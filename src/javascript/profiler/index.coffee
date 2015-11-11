@@ -11,21 +11,22 @@ flushToConsole = (buffer,_) -> console.log buffer
 
 every60 = BufferedPusher.Conditions.length(60)
 
-impl = new ProfilerImpl()
+impl = null
 reporter = null
 
 module.exports =
+  enable: -> impl = new ProfilerImpl()
+  disable: -> impl = null
+
   in: (name) -> impl.in(name) if impl
   out: (name) -> impl.out(name) if impl
   count: (name) -> impl.count(name) if impl
   sample: (name,x) -> impl.sample(name,x) if impl
   tear: (item) ->
-    if impl
-      item = impl.tear(item)
-      reporter.push item if reporter
-      item
-    else
-      null
+    return null unless impl
+    item = impl.tear(item)
+    reporter.push item if reporter
+    item
   
   useAjaxReporter: (endpoint=DefaultDataEndpoint) ->
     reporter = new BufferedPusher(newFlushToServer(endpoint), every60)
@@ -34,3 +35,4 @@ module.exports =
   useConsoleReporter: (endpoint=null) ->
     reporter = new BufferedPusher(flushToConsole, every60)
     null
+

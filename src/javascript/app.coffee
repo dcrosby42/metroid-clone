@@ -12,6 +12,8 @@ DelegateClass = MetroidCloneDelegate
 
 Profiler = require './profiler'
 Profiler.useAjaxReporter()
+Profiler.disable()
+
 
 BigScreen = require './vendor/bigscreen_wrapper'
 
