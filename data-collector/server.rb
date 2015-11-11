@@ -14,7 +14,7 @@ end
 post '/capture-data' do
   # cross_origin
   obj = JSON.parse(request.body.read)
-  File.open("data.json","w+") do |f|
+  File.open("data.json","a") do |f|
     obj['data'].each do |x|
       f.puts x.to_json
     end
