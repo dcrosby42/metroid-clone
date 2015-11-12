@@ -9,6 +9,7 @@ searchWithJoins = (comps,filters,row=Immutable.Map()) ->
   fs = filters.shift()
 
   as = f0.get('as')
+  Profiler.debug("f0", f0.toJS())
   filterObjects(comps,f0).map((c) ->
     searchWithJoins(comps,fs,row.set(as,c))
   ).flatten(1)

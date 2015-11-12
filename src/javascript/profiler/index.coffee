@@ -22,6 +22,7 @@ module.exports =
   out: (name) -> impl.out(name) if impl
   count: (name) -> impl.count(name) if impl
   sample: (name,x) -> impl.sample(name,x) if impl
+  debug: (name,x) -> impl.debug(name,x) if impl
   tear: (item) ->
     return null unless impl
     item = impl.tear(item)

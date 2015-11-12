@@ -12,8 +12,10 @@ configure do
 end
 
 post '/capture-data' do
-  # cross_origin
+  puts "hi!"
+  cross_origin
   obj = JSON.parse(request.body.read)
+  p obj
   File.open("data.json","a") do |f|
     obj['data'].each do |x|
       f.puts x.to_json

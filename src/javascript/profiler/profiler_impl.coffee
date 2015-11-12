@@ -8,6 +8,7 @@ class ProfilerImpl
     @times = {}
     @counts = {}
     @samples = {}
+    @debugs = {}
 
   in: (name) ->
     @times[name] ?= []
@@ -27,6 +28,10 @@ class ProfilerImpl
   sample: (name,x) ->
     @samples[name] ?= []
     @samples[name].push x
+
+  debug: (name,x) ->
+    @debugs[name] ?= []
+    @debugs[name].push x
 
   tear: (item={}) ->
     for key,arr of @times
@@ -48,6 +53,9 @@ class ProfilerImpl
         mean: MathUtils.arrayMean(arr)
         min: MathUtils.arrayMin(arr)
         max: MathUtils.arrayMax(arr)
+
+    for key,arr of @debugs
+      item[key] = arr
     
     @reset()
     item
