@@ -60,7 +60,7 @@ joinAll = (filters,key) ->
 
   first = filters.first()
 
-  join = "#{first.get('as')}.#{key}"
+  join = "#{first.get('as')}.#{key}" # TODO don't do this like "obj.key" but rather ["obj","key"]
   rest = filters.shift().map (f) ->
     return f if f.has('join')
     f.set('join', join)

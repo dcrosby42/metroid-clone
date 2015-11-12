@@ -1,6 +1,9 @@
 Immutable = require 'immutable'
 Profiler = require '../profiler'
 
+#  { match: { type: 'position' }, join: "animation.eid" }
+#  { match: { type: 'position' }, join: "animation.eid", as: 'animation_position' }
+#  { match: { type: 'position', eid: 'e42' } as: 'animation_position' }, 
 searchWithJoins = (comps,filters,row=Immutable.Map()) ->
   if filters.size == 0
     return Immutable.List([row])
@@ -9,7 +12,6 @@ searchWithJoins = (comps,filters,row=Immutable.Map()) ->
   fs = filters.shift()
 
   as = f0.get('as')
-  Profiler.debug("f0", f0.toJS())
   filterObjects(comps,f0).map((c) ->
     searchWithJoins(comps,fs,row.set(as,c))
   ).flatten(1)
@@ -28,7 +30,7 @@ expandLabel = (filter) ->
 expandJoins = (filter,row) ->
   join = filter.get('join')
   if join?
-    [refKey,key] = join.split('.')
+    [refKey,key] = join.split('.') # TODO: update filter_expander#joinAll to express joins with a 2-vector instead of a string, so we don't have to split on "."
     if val = row.getIn [refKey,key]
       filter.setIn ['match',key], val
     else
