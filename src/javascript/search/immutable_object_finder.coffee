@@ -16,6 +16,24 @@ searchWithJoins = (comps,filters,row=Immutable.Map()) ->
     searchWithJoins(comps,fs,row.set(as,c))
   ).flatten(1)
 
+indexedSearchWithJoins = (allComps,indices,filters,row=Immutable.Map()) ->
+  if filters.size == 0
+    return Immutable.List([row])
+
+  f0 = expandLabel(expandJoins(filters.first(),row))
+  fs = filters.shift()
+
+  as = f0.get('as')
+
+  # 
+  # type
+  # eid,type
+  #
+  hits = filterObjects(comps,f0)
+  hits.map((c) ->
+    searchWithJoins(comps,fs,row.set(as,c))
+  ).flatten(1)
+
 filterObjects = (comps,filter) ->
   Profiler.count("filterObjects")
   Profiler.sample("filterObjects_numComps",comps.size)

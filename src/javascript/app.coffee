@@ -12,7 +12,7 @@ DelegateClass = MetroidCloneDelegate
 
 Profiler = require './profiler'
 Profiler.useAjaxReporter()
-Profiler.enable()
+# Profiler.enable()
 # Profiler.disable()
 
 
