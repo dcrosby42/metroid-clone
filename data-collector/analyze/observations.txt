@@ -1,0 +1,18 @@
+"Heavy" case
+  1 update
+  dt=~18 millis
+  (3 millis update time)
+  159 filterObject calls (159 full scans)
+   * 114 obj comparisons per call
+   = 18126 compares per update
+
+
+"Lite" case
+  1 update
+  dt= ~16 millis
+  (18-32 millis update time)
+  16 filterObject calls (16 full scans)
+   * 8 obj compares per scan
+   = 128 compares per update
+
+Heavy case is 140x that of lite case
