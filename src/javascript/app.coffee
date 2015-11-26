@@ -10,6 +10,11 @@ ShapesUiDelegate = require './game/shapes_ui_delegate'
 DelegateClass = MetroidCloneDelegate
 # DelegateClass = ShapesUiDelegate
 
+Profiler = require './profiler'
+Profiler.useAjaxReporter()
+# Profiler.enable()
+# Profiler.disable()
+
 
 BigScreen = require './vendor/bigscreen_wrapper'
 

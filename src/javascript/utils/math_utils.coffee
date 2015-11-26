@@ -1,3 +1,5 @@
+_ = require 'lodash'
+
 clamp = (x,min,max) ->
   if x < min
     min
@@ -19,9 +21,30 @@ keepWithin = (x,target,minDist,maxDist) ->
 
 divRem = (numer,denom) -> [Math.floor(numer/denom), numer % denom]
 
+arraySum = (arr) ->
+  _.sum(arr)
+  # s = 0
+  # for x in arr
+  #   s += x
+  # s
+
+arrayMin = (arr) ->
+  _.min(arr)
+
+arrayMax = (arr) ->
+  _.max(arr)
+
+arrayMean = (arr) ->
+  _.sum(arr) / arr.length
+
 module.exports =
-  max: max
   min: min
+  max: max
+  arraySum: arraySum
+  arrayMax: arrayMax
+  arrayMin: arrayMin
+  arrayMean: arrayMean
   clamp: clamp
   keepWithin: keepWithin
   divRem: divRem
+

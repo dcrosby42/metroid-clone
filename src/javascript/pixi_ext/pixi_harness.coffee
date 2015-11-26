@@ -2,6 +2,7 @@ PIXI = require 'pixi.js'
 StopWatch = require './stop_watch'
 CompositeEvent = require '../utils/composite_event'
 SoundController = require './sound_controller'
+Profiler = require '../profiler'
 
 class PixiHarness
   constructor: ({@domElement, @delegate, stageBgColor, width, height,@zoom})->
@@ -11,7 +12,6 @@ class PixiHarness
     @view = @renderer.view
     @domElement.appendChild @view
     @stopWatch = new StopWatch()
-
 
   start: ->
     @_loadAssets =>
@@ -54,9 +54,14 @@ class PixiHarness
     if dt > 1000
       console.log "SKIPPING UPDATE, long dt: #{dt}"
     else
+      updateStart = @stopWatch.currentTimeMillis()
       @delegate.update dt
+      updateTime = @stopWatch.currentTimeMillis() - updateStart
 
     @renderer.render(@stage)
+
+    Profiler.tear(dt: dt, updateTime: updateTime)
+
     requestAnimationFrame => @update()
 
 module.exports = PixiHarness
