@@ -60,10 +60,23 @@ ObjectStore.hasIndex = (store, indexedBy) ->
 ObjectStore.getIndices = (store) ->
   store.get('indexedData').keySeq()
 
+# TODO return a Seq instead of the actual Set?
 ObjectStore.getIndexedObjects = (store, indexedBy, keyPath) ->
   index = store.get('indexedData').get(indexedBy)
   if index? then index.getIn(keyPath) else Immutable.Set()
 
+
+# TODO: removeObject
+# TODO: allObjects
+
+listSize = (l) -> l.size
+
+ObjectStore.bestIndexForKeys = (store, keys) ->
+  matchAllKeys = (index) -> index.every (k) -> keys.has(k)
+  ObjectStore.getIndices(store)
+    .filter(matchAllKeys)
+    .sortBy(listSize)
+    .last() or null
 
 
 #

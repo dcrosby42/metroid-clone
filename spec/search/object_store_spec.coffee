@@ -153,6 +153,35 @@ describe "ObjectStore", ->
         indices = ObjectStore.getIndices(store)
         expectIs indices.toList(), imm([])
 
+    describe "bestIndexForKeys()", ->
+      catIndex = imm(['cat'])
+      catGenreIndex = imm(['cat','genre'])
+
+      beforeEach ->
+        store = ObjectStore.addIndex(store, imm(['other']))
+        store = ObjectStore.addIndex(store, catIndex)
+        store = ObjectStore.addIndex(store, catGenreIndex)
+
+      it "finds which indices in a store may be used for the given match configuration", ->
+        match = imm
+          genre: 'scifi'
+          cat: 'fiction'
+          dude: "dave"
+
+        keys = match.keySeq().toSet()
+        index = ObjectStore.bestIndexForKeys(store,keys)
+        expectIs index, imm(['cat','genre'])
+
+        match2 = match.delete('genre')
+        keys2 = match.keySeq().toSet()
+        index2 = ObjectStore.bestIndexForKeys(store,keys2)
+        expectIs index2, imm(['cat','genre'])
+
+        match3 = match2.delete('cat')
+        keys3 = match3.keySeq().toSet()
+        index3 = ObjectStore.bestIndexForKeys(store,keys3)
+        expect(index3).to.be.null
+
 
   describe "ObjectStore.Wrapper", ->
     wrapper = null
@@ -185,7 +214,22 @@ describe "ObjectStore", ->
       expect(wrapper.hasIndex(imm(['genre']))).to.equal(true)
 
 
-
-    
-
-
+# [
+#   {
+#     as: 'bullet'
+#     match:
+#       type: 'bullet'
+#   }
+#   {
+#     as: 'hit_box'
+#     match:
+#       type: 'hit_box'
+#       eid: ['bullet','eid']
+#   }
+#   {
+#     as: 'animation'
+#     match:
+#       type: 'animation'
+#       eid: {matching: ['bullet','eid']}
+#   }
+# ]
