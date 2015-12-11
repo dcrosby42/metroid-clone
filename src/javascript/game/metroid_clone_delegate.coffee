@@ -2,6 +2,8 @@ Immutable = require 'immutable'
 
 KeyboardController = require '../input/keyboard_controller'
 GamepadController = require('../input/gamepad_controller')
+ControllerEventMux = require('../input/controller_event_mux')
+PressedReleased = require('../utils/pressed_released')
 
 EntityStore = require '../ecs/entity_store'
 EcsMachine = require '../ecs/ecs_machine'
@@ -32,6 +34,11 @@ WorldMap = require './map/world_map'
 # ZoomerLevel = require './zoomer_level'
 RoomsLevel = require './rooms_level'
 MainTitleLevel = require './main_title_level'
+
+GameControlMappings = Immutable.Map
+  player1: 'p1Keyboard'
+  debug1: 'p1Gamepad'
+
 
 class MetroidCloneDelegate
   constructor: ({componentInspector}) ->
@@ -65,8 +72,13 @@ class MetroidCloneDelegate
     sounds
 
   setupStage: (stage, width, height,zoom) ->
+    # @titleGameMachine = new EcsMachine(systems: @titleLevel.gameSystems())
+    # @mainGameMachine = new EcsMachine(systems: @level.gameSystems())
+
     @_activateTitleScreen()
     # @_activateMainGame()
+
+    @adminState = Immutable.fromJS(controller:{})
 
     uiState = UIState.create
       stage: stage
@@ -155,74 +167,82 @@ class MetroidCloneDelegate
         "b": 'toggleCrawlDir'
         "f": 'mod1'
 
-    @useGamepad = false
+    # XXX
+    @useGamepad = true
+    # XXX
     @p1Controller = @keyboardController
 
+    @controllerEventMux = new ControllerEventMux(
+      admin: @adminController
+      debug: @debugController
+      p1Keyboard: @keyboardController
+      p1Gamepad: @gamepadController
+    )
+
+  _mapControllerEvents: (events, mappings) ->
+    mappings.reduce (controllers, src,dest) ->
+      controllers.set dest, events.get(src)
+    , Immutable.Map()
+
+  _updateAdmin: (state, cevts) ->
+    controller = PressedReleased.update(state.get('controller'),cevts)
+    state = state.set('controller', controller)
+
+    if controller.get('toggle_pausePressed')
+      state = state.update 'paused', (p) -> !p
+     
+    state = state.set('replay_back',
+      controller.get('time_walk_backPressed') or
+      controller.get('time_scroll_back')
+    ).set('replay_forward',
+      controller.get('time_walk_forwardPressed') or
+      controller.get('time_scroll_forward')
+    ).set('step_forward',
+      controller.get('step_forwardPressed')
+    )
+        
+    state
 
 
   update: (dt) ->
-    ac = @adminController.update()
-    @handleAdminControls(ac) if ac?
+    controllerEvents = @controllerEventMux.next()
 
-    p1ControllerInput = Immutable.fromJS(
-      @p1Controller.update()
-    )
-    debugControllerInput = Immutable.fromJS(
-      @debugController.update()
-    )
-
-    input = @defaultInput
-      .set('dt', dt)
-      .setIn(['controllers','player1'], p1ControllerInput)
-      .setIn(['controllers','debug1'], debugControllerInput)
-    
     events = null
-    if @paused
-      if @step_forward
-        @step_forward = false
-
-        input = input.set('dt', 17)
-        [@estore,events] = @gameMachine.update(@estore,input)
-        @captureTimeWalkSnapShot(@estore)
-
-      if @time_walk_back or @time_scroll_back
-        @time_walk_back = false
-        if snapshot = @stateHistory.stepBack()
-          @estore.restoreSnapshot(snapshot)
-        else
-          console.log "(null snapshot, not restoring)"
-
-
-      if @time_walk_forward or @time_scroll_forward
-        @time_walk_forward = false
+    @adminState = @_updateAdmin(@adminState, controllerEvents.get('admin'))
+    if @adminState.get('paused')
+      if @adminState.get('replay_forward')
         if snapshot = @stateHistory.stepForward()
           @estore.restoreSnapshot(snapshot)
-        else
-          console.log "(null snapshot, not restoring)"
-
+      if @adminState.get('replay_back')
+        if snapshot = @stateHistory.stepBack()
+          @estore.restoreSnapshot(snapshot)
+      if @adminState.get('step_forward')
+        input = @defaultInput
+          .set('dt', 17)
+          .set('controllers', @_mapControllerEvents(controllerEvents,GameControlMappings))
+        [@estore,events] = @gameMachine.update(@estore,input)
+        @captureTimeWalkSnapShot(@estore)
     else
-      [@estore,events] = @gameMachine.update(@estore, input)
+      input = @defaultInput
+        .set('dt', 17)
+        .set('controllers', @_mapControllerEvents(controllerEvents,GameControlMappings))
+      [@estore,events] = @gameMachine.update(@estore,input)
       @captureTimeWalkSnapShot(@estore)
-
-    @viewMachine.update(@estore.readOnly())
-
-    @componentInspectorMachine.update(@estore.readOnly())
-
-    
 
     if events? and events.size > 0
       if e = events.find((e) -> e.get('name') == 'StartNewGame')
-        # console.log "NEW GAME!",e.toJS()
         @_activateMainGame()
       if e = events.find((e) -> e.get('name') == 'ContinueGame')
-        # console.log "CONTINUE GAME!",e.toJS()
         @_activateMainGame()
       if e = events.find((e) -> e.get('name') == 'Killed')
-        # console.log "KILLED!",e.toJS()
         @_activateTitleScreen()
 
-      # else
-      #   console.log events.toJS()
+    gameState = @estore.readOnly()
+
+    @viewMachine.update gameState
+
+    @componentInspectorMachine.update gameState
+
 
 
 
@@ -230,6 +250,20 @@ class MetroidCloneDelegate
     @stateHistory.addState estore.takeSnapshot()
     
   handleAdminControls: (ac) ->
+    # negate = (x) -> !x
+    # updateProp = (prop, fn) -> (s) -> s.update prop, fn
+    # negateProp = (prop) -> updateProp(prop, negate)
+    # cycleProp
+    #
+    # {
+    #   toggle_gamepad: negateProp('useGamepad')
+    #   toggle_bgm: (s) ->
+    #     if bgmId = s.get('bgmId')
+    #
+    #
+    #
+    # }
+    #
     if ac.toggle_gamepad
       @useGamepad = !@useGamepad
       if @useGamepad
@@ -237,14 +271,14 @@ class MetroidCloneDelegate
       else
         @p1Controller = @keyboardController
 
-    if ac.toggle_bgm
-      if @bgmId?
-        @estore.destroyEntity @bgmId
-        @bgmId = null
-      else
-        @bgmId = @estore.createEntity [
-          C.Sound.merge soundId: 'brinstar', timeLimit: 116000, volume: 0.3
-        ]
+    # if ac.toggle_bgm
+    #   if @bgmId?
+    #     @estore.destroyEntity @bgmId
+    #     @bgmId = null
+    #   else
+    #     @bgmId = @estore.createEntity [
+    #       C.Sound.merge soundId: 'brinstar', timeLimit: 116000, volume: 0.3
+    #     ]
 
     if ac.toggle_pause
       if @paused

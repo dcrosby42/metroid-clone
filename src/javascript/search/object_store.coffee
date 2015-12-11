@@ -40,6 +40,10 @@ ObjectStore.addObject = (store, object) ->
     store.setIn ['data', object.get(store.get('dataKey'))], object
   )
 
+# TODO: testme
+ObjectStore.updateObject = (store, object) ->
+  store.setIn ['data', object.get(store.get('dataKey'))], object
+
 ObjectStore.addObjects = (store, objects) ->
   reindex(
     store.set 'data', ObjectStore.mappedBy(objects, store.get('dataKey'))

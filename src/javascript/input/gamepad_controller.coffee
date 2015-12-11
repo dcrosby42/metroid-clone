@@ -13,20 +13,16 @@ class GamepadWrapper
     @gamepad = new Gamepad()
     @gamepad.bind Gamepad.Event.BUTTON_DOWN, (e) => @_keyDown(e.control)
     @gamepad.bind Gamepad.Event.BUTTON_UP, (e) => @_keyUp(e.control)
-    if @gamepad.init()
-      0 #
-    else
-      console.log "Gamepad init FAILED"
+    if !@gamepad.init()
+      throw "GamepadWrapper: Gamepad#init FAILED"
 
   _keyDown: (key) ->
     tracking = @_getDowns(key)
-    # console.log "_keyDown #{key}", tracking
     tracking['queued'].push(true)
     false
 
   _keyUp: (key) ->
     tracking = @_getDowns(key)
-    # console.log "_keyUp #{key}", tracking
     tracking['queued'].push(false)
     false
 
@@ -63,6 +59,8 @@ class InputState
     else
       return null
 
+  next: -> @update()
+
 class GamepadController
   constructor: (@bindings) ->
     @keys = []
@@ -95,7 +93,5 @@ class GamepadController
   isActive: (action) ->
     @actionStates[action]
 
-
-# module.exports = KeyboardController
 
 module.exports = GamepadController

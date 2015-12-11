@@ -96,6 +96,7 @@ class KeyboardController
     else
       return null
 
+  next: -> @update()
 
   isActive: (action) ->
     @actionStates[action]
