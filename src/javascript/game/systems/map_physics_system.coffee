@@ -23,7 +23,7 @@ class MapPhysicsSystem extends BaseSystem
     box.setXY position.get('x'), position.get('y')
 
     fboxes = []
-    @estore.search(fixtureFilter).forEach (comps) ->
+    @searchEntities(fixtureFilter).forEach (comps) ->
       fboxes.push( new AnchoredBox(comps.get('hit_box').toJS()) )
 
     hits =

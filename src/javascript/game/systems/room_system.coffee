@@ -58,15 +58,16 @@ class RoomSystem extends StateMachineSystem
     roomBottom = roomTop + worldMap.roomHeightInPx
 
     # Despawn enemies
-    @estore.search(enemyFilter).forEach (comps) =>
+    @searchEntities(enemyFilter).forEach (comps) =>
       epos = comps.get('position')
       if epos.get('x') >= roomLeft and epos.get('x') < roomRight and epos.get('y') >= roomTop and epos.get('y') < roomBottom
         @destroyEntity epos.get('eid')
     
     # Remove doors
-    @estore.search([{match:{type:'door_gel',roomId:roomId}, as: 'door_gel'}]).forEach (comps) =>
+    @searchEntities([{match:{type:'door_gel',roomId:roomId}, as: 'door_gel'}]).forEach (comps) =>
       @destroyEntity comps.getIn(['door_gel','eid'])
-    @estore.search([{match:{type:'door_frame',roomId:roomId}, as: 'door_frame'}]).forEach (comps) =>
+
+    @searchEntities([{match:{type:'door_frame',roomId:roomId}, as: 'door_frame'}]).forEach (comps) =>
       @destroyEntity comps.getIn(['door_frame','eid'])
 
     # Remove room

@@ -36,7 +36,7 @@ class ViewportRoomSystem extends BaseSystem
 
     # Find existing rooms that need to go away:
     goneIds = prevRoomIds.subtract(currRoomIds)
-    @estore.search(roomFilter).forEach (comps) =>
+    @searchEntities(roomFilter).forEach (comps) =>
       room = comps.get('room')
       roomId = room.get('roomId')
       if goneIds.has(roomId)

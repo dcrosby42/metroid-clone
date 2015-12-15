@@ -138,6 +138,12 @@ class BaseSystem
   firstEntityNamed: (name) ->
     return @eachEntityNamed(name).first()
 
+  searchEntities: (filters) ->
+    @estore.search(filters)
+
+
+
+
   #
   # EVENTS
   #
