@@ -11,7 +11,7 @@ class EntityStore
       cidGen:          SeqGen.new('c', 0)
 
   constructor: ->
-    @restoreSnapshot EntityStore.initialState()
+    @restoreSnapshot @constructor.initialState()
 
   #
   # WRITE

@@ -24,7 +24,8 @@ Samus = require './entity/samus'
 Enemies = require './entity/enemies'
 General = require './entity/general'
 
-StateHistory = require '../utils/state_history'
+#XXX StateHistory = require '../utils/state_history'
+ImmRingBuffer = require '../utils/imm_ring_buffer'
 Debug = require '../utils/debug'
 
 # MapDatabase = require './map/map_database'
@@ -39,12 +40,19 @@ GameControlMappings = Immutable.Map
   player1: 'p1Keyboard'
   debug1: 'p1Gamepad'
 
+ImmRingBuffer = require '../utils/imm_ring_buffer'
+
 
 class MetroidCloneDelegate
   constructor: ({componentInspector}) ->
     @titleLevel = MainTitleLevel
     # @level = ZoomerLevel
     @level = RoomsLevel
+
+    @playingTheGameMachine = new EcsMachine(systems: @level.gameSystems())
+    @titleMachine = new EcsMachine(systems: @titleLevel.gameSystems())
+
+    # @estore = new EntityStore()
 
     @defaultInput = Immutable.fromJS
       controllers:
@@ -72,13 +80,12 @@ class MetroidCloneDelegate
     sounds
 
   setupStage: (stage, width, height,zoom) ->
-    # @titleGameMachine = new EcsMachine(systems: @titleLevel.gameSystems())
-    # @mainGameMachine = new EcsMachine(systems: @level.gameSystems())
 
-    @_activateTitleScreen()
-    # @_activateMainGame()
 
-    @adminState = Immutable.fromJS(controller:{})
+    @adminState = Immutable.fromJS
+      controller:{}
+      paused: false
+      stateHistory: ImmRingBuffer.create(5*60)
 
     uiState = UIState.create
       stage: stage
@@ -101,20 +108,15 @@ class MetroidCloneDelegate
       uiConfig: uiConfig
       uiState: uiState
 
-  _activateMainGame: ->
-    @gameMachine = new EcsMachine(systems: @level.gameSystems())
-    @estore = new EntityStore()
-    @level.populateInitialEntities(@estore)
-    @stateHistory = new StateHistory()
-    @captureTimeWalkSnapShot(@estore)
+    # Enter the main title screen
+    @gameMachine = @titleMachine
+    @gameState = @_getInitialState(@titleLevel)
+    # TODO history
 
-  _activateTitleScreen: ->
-    @gameMachine = new EcsMachine(systems: @titleLevel.gameSystems())
-    @estore = new EntityStore()
-    @titleLevel.populateInitialEntities(@estore)
-    @stateHistory = new StateHistory()
-    @captureTimeWalkSnapShot(@estore)
-
+  _getInitialState: (level) ->
+    es = new EntityStore()
+    level.populateInitialEntities(es)
+    return es.takeSnapshot()
 
   _setupControllers: ->
     @keyboardController = new KeyboardController
@@ -184,133 +186,101 @@ class MetroidCloneDelegate
       controllers.set dest, events.get(src)
     , Immutable.Map()
 
-  _updateAdmin: (state, cevts) ->
-    controller = PressedReleased.update(state.get('controller'),cevts)
-    state = state.set('controller', controller)
+  _updateAdmin: (admin, cevts) ->
+    controller = PressedReleased.update(admin.get('controller'),cevts)
+    admin = admin.set('controller', controller)
 
     if controller.get('toggle_pausePressed')
-      state = state.update 'paused', (p) -> !p
+      admin = admin.update 'paused', (p) -> !p
      
-    state = state.set('replay_back',
-      controller.get('time_walk_backPressed') or
-      controller.get('time_scroll_back')
-    ).set('replay_forward',
-      controller.get('time_walk_forwardPressed') or
-      controller.get('time_scroll_forward')
-    ).set('step_forward',
-      controller.get('step_forwardPressed')
-    )
+    admin = if admin.get('paused')
+      admin.set('replay_back',
+        controller.get('time_walk_backPressed') or
+        controller.get('time_scroll_back')
+      ).set('replay_forward',
+        controller.get('time_walk_forwardPressed') or
+        controller.get('time_scroll_forward')
+      ).set('step_forward',
+        controller.get('step_forwardPressed')
+      )
+    else
+      admin
+        .set('replay_back',false)
+        .set('replay_forward',false)
+        .set('step_forward',false)
         
-    state
+    admin
 
 
   update: (dt) ->
     controllerEvents = @controllerEventMux.next()
 
-    events = null
     @adminState = @_updateAdmin(@adminState, controllerEvents.get('admin'))
+
+    gameState0 = @gameState
+
+    # ------------------------------------------------------------------------
+
+    gameState1 = null
+    events = null
     if @adminState.get('paused')
       if @adminState.get('replay_forward')
-        if snapshot = @stateHistory.stepForward()
-          @estore.restoreSnapshot(snapshot)
-      if @adminState.get('replay_back')
-        if snapshot = @stateHistory.stepBack()
-          @estore.restoreSnapshot(snapshot)
-      if @adminState.get('step_forward')
-        input = @defaultInput
-          .set('dt', 17)
-          .set('controllers', @_mapControllerEvents(controllerEvents,GameControlMappings))
-        [@estore,events] = @gameMachine.update(@estore,input)
-        @captureTimeWalkSnapShot(@estore)
-    else
+        @adminState = @adminState.update 'stateHistory', ImmRingBuffer.forward
+        gameState1 = ImmRingBuffer.read(@adminState.get('stateHistory'))
+
+      else if @adminState.get('replay_back')
+        @adminState = @adminState.update 'stateHistory', ImmRingBuffer.backward
+        gameState1 = ImmRingBuffer.read(@adminState.get('stateHistory'))
+        window.B = ImmRingBuffer
+        window.sh = @adminState.get('stateHistory')
+        window.gs1 = gameState1
+
+      else if @adminState.get('step_forward')
+        # paused, step forward one nominal time slice. 17 =~ 16.666
+        dt = 17
+
+      else
+        # paused. no change.
+        gameState1 = gameState0
+
+    if !gameState1
       input = @defaultInput
-        .set('dt', 17)
+        .set('dt', dt)
         .set('controllers', @_mapControllerEvents(controllerEvents,GameControlMappings))
-      [@estore,events] = @gameMachine.update(@estore,input)
-      @captureTimeWalkSnapShot(@estore)
+
+      [gameState1,events] = @gameMachine.update2(gameState0,input)
+
+      @adminState = @adminState.update 'stateHistory', (h) ->
+        ImmRingBuffer.add(h,gameState1)
+
+    # ------------------------------------------------------------------------
+    @gameState = gameState1
+
+    # (maybe) Switch levels based on game events
+    switchLevel = (level,machine) =>
+      @gameState = @_getInitialState(level)
+      
+      @gameMachine = machine
+      @adminState.update('stateHistory', (h) ->
+        ImmRingBuffer.add(ImmRingBuffer.clear(h), @gameState))
 
     if events? and events.size > 0
       if e = events.find((e) -> e.get('name') == 'StartNewGame')
-        @_activateMainGame()
-      if e = events.find((e) -> e.get('name') == 'ContinueGame')
-        @_activateMainGame()
-      if e = events.find((e) -> e.get('name') == 'Killed')
-        @_activateTitleScreen()
-
-    gameState = @estore.readOnly()
-
-    @viewMachine.update gameState
-
-    @componentInspectorMachine.update gameState
+        switchLevel @level, @playingTheGameMachine
+      else if e = events.find((e) -> e.get('name') == 'ContinueGame')
+        switchLevel @level, @playingTheGameMachine
+      else if e = events.find((e) -> e.get('name') == 'Killed')
+        switchLevel @titleLevel, @titleMahine
 
 
+    # Update the view:
+    @viewMachine.update2 @gameState
 
+    # Update the component inspector:
+    @componentInspectorMachine.update2 @gameState
 
-  captureTimeWalkSnapShot: (estore) ->
-    @stateHistory.addState estore.takeSnapshot()
-    
-  handleAdminControls: (ac) ->
-    # negate = (x) -> !x
-    # updateProp = (prop, fn) -> (s) -> s.update prop, fn
-    # negateProp = (prop) -> updateProp(prop, negate)
-    # cycleProp
-    #
-    # {
-    #   toggle_gamepad: negateProp('useGamepad')
-    #   toggle_bgm: (s) ->
-    #     if bgmId = s.get('bgmId')
-    #
-    #
-    #
-    # }
-    #
-    if ac.toggle_gamepad
-      @useGamepad = !@useGamepad
-      if @useGamepad
-        @p1Controller = @gamepadController
-      else
-        @p1Controller = @keyboardController
-
-    # if ac.toggle_bgm
-    #   if @bgmId?
-    #     @estore.destroyEntity @bgmId
-    #     @bgmId = null
-    #   else
-    #     @bgmId = @estore.createEntity [
-    #       C.Sound.merge soundId: 'brinstar', timeLimit: 116000, volume: 0.3
-    #     ]
-
-    if ac.toggle_pause
-      if @paused
-        @paused = false
-      else
-        @paused = true
-
-    if @paused
-      if ac.step_forward
-        @step_forward = true
-
-      else if ac.time_walk_back
-        @time_walk_back = true
-
-      else if ac.time_walk_forward
-        @time_walk_forward = true
-
-      else if ac.time_scroll_back
-        @time_scroll_forward = off
-        @time_scroll_back = true
-
-      else if ac.time_scroll_forward
-        @time_scroll_back = off
-        @time_scroll_forward = true
-
-      else
-        @time_scroll_back = off
-        @time_scroll_forward = off
-
-    if ac.toggle_bounding_box
-      # TODO: not beautiful. HitBoxVisualSyncSystem uses this.
-      @viewMachine.uiState.drawHitBoxes = !@viewMachine.uiState.drawHitBoxes
+    # TODO -- handle admin control 'toggle_bounding_box' to :
+    #   @viewMachine.uiState.drawHitBoxes = !@viewMachine.uiState.drawHitBoxes
 
   _createViewSystems: ->
     systemDefs = [

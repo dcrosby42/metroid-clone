@@ -1,3 +1,4 @@
+EntityStore = require '../ecs/entity_store'
 #
 # TODO: break refactor this to use a 'generic machine', where the update logic
 # is in a ComponentInspectorSystem or something.
@@ -5,12 +6,19 @@
 # from ViewMachine. I think.
 class ComponentInspectorMachine
   constructor: ({@componentInspector}) ->
+    @estore = new EntityStore()
 
   update: (entityFinder) ->
     entityFinder.allComponentsByCid().forEach (comp) =>
       @componentInspector.update comp
     @componentInspector.sync()
     
+  update2: (gameState) ->
+    @estore.restoreSnapshot(gameState)
+    @estore.allComponentsByCid().forEach (comp) =>
+      @componentInspector.update comp
+    @componentInspector.sync()
+
 module.exports = ComponentInspectorMachine
 
 ## This is a copy of the old system, saved for reference:
