@@ -1,9 +1,10 @@
 Immutable = require 'immutable'
 
+Transforms = require './transforms'
+
 KeyboardController = require '../input/keyboard_controller'
 GamepadController = require('../input/gamepad_controller')
 ControllerEventMux = require('../input/controller_event_mux')
-PressedReleased = require('../utils/pressed_released')
 
 EntityStore = require '../ecs/entity_store'
 EcsMachine = require '../ecs/ecs_machine'
@@ -36,9 +37,9 @@ WorldMap = require './map/world_map'
 RoomsLevel = require './rooms_level'
 MainTitleLevel = require './main_title_level'
 
-GameControlMappings = Immutable.Map
-  player1: 'p1Keyboard'
-  debug1: 'p1Gamepad'
+# GameControlMappings = Immutable.Map
+#   player1: 'p1Keyboard'
+#   debug1: 'debug'
 
 ImmRingBuffer = require '../utils/imm_ring_buffer'
 
@@ -85,7 +86,8 @@ class MetroidCloneDelegate
     @adminState = Immutable.fromJS
       controller:{}
       paused: false
-      stateHistory: ImmRingBuffer.create(5*60)
+      # stateHistory: ImmRingBuffer.create(5*60)
+    @stateHistory = ImmRingBuffer.create(5*60)
 
     uiState = UIState.create
       stage: stage
@@ -93,13 +95,10 @@ class MetroidCloneDelegate
       aspectScale:
         x: 1.25
         y: 1
-    window.uiState = uiState
 
     uiConfig = UIConfig.create
       worldMap: WorldMap.getDefaultWorldMap()
       spriteConfigs: @level.spriteConfigs()
-      # mapDatabase: @level.mapDatabase()
-    window.uiConfig = uiConfig
       
     viewSystems = @_createViewSystems()
 
@@ -111,7 +110,6 @@ class MetroidCloneDelegate
     # Enter the main title screen
     @gameMachine = @titleMachine
     @gameState = @_getInitialState(@titleLevel)
-    # TODO history
 
   _getInitialState: (level) ->
     es = new EntityStore()
@@ -119,7 +117,7 @@ class MetroidCloneDelegate
     return es.takeSnapshot()
 
   _setupControllers: ->
-    @keyboardController = new KeyboardController
+    keyboardController = new KeyboardController
       bindings:
         "right": 'right'
         "left": 'left'
@@ -133,7 +131,7 @@ class MetroidCloneDelegate
         [ 'up', 'down' ]
       ]
         
-    @gamepadController = new GamepadController
+    gamepadController = new GamepadController
       "DPAD_RIGHT": 'right'
       "DPAD_LEFT": 'left'
       "DPAD_UP": 'up'
@@ -142,7 +140,7 @@ class MetroidCloneDelegate
       "FACE_3": 'action1'
 
 
-    @adminController = new KeyboardController
+    adminController = new KeyboardController
       bindings:
         "g": 'toggle_gamepad'
         "b": 'toggle_bgm'
@@ -159,7 +157,7 @@ class MetroidCloneDelegate
         "l": 'right'
         "space": 'step_forward'
 
-    @debugController = new KeyboardController
+    debugController = new KeyboardController
       bindings:
         "h": 'moveLeft'
         "j": 'moveDown'
@@ -169,100 +167,93 @@ class MetroidCloneDelegate
         "b": 'toggleCrawlDir'
         "f": 'mod1'
 
-    # XXX
-    @useGamepad = true
-    # XXX
-    @p1Controller = @keyboardController
-
     @controllerEventMux = new ControllerEventMux(
-      admin: @adminController
-      debug: @debugController
-      p1Keyboard: @keyboardController
-      p1Gamepad: @gamepadController
+      admin: adminController
+      debug: debugController
+      p1Keyboard: keyboardController
+      p1Gamepad: gamepadController
     )
 
-  _mapControllerEvents: (events, mappings) ->
-    mappings.reduce (controllers, src,dest) ->
-      controllers.set dest, events.get(src)
-    , Immutable.Map()
+  # _mapControllerEvents: (events, mappings) ->
+  #   mappings.reduce (controllers, src,dest) ->
+  #     controllers.set dest, events.get(src)
+  #   , Immutable.Map()
 
-  _updateAdmin: (admin, cevts) ->
-    controller = PressedReleased.update(admin.get('controller'),cevts)
-    admin = admin.set('controller', controller)
-
-    if controller.get('toggle_pausePressed')
-      admin = admin.update 'paused', (p) -> !p
-     
-    admin = if admin.get('paused')
-      admin.set('replay_back',
-        controller.get('time_walk_backPressed') or
-        controller.get('time_scroll_back')
-      ).set('replay_forward',
-        controller.get('time_walk_forwardPressed') or
-        controller.get('time_scroll_forward')
-      ).set('step_forward',
-        controller.get('step_forwardPressed')
-      )
-    else
-      admin
-        .set('replay_back',false)
-        .set('replay_forward',false)
-        .set('step_forward',false)
-        
-    admin
 
 
   update: (dt) ->
     controllerEvents = @controllerEventMux.next()
 
-    @adminState = @_updateAdmin(@adminState, controllerEvents.get('admin'))
+    @adminState = Transforms.updateAdmin(@adminState, controllerEvents.get('admin'))
 
-    gameState0 = @gameState
+    [@stateHistory, action] = Transforms.selectAction(@stateHistory,dt,controllerEvents,@adminState)
 
-    # ------------------------------------------------------------------------
-
-    gameState1 = null
-    events = null
-    if @adminState.get('paused')
-      if @adminState.get('replay_forward')
-        @adminState = @adminState.update 'stateHistory', ImmRingBuffer.forward
-        gameState1 = ImmRingBuffer.read(@adminState.get('stateHistory'))
-
-      else if @adminState.get('replay_back')
-        @adminState = @adminState.update 'stateHistory', ImmRingBuffer.backward
-        gameState1 = ImmRingBuffer.read(@adminState.get('stateHistory'))
-        window.B = ImmRingBuffer
-        window.sh = @adminState.get('stateHistory')
-        window.gs1 = gameState1
-
-      else if @adminState.get('step_forward')
-        # paused, step forward one nominal time slice. 17 =~ 16.666
-        dt = 17
-
+    [@gameState,events] = switch action.get('type')
+      when "useState"
+        [action.get('gameState'), null]
+      when "computeState"
+        input = @defaultInput.merge(action.get('input'))
+        [gameState1,events] = @gameMachine.update2(@gameState,input)
+        @stateHistory = ImmRingBuffer.add(@stateHistory, gameState1)
+        [gameState1, events]
+      when "nothing"
+        [@gameState, null]
       else
-        # paused. no change.
-        gameState1 = gameState0
+        throw new Error("WTF Transforms.selectAction returned #{action.toJS()}")
 
-    if !gameState1
-      input = @defaultInput
-        .set('dt', dt)
-        .set('controllers', @_mapControllerEvents(controllerEvents,GameControlMappings))
-
-      [gameState1,events] = @gameMachine.update2(gameState0,input)
-
-      @adminState = @adminState.update 'stateHistory', (h) ->
-        ImmRingBuffer.add(h,gameState1)
-
-    # ------------------------------------------------------------------------
-    @gameState = gameState1
+    # # ------------------------------------------------------------------------
+    # adminState = @adminState # -->
+    # stateHistory = @stateHistory
+    #
+    # gameState0 = @gameState # -->
+    # gameMachine = @gameMachine # -->
+    # gameControlMappings = GameControlMappings # -->
+    # defaultInput = @defaultInput # -->
+    # # controllerEvents -->
+    # # ------------------------------------------------------------------------
+    #
+    # gameState1 = null
+    # events = null
+    # if adminState.get('paused')
+    #   if adminState.get('replay_forward')
+    #     stateHistory = ImmRingBuffer.forward(stateHistory)
+    #     gameState1 = ImmRingBuffer.read(stateHistory)
+    #
+    #   else if adminState.get('replay_back')
+    #     stateHistory = ImmRingBuffer.backward(stateHistory)
+    #     gameState1 = ImmRingBuffer.read(stateHistory)
+    #
+    #   else if adminState.get('step_forward')
+    #     # paused, step forward one nominal time slice. 17 =~ 16.666
+    #     dt = 17
+    #
+    #   else
+    #     # paused. no change.
+    #     gameState1 = ImmRingBuffer.read(stateHistory)
+    #
+    # if !gameState1
+    #   gameInput = defaultInput
+    #     .set('dt', dt)
+    #     .set('controllers', @_mapControllerEvents(controllerEvents,gameControlMappings))
+    #
+    #   [gameState1,events] = gameMachine.update2(gameState0,gameInput)
+    #
+    #   stateHistory = ImmRingBuffer.add(stateHistory, gameState1)
+    #
+    # # ------------------------------------------------------------------------
+    # @stateHistory = stateHistory # <---
+    # @gameState = gameState1 # <-- 
+    # # events # <--
+    # # ------------------------------------------------------------------------
 
     # (maybe) Switch levels based on game events
     switchLevel = (level,machine) =>
       @gameState = @_getInitialState(level)
       
       @gameMachine = machine
-      @adminState.update('stateHistory', (h) ->
-        ImmRingBuffer.add(ImmRingBuffer.clear(h), @gameState))
+      @stateHistory = ImmRingBuffer.add(ImmRingBuffer.clear(@stateHistory), @gameState)
+      # @adminState.update('stateHistory', (h) ->
+      #   ImmRingBuffer.add(ImmRingBuffer.clear(h), @gameState))
 
     if events? and events.size > 0
       if e = events.find((e) -> e.get('name') == 'StartNewGame')
