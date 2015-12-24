@@ -199,59 +199,12 @@ class MetroidCloneDelegate
       else
         throw new Error("WTF Transforms.selectAction returned #{action.toJS()}")
 
-    # # ------------------------------------------------------------------------
-    # adminState = @adminState # -->
-    # stateHistory = @stateHistory
-    #
-    # gameState0 = @gameState # -->
-    # gameMachine = @gameMachine # -->
-    # gameControlMappings = GameControlMappings # -->
-    # defaultInput = @defaultInput # -->
-    # # controllerEvents -->
-    # # ------------------------------------------------------------------------
-    #
-    # gameState1 = null
-    # events = null
-    # if adminState.get('paused')
-    #   if adminState.get('replay_forward')
-    #     stateHistory = ImmRingBuffer.forward(stateHistory)
-    #     gameState1 = ImmRingBuffer.read(stateHistory)
-    #
-    #   else if adminState.get('replay_back')
-    #     stateHistory = ImmRingBuffer.backward(stateHistory)
-    #     gameState1 = ImmRingBuffer.read(stateHistory)
-    #
-    #   else if adminState.get('step_forward')
-    #     # paused, step forward one nominal time slice. 17 =~ 16.666
-    #     dt = 17
-    #
-    #   else
-    #     # paused. no change.
-    #     gameState1 = ImmRingBuffer.read(stateHistory)
-    #
-    # if !gameState1
-    #   gameInput = defaultInput
-    #     .set('dt', dt)
-    #     .set('controllers', @_mapControllerEvents(controllerEvents,gameControlMappings))
-    #
-    #   [gameState1,events] = gameMachine.update2(gameState0,gameInput)
-    #
-    #   stateHistory = ImmRingBuffer.add(stateHistory, gameState1)
-    #
-    # # ------------------------------------------------------------------------
-    # @stateHistory = stateHistory # <---
-    # @gameState = gameState1 # <-- 
-    # # events # <--
-    # # ------------------------------------------------------------------------
 
     # (maybe) Switch levels based on game events
     switchLevel = (level,machine) =>
       @gameState = @_getInitialState(level)
-      
       @gameMachine = machine
       @stateHistory = ImmRingBuffer.add(ImmRingBuffer.clear(@stateHistory), @gameState)
-      # @adminState.update('stateHistory', (h) ->
-      #   ImmRingBuffer.add(ImmRingBuffer.clear(h), @gameState))
 
     if events? and events.size > 0
       if e = events.find((e) -> e.get('name') == 'StartNewGame')
