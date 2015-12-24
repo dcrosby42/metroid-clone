@@ -83,7 +83,6 @@ class Room
 
   @create: (info) -> new @(info)
 
-# TODO: Areas!
 class Area
   constructor: ({@name,@topRow,@leftCol,@rightCol,@bottomRow,@roomWidthInPx,@roomHeightInPx}) ->
     @_leftPx   = @leftCol * @roomWidthInPx
@@ -187,12 +186,13 @@ defaultWorldMapLayout =
   rows: 10
   cols: 10
   data: [
-    #roomA-----------------   roomB----------------------- 
-    [0x12, 0x14, 0x19, 0x13,  0x12, 0x14, 0x14, 0x14, 0x13]
+    # mainEntry-------------------  roomA-----------------   roomB----------------------- 
+    [0x08, 0x17, 0x09, 0x14, 0x13,  0x12, 0x14, 0x19, 0x13,  0x12, 0x14, 0x14, 0x14, 0x13]
   ]
   areas: [
-    ["roomA", [0,0], [0,3]]
-    ["roomB", [0,4], [0,8]]
+    ["mainEntry", [0,0], [0,4]]
+    ["roomA", [0,5], [0,8]]
+    ["roomB", [0,9], [0,13]]
   ]
 
 defaultWorldMap = null

@@ -28,7 +28,7 @@ RoomsLevel.populateInitialEntities = (estore) ->
   #   Common.Map.merge(name: 'mapTest')
   # ]
 
-  estore.createEntity Samus.factory.createComponents('samus', position: {x:780,y:50})
+  estore.createEntity Samus.factory.createComponents('samus', position: {x:648,y:191})
 
   # RNG
   estore.createEntity [
@@ -51,7 +51,7 @@ RoomsLevel.populateInitialEntities = (estore) ->
   # Viewport
   vpConf = Immutable.fromJS
     width:          16*16       # 16 tiles wide, 16 px per tile
-    height:         15*16       # 15 tiles wide, 16 px per tile
+    height:         15*16       # 15 tiles high, 16 px per tile
     trackBufLeft:   (8*18) - 16
     trackBufRight:  (8*18) + 16
     trackBufTop:    (8*18) - 16
@@ -121,40 +121,6 @@ RoomsLevel.gameSystems = ->
   sys.add CommonSystems, 'room_system'
   sys.add DoorSystems, 'door_gel_system'
   return sys.systems
-  # [
-  #   CommonSystems.timer_system
-  #   CommonSystems.death_timer_system
-  #   CommonSystems.animation_timer_system
-  #   CommonSystems.sound_system
-  #   SamusSystems.samus_motion
-  #   CommonSystems.controller_system
-  #   SamusSystems.samus_controller_action
-  #   EnemiesSystems.zoomer_controller_system
-  #   SamusSystems.short_beam_system
-  #   SamusSystems.samus_action_velocity
-  #   CommonSystems.samus_pickup_system
-  #   CommonSystems.samus_hit_system
-  #   CommonSystems.samus_damage_system
-  #   CommonSystems.samus_death_system
-  #   SamusSystems.samus_action_sounds
-  #   SamusSystems.samus_hud_system
-  #
-  #   EnemiesSystems.zoomer_crawl_system
-  #   CommonSystems.gravity_system
-  #   CommonSystems.map_physics_system
-  #   CommonSystems.map_ghost_system
-  #   CommonSystems.bullet_enemy_system
-  #   DoorSystems.bullet_door_system
-  #   CommonSystems.bullet_system
-  #   CommonSystems.enemy_hit_system
-  #   EnemiesSystems.skree_action
-  #   SamusSystems.samus_animation
-  #   CommonSystems.viewport_shuttle_system
-  #   CommonSystems.viewport_system
-  #   CommonSystems.viewport_room_system
-  #   CommonSystems.room_system
-  #   DoorSystems.door_gel_system
-  # ]
 
 RoomsLevel.spriteConfigs = ->
   spriteConfigs = {}

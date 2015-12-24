@@ -25,11 +25,9 @@ Samus = require './entity/samus'
 Enemies = require './entity/enemies'
 General = require './entity/general'
 
-#XXX StateHistory = require '../utils/state_history'
 ImmRingBuffer = require '../utils/imm_ring_buffer'
 Debug = require '../utils/debug'
 
-# MapDatabase = require './map/map_database'
 WorldMap = require './map/world_map'
 
 # TestLevel = require './test_level'
@@ -261,7 +259,7 @@ class MetroidCloneDelegate
       else if e = events.find((e) -> e.get('name') == 'ContinueGame')
         switchLevel @level, @playingTheGameMachine
       else if e = events.find((e) -> e.get('name') == 'Killed')
-        switchLevel @titleLevel, @titleMahine
+        switchLevel @titleLevel, @titleMachine
 
 
     # Update the view:
