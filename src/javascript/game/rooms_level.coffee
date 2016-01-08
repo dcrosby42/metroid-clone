@@ -17,6 +17,9 @@ CommonSystems = require './systems'
 
 Common = require './entity/components'
 
+Items = require './entity/items'
+# ItemsSystems = require './entity/items/systems'
+
 RoomsLevel = {}
 
 RoomsLevel.populateInitialEntities = (estore,params) ->
@@ -40,6 +43,9 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
       x: 25
       y: 35
   ]
+
+  # XXX testing powerup placement
+  estore.createEntity Items.factory.createComponents('powerup', name: 'maru_mari', position: {x:360,y:154})
 
   # Viewport
   vpConf = Immutable.fromJS
@@ -120,6 +126,7 @@ RoomsLevel.spriteConfigs = ->
   _.merge spriteConfigs, Enemies.sprites
   _.merge spriteConfigs, General.sprites
   _.merge spriteConfigs, Doors.sprites
+  _.merge spriteConfigs, Items.sprites
   spriteConfigs
 
 _mapDb = MapDatabase.createDefault()
@@ -134,6 +141,7 @@ RoomsLevel.graphicsToPreload = ->
   assets = assets.concat(Enemies.assets)
   assets = assets.concat(General.assets)
   assets = assets.concat(Doors.assets)
+  assets = assets.concat(Items.assets)
 
   assets
 
