@@ -19,22 +19,15 @@ Common = require './entity/components'
 
 RoomsLevel = {}
 
-RoomsLevel.populateInitialEntities = (estore) ->
-  # Map
-  # XXX
-  # estore.createEntity [
-  #   Common.Name.merge(name: 'Map')
-  #   # Common.Map.set('name','areaA')
-  #   Common.Map.merge(name: 'mapTest')
-  # ]
-
-  estore.createEntity Samus.factory.createComponents('samus', position: {x:648,y:191})
-
+RoomsLevel.populateInitialEntities = (estore,params) ->
   # RNG
   estore.createEntity [
     Common.Name.merge(name: 'mainRandom')
     Common.Rng.merge(state: 123123123)
   ]
+
+  estore.createEntity Samus.factory.createComponents('samus', position: {x:648,y:191})
+
 
   # Samus status HUD
   estore.createEntity [
@@ -70,7 +63,6 @@ RoomsLevel.populateInitialEntities = (estore) ->
       type: 'room_watcher'
       roomIds: Immutable.Set()
   ]
-
 
   estore
 

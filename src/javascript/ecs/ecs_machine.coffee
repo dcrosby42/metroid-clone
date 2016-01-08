@@ -10,13 +10,13 @@ class EcsMachine
     @eventBucket = new EventBucket()
     @estore = new EntityStore()
 
-  # update: (estore, input) ->
-  #   @eventBucket.reset()
-  #
-  #   @systems.forEach (system) =>
-  #     system.update(estore, input, @eventBucket)
-  #
-  #   return [estore,@eventBucket.globalEvents]
+  update: (estore, input) ->
+    @eventBucket.reset()
+
+    @systems.forEach (system) =>
+      system.update(estore, input, @eventBucket)
+
+    return [estore,@eventBucket.globalEvents]
 
   update2: (state, input) ->
     @eventBucket.reset()

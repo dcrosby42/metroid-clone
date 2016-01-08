@@ -12,12 +12,18 @@ mapControllerEvents = (events,mappings) ->
     controllers.set dest, events.get(src)
   , Immutable.Map()
 
+toggle = (x) -> !x
+  
+
 exports.updateAdmin = (admin, cevts) ->
   controller = PressedReleased.update(admin.get('controller'),cevts)
   admin = admin.set('controller', controller)
 
   if controller.get('toggle_pausePressed')
-    admin = admin.update 'paused', (p) -> !p
+    admin = admin.update 'paused', toggle
+
+  if controller.get('toggle_bounding_boxPressed')
+    admin = admin.update 'drawHitBoxes', toggle
    
   admin = if admin.get('paused')
     admin.set('replay_back',
