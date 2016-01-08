@@ -21,6 +21,19 @@ body { background-color: #000000; }
 // canvas { background-color: #444444; }
 
 
+#dev-ui {
+  ul.toggles {
+    list-style: none;
+
+    li {
+      cursor: pointer;
+    }
+    li.enabled {
+      color: white;
+    }
+  }
+}
+
 .component-inspector {
   .inspector-header {
     cursor: pointer;

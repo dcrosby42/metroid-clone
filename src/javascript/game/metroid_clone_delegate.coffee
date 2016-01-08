@@ -6,50 +6,28 @@ KeyboardController = require '../input/keyboard_controller'
 GamepadController = require('../input/gamepad_controller')
 ControllerEventMux = require('../input/controller_event_mux')
 
-EntityStore = require '../ecs/entity_store'
-EcsMachine = require '../ecs/ecs_machine'
-
 ViewMachine = require '../view/view_machine'
 ViewSystems = require '../view/systems'
 UIState = require '../view/ui_state'
 UIConfig = require '../view/ui_config'
 
 ComponentInspectorMachine = require '../view/component_inspector_machine'
-CommonSystems = require './systems'
-SamusSystems =  require './entity/samus/systems'
-EnemiesSystems =  require './entity/enemies/systems'
-
-C = require './entity/components'
-
-Samus = require './entity/samus'
-Enemies = require './entity/enemies'
-General = require './entity/general'
 
 ImmRingBuffer = require '../utils/imm_ring_buffer'
-Debug = require '../utils/debug'
 
 WorldMap = require './map/world_map'
 
 GameStateMachine = require './states/game_state_machine'
 TitleState = require './states/title'
 AdventureState = require './states/adventure'
-PowerupState = require './states/powerup'
 
-# TestLevel = require './test_level'
-# ZoomerLevel = require './zoomer_level'
 RoomsLevel = require './rooms_level'
 MainTitleLevel = require './main_title_level'
 
-
-# GameControlMappings = Immutable.Map
-#   player1: 'p1Keyboard'
-#   debug1: 'debug'
-
 ImmRingBuffer = require '../utils/imm_ring_buffer'
 
-
 class MetroidCloneDelegate
-  constructor: ({componentInspector}) ->
+  constructor: ({componentInspector,@devUI}) ->
 
     @gameStateMachine = new GameStateMachine([
       TitleState
@@ -111,8 +89,8 @@ class MetroidCloneDelegate
 
   update: (dt) ->
     controllerEvents = @controllerEventMux.next()
-
-    @adminState = Transforms.updateAdmin(@adminState, controllerEvents.get('admin'))
+    devUIEvents = @devUI.getEvents()
+    @adminState = Transforms.updateAdmin(@adminState, controllerEvents.get('admin'), devUIEvents)
 
     [@stateHistory, action] = Transforms.selectAction(@stateHistory,dt,controllerEvents,@adminState)
     gameState = switch action.get('type')
@@ -139,15 +117,15 @@ class MetroidCloneDelegate
     # Update the component inspector:
     @componentInspectorMachine.update2 gameState if gameState?
 
+    @devUI.setState(@adminState)
+
 createViewSystems = ->
   systemDefs = [
-    # ViewSystems.map_sync_system
     ViewSystems.animation_sync_system
     ViewSystems.label_sync_system
     ViewSystems.ellipse_sync_system
     ViewSystems.rectangle_sync_system
     ViewSystems.hit_box_visual_sync_system
-    # ViewSystems.viewport_target_tracker_system
     ViewSystems.viewport_sync_system
     ViewSystems.sound_sync_system
     ViewSystems.room_sync_system

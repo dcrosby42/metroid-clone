@@ -19,6 +19,7 @@ Profiler.useAjaxReporter()
 BigScreen = require './vendor/bigscreen_wrapper'
 
 Inspector = require './inspector'
+DevUI = require './dev_ui'
 
 inspectorConfig = Immutable.fromJS
   componentLayout:
@@ -36,8 +37,10 @@ jquery ->
   componentInspector = Inspector.createComponentInspector
     mountNode: inspectorHolder
     inspectorConfig: inspectorConfig
+  devUIDiv = jquery('#dev-ui')
+  devUI = DevUI.create(devUIDiv)
 
-  del = new DelegateClass(componentInspector: componentInspector)
+  del = new DelegateClass(componentInspector: componentInspector, devUI: devUI)
 
   gameHolder = jquery('#game-holder')[0]
   harness = new PixiHarness

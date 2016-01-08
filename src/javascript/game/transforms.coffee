@@ -14,15 +14,21 @@ mapControllerEvents = (events,mappings) ->
 
 toggle = (x) -> !x
   
+_calcDevUIState = (admin) ->
+  dui = admin.get('devUIState')
+    .set('paused', admin.get('paused'))
+    .set('draw-hitboxes', admin.get('drawHitBoxes'))
+  dui
+    
 
-exports.updateAdmin = (admin, cevts) ->
+exports.updateAdmin = (admin, cevts, devUIEvents) ->
   controller = PressedReleased.update(admin.get('controller'),cevts)
   admin = admin.set('controller', controller)
 
-  if controller.get('toggle_pausePressed')
+  if controller.get('toggle_pausePressed') or devUIEvents.get('toggle_pause')
     admin = admin.update 'paused', toggle
 
-  if controller.get('toggle_bounding_boxPressed')
+  if controller.get('toggle_bounding_boxPressed') or devUIEvents.get('toggle_draw_hitboxes')
     admin = admin.update 'drawHitBoxes', toggle
    
   admin = if admin.get('paused')
@@ -40,7 +46,7 @@ exports.updateAdmin = (admin, cevts) ->
       .set('replay_back',false)
       .set('replay_forward',false)
       .set('step_forward',false)
-      
+
   admin
 
 exports.selectAction = (stateHistory,dt,controllerEvents,adminState) ->
