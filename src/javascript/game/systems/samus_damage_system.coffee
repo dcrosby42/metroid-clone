@@ -26,8 +26,6 @@ class SamusDamageSystem extends StateMachineSystem
             nextState: 'done'
       done: {}
 
-
-
   newState: ->
     @publishEvent 'hit'
 

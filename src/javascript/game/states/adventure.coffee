@@ -16,7 +16,10 @@ class AdventureState extends GameState
 
   enter: (data=null) ->
     @estore = new EntityStore()
-    @level.populateInitialEntities(@estore)
+    if data == null
+      @level.populateInitialEntities(@estore)
+    else
+      @estore.restoreSnapshot(data)
 
   update: (gameInput) ->
     [@estore,events] = @ecsMachine.update(@estore,gameInput)
@@ -27,5 +30,8 @@ class AdventureState extends GameState
 
   event_Killed: (e) ->
     @transition 'title'
+
+  event_PowerupTouched: (e) ->
+    @transition 'powerup', @gameData()
 
 module.exports = AdventureState

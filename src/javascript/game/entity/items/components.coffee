@@ -6,4 +6,12 @@ module.exports = C
 
 C.Powerup = imm
   type: 'powerup'
-  name: '_UNSET_'
+  powerupType: '_UNSET_'
+
+C.Collected = imm
+  type: 'collected'
+  state: 'ready'
+  byEid: '_UNSET_'
+
+C.MaruMari = imm
+  type: 'maru_mari'

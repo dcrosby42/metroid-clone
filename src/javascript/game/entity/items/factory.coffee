@@ -1,5 +1,6 @@
 Items = require('./components')
 Common = require('../components')
+Immutable = require('immutable')
 
 F = {}
 
@@ -8,11 +9,11 @@ F.powerup = (args) ->
   x = args.position.x
   y = args.position.y
   name = args.name
-  comps = [
-    Common.Name.merge
-      name: "'#{name}' Powerup"
+  comps = Immutable.List([
     Items.Powerup.merge
-      name: name
+      powerupType: name
+    Common.Name.merge
+      name: "Powerup #{name}"
     Common.Position.merge
       x: x
       y: y
@@ -20,7 +21,6 @@ F.powerup = (args) ->
       layer: 'creatures'
       spriteName: name
       state: 'default'
-
     Common.HitBox.merge
       x: x
       y: y
@@ -30,8 +30,17 @@ F.powerup = (args) ->
       anchorY: 0.5
     Common.HitBoxVisual.merge
       color: 0x33ff33
-  ]
+  ])
   comps
+
+F.maru_mari = (args) ->
+  args.name = 'maru_mari'
+  F.powerup(args)
+    .push(Items.MaruMari)
+  
+
+  
+
 # F.healthPickup = (args) ->
 #   x = args.x - 16
 #   y = args.y - 16

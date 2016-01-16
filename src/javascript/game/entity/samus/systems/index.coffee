@@ -1,4 +1,5 @@
 module.exports =
+  powerup_collection_system: require './powerup_collection_system'
   samus_action_sounds: require './samus_action_sounds'
   samus_action_velocity: require './samus_action_velocity'
   samus_animation: require './samus_animation'

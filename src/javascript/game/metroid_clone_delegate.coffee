@@ -20,6 +20,7 @@ WorldMap = require './map/world_map'
 GameStateMachine = require './states/game_state_machine'
 TitleState = require './states/title'
 AdventureState = require './states/adventure'
+PowerupState = require './states/powerup'
 
 RoomsLevel = require './rooms_level'
 MainTitleLevel = require './main_title_level'
@@ -32,6 +33,7 @@ class MetroidCloneDelegate
     @gameStateMachine = new GameStateMachine([
       TitleState
       AdventureState
+      PowerupState
     ])
 
     @defaultInput = Immutable.fromJS

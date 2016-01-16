@@ -19,8 +19,10 @@ Common = require './entity/components'
 
 Items = require './entity/items'
 # ItemsSystems = require './entity/items/systems'
+SystemAccumulator = require '../ecs/system_accumulator'
 
 RoomsLevel = {}
+
 
 RoomsLevel.populateInitialEntities = (estore,params) ->
   # RNG
@@ -29,7 +31,8 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
     Common.Rng.merge(state: 123123123)
   ]
 
-  estore.createEntity Samus.factory.createComponents('samus', position: {x:648,y:191})
+  # estore.createEntity Samus.factory.createComponents('samus', position: {x:648,y:191})
+  estore.createEntity Samus.factory.createComponents('samus', position: {x:400,y:175})
 
 
   # Samus status HUD
@@ -45,7 +48,7 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
   ]
 
   # XXX testing powerup placement
-  estore.createEntity Items.factory.createComponents('powerup', name: 'maru_mari', position: {x:360,y:154})
+  estore.createEntity Items.factory.createComponents('maru_mari', position: {x:360,y:154})
 
   # Viewport
   vpConf = Immutable.fromJS
@@ -72,18 +75,6 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
 
   estore
 
-class SystemAccumulator
-  constructor: ->
-    @systems = []
-  add: (sysNs, name) ->
-    if sysNs
-      if system = sysNs[name]
-        @systems.push system
-      else
-        console.log "!! No system '#{name}' found in namespace:",sysNs
-        throw "No system '#{name}' found in namespace"
-    else
-      throw "Null namespace given when adding system named '#{name}"
 
 RoomsLevel.gameSystems = ->
   sys = new SystemAccumulator()
@@ -98,6 +89,7 @@ RoomsLevel.gameSystems = ->
   sys.add SamusSystems, 'short_beam_system'
   sys.add SamusSystems, 'samus_action_velocity'
   sys.add CommonSystems, 'samus_pickup_system'
+  sys.add CommonSystems, 'samus_powerup_system'
   sys.add CommonSystems, 'samus_hit_system'
   sys.add CommonSystems, 'samus_damage_system'
   sys.add CommonSystems, 'samus_death_system'

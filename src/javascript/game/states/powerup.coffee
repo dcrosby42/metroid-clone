@@ -1,44 +1,46 @@
+GameState = require './game_state'
 Common = require '../entity/components'
+General = require '../entity/general'
+EcsMachine = require '../../ecs/ecs_machine'
+EntityStore = require '../../ecs/entity_store'
 
-class PowerupState
-  @Name: 'adventure'
+CommonSystems = require '../systems'
+SamusSystems = require '../entity/samus/systems'
+SystemAccumulator = require '../../ecs/system_accumulator'
 
-  constructor: (@machine) ->
+# RoomsLevel = require '../rooms_level'
+
+class PowerupState extends GameState
+  @StateName: 'powerup'
+
+  constructor: (machine) ->
+    super(machine)
     # @level = RoomsLevel
+    @estore = new EntityStore()
     @ecsMachine = new EcsMachine(systems: @_getSystems())
 
-  enter: (data=null) ->
+  enter: (data=null,args=null) ->
+    if !data?
+      throw new Error("PowerupState requires game data to be provided on transition")
+
     @estore.restoreSnapshot(data)
-    @estore.createEntity [
-      General.PoweupJingle
-      Common.Name.merge
-        name: 'Powerup Jingle'
-      Common.Timer.merge
-        time: 750
-        event: 'jingleOver'
-      Common.Sound.merge
-        soundId: 'powerup_jingle'
-        volume: 0.2
-        playPosition: 0
-        timeLimit: 750
-    ]
 
   update: (gameInput) ->
     [@estore,events] = @ecsMachine.update(@estore,gameInput)
-    events.forEach (e) -> @["event_#{e.get('name')}"]?(e)
+    events.forEach (e) => 
+      @["event_#{e.get('name')}"]?(e)
 
-  exit: ->
 
   gameData: ->
     @estore.takeSnapshot()
 
-  event_Done: (e) ->
-    @machine.transition 'adventure'
+  event_PowerupInstalled: (e) ->
+    @transition 'adventure', @gameData()
 
   _getSystems: ->
-    [
-
-      # TODO: small subset of game systems, such as TimerSystem
-    ]
+    sys = new SystemAccumulator()
+    sys.add CommonSystems, 'timer_system'
+    sys.add SamusSystems, 'powerup_collection_system'
+    return sys.systems
 
 module.exports = PowerupState

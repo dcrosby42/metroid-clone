@@ -12,8 +12,8 @@ class GameState
 
   update: (gameInput) ->
 
-  transition: (stateName) ->
-    @machine.transition(stateName)
+  transition: (stateName,data=null,args=null) ->
+    @machine.transition(stateName,data,args)
 
   gameData: ->
     throw new Error("GameState #{@stateName} doesn't implement method gameData()")

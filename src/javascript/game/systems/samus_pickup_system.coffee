@@ -21,11 +21,12 @@ class SamusPickupSystem extends BaseSystem
       console.log "Pickup", pickup.toJS()
       item = pickup.get('item')
       value = pickup.get('value')
-      if item == 'health'
-        healthComp = @getEntityComponent @eid(), 'health'
-        @updateComp healthComp.update('hp', (hp) => hp + value)
-      else
-        console.log "--> No reaction"
+      switch item
+        when 'health'
+          healthComp = @getEntityComponent @eid(), 'health'
+          @updateComp healthComp.update('hp', (hp) => hp + value)
+        else
+          console.log "--> No reaction for #{item}"
 
       @destroyEntity pickup.get('eid')
       @_makePickupSound()
