@@ -25,12 +25,12 @@ inspectorConfig = Immutable.fromJS
   componentLayout:
     samus:      { open: false }
     skree:      { open: false }
-    zoomer:      { open: true }
-    hit_box:      { open: true }
+    zoomer:      { open: false }
+    hit_box:      { open: false }
     controller: { open: false }
     animation:     { open: false }
-    velocity:   { open: true }
-    position:   { open: true }
+    velocity:   { open: false }
+    position:   { open: false }
 
 jquery ->
   inspectorHolder = jquery('#inspector-holder')[0]

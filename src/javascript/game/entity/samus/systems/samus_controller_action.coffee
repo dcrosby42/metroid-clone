@@ -6,19 +6,23 @@ class SamusControllerActionSystem extends BaseSystem
   process: ->
     samus = @getComp('samus')
     ctrl = @getProp 'controller', 'states'
-
-    aim = if ctrl.get('up') then 'up' else 'straight'
-      
-    direction = if ctrl.get('left')
-      'left'
+    
+    # Direction
+    sideways = false
+    if ctrl.get('left')
+      @setProp 'samus', 'direction', 'left'
+      sideways = true
     else if ctrl.get('right')
-      'right'
-    else
-      samus.get('direction')
-      
-    sideways = ctrl.get('right') or ctrl.get('left')
+      @setProp 'samus', 'direction', 'right'
+      sideways = true
 
-    action = switch samus.get('motion')
+    # Aim
+    if ctrl.get('up')
+      @setProp 'samus', 'aim', 'up'
+    else if ctrl.get('upReleased')
+      @setProp 'samus', 'aim', 'straight'
+      
+    @setProp 'samus','action',switch samus.get('motion')
       when 'standing'
         if ctrl.get('action2Pressed')
           'jump'
@@ -48,13 +52,6 @@ class SamusControllerActionSystem extends BaseSystem
 
         else if sideways
           'drift'
-
-
-    @updateComp(samus
-      .set('aim', aim)
-      .set('direction', direction)
-      .set('action', action)
-    )
 
 module.exports = SamusControllerActionSystem
 

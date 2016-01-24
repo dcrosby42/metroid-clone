@@ -16,8 +16,6 @@ class SamusMotionSystem extends BaseSystem
           'standing'
         else
           'running'
-      else if hitBox.getIn(['touching','top'])
-        'falling'
       
 
 module.exports = SamusMotionSystem
