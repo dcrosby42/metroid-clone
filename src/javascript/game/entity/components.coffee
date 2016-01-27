@@ -180,5 +180,9 @@ C.Rectangle = imm
   fillColor: null
   fillAlpha: 1
   visible: true
-    
+
+C.Motion = imm
+  type: 'motion'
+  states: Immutable.Set()
+
 module.exports = C

@@ -1,4 +1,6 @@
 module.exports =
+  motion_oracle: require './motion_oracle'
+  motion_system: require './motion_system'
   powerup_collection_system: require './powerup_collection_system'
   samus_action_sounds: require './samus_action_sounds'
   samus_action_velocity: require './samus_action_velocity'
@@ -8,3 +10,6 @@ module.exports =
   samus_maru_mari_system: require './samus_maru_mari_system'
   samus_motion: require './samus_motion'
   short_beam_system: require './short_beam_system'
+  suit_control_system: require './suit_control_system'
+  suit_sound_system: require './suit_sound_system'
+  suit_velocity_system: require './suit_velocity_system'

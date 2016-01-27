@@ -31,8 +31,8 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
     Common.Rng.merge(state: 123123123)
   ]
 
-  # estore.createEntity Samus.factory.createComponents('samus', position: {x:648,y:191}) # brinstar landing pad
-  estore.createEntity Samus.factory.createComponents('samus', position: {x:400,y:175}) # near maru_mari
+  estore.createEntity Samus.factory.createComponents('samus', position: {x:648,y:191}) # brinstar landing pad
+  # estore.createEntity Samus.factory.createComponents('samus', position: {x:400,y:175}) # near maru_mari
 
 
   # Samus status HUD
@@ -83,18 +83,23 @@ RoomsLevel.gameSystems = ->
   sys.add CommonSystems, 'animation_timer_system'
   sys.add CommonSystems, 'sound_system'
   sys.add SamusSystems, 'samus_motion'
+  sys.add SamusSystems, 'motion_system'
   sys.add CommonSystems, 'controller_system'
-  sys.add SamusSystems, 'samus_controller_action'
+
+  sys.add SamusSystems, 'suit_control_system'
+  sys.add SamusSystems, 'suit_velocity_system'
+  sys.add SamusSystems, 'suit_sound_system'
+
   sys.add SamusSystems, 'samus_maru_mari_system'
   sys.add EnemiesSystems, 'zoomer_controller_system'
   sys.add SamusSystems, 'short_beam_system'
-  sys.add SamusSystems, 'samus_action_velocity'
+
   sys.add CommonSystems, 'samus_pickup_system'
   sys.add CommonSystems, 'samus_powerup_system'
   sys.add CommonSystems, 'samus_hit_system'
   sys.add CommonSystems, 'samus_damage_system'
   sys.add CommonSystems, 'samus_death_system'
-  sys.add SamusSystems, 'samus_action_sounds'
+
   sys.add SamusSystems, 'samus_hud_system'
   sys.add EnemiesSystems, 'zoomer_crawl_system'
   sys.add CommonSystems, 'gravity_system'

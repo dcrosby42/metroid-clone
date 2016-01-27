@@ -5,7 +5,6 @@ Immutable = require('immutable')
 F = {}
 
 F.powerup = (args) ->
-  console.log args
   x = args.position.x
   y = args.position.y
   name = args.name

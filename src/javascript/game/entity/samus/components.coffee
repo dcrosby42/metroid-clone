@@ -19,3 +19,6 @@ exports.ShortBeam = Immutable.fromJS
   damage: 5
   cooldown: 0
 
+exports.Suit = Immutable.fromJS
+  type: 'suit'
+

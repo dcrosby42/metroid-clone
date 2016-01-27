@@ -8,7 +8,7 @@ class SystemAccumulator
         if system.Instance?
           @systems.push system
         else
-          msg = "Object provided as class for system '#{name}' does not support Instance()"
+          msg = "Object provided as class for system '#{name}' does not support Instance() (HINT: make sure 'module.exports' assignment is present in the source file)"
           console.log msg,system
           throw msg
       else

@@ -25,7 +25,7 @@ class StateMachineSystem extends BaseSystem
     @[state+"State"]?()
 
     # Push events into the state machine and invoke associated actions:
-    events = @getEvents(@getProp(@_stateComponent,'eid'))
+    events = @getEvents(@getProp(@_stateComponent,'eid')) # FIXME: this call is misleading... getEvents doesn't accept args but rather assumes @eid().  Either remove the args and rely on that behavior, or invoke @getEntityEvents() instead, which accepts eid as an arg.
     state1 = StateMachine.processEvents(@_stateMachine, state, events, @)
 
     # Update the approriate component with the resulting state:

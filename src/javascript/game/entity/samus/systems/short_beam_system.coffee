@@ -73,23 +73,31 @@ class ShortBeamSystem extends StateMachineSystem
     states:
       ready:
         events:
-          triggerPulled:
+          gunTrigger:
             action:    'shoot'
-            nextState: 'cooling'
-          triggerHeld:
-            action:    'repeat'
-            nextState: 'cooling'
-      cooling:
+            nextState: 'coolDown'
+      coolDown:
         events:
-          cooldownComplete:
-            nextState: 'ready'
-          triggerReleased:
+          gunTriggerReleased:
             action:    'reset'
+            nextState: 'ready'
+          cooldownComplete:
+            nextState: 'repeating'
+      repeating:
+        events:
+          keepFiring:
+            action: 'repeat'
+            nextState: 'coolDown'
+          gunTriggerReleased:
+            action: 'reset'
             nextState: 'ready'
 
   shootAction: ->
     @_fireBullet()
     @_startCooldown(500)
+
+  repeatingState: ->
+    @publishEvent 'keepFiring'
 
   repeatAction: ->
     @_fireBullet()
@@ -99,6 +107,10 @@ class ShortBeamSystem extends StateMachineSystem
     # Clear cooldown timer(s):
     @getEntityComponents(@eid(), 'timer', 'name', 'shortBeamCooldown').forEach (comp) =>
       @deleteComp comp
+
+  repeatState: ->
+    @publishEvent 'done'
+  
 
   _fireBullet: ->
     dir = @getProp('samus','direction')
