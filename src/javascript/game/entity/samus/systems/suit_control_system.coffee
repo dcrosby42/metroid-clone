@@ -1,7 +1,7 @@
 BaseSystem = require '../../../../ecs/state_machine_system'
 Immutable = require 'immutable'
 imm = Immutable.fromJS
-MotionOracle = require './motion_oracle'
+SuitMotionOracle = require './suit_motion_oracle'
   
 MotionStates = imm
   any:
@@ -38,13 +38,13 @@ MotionStates = imm
     left: 'tumble'
     right: 'tumble'
 
-transformEvents = (events,oracle, fn) ->
-  MotionStates.forEach (handlers,state) ->
+transformEvents = (events, oracle, handlers, callback) ->
+  handlers.forEach (handlers,state) ->
     if oracle[state]?()
       events.forEach (inEvent) ->
         ename = handlers.get(inEvent.get('name'))
         if ename?
-          fn(ename)
+          callback(ename)
 
 
 class SuitControlSystem extends BaseSystem
@@ -52,10 +52,10 @@ class SuitControlSystem extends BaseSystem
 
   process: ->
     motion = @getComp('motion')
-    events = @getEvents()
-    oracle = new MotionOracle(motion)
-    transformEvents events, oracle, (e,data=null) =>
-      switch e
+    # events = @getEvents()
+    oracle = new SuitMotionOracle(motion)
+    @handleEventsByState oracle, MotionStates, (name,data=null) =>
+      switch name
         when 'faceLeft'
           @setProp 'samus','direction','left'
         when 'faceRight'
@@ -65,6 +65,14 @@ class SuitControlSystem extends BaseSystem
         when 'aimStraight'
           @setProp 'samus','aim','straight'
         else
-          @publishEvent e,data
+          @publishEvent name,data
+
+  handleEventsByState: (oracle,handlers,callback) ->
+    handlers.forEach (handlers,state) =>
+      if oracle[state]?()
+        @getEvents().forEach (inEvent) ->
+          ename = handlers.get(inEvent.get('name'))
+          if ename?
+            callback(ename,null)
 
 module.exports = SuitControlSystem

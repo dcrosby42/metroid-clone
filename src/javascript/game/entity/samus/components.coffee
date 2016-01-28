@@ -22,3 +22,5 @@ exports.ShortBeam = Immutable.fromJS
 exports.Suit = Immutable.fromJS
   type: 'suit'
 
+exports.MorphBall = Immutable.fromJS
+  type: 'morph_ball'

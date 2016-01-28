@@ -2,7 +2,7 @@ BaseSystem = require '../../../../ecs/base_system'
 Immutable = require 'immutable'
 
 class MotionSystem extends BaseSystem
-  @Subscribe: ['motion', 'velocity', 'hit_box']
+  @Subscribe: ['samus', 'motion', 'velocity', 'hit_box']
 
   process: ->
     velocity = @getComp('velocity')

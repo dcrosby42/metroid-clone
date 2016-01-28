@@ -1,5 +1,5 @@
 
-class MotionOracle
+class SuitMotionOracle
   constructor: (motionComp) ->
     @states = motionComp.get('states')
 
@@ -15,4 +15,4 @@ class MotionOracle
   airborn:        -> @rising() or @falling()
   spinJumping:    -> false # TODO: boots / suit state for spin jumping?
 
-module.exports = MotionOracle
+module.exports = SuitMotionOracle

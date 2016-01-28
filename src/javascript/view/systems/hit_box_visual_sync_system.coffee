@@ -25,10 +25,11 @@ drawBoundingBox = (gfx,hitBox,hitBoxVisual) ->
   gfx.lineTo(4,0)
   gfx
 
-updateSidecar = (gfx, hitBoxVisual) ->
+updateSidecar = (gfx, hitBox, hitBoxVisual) ->
   gfx._sidecar ||= {}
   gfx._sidecar.color = hitBoxVisual.get('color')
   gfx._sidecar.anchorColor = hitBoxVisual.get('anchorColor')
+  gfx._sidecar.height = hitBox.get('height')
   gfx
 
 class HitBoxVisualSyncSystem extends ViewObjectSyncSystem
@@ -46,9 +47,9 @@ class HitBoxVisualSyncSystem extends ViewObjectSyncSystem
     hitBoxVisual = comps.get('hit_box_visual')
 
     drawBoundingBox(gfx, hitBox, hitBoxVisual)
+    updateSidecar(gfx, hitBox, hitBoxVisual)
     
     @ui.addObjectToLayer(gfx, hitBoxVisual.get('layer'))
-    updateSidecar(gfx,hitBoxVisual)
     gfx
 
   updateObject: (comps,gfx) ->
@@ -56,9 +57,11 @@ class HitBoxVisualSyncSystem extends ViewObjectSyncSystem
     hitBoxVisual = comps.get('hit_box_visual')
     gfx.position.set hitBox.get('x'), hitBox.get('y')
 
-    if hitBoxVisual.get('color') != gfx._sidecar.color or hitBoxVisual.get('anchorColor') != gfx._sidecar.anchorColor
+    if hitBoxVisual.get('color') != gfx._sidecar.color or hitBoxVisual.get('anchorColor') != gfx._sidecar.anchorColor or hitBox.get('height') != gfx._sidecar.height
+      console.log "hitboxvisualsyncsystem: clear"
       gfx.clear()
-      updateSidecar(gfx,hitBoxVisual)
+      drawBoundingBox(gfx, hitBox, hitBoxVisual)
+      updateSidecar(gfx, hitBox, hitBoxVisual)
 
 module.exports = HitBoxVisualSyncSystem
 

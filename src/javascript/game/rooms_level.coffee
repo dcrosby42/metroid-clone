@@ -31,8 +31,8 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
     Common.Rng.merge(state: 123123123)
   ]
 
-  estore.createEntity Samus.factory.createComponents('samus', position: {x:648,y:191}) # brinstar landing pad
-  # estore.createEntity Samus.factory.createComponents('samus', position: {x:400,y:175}) # near maru_mari
+  # estore.createEntity Samus.factory.createComponents('samus', position: {x:648,y:191}) # brinstar landing pad
+  estore.createEntity Samus.factory.createComponents('samus', position: {x:400,y:175}) # near maru_mari
 
 
   # Samus status HUD
@@ -82,15 +82,21 @@ RoomsLevel.gameSystems = ->
   sys.add CommonSystems, 'death_timer_system'
   sys.add CommonSystems, 'animation_timer_system'
   sys.add CommonSystems, 'sound_system'
-  sys.add SamusSystems, 'samus_motion'
-  sys.add SamusSystems, 'motion_system'
   sys.add CommonSystems, 'controller_system'
+
+  sys.add SamusSystems, 'samus_motion' # TODO remove? Update Animation though!
+
+  sys.add SamusSystems, 'motion_system'
 
   sys.add SamusSystems, 'suit_control_system'
   sys.add SamusSystems, 'suit_velocity_system'
   sys.add SamusSystems, 'suit_sound_system'
 
-  sys.add SamusSystems, 'samus_maru_mari_system'
+  sys.add SamusSystems, 'morph_ball_control_system'
+  sys.add SamusSystems, 'morph_ball_velocity_system'
+
+  sys.add SamusSystems, 'samus_morph_system'
+
   sys.add EnemiesSystems, 'zoomer_controller_system'
   sys.add SamusSystems, 'short_beam_system'
 

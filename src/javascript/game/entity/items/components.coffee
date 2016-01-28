@@ -15,3 +15,4 @@ C.Collected = imm
 
 C.MaruMari = imm
   type: 'maru_mari'
+  state: 'inactive'

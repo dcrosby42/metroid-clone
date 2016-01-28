@@ -1,6 +1,6 @@
 Common = require '../../components'
 BaseSystem = require '../../../../ecs/base_system'
-MotionOracle = require './motion_oracle'
+SuitMotionOracle = require './suit_motion_oracle'
 
 handleEvents = (events,fns) ->
   events.forEach (e) ->
@@ -14,7 +14,7 @@ class SuitSoundSystem extends BaseSystem
       jump: =>
         @_startJumpingSound()
     
-    mo = new MotionOracle(@getComp('motion'))
+    mo = new SuitMotionOracle(@getComp('motion'))
     if mo.running()
       @_startRunningSound()
     else
