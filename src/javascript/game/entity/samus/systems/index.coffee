@@ -12,6 +12,7 @@ module.exports =
   samus_morph_system: require './samus_morph_system'
   samus_motion: require './samus_motion'
   short_beam_system: require './short_beam_system'
+  suit_animation: require './suit_animation'
   suit_control_system: require './suit_control_system'
   suit_motion_oracle: require './suit_motion_oracle'
   suit_sound_system: require './suit_sound_system'

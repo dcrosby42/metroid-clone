@@ -2,23 +2,32 @@ Common = require '../../components'
 BaseSystem = require '../../../../ecs/base_system'
 SuitMotionOracle = require './suit_motion_oracle'
 
-handleEvents = (events,fns) ->
-  events.forEach (e) ->
-    fns[e.get('name')]?()
-
 class SuitSoundSystem extends BaseSystem
   @Subscribe: [ 'suit', 'motion' ]
 
   process: ->
+    oracle = new SuitMotionOracle(@getComp('motion'))
+
     @handleEvents
       jump: =>
         @_startJumpingSound()
     
-    mo = new SuitMotionOracle(@getComp('motion'))
-    if mo.running()
+    if oracle.running()
       @_startRunningSound()
     else
       @_stopRunningSound()
+
+    # VISUAL POSE
+    @setProp 'suit','pose', if oracle.running()
+      'running'
+    else if oracle.airborn()
+      'airborn'
+    else
+      'standing'
+      
+  # 
+  # Helpers
+  #
 
   _startJumpingSound: ->
     @addComp Common.Sound.merge

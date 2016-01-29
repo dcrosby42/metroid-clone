@@ -84,7 +84,7 @@ RoomsLevel.gameSystems = ->
   sys.add CommonSystems, 'sound_system'
   sys.add CommonSystems, 'controller_system'
 
-  sys.add SamusSystems, 'samus_motion' # TODO remove? Update Animation though!
+  # sys.add SamusSystems, 'samus_motion' # TODO remove? Update Animation though!
 
   sys.add SamusSystems, 'motion_system'
 
@@ -116,7 +116,8 @@ RoomsLevel.gameSystems = ->
   sys.add CommonSystems, 'bullet_system'
   sys.add CommonSystems, 'enemy_hit_system'
   sys.add EnemiesSystems, 'skree_action'
-  sys.add SamusSystems, 'samus_animation'
+  # sys.add SamusSystems, 'samus_animation' # XXX
+  sys.add SamusSystems, 'suit_animation'
   sys.add CommonSystems, 'viewport_shuttle_system'
   sys.add CommonSystems, 'viewport_system'
   sys.add CommonSystems, 'viewport_room_system'
