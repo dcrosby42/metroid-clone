@@ -21,6 +21,7 @@ Bugs
 
 Refinements
 
+- door transition completion
 - gun recoil anim
 - Powerup icons should flicker/glow 
 - morphing action should have intermediate "roll up" frame
