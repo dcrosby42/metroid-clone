@@ -7,7 +7,8 @@ exports.Samus = Immutable.fromJS
   direction: 'right' # right | left
   aim: 'straight' # up | straight
   runSpeed: 88/1000 # 88 px/sec
-  jumpSpeed: 400/1000
+  # jumpSpeed: 400/1000
+  jumpSpeed: 0.31
 
   floatSpeed: 60/1000
   recoil: 'no'

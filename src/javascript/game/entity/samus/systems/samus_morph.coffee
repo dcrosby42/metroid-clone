@@ -1,13 +1,13 @@
 BaseSystem = require '../../../../ecs/base_system'
 StateMachineSystem = require '../../../../ecs/state_machine_system'
 Samus = require '..'
-# Common = require '../../components'
+Common = require '../../components'
 # Immutable = require 'immutable'
 # StateMachineSystem = require '../../../../ecs/state_machine_system'
 
 # class SamusMaruMariSystem extends BaseSystem
 class SamusMorphSystem extends StateMachineSystem
-  @Subscribe: ['maru_mari', 'samus', 'hit_box']
+  @Subscribe: ['maru_mari', 'samus', 'hit_box', 'position']
 
   @StateMachine:
     componentProperty: ['maru_mari', 'state']
@@ -28,21 +28,48 @@ class SamusMorphSystem extends StateMachineSystem
     console.log 'morphIntoBallAction'
     # Add morphball component
     @addComp Samus.components.MorphBall
+
     # Remove suit component
     suit = @getEntityComponent @eid(), 'suit'
     @deleteComp suit
-    # TODO: Change hitbox
-    @setProp 'hit_box', 'height', 14
+
+    # Shrink hitbox
+    @setProp 'hit_box', 'height', 15
+
+    # start a little airborn
+    @updateProp 'position', 'y', (y) -> y - 8
+
+    # Make morph bloop sound
+    @addComp Common.Sound.merge
+      soundId: 'samus_morphball'
+      volume: 0.2
+      # playPosition: 0
+      timeLimit: 100
+      resound: true
+
 
   morphIntoSuitAction: ->
     console.log 'morphIntoSuitAction'
     # Add suit component
     @addComp Samus.components.Suit
+
     # Remove morphball component
     mb = @getEntityComponent @eid(), 'morph_ball'
     @deleteComp mb
-    # TODO: Change hitbox
+
+    # Grow hitbox
     @setProp 'hit_box', 'height', 29 # TODO this is duplcate knowledge from Samus factory
+    
+    # start a little airborn
+    @updateProp 'position', 'y', (y) -> y - 8
+    
+    # Make step sound
+    @addComp Common.Sound.merge
+      soundId: 'step'
+      volume: 0.5
+      # playPosition: 0
+      timeLimit: 50
+      resound: true
 
 
 module.exports = SamusMorphSystem

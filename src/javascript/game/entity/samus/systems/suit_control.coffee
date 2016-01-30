@@ -14,11 +14,11 @@ MotionStates = imm
     rightReleased: 'stop'
     up: 'aimUp'
     upReleased: 'aimStraight'
-    down: 'crouch'
     action1: 'gunTrigger'
     action1Released: 'gunTriggerReleased'
   standing:
     action2Pressed: 'jump'
+    down: 'crouch'
   running:
     action2Pressed: 'jump'
     # action2Pressed: 'spinJump' # TODO

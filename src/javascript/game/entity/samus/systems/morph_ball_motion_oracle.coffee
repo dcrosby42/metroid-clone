@@ -5,6 +5,8 @@ class MorphBallMotionOracle
 
   any:            -> true
   grounded:       -> @states.has('touchingBottom')
+  underSomething: -> @states.has('adjacentTop')
+  inTheClear:     -> @grounded() and !@underSomething()
   # parked:         -> @grounded() and @states.has('xStill')
   # rolling:        -> @grounded() and @movingSideways()
   # rising:         -> @states.has('rising')

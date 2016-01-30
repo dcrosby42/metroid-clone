@@ -23,6 +23,9 @@ class MotionSystem extends BaseSystem
     if hitBox.getIn(['touching','top'])
       motions.push('touching')
       motions.push('touchingTop')
+    if hitBox.getIn(['adjacent','top'])
+      motions.push('adjacent')
+      motions.push('adjacentTop')
 
 
     if velocity.get('x') > 0

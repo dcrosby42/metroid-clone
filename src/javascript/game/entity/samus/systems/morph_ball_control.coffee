@@ -9,10 +9,11 @@ MotionStates = imm
     right: 'rollRight'
     leftReleased: 'stop'
     rightReleased: 'stop'
-    up: 'stand'
   grounded:
     action1: 'bombTrigger'
     action1Released: 'bombTriggerReleased'
+  inTheClear:
+    up: 'stand'
   # parked:
   # rolling:
   # rising:

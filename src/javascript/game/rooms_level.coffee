@@ -30,16 +30,18 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
     Common.Name.merge(name: 'mainRandom')
     Common.Rng.merge(state: 123123123)
   ]
-
+  
+  # Samus start position
   brinstarEntrance = {x:648,y:191}
   nearBushTunnel = {x:1800,y:207}
   nearMorphBall = {x:400,y:175}
-  samusStartPos = nearMorphBall
+  samusStartPos = brinstarEntrance
+  # samusStartPos = nearMorphBall
   # samusStartPos = nearBushTunnel
   estore.createEntity Samus.factory.createComponents('samus', position: samusStartPos)
 
 
-  # Samus status HUD
+  # HUD
   estore.createEntity [
     Common.Hud
     Common.Name.merge(name: 'hud')
@@ -158,12 +160,14 @@ RoomsLevel.soundsToPreload = ->
   effects = [
     "enemy_die1"
     "health"
+    "step"
     "step2"
     "jump"
     "samus_hurt"
     "samus_die"
     "short_beam"
     "door"
+    "samus_morphball"
   ]
   assets = {}
   for song in songs
