@@ -24,8 +24,8 @@ class SamusHitSystem extends BaseSystem
       # console.log ">> Samus #{samusEid} harmed by for #{damage} HP by #{@getProp('harmful','eid')}"
       @deleteComp @getComp('samus-vulnerable')
 
-      kickX = if samusBox.centerX > harmfulBox.centerX then 0.05 else -0.05
-      kickY = -0.1
+      kickX = if samusBox.centerX > harmfulBox.centerX then 0.02 else -0.02
+      kickY = -0.05
       @addEntityComp samusEid, Common.Damaged.merge
         impulseX: kickX
         impulseY: kickY

@@ -66,13 +66,13 @@ class MorphBallAnimationSystem extends BaseSystem
     # ]
     # newState = ObjectUtils.getDeep states, keyPath
     #
-    # # TODO : refactor this gorpy implementation.
-    # if damaged = @getEntityComponent(@eid(), 'damaged')
-    #   animation = animation.update 'visible', (v) -> !v
-    #   animationChanged = true
-    # else
-    #   animation = animation.set('visible',true)
-    #   animationChanged = true
+    # # TODO : refactor this gorpy implementation. ALSO: this is totally duped from suit_animation
+    if damaged = @getEntityComponent(@eid(), 'damaged')
+      animation = animation.update 'visible', (v) -> !v
+      animationChanged = true
+    else
+      animation = animation.set('visible',true)
+      animationChanged = true
 
     if newState != oldState
       animation = animation.set('state',newState).set('time',0)

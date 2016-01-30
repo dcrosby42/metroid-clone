@@ -40,6 +40,7 @@ class SamusMorphSystem extends StateMachineSystem
     @updateProp 'position', 'y', (y) -> y - 8
 
     # Make morph bloop sound
+    @_clearSounds()
     @addComp Common.Sound.merge
       soundId: 'samus_morphball'
       volume: 0.2
@@ -64,6 +65,7 @@ class SamusMorphSystem extends StateMachineSystem
     @updateProp 'position', 'y', (y) -> y - 8
     
     # Make step sound
+    @_clearSounds()
     @addComp Common.Sound.merge
       soundId: 'step'
       volume: 0.5
@@ -71,5 +73,8 @@ class SamusMorphSystem extends StateMachineSystem
       timeLimit: 50
       resound: true
 
+  _clearSounds: ->
+    @getEntityComponents(@eid(), 'sound').forEach (s) =>
+      @deleteComp s
 
 module.exports = SamusMorphSystem

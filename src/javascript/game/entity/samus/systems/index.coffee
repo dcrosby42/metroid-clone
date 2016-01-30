@@ -4,7 +4,6 @@ module.exports =
   morph_ball_motion_oracle: require './morph_ball_motion_oracle'
   morph_ball_velocity: require './morph_ball_velocity'
   powerup_collection: require './powerup_collection'
-  samus_action_sounds: require './samus_action_sounds'
   samus_action_velocity: require './samus_action_velocity'
   samus_controller_action: require './samus_controller_action'
   samus_hud: require './samus_hud'

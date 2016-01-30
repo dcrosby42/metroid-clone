@@ -1,3 +1,35 @@
+Things to add
+
+- level bg music
+- powerup jingle
+- Spin jump
+- High jump boots
+- bombs
+- long beam powerup
+- ice beam powerup
+- wave beam powerup
+- vertical rooms / shaft 1
+- missiles
+- enemy: big flappy
+
+Bugs
+
+- non-stereo sound?
+- Recoil from geting damaged -> samus keeps going, in suit or ball form, until interupted.
+- key-up-related events are missed when flip-flopping in and out of adeventure state to powerup state and back, causing sticky run/roll action
+
+
+Refinements
+
+- gun recoil anim
+- Powerup icons should flicker/glow 
+- morphing action should have intermediate "roll up" frame
+- walking off a ledge: samus shouldn't be able to aim or fire up while falling. (Distinct from falling due to jump)
+
+
+-----------------------------------
+
+
 @displayObjectCaches
   constructor
   objectCacheFor
