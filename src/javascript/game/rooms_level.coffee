@@ -31,8 +31,12 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
     Common.Rng.merge(state: 123123123)
   ]
 
-  # estore.createEntity Samus.factory.createComponents('samus', position: {x:648,y:191}) # brinstar landing pad
-  estore.createEntity Samus.factory.createComponents('samus', position: {x:400,y:175}) # near maru_mari
+  brinstarEntrance = {x:648,y:191}
+  nearBushTunnel = {x:1800,y:207}
+  nearMorphBall = {x:400,y:175}
+  samusStartPos = nearMorphBall
+  # samusStartPos = nearBushTunnel
+  estore.createEntity Samus.factory.createComponents('samus', position: samusStartPos)
 
 
   # Samus status HUD
