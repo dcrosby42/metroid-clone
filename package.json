@@ -69,6 +69,7 @@
     "lodash": "*",
     "mousetrap": "~1.4.6",
     "react": "~0.13.2",
-    "immutable": "~3.7.2"
+    "immutable": "~3.7.2",
+    "howler": "2.0.0-beta7"
   }
 }
