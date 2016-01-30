@@ -89,6 +89,23 @@ sprites =
         props:
           scale: { x: -1 }
 
+      "roll-right":
+        frames: [
+          "morph-ball-a"
+          "morph-ball-b"
+          "morph-ball-c"
+          "morph-ball-d"
+        ]
+        fps: 30
+      "roll-left":
+        frames: [
+          "morph-ball-d"
+          "morph-ball-c"
+          "morph-ball-b"
+          "morph-ball-a"
+        ]
+        fps: 30
+
     props:
       anchor: { x: 0.5, y: 0.95 }
 

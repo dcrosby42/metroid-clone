@@ -84,21 +84,19 @@ RoomsLevel.gameSystems = ->
   sys.add CommonSystems, 'sound_system'
   sys.add CommonSystems, 'controller_system'
 
-  # sys.add SamusSystems, 'samus_motion' # TODO remove? Update Animation though!
+  sys.add SamusSystems, 'samus_motion'
 
-  sys.add SamusSystems, 'motion_system'
+  sys.add SamusSystems, 'suit_control'
+  sys.add SamusSystems, 'suit_velocity'
+  sys.add SamusSystems, 'suit_sound'
 
-  sys.add SamusSystems, 'suit_control_system'
-  sys.add SamusSystems, 'suit_velocity_system'
-  sys.add SamusSystems, 'suit_sound_system'
+  sys.add SamusSystems, 'morph_ball_control'
+  sys.add SamusSystems, 'morph_ball_velocity'
 
-  sys.add SamusSystems, 'morph_ball_control_system'
-  sys.add SamusSystems, 'morph_ball_velocity_system'
-
-  sys.add SamusSystems, 'samus_morph_system'
+  sys.add SamusSystems, 'samus_morph'
 
   sys.add EnemiesSystems, 'zoomer_controller_system'
-  sys.add SamusSystems, 'short_beam_system'
+  sys.add SamusSystems, 'short_beam'
 
   sys.add CommonSystems, 'samus_pickup_system'
   sys.add CommonSystems, 'samus_powerup_system'
@@ -106,7 +104,7 @@ RoomsLevel.gameSystems = ->
   sys.add CommonSystems, 'samus_damage_system'
   sys.add CommonSystems, 'samus_death_system'
 
-  sys.add SamusSystems, 'samus_hud_system'
+  sys.add SamusSystems, 'samus_hud'
   sys.add EnemiesSystems, 'zoomer_crawl_system'
   sys.add CommonSystems, 'gravity_system'
   sys.add CommonSystems, 'map_physics_system'
@@ -118,6 +116,7 @@ RoomsLevel.gameSystems = ->
   sys.add EnemiesSystems, 'skree_action'
   # sys.add SamusSystems, 'samus_animation' # XXX
   sys.add SamusSystems, 'suit_animation'
+  sys.add SamusSystems, 'morph_ball_animation'
   sys.add CommonSystems, 'viewport_shuttle_system'
   sys.add CommonSystems, 'viewport_system'
   sys.add CommonSystems, 'viewport_room_system'

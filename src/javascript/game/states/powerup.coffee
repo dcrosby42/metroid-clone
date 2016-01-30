@@ -40,7 +40,7 @@ class PowerupState extends GameState
   _getSystems: ->
     sys = new SystemAccumulator()
     sys.add CommonSystems, 'timer_system'
-    sys.add SamusSystems, 'powerup_collection_system'
+    sys.add SamusSystems, 'powerup_collection'
     return sys.systems
 
 module.exports = PowerupState
