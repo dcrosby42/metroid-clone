@@ -120,7 +120,6 @@ RoomsLevel.gameSystems = ->
   sys.add CommonSystems, 'bullet_system'
   sys.add CommonSystems, 'enemy_hit_system'
   sys.add EnemiesSystems, 'skree_action'
-  # sys.add SamusSystems, 'samus_animation' # XXX
   sys.add SamusSystems, 'suit_animation'
   sys.add SamusSystems, 'morph_ball_animation'
   sys.add CommonSystems, 'viewport_shuttle_system'

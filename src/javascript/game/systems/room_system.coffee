@@ -45,6 +45,7 @@ class RoomSystem extends StateMachineSystem
       @newEntity Doors.factory.createComponents('doorEnclosure', x:x,y:y, style:style, roomId: roomId)
       @newEntity Doors.factory.createComponents('doorGel', x:x, y:y, style:style, roomId: roomId)
 
+    # TODO: spawn powerups
 
       
   teardownRoomAction: ->
