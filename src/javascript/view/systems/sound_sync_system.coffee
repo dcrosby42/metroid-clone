@@ -7,24 +7,21 @@ class SoundSyncSystem extends ViewObjectSyncSystem
   newObject: (comps) ->
     soundComp = comps.get('sound')
     soundId = soundComp.get('soundId')
-    volume = soundComp.get('volume')
 
-    soundInstance = @ui.playSound(soundId)
-    soundInstance.volume = volume if volume?
-    if soundComp.get('loop')
-      soundInstance.loop = -1
+    sound = @ui.playSound(soundId)
+    return null unless sound?
 
-    if soundComp.get('resound')
-      soundInstance._resound = true
-    else
-      soundInstance._resound = false
+    sound.setVolume soundComp.get('volume')
+    sound.setLooping soundComp.get('loop')
+    sound.setResound soundComp.get('resound')
+    sound
 
-    soundInstance
-
-  updateObject: (comps,soundInstance) ->
+  updateObject: (comps,sound) ->
     # TODO: sound component could indicate a change in play state that should affect the instance
 
-  removeObject: (soundInstance) ->
-    soundInstance.stop() unless soundInstance._resound
+  removeObject: (sound) ->
+    console.log "howler sound sync: removeObject",sound
+    return unless sound?
+    sound.remove()
 
 module.exports = SoundSyncSystem

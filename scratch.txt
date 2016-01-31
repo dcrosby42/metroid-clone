@@ -2,6 +2,7 @@ Things to add
 
 - level bg music
 - powerup jingle
+- door transition completion
 - Spin jump
 - High jump boots
 - bombs
@@ -21,13 +22,33 @@ Bugs
 
 Refinements
 
-- door transition completion
 - gun recoil anim
 - Powerup icons should flicker/glow 
 - morphing action should have intermediate "roll up" frame
 - walking off a ledge: samus shouldn't be able to aim or fire up while falling. (Distinct from falling due to jump)
 
+-----------------------------------
+SOUND MGMT
 
+Deps:
+
+PixiHarness <- SoundController
+SoundController <- CreateJS, CreateJS.Sound, window.createjs
+  loadSoundMap
+  playSound
+
+UiState <- SoundController
+  playSound
+
+view/systems/SoundSyncSystem <- UiState, createjs methods on soundInstances
+  playSound
+
+Howler
+https://www.npmjs.com/package/howler
+2.0 branch in github: https://github.com/goldfire/howler.js/tree/2.0
+npm view howler versions
+    "howler": "2.0.0-beta7"
+npm instlal
 -----------------------------------
 
 

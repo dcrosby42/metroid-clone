@@ -24,13 +24,11 @@ class PixiHarness
     allDone = CompositeEvent.create ["graphics", "sounds"], callback
 
     if @delegate.graphicsToPreload?
-      # console.log "GRAPHICS PRELOAD:",@delegate.graphicsToPreload()
       @_loadGraphicalAssets @delegate.graphicsToPreload(), allDone.notifier("graphics")
     else
       allDone.notify "graphics"
 
     if @delegate.soundsToPreload?
-      # console.log "SOUNDS PRELOAD:",@delegate.soundsToPreload()
       @_loadSoundAssets @delegate.soundsToPreload(), allDone.notifier("sounds")
     else
       allDone.notify "sounds"

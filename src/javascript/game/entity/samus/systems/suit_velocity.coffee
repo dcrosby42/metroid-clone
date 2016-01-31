@@ -5,7 +5,6 @@ class SuitVelocitySystem extends BaseSystem
   @Subscribe: [ 'suit', 'samus', 'velocity' ]
 
   process: ->
-    console.log "suit velocity"
     @handleEvents
       run: =>
         if @getProp('samus','direction') == 'right'
