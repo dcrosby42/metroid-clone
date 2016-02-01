@@ -14,7 +14,6 @@ class SoundController
     names = []
     names.push name for name,_ of soundMap
     soundsLoadedEvent = CompositeEvent.create names, ->
-      console.log "HowlerSoundController.loadSoundMap soundsLoadedEvents"
       callback()
 
     for name,url of soundMap
@@ -22,24 +21,20 @@ class SoundController
         src: [url]
         preload: true
         onload: ->
-          console.log "HowlerSoundController.loadSoundMap onload sn=#{@__soundName} this=",@
           soundsLoadedEvent.notify @__soundName
-
         onloaderror: (soundId, err) ->
-          console.log "HowlerSoundController.loadSoundMap ERROR while building Howl name=#{name} url=#{url}: soundId=#{soundId} err=",err
+          console.log "!! ERR SoundController.loadSoundMap Howl name=#{name} url=#{url}: soundId=#{soundId} err=",err
       h.__soundName = name
       howls[name] = h
 
   @playSound: (soundName) ->
-    console.log "HowlerSoundController.playSound #{soundName}"
     howl = howls[soundName]
     if howl?
       sound = new SoundRef(howl)
-      console.log "HowlerSoundController.playSound '#{soundName}'"
       sound.play()
       sound
     else
-      console.log "!! FAIL: HowlerSoundController.playSound '#{soundName}': no howl cached with this name"
+      console.log "!! FAIL: SoundController.playSound '#{soundName}': no howl cached with this name"
       null
 
 # Wraps a Howl and the sound id of a playable sound.
@@ -69,6 +64,15 @@ class SoundRef
     return unless resound? and @howl? and @id?
     @resound = resound
 
+  playPositionMillis: ->
+    return 0 unless @howl? and @id?
+    @howl.seek(@id) * 1000
+    
+  seekMillis: (millis) ->
+    return 0 unless millis? and @howl? and @id?
+    sec = millis/1000
+    @howl.seek(sec,@id)
+
   stop: ->
     @howl.stop(@id)
 
@@ -81,7 +85,6 @@ class SoundRef
     # Decommision this sound wrapper
     @id = null
     @howl = null
-
 
 module.exports = SoundController
 

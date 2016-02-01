@@ -79,6 +79,18 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
       roomIds: Immutable.Set()
   ]
 
+  # Background music
+  estore.createEntity [
+    Common.Name.merge(name: "BG Music")
+    Immutable.Map
+      type: 'background_music'
+    Common.Sound.merge
+      soundId: 'brinstar'
+      volume: 0.5
+      loop:true
+      timeLimit: 110*1000
+  ]
+
   estore
 
 
@@ -126,6 +138,8 @@ RoomsLevel.gameSystems = ->
   sys.add CommonSystems, 'viewport_system'
   sys.add CommonSystems, 'viewport_room_system'
   sys.add CommonSystems, 'room_system'
+  # sys.add CommonSystems, 'samus_room_system'
+
   sys.add DoorSystems, 'door_gel_system'
   return sys.systems
 
