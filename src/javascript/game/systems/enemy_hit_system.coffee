@@ -46,7 +46,7 @@ class EnemyHitSystem extends StateMachineSystem
     @newEntity [
       Common.Sound.merge
         soundId: 'enemy_die1'
-        volume: 0.15
+        volume: 0.4
         playPosition: 0
         timeLimit: 170
     ]

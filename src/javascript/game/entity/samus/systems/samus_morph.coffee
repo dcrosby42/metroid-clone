@@ -43,7 +43,8 @@ class SamusMorphSystem extends StateMachineSystem
     @_clearSounds()
     @addComp Common.Sound.merge
       soundId: 'samus_morphball'
-      volume: 0.2
+      # volume: 0.2
+      volume: 1
       # playPosition: 0
       timeLimit: 100
       resound: true
@@ -68,7 +69,8 @@ class SamusMorphSystem extends StateMachineSystem
     @_clearSounds()
     @addComp Common.Sound.merge
       soundId: 'step'
-      volume: 0.5
+      # volume: 0.5
+      volume: 1
       # playPosition: 0
       timeLimit: 50
       resound: true

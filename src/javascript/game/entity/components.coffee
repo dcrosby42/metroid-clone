@@ -81,7 +81,7 @@ C.MapGhost = imm
 C.Sound = imm
   type: 'sound'
   soundId: null
-  volume: 0.0
+  volume: 1.0
   playPosition: 0.0
   timeLimit: 0
   loop: false

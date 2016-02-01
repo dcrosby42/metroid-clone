@@ -27,7 +27,7 @@ class PowerupCollectionSystem extends StateMachineSystem
   celebrateAction: ->
     @addComp Common.Sound.merge
       soundId: 'powerup_jingle'
-      volume: 0.2
+      volume: 1
       playPosition: 0
       timeLimit: 750
     @addComp Common.Timer.merge

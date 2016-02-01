@@ -35,7 +35,8 @@ class SamusPickupSystem extends BaseSystem
     @newEntity [
       Common.Sound.merge
         soundId: 'health'
-        volume: 0.15
+        # volume: 0.15
+        volume: 0.5
         playPosition: 0
         timeLimit: 245
     ]

@@ -86,7 +86,7 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
       type: 'background_music'
     Common.Sound.merge
       soundId: 'brinstar'
-      volume: 0.5
+      volume: 1
       loop:true
       timeLimit: 110*1000
   ]

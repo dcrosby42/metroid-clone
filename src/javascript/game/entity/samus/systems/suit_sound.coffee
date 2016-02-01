@@ -32,7 +32,7 @@ class SuitSoundSystem extends BaseSystem
   _startJumpingSound: ->
     @addComp Common.Sound.merge
       soundId: 'jump'
-      volume: 0.2
+      volume: 0.5
       playPosition: 0
       timeLimit: 170
 
@@ -41,7 +41,7 @@ class SuitSoundSystem extends BaseSystem
     unless s?
       @addComp Common.Sound.merge
         soundId: 'step2'
-        volume: 0.04
+        volume: 0.15
         playPosition: 0
         timeLimit: 20
         loop: true
