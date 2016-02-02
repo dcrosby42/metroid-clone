@@ -53,7 +53,6 @@ newBullet = (weapon, position,direction,shootUp) ->
 
     Common.Sound.merge
       soundId: 'short_beam'
-      # volume: 0.2
       volume: 0.5
       playPosition: 0
       timeLimit: 55

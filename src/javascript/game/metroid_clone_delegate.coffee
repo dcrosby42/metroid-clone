@@ -70,10 +70,11 @@ class MetroidCloneDelegate
     sounds = _.merge(sounds, MainTitleLevel.soundsToPreload())
     sounds
 
-  setupStage: (stage, width, height,zoom) ->
+  setupStage: (stage, width, height,zoom, soundController) ->
     uiState = UIState.create
       stage: stage
       zoomScale: zoom
+      soundController: soundController
       aspectScale:
         x: 1.25
         y: 1
@@ -92,7 +93,10 @@ class MetroidCloneDelegate
   update: (dt) ->
     controllerEvents = @controllerEventMux.next()
     devUIEvents = @devUI.getEvents()
-    @adminState = Transforms.updateAdmin(@adminState, controllerEvents.get('admin'), devUIEvents)
+
+    [@adminState,adminEvents] = Transforms.updateAdmin(@adminState, controllerEvents.get('admin'), devUIEvents)
+    if adminEvents.size > 0
+      console.log "adminEvents:",adminEvents
 
     [@stateHistory, action] = Transforms.selectAction(@stateHistory,dt,controllerEvents,@adminState)
     gameState = switch action.get('type')
@@ -113,6 +117,13 @@ class MetroidCloneDelegate
         throw new Error("WTF Transforms.selectAction returned unknown action #{action.toJS()}")
 
     # Update the view:
+    adminEvents.forEach (e) =>
+      switch e.get('name')
+        when 'pausedChanged'
+          if @adminState.get('paused')
+            @viewMachine.uiState.muteAudio()
+          else
+            @viewMachine.uiState.unmuteAudio()
     @viewMachine.uiState.drawHitBoxes = @adminState.get('drawHitBoxes')
     @viewMachine.update2 gameState if gameState?
 

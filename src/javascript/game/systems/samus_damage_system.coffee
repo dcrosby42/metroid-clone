@@ -67,7 +67,6 @@ class SamusDamageSystem extends StateMachineSystem
     @newEntity [
       Common.Sound.merge
         soundId: 'samus_hurt'
-        # volume: 0.15
         volume: 0.2
         playPosition: 0
         timeLimit: 170
@@ -78,7 +77,6 @@ class SamusDamageSystem extends StateMachineSystem
     @newEntity [
       Common.Sound.merge
         soundId: 'samus_die'
-        # volume: 0.15
         volume: 0.5
         playPosition: 0
         timeLimit: 3000

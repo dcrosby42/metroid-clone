@@ -8,6 +8,8 @@ class SoundSystem extends BaseSystem
     newPlayPosition = sound.get('playPosition') + @dt()
     if newPlayPosition > sound.get('timeLimit')
       if sound.get('loop')
+        # @deleteComp sound
+        # @addComp sound.set('playPosition',0)
         @updateComp sound.set('playPosition', 0)
       else
         @deleteComp sound

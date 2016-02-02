@@ -12,11 +12,12 @@ class PixiHarness
     @view = @renderer.view
     @domElement.appendChild @view
     @stopWatch = new StopWatch()
+    @soundController = SoundController
 
   start: ->
     @_loadAssets =>
       console.log "Assets loaded."
-      @delegate.setupStage @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight, @zoom
+      @delegate.setupStage @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight, @zoom, @soundController
       @stopWatch.start()
       requestAnimationFrame => @update()
 
@@ -43,7 +44,7 @@ class PixiHarness
 
   _loadSoundAssets: (assets, callback) ->
     if _.keys(assets).length > 0
-      SoundController.loadSoundMap assets, callback
+      @soundController.loadSoundMap assets, callback
     else
       callback()
    

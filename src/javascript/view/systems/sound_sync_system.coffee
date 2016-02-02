@@ -17,11 +17,25 @@ class SoundSyncSystem extends ViewObjectSyncSystem
     sound
 
   updateObject: (comps,sound) ->
-    # TODO: sound component could indicate a change in play state that should affect the instance
+    # soundComp = comps.get('sound')
+    # assumedPos = soundComp.get('playPosition')
+    # actualPos = sound.playPositionMillis()
+    # diff = assumedPos - actualPos
+    # diff2 = null
+    # if soundComp.get('loop')
+    #   diff2 = diff + soundComp.get('timeLimit')
+    # if diff < -18 and (!diff2 or (diff2? and diff2 > 18))
+    #   sound.seekMillis(assumedPos)
+    #   sound.pause()
+    # else if diff > 18
+    #   sound.seekMillis(assumedPos)
+    #   sound.play()
 
   removeObject: (sound) ->
-    console.log "howler sound sync: removeObject",sound
-    return unless sound?
+    if !sound?
+      console.log "sound sync: removeObject called with null sound?"
+      return
     sound.remove()
+
 
 module.exports = SoundSyncSystem

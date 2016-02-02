@@ -44,7 +44,6 @@ class DoorGelSystem extends StateMachineSystem
     @newEntity [
       Common.Sound.merge
         soundId: 'door'
-        # volume: 0.2
         volume: 0.5
         timeLimit: 1000
     ]

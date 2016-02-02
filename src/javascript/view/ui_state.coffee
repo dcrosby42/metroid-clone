@@ -1,4 +1,3 @@
-SoundController = require '../pixi_ext/sound_controller'
 PIXI = require "pixi.js"
 
 class UIState
@@ -8,11 +7,12 @@ class UIState
       x: 1.25
       y: 1.0
   
-  constructor: ({stage, zoomScale, aspectScale}) ->
+  constructor: ({stage, zoomScale, soundController, aspectScale}) ->
     @_layers = @_createLayers(stage,zoomScale,aspectScale)
     @_objectCaches = {}
     @_currentMapName = null
     @drawHitBoxes = false
+    @soundController = soundController
 
   getLayer: (layerName) ->
     @_layers[layerName] || @_layers.default
@@ -25,7 +25,7 @@ class UIState
     @_objectCaches[cacheName] ?= {}
 
   playSound: (soundId) ->
-    SoundController.playSound(soundId)
+    @soundController.playSound(soundId)
 
   _createLayers: (stage,zoomScale,aspectScale) ->
     zoomScale ?= @constructor.Defaults.zoomScale
@@ -94,6 +94,12 @@ class UIState
     @_currentMapName = null
     _.forEach _.values(@_layers.maps), (layer) ->
       layer.visible = false
+
+  muteAudio: ->
+    @soundController.muteAll()
+
+  unmuteAudio: ->
+    @soundController.unmuteAll()
 
   _addMapLayer: (mapDatabase,mapName) ->
     mapLayer = new PIXI.DisplayObjectContainer()

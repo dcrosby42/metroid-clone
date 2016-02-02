@@ -1,7 +1,6 @@
 CompositeEvent = require '../utils/composite_event'
 
 HowlerJs = require 'howler'
-window.howler = HowlerJs
 
 howls = {}
 
@@ -37,6 +36,13 @@ class SoundController
       console.log "!! FAIL: SoundController.playSound '#{soundName}': no howl cached with this name"
       null
 
+  @muteAll: ->
+    HowlerJs.Howler.mute(true)
+
+  @unmuteAll: ->
+    HowlerJs.Howler.mute(false)
+
+
 # Wraps a Howl and the sound id of a playable sound.
 class SoundRef
   constructor: (@howl) ->
@@ -71,6 +77,10 @@ class SoundRef
   seekMillis: (millis) ->
     return 0 unless millis? and @howl? and @id?
     sec = millis/1000
+    if sec < 0
+      sec = 0
+    else if sec > @howl.duration()
+      sec = @howl.duration()-0.001
     @howl.seek(sec,@id)
 
   stop: ->
@@ -85,6 +95,10 @@ class SoundRef
     # Decommision this sound wrapper
     @id = null
     @howl = null
+
+
+window.HowlerJs = HowlerJs
+window.howls = howls
 
 module.exports = SoundController
 

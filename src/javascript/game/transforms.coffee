@@ -14,22 +14,32 @@ mapControllerEvents = (events,mappings) ->
 
 toggle = (x) -> !x
   
-_calcDevUIState = (admin) ->
-  dui = admin.get('devUIState')
-    .set('paused', admin.get('paused'))
-    .set('draw-hitboxes', admin.get('drawHitBoxes'))
-  dui
+# _calcDevUIState = (admin) ->
+#   dui = admin.get('devUIState')
+#     .set('paused', admin.get('paused'))
+#     .set('draw-hitboxes', admin.get('drawHitBoxes'))
+#   dui
     
+toggleProp = (map,prop,events) ->
+  before = map.get(prop)
+  map = map.update(prop, toggle)
+  after = map.get(prop)
+  if after != before
+    events.push(Immutable.Map(name:"#{prop}Changed", data: after))
+  map
 
 exports.updateAdmin = (admin, cevts, devUIEvents) ->
   controller = PressedReleased.update(admin.get('controller'),cevts)
   admin = admin.set('controller', controller)
+  events = []
 
   if controller.get('toggle_pausePressed') or devUIEvents.get('toggle_pause')
-    admin = admin.update 'paused', toggle
+    # admin = admin.update 'paused', toggle
+    admin = toggleProp(admin,'paused',events)
 
   if controller.get('toggle_bounding_boxPressed') or devUIEvents.get('toggle_draw_hitboxes')
-    admin = admin.update 'drawHitBoxes', toggle
+    # admin = admin.update 'drawHitBoxes', toggle
+    admin = toggleProp(admin,'paused',events)
    
   admin = if admin.get('paused')
     admin.set('replay_back',
@@ -47,7 +57,7 @@ exports.updateAdmin = (admin, cevts, devUIEvents) ->
       .set('replay_forward',false)
       .set('step_forward',false)
 
-  admin
+  return [admin,Immutable.List(events)]
 
 exports.selectAction = (stateHistory,dt,controllerEvents,adminState) ->
   gameState1 = null
