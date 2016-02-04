@@ -1,5 +1,35 @@
 PIXI = require "pixi.js"
 
+MetroidLayerDefs = {
+  children:
+    [
+      {
+        id: 'base'
+        name: "Base Layer"
+        children: [
+          {
+            id: 'creatures'
+            name: 'Creatures Layer'
+          }
+          {
+            id: 'rooms'
+            name: 'Rooms Layer'
+          }
+          {
+            id: 'doors'
+            name: 'Doors Layer'
+          }
+        ]
+      }
+      {
+        id: 'overlay'
+        name: "Overlay Layer"
+      }
+    ]
+  aliases:
+    default: 'creatures'
+}
+
 class UIState
   @Defaults =
     zoomScale: 2.0
@@ -8,7 +38,8 @@ class UIState
       y: 1.0
   
   constructor: ({stage, zoomScale, soundController, aspectScale}) ->
-    @_layers = @_createLayers(stage,zoomScale,aspectScale)
+    # @_layers = @_createLayers(stage,zoomScale,aspectScale)
+    @_layers = @_createLayers_old(stage,zoomScale,aspectScale)
     @_objectCaches = {}
     @_currentMapName = null
     @drawHitBoxes = false
@@ -35,98 +66,40 @@ class UIState
     scaler.scale.set(aspectScale.x * zoomScale, aspectScale.y * zoomScale)
     scaler._name = "Scaler Layer - (#{scaler.scale.x},#{scaler.scale.y})"
 
-    base = new PIXI.DisplayObjectContainer()
-    base._name = "Base Layer"
-
-    background = new PIXI.DisplayObjectContainer()
-    background._name = "Background Layer"
-
-    creatures = new PIXI.DisplayObjectContainer()
-    creatures._name = "Creatures Layer"
-
-    rooms = new PIXI.DisplayObjectContainer()
-    rooms._name = "Rooms Layer"
-
-    doors = new PIXI.DisplayObjectContainer()
-    doors._name = "Doors Layer"
-
-    overlay = new PIXI.DisplayObjectContainer()
-    overlay._name = "Overlay Layer"
-
     stage.addChild scaler
-    scaler.addChild base
-    base.addChild creatures
-    base.addChild rooms
-    base.addChild doors
-    scaler.addChild overlay
 
-    layers =
-      scaler: scaler
-      base: base
-      maps: {}
-      rooms: rooms
-      doors: doors
-      background: background
-      creatures: creatures
-      overlay: overlay
-      default: creatures
-    layers
-    
-  # MAPS
+    layers = {}
+    layers.scaler = scaler
+    layers.maps = {}
 
-  getMapLayer: (mapDatabase, mapName) ->
-    layer = @_layers.maps[mapName]
-    unless layer?
-      layer = @_addMapLayer(mapDatabase, mapName)
-    layer
+    newLayer = (info) ->
+      l = new PIXI.DisplayObjectContainer()
+      l._name = info.name
+      layers[info.id] = l
+      l
 
-  setMap: (mapDatabase, mapName) ->
-    return if @_currentMapName == mapName
+    addChildren = (layer,cinfos) ->
+      return unless cinfos?
+      for cinfo in cinfos
+        cl = newLayer(cinfo)
+        addChildren(cl,cinfo.children)
+        layer.addChild cl
 
-    @hideMaps()
+    defs = MetroidLayerDefs
+        
+    addChildren(scaler, defs.children)
 
-    layer = @getMapLayer(mapDatabase, mapName)
-    layer.visible = true
+    if defs.aliases?
+      for k,v of defs.aliases
+        layers[k] = layers[v]
 
-    @_currentMapName = mapName
-
-  hideMaps: ->
-    @_currentMapName = null
-    _.forEach _.values(@_layers.maps), (layer) ->
-      layer.visible = false
+    return layers
 
   muteAudio: ->
     @soundController.muteAll()
 
   unmuteAudio: ->
     @soundController.unmuteAll()
-
-  _addMapLayer: (mapDatabase,mapName) ->
-    mapLayer = new PIXI.DisplayObjectContainer()
-    mapLayer._name = "Map Layer - #{mapName}"
-    @_layers.base.addChild mapLayer
-    @_layers.maps[mapName] = mapLayer
-
-    map = mapDatabase.get(mapName)
-    @_populateMapTileSprites map, mapLayer
-    mapLayer
-
-  _populateMapTileSprites: (map,layer) ->
-    for row in map.tileGrid
-      for tile in row
-        if tile?
-          sprite = @_getMapTileSprite(tile.type)
-          if sprite?
-            sprite.position.set tile.x, tile.y
-            sprite._name = "Sprite #{tile.type}"
-            layer.addChild sprite
-
-  _getMapTileSprite: (n) ->
-    if n?
-      PIXI.Sprite.fromFrame("block-#{n}")
-    else
-      null
-
 
   @create: (a...) -> new @(a...)
 
