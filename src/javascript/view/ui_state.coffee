@@ -39,7 +39,7 @@ class UIState
   
   constructor: ({stage, zoomScale, soundController, aspectScale}) ->
     # @_layers = @_createLayers(stage,zoomScale,aspectScale)
-    @_layers = @_createLayers_old(stage,zoomScale,aspectScale)
+    @_layers = @_createLayers(stage,zoomScale,aspectScale)
     @_objectCaches = {}
     @_currentMapName = null
     @drawHitBoxes = false

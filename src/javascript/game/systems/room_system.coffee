@@ -1,6 +1,7 @@
 StateMachineSystem = require '../../ecs/state_machine_system'
 Common = require '../entity/components'
 Enemies = require '../entity/enemies'
+Items = require '../entity/items'
 Doors = require '../entity/doors'
 
 FilterExpander = require '../../ecs/filter_expander'
@@ -37,6 +38,16 @@ class RoomSystem extends StateMachineSystem
       x = roomPos.get('x') + (col * worldMap.tileWidth)
       y = roomPos.get('y') + (row * worldMap.tileHeight)
       @newEntity Enemies.factory.createComponents(id, x:x, y:y)
+
+
+    # Spawn items:
+    hoff = 8
+    voff = 8
+    for [col,row,id] in (roomDef.items || [])
+      x = roomPos.get('x') + (col * worldMap.tileWidth) + hoff
+      y = roomPos.get('y') + (row * worldMap.tileHeight) + voff
+      @newEntity Items.factory.createComponents(id, position: {x: x, y: y})
+
 
     # Spawn doors:
     for [style,col,row] in (roomDef.doors || [])

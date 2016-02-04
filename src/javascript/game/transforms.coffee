@@ -39,7 +39,7 @@ exports.updateAdmin = (admin, cevts, devUIEvents) ->
 
   if controller.get('toggle_bounding_boxPressed') or devUIEvents.get('toggle_draw_hitboxes')
     # admin = admin.update 'drawHitBoxes', toggle
-    admin = toggleProp(admin,'paused',events)
+    admin = toggleProp(admin,'drawHitBoxes',events)
    
   admin = if admin.get('paused')
     admin.set('replay_back',

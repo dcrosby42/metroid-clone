@@ -51,7 +51,7 @@ RoomDefs[0x17] =
     [0x4,0xB, 'basicZoomer']
   ]
   items: [
-    # TODO [0x6,0x9, 'ball']
+    [0x6,0x9, 'maru_mari']
   ]
   doors: [
   ]

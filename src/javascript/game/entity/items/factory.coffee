@@ -23,8 +23,8 @@ F.powerup = (args) ->
     Common.HitBox.merge
       x: x
       y: y
-      width: 5
-      height: 5
+      width: 8
+      height: 8
       anchorX: 0.5 # halfway across
       anchorY: 0.5
     Common.HitBoxVisual.merge
@@ -73,5 +73,9 @@ F.maru_mari = (args) ->
 
 module.exports =
   createComponents: (entityType, args) ->
-    F[entityType](args)
+    fact = F[entityType]
+    if fact?
+      fact(args)
+    else
+      throw new Error("Items.Factory cannot build entityType=",entityType)
 

@@ -14,6 +14,8 @@ mapLayoutToRoomGrid = (mapLayout, roomTypes, roomDefs, roomWidthInTiles, roomHei
         roomDef.enemies
       doors = if roomDef?
         roomDef.doors
+      items = if roomDef? and roomDef.items? and roomDef.items.length > 0
+        roomDef.items
       room = Room.create(
         roomType:roomType
         row:r
@@ -23,6 +25,7 @@ mapLayoutToRoomGrid = (mapLayout, roomTypes, roomDefs, roomWidthInTiles, roomHei
         tiles: tilesForRoom(roomTypes[roomType], tileWidth, tileHeight)
         enemies: enemies
         doors: doors
+        items: items
       )
       roomGrid[r][c] = room
   roomGrid
@@ -76,7 +79,7 @@ roomGridToTileGrid = (roomGrid, roomTypes, roomWidthInTiles, roomHeightInTiles, 
 
 
 class Room
-  constructor: ({@row,@col,@roomType,@x,@y,@tiles,@enemies,@doors}) ->
+  constructor: ({@row,@col,@roomType,@x,@y,@tiles,@enemies,@doors,@items}) ->
     @roomId = "room_r#{@row}_c#{@col}"
 
   id: -> @roomId
@@ -89,7 +92,6 @@ class Area
     @_topPx    = @topRow * @roomWidthInPx
     @_rightPx  = (@rightCol+1) * @roomWidthInPx
     @_bottomPx = (@bottomRow+1) * @roomHeightInPx
-    console.log "Area ctor",@
 
   leftPx: -> @_leftPx
   rightPx: -> @_rightPx

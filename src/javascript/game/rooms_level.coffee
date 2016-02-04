@@ -35,8 +35,8 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
   brinstarEntrance = {x:648,y:191}
   nearBushTunnel = {x:1800,y:207}
   nearMorphBall = {x:400,y:175}
-  samusStartPos = brinstarEntrance
-  # samusStartPos = nearMorphBall
+  # samusStartPos = brinstarEntrance
+  samusStartPos = nearMorphBall
   # samusStartPos = nearBushTunnel
   estore.createEntity Samus.factory.createComponents('samus', position: samusStartPos)
 
@@ -54,7 +54,7 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
   ]
 
   # XXX testing powerup placement
-  estore.createEntity Items.factory.createComponents('maru_mari', position: {x:360,y:154})
+  # estore.createEntity Items.factory.createComponents('maru_mari', position: {x:360,y:152})
 
   # Viewport
   vpConf = Immutable.fromJS
