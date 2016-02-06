@@ -1,8 +1,6 @@
 _ = require 'lodash'
 Immutable = require 'immutable'
 
-MapDatabase = require './map/map_database'
-
 Enemies = require './entity/enemies'
 EnemiesSystems =  require './entity/enemies/systems'
 
@@ -18,7 +16,6 @@ CommonSystems = require './systems'
 Common = require './entity/components'
 
 Items = require './entity/items'
-# ItemsSystems = require './entity/items/systems'
 SystemAccumulator = require '../ecs/system_accumulator'
 
 RoomsLevel = {}
@@ -151,10 +148,6 @@ RoomsLevel.spriteConfigs = ->
   _.merge spriteConfigs, Doors.sprites
   _.merge spriteConfigs, Items.sprites
   spriteConfigs
-
-_mapDb = MapDatabase.createDefault()
-RoomsLevel.mapDatabase = ->
-  _mapDb
 
 RoomsLevel.graphicsToPreload = ->
   assets = [

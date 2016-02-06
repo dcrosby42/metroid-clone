@@ -1,8 +1,6 @@
 _ = require 'lodash'
 Immutable = require 'immutable'
 
-# MapDatabase = require './map/map_database'
-
 # Enemies = require './entity/enemies'
 # EnemiesSystems =  require './entity/enemies/systems'
 #
@@ -94,12 +92,6 @@ ShapesLevel.spriteConfigs = ->
   # _.merge spriteConfigs, Enemies.sprites
   # _.merge spriteConfigs, General.sprites
   spriteConfigs
-
-# XXX
-# _mapDb = MapDatabase.createDefault()
-ShapesLevel.mapDatabase = ->
-#   _mapDb
-  null
 
 ShapesLevel.graphicsToPreload = ->
   assets = [

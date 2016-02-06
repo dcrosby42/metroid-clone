@@ -66,9 +66,6 @@ L.gameSystems = ->
 L.spriteConfigs = ->
   TestLevel.spriteConfigs()
 
-L.mapDatabase = ->
-  TestLevel.mapDatabase()
-
 L.graphicsToPreload = ->
   TestLevel.graphicsToPreload()
 

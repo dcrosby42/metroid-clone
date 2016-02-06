@@ -45,7 +45,6 @@ class MetroidCloneDelegate
       dt: 0
       static:
         worldMap: WorldMap.getDefaultWorldMap()
-        mapDatabase: RoomsLevel.mapDatabase() # TODO RoomsLevel doesn't seem like the right place
 
     @controllerEventMux = createControllerEventMux()
 

@@ -20,7 +20,6 @@ General = require './entity/general'
 StateHistory = require '../utils/state_history'
 Debug = require '../utils/debug'
 
-MapDatabase = require './map/map_database'
 
 # TestLevel = require './test_level'
 # ZoomerLevel = require './zoomer_level'
@@ -39,7 +38,6 @@ class ShapesUiDelegate
         debug1: {}
       dt: 0
       static: {}
-        # mapDatabase: @level.mapDatabase()
 
     @_setupControllers()
 
@@ -61,7 +59,6 @@ class ShapesUiDelegate
       aspectScale:
         x: 1.0
         y: 1.0
-      # mapDatabase: @level.mapDatabase()
       # spriteConfigs: @level.spriteConfigs()
       componentInspector: @componentInspector
 

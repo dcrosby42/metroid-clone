@@ -193,7 +193,7 @@ areas.mapTest = [
 ]
 
 exports.roomTypes = roomTypes
-exports.areas = areas
+# exports.areas = areas
 exports.info =
   tileWidth: 16
   tileHeight: 16

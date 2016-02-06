@@ -35,25 +35,3 @@ Dan Tello's blog post about getting Gulp + all-the-things up and running:
 State machines in ECS article:
 
 http://www.richardlord.net/blog/finite-state-machines-with-ash
-
-TODO
-
-
-BaseSystem: imply eid in certain helpers
-
-
--
-- Skree: react to shot
-- Skree: blow up on time
-- Skree: emit shrapnel
-- Samus: get hurt
-- Shoot up, shoot running, shoot while jumping
-- Zoomer!
-
-REFACTOR
-- Samus controller action: state machine that uses enter/exit transitions to manage sounds
-- Samus sounds: declare sound comps for running, jump etc. w volume etc already set, eg samus_sounds.coffee
-
-
-
-Tags?
