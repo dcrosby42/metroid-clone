@@ -2,6 +2,7 @@ AnchoredBox = require '../../utils/anchored_box'
 BaseSystem = require '../../ecs/base_system'
 FilterExpander = require '../../ecs/filter_expander'
 
+# Things like doors are "map fixtures"
 fixtureFilter = FilterExpander.expandFilterGroups(['map_fixture', 'hit_box'])
 
 class MapPhysicsSystem extends BaseSystem
@@ -22,6 +23,7 @@ class MapPhysicsSystem extends BaseSystem
     box = new AnchoredBox(hitBoxJS)
     box.setXY position.get('x'), position.get('y')
 
+    #  map fixtures are doors, etc
     fboxes = []
     @searchEntities(fixtureFilter).forEach (comps) ->
       fboxes.push( new AnchoredBox(comps.get('hit_box').toJS()) )

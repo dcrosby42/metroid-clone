@@ -1,6 +1,7 @@
 TileSearch = require('./tile_search')
 MapData = require('./map_data')
 MathUtils = require('../../utils/math_utils')
+FnUtils = require('../../utils/fn_utils')
 
 emptyGrid = (rows,cols) -> ((null for [1..cols]) for [1..rows])
 
@@ -182,8 +183,6 @@ class WorldMap
       areas: areas
     )
 
-defArea = (name, [topRow,leftCol], [bottomRow, rightCol]) ->
-
 defaultWorldMapLayout =
   rows: 10
   cols: 10
@@ -197,9 +196,6 @@ defaultWorldMapLayout =
     ["roomB", [0,9], [0,13]]
   ]
 
-defaultWorldMap = null
-
 module.exports =
-  getDefaultWorldMap: ->
-    defaultWorldMap ?= WorldMap.create(defaultWorldMapLayout)
+  getDefaultWorldMap: FnUtils.memoizeThunk -> WorldMap.create(defaultWorldMapLayout)
 

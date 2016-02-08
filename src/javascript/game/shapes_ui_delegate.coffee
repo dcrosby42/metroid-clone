@@ -5,7 +5,6 @@ GamepadController = require('../input/gamepad_controller')
 
 EntityStore = require '../ecs/entity_store'
 EcsMachine = require '../ecs/ecs_machine'
-# ViewMachine = require './view_machine'
 ViewMachine = require '../view/view_machine'
 CommonSystems = require './systems'
 SamusSystems =  require './entity/samus/systems'
@@ -21,8 +20,6 @@ StateHistory = require '../utils/state_history'
 Debug = require '../utils/debug'
 
 
-# TestLevel = require './test_level'
-# ZoomerLevel = require './zoomer_level'
 ShapesLevel = require './shapes_level'
 
 class ShapesUiDelegate

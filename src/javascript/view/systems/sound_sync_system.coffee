@@ -17,6 +17,8 @@ class SoundSyncSystem extends ViewObjectSyncSystem
     sound
 
   updateObject: (comps,sound) ->
+    # Attempt to keep playing sounds from "getting away from game state if we adminify
+    # the timeline, pause, go back, etc
     # soundComp = comps.get('sound')
     # assumedPos = soundComp.get('playPosition')
     # actualPos = sound.playPositionMillis()

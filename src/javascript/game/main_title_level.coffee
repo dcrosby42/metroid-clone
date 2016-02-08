@@ -1,7 +1,7 @@
 _ = require 'lodash'
 Immutable = require 'immutable'
 
-TestLevel = require './test_level'
+RoomsLevel = require './rooms_level'
 
 Enemies = require './entity/enemies'
 EnemiesSystems =  require './entity/enemies/systems'
@@ -25,25 +25,7 @@ L.populateInitialEntities = (estore) ->
     )
     Common.Controller.merge
       inputName: 'player1'
-
-
   ]
-
-  # estore.createEntity [
-  #   Common.Label.merge
-  #     content: "PUSH START BUTTON"
-  #     layer: 'overlay'
-  #   Common.Position.merge
-  #     x: 50
-  #     y: 50
-  # ]
-
-  # estore.createEntity [
-  #   Common.Sound.merge
-  #     soundId: 'main_title'
-  #     timeLimit: 102 * 1000
-  #     volume: 0.3
-  # ]
 
   estore
 
@@ -53,40 +35,19 @@ L.gameSystems = ->
     CommonSystems.death_timer_system
     CommonSystems.animation_timer_system
     CommonSystems.sound_system
-    # SamusSystems.samus_motion
     CommonSystems.controller_system
     CommonSystems.main_title_system
-    # EnemiesSystems.zoomer_controller_system # XXX
-    # EnemiesSystems.zoomer_crawl_system
-    # SamusSystems.samus_controller_action
-    # SamusSystems.short_beam_system
-    # SamusSystems.samus_action_velocity
-    # CommonSystems.samus_hit_system
-    # CommonSystems.samus_damage_system
-    # SamusSystems.samus_action_sounds
-    # CommonSystems.gravity_system
-    # CommonSystems.map_physics_system
-    # CommonSystems.map_ghost_system
-    # CommonSystems.bullet_enemy_system
-    # CommonSystems.bullet_system
-    # CommonSystems.enemy_hit_system
-    # EnemiesSystems.skree_action
-    # SamusSystems.samus_animation
   ]
 
 L.spriteConfigs = ->
-  TestLevel.spriteConfigs()
+  RoomsLevel.spriteConfigs() # XXX why are we referring to RoomsLevel directly??
 
 L.graphicsToPreload = ->
-  # assets = TestLevel.graphicsToPreload()
   assets = []
   assets.push("images/main_title.png")
-  # assets.push("fonts/narpassword00000_regular_20.fnt")
-  # assets.push("fonts/narpassword00000_regular_20.png")
   assets
 
 L.soundsToPreload = ->
-  # TestLevel.soundsToPreload()
   songs = ["main_title"]
   effects = []
 

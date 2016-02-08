@@ -36,6 +36,8 @@ class MetroidCloneDelegate
       PowerupState
     ])
 
+    @worldMap = WorldMap.getDefaultWorldMap()
+
     @defaultInput = Immutable.fromJS
       controllers:
         player1: {}
@@ -44,7 +46,7 @@ class MetroidCloneDelegate
         admin: {}
       dt: 0
       static:
-        worldMap: WorldMap.getDefaultWorldMap()
+        worldMap: @worldMap
 
     @controllerEventMux = createControllerEventMux()
 
@@ -79,7 +81,7 @@ class MetroidCloneDelegate
         y: 1
 
     uiConfig = UIConfig.create
-      worldMap: WorldMap.getDefaultWorldMap()
+      worldMap: @worldMap
       spriteConfigs: RoomsLevel.spriteConfigs()
       
     viewSystems = createViewSystems()

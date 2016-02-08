@@ -1,7 +1,7 @@
 _ = require 'lodash'
 Immutable = require 'immutable'
 
-TestLevel = require './test_level'
+TestLevel = require './rooms_level' # XXX yuck
 
 Enemies = require './entity/enemies'
 EnemiesSystems =  require './entity/enemies/systems'
@@ -64,13 +64,13 @@ L.gameSystems = ->
   ]
 
 L.spriteConfigs = ->
-  TestLevel.spriteConfigs()
+  TestLevel.spriteConfigs() # XXX yuck
 
 L.graphicsToPreload = ->
-  TestLevel.graphicsToPreload()
+  TestLevel.graphicsToPreload() # XXX yuck
 
 L.soundsToPreload = ->
-  TestLevel.soundsToPreload()
+  TestLevel.soundsToPreload() # XXX yuck
 
 module.exports = L
 
