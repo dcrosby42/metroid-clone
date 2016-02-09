@@ -5,10 +5,6 @@ RoomWidth = 16
 RoomHeight = 15
 
 roomTypes = []
-# OldRoomTypes = require './old_room_types'
-# for rt,i in OldRoomTypes.sampleRoomTypes
-#   roomTypes[i] = rt
-
 
 emptyGrid = -> ((null for [1..RoomWidth]) for [1..RoomHeight])
 
