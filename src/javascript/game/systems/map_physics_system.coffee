@@ -45,14 +45,14 @@ class MapPhysicsSystem extends BaseSystem
 
     hits.top = worldMap.tileSearchHorizontal(box.top, box.left, Math.ceil(box.right))
     if hits.top.length > 0
-      s = hits.top[0]
-      box.setY(s.y+s.height - box.topOffset)
+      tile = hits.top[0]
+      box.setY(tile.worldY+tile.height - box.topOffset)
       adjacent.top = hits.top
     else
       hits.bottom = worldMap.tileSearchHorizontal(Math.ceil(box.bottom), box.left, Math.ceil(box.right))
       if hits.bottom.length > 0
-        s = hits.bottom[0]
-        box.setY(s.y - box.bottomOffset-1)
+        tile = hits.bottom[0]
+        box.setY(tile.worldY - box.bottomOffset-1)
         adjacent.bottom = hits.bottom
 
 
@@ -78,14 +78,14 @@ class MapPhysicsSystem extends BaseSystem
     # (check map tiles)
     hits.left = worldMap.tileSearchVertical(box.left, box.top, Math.ceil(box.bottom))
     if hits.left.length > 0
-      s = hits.left[0]
-      box.setX(s.x+s.width - box.leftOffset)
+      tile = hits.left[0]
+      box.setX(tile.worldX+tile.width - box.leftOffset)
       adjacent.left = hits.left
     else
       hits.right = worldMap.tileSearchVertical(Math.ceil(box.right), box.top,box.bottom-1)
       if hits.right.length > 0
-        s = hits.right[0]
-        box.setX(s.x - box.rightOffset-1)
+        tile = hits.right[0]
+        box.setX(tile.worldX - box.rightOffset-1)
         adjacent.right = hits.right
 
     unless adjacent.left?

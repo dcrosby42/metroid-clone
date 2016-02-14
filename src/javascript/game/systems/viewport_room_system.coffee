@@ -25,9 +25,10 @@ class ViewportRoomSystem extends BaseSystem
       position.get('y')+config.get('height') - 1, position.get('x')+config.get('width') - 1 # -1 stops from over-reaching TODO: adjust this box to be something more than an exact screen fit?
     )
 
+    window.rooms = rooms
     prevRoomIds = @getProp('room_watcher', 'roomIds')
 
-    currRoomIds = Immutable.Set(_.map(rooms, (r) -> r.id()))
+    currRoomIds = Immutable.Set(_.map(rooms, (r) -> r.id))
     @setProp 'room_watcher', 'roomIds', currRoomIds
 
     @_reconcileRoomPresence(worldMap, rooms, prevRoomIds, currRoomIds)
@@ -45,22 +46,22 @@ class ViewportRoomSystem extends BaseSystem
     # Generate new room entities for each new id
     newIds = currRoomIds.subtract(prevRoomIds)
     newIds.forEach (roomId) =>
-      room = _.find(rooms, (r) -> r.roomId == roomId)
+      room = _.find(rooms, (r) -> r.id == roomId)
       if room?
-        @newEntity @_roomComps(room: room)
+        @newEntity @_roomComps(room)
       else
         console.log "!! ViewportRoomSystem: in adding rooms, the rooms array didn't have roomId #{roomId}", rooms
 
-  _roomComps: (args) ->
-    room = args.room
+  _roomComps: (room) ->
+    console.log "_roomComps",room
     [
       Common.Name.merge
-        name: room.roomId
+        name: "Room #{room.id}"
       Immutable.Map
         type: 'room'
         state: 'begin'
-        roomId: room.roomId
-        roomType: room.roomType
+        roomId: room.id
+        roomType: room.roomDef.id
         roomRow: room.row
         roomCol: room.col
       Common.Position.merge

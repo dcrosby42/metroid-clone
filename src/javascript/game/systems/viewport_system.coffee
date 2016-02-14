@@ -27,8 +27,8 @@ class ViewportSystem extends BaseSystem
         targetPosition.get('x')
         config.get('trackBufLeft')
         config.get('trackBufRight'))
-      viewportArea.leftPx()
-      viewportArea.rightPx() - config.get('width')
+      viewportArea.bounds.left
+      viewportArea.bounds.right - config.get('width') # TODO area.bounds.right
     )
     
     viewportY = MathUtils.clamp(
@@ -37,8 +37,8 @@ class ViewportSystem extends BaseSystem
         targetPosition.get('y')
         config.get('trackBufTop')
         config.get('trackBufBottom'))
-      viewportArea.topPx()
-      viewportArea.bottomPx() - config.get('height')
+      viewportArea.bounds.top # TODO area.bounds
+      viewportArea.bounds.bottom - config.get('height') # TODO area.bounds
     )
 
     @updateComp viewportPosition.set('x',viewportX).set('y',viewportY)

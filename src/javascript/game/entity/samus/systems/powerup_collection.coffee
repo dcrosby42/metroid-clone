@@ -35,11 +35,8 @@ class PowerupCollectionSystem extends StateMachineSystem
       event: 'partyOver'
 
   installPowerupAction: ->
-    console.log "installPowerupAction: powerupEid: #{@eid()}"
     powerup = @getComp 'powerup'
-    console.log "installPowerupAction:   powerup:", powerup.toJS()
     item = @getEntityComponent(@eid(), powerup.get('powerupType'))
-    console.log "installPowerupAction:   item:", item.toJS()
 
     
     # Grab the relevant powerup item (assumed to have the ctype matching powerupType field)
@@ -47,7 +44,6 @@ class PowerupCollectionSystem extends StateMachineSystem
     heroEid = @getProp 'collected', 'byEid'
     # Install item in player entity:
     @addEntityComp heroEid, item
-    console.log "installPowerupAction:   item installed into heroEid #{heroEid}"
     
     # Remove the powerup's entity:
     @destroyEntity()

@@ -3,6 +3,7 @@ Common = require '../entity/components'
 Enemies = require '../entity/enemies'
 Items = require '../entity/items'
 Doors = require '../entity/doors'
+MapConfig = require '../map/config'
 
 FilterExpander = require '../../ecs/filter_expander'
 enemyFilter = FilterExpander.expandFilterGroups(['enemy','position'])
@@ -31,28 +32,34 @@ class RoomSystem extends StateMachineSystem
     roomId = @getProp 'room', 'roomId'
     roomPos = @getComp 'position'
     worldMap = @input.getIn(['static','worldMap'])
-    roomDef = worldMap.getRoomById(roomId)
+    mapRoom = worldMap.getRoomById(roomId)
+    console.log "setupRoomAction",mapRoom
+    roomDef = mapRoom.roomDef
 
     # Spawn enemies:
     for [col,row,id] in (roomDef.enemies || [])
-      x = roomPos.get('x') + (col * worldMap.tileWidth)
-      y = roomPos.get('y') + (row * worldMap.tileHeight)
-      @newEntity Enemies.factory.createComponents(id, x:x, y:y)
+      x = roomPos.get('x') + (col * MapConfig.tileWidth)
+      y = roomPos.get('y') + (row * MapConfig.tileHeight)
+      comps = Enemies.factory.createComponents(id, x:x, y:y)
+      cjs = _.map comps, (c) -> c.toJS()
+      console.log "setupRoomAction creating enemy with comps:",cjs
+      @newEntity comps
+
 
 
     # Spawn items:
     hoff = 8
     voff = 8
     for [col,row,id] in (roomDef.items || [])
-      x = roomPos.get('x') + (col * worldMap.tileWidth) + hoff
-      y = roomPos.get('y') + (row * worldMap.tileHeight) + voff
+      x = roomPos.get('x') + (col * MapConfig.tileWidth) + hoff
+      y = roomPos.get('y') + (row * MapConfig.tileHeight) + voff
       @newEntity Items.factory.createComponents(id, position: {x: x, y: y})
 
 
     # Spawn doors:
     for [style,col,row] in (roomDef.doors || [])
-      x = roomPos.get('x') + (col * worldMap.tileWidth)
-      y = roomPos.get('y') + (row * worldMap.tileHeight)
+      x = roomPos.get('x') + (col * MapConfig.tileWidth)
+      y = roomPos.get('y') + (row * MapConfig.tileHeight)
       @newEntity Doors.factory.createComponents('doorEnclosure', x:x,y:y, style:style, roomId: roomId)
       @newEntity Doors.factory.createComponents('doorGel', x:x, y:y, style:style, roomId: roomId)
 

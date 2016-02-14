@@ -15,6 +15,7 @@ class RoomSyncSystem extends ViewObjectSyncSystem
     container._name = roomComp.get('roomId')
 
     room = @config.getRoom(roomComp.get('roomId'))
+    # console.log "RoomSyncSystem room",room
     @_populateTiles container, room.tiles
 
     @ui.addObjectToLayer container, 'rooms'
@@ -27,7 +28,7 @@ class RoomSyncSystem extends ViewObjectSyncSystem
   _populateTiles: (container, tiles) ->
     for row in tiles
       for tile in row
-        if tile and tile.type?
+        if tile
           name = "block-#{tile.type}"
           sprite = PIXI.Sprite.fromFrame(name)
           sprite._name = name
