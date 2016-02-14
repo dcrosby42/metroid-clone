@@ -60,6 +60,8 @@ tilesForRoom = (room) ->
         outRow.push null
   outRows
 
+# Convert the populated grid of rooms, create a world-wide tile grid.
+# (Used by MapPhysics to search for tile collisions)
 roomGridToTileGrid = (roomGrid) ->
   roomRowCount = roomGrid.length
   roomColCount = roomGrid[0].length
@@ -69,20 +71,12 @@ roomGridToTileGrid = (roomGrid) ->
       if room?
         for roomTileRow in room.tiles
           for tile in roomTileRow
-        # for roomTileRow,rtri in room.tiles
-        #   for tile,ti in roomTileRow
             if tile?
               tileGrid[tile.worldRow][tile.worldCol] = tile
-              # worldRowIndex = rtri + room.row*Config.roomHeight
-              # worldColIndex = ti + room.col*Config.roomWidth
-              # worldRow = tileGrid[worldRowIndex]
-              # tile.row = rtri
-              # tile.col = ti
-              # tile.worldRow = worldRowIndex
-              # tile.worldCol = worldColIndex
-              # worldRow[tile.worldCol] = tile
   tileGrid
 
+# Relate rooms to their areas (and vice versa) comparing the Area's defined coverage to the rooms' locations.
+# Sets room.area and adds to area.rooms[]
 setRoomAreas = (roomGrid,areas) ->
   for row in roomGrid
     for room in row
@@ -93,6 +87,8 @@ setRoomAreas = (roomGrid,areas) ->
             room.area = area
             area.rooms.push(room)
 
+
+# Retuen a mapping from room.id -> room
 indexRoomGrid = (roomGrid) ->
   index = {}
   for row in roomGrid
@@ -101,6 +97,7 @@ indexRoomGrid = (roomGrid) ->
         index[room.id] = room
   index
 
+# Convert an area's metadata def into a Types.Area object
 makeArea = (areaDef) ->
   [name, [topRow,leftCol],[bottomRow,rightCol]] = areaDef
   new Types.Area
@@ -118,23 +115,6 @@ makeArea = (areaDef) ->
     rooms: []
     zone: null
     music: "brinstar"
-
-# class OldArea
-#   constructor: (areaDef) ->
-#     [@name, [@topRow,@leftCol],[@bottomRow,@rightCol]] = areaDef
-#     @_leftPx   = @leftCol * Config.roomWidthInPixels
-#     @_topPx    = @topRow * Config.roomHeightInPixels
-#     @_rightPx  = (@rightCol+1) * Config.roomWidthInPixels
-#     @_bottomPx = (@bottomRow+1) * Config.roomHeightInPixels
-#     @rooms = []
-#     @music = "brinstar"
-#     @zone = null
-#
-#   leftPx: -> @_leftPx
-#   rightPx: -> @_rightPx
-#   topPx: -> @_topPx
-#   bottomPx: -> @_bottomPx
-
 
 class WorldMap
   constructor: ({@roomGrid,@tileGrid,@areas}) ->
@@ -179,7 +159,7 @@ expandWorldMap = (layout) ->
     tileGrid: tileGrid
     areas: areas
 
-defaultWorldMapLayout =
+mapDef =
   rows: 10
   cols: 10
   data: [
@@ -193,5 +173,5 @@ defaultWorldMapLayout =
   ]
 
 module.exports =
-  getDefaultWorldMap: FnUtils.memoizeThunk -> expandWorldMap(defaultWorldMapLayout)
+  getDefaultWorldMap: FnUtils.memoizeThunk -> expandWorldMap(mapDef)
 
