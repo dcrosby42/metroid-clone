@@ -20,10 +20,6 @@ roomData[0x09] =
     [0x5,0x2, 'basicZoomer']
     [0xB,0x2, 'basicZoomer']
   ]
-  items: [
-  ]
-  doors: [
-  ]
 
 # Ball powerup room
 roomData[0x17] =
@@ -52,8 +48,6 @@ roomData[0x17] =
   items: [
     [0x6,0x9, 'maru_mari']
   ]
-  doors: [
-  ]
 
 # Solid fill end of hall
 roomData[0x08] =
@@ -78,12 +72,6 @@ roomData[0x08] =
     [0xC,0x8, 0x1E]
     [0xC,0xB, 0x1E]
   ]
-  enemies: [
-  ]
-  items: [
-  ]
-  doors: [
-  ]
 
 # Skree hall, door on left
 roomData[0x12] =
@@ -104,11 +92,10 @@ roomData[0x12] =
     [0x7,0xC, 'basicZoomer']
     [0xB,0xC, 'basicZoomer']
   ]
-  items: [
-  ]
-  doors: [
-    ['blue-right', 0x0, 0x5]
-  ]
+  fixtures:
+    doors: [
+      ['blue-right', 0x0, 0x5]
+    ]
 
 # hall, door on right
 roomData[0x13] =
@@ -125,9 +112,10 @@ roomData[0x13] =
   ]
   items: [
   ]
-  doors: [
-    ['blue-left', 0xF, 0x5]
-  ]
+  fixtures:
+    doors: [
+      ['blue-left', 0xF, 0x5]
+    ]
 
 # Skree hall
 roomData[0x14] =
@@ -159,8 +147,6 @@ roomData[0x19] =
     [0x0,0xD, 0x1F]
     [0x4,0xD, 0x1F]
     [0x8,0xD, 0x10]
-  ]
-  items: [
   ]
 
 module.exports = roomData

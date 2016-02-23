@@ -53,7 +53,7 @@ class ViewportRoomSystem extends BaseSystem
         console.log "!! ViewportRoomSystem: in adding rooms, the rooms array didn't have roomId #{roomId}", rooms
 
   _roomComps: (room) ->
-    console.log "_roomComps",room
+    # console.log "_roomComps",room
     [
       Common.Name.merge
         name: "Room #{room.id}"

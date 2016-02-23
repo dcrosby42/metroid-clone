@@ -12,7 +12,6 @@ Types = require './types'
 # Convert a grid of room types into a grid of room data objects
 mapLayoutToRoomGrid = (mapLayout, roomDefs, mapConfig) ->
   roomGrid = emptyGrid(mapLayout.rows, mapLayout.cols)
-  console.log "roomGrid before:",roomGrid
   for row,r in mapLayout.data
     for roomTypeId,c in row
       roomDef = roomDefs.get(roomTypeId)
@@ -175,3 +174,5 @@ mapDef =
 module.exports =
   getDefaultWorldMap: FnUtils.memoizeThunk -> expandWorldMap(mapDef)
 
+
+window.WorldMap = module.exports.getDefaultWorldMap

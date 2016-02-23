@@ -25,7 +25,6 @@ class SamusMorphSystem extends StateMachineSystem
             nextState: 'inactive'
 
   morphIntoBallAction: ->
-    console.log 'morphIntoBallAction'
     # Add morphball component
     @addComp Samus.components.MorphBall
 
@@ -51,7 +50,6 @@ class SamusMorphSystem extends StateMachineSystem
 
 
   morphIntoSuitAction: ->
-    console.log 'morphIntoSuitAction'
     # Add suit component
     @addComp Samus.components.Suit
 

@@ -33,7 +33,6 @@ class RoomSystem extends StateMachineSystem
     roomPos = @getComp 'position'
     worldMap = @input.getIn(['static','worldMap'])
     mapRoom = worldMap.getRoomById(roomId)
-    console.log "setupRoomAction",mapRoom
     roomDef = mapRoom.roomDef
 
     # Spawn enemies:
@@ -42,10 +41,7 @@ class RoomSystem extends StateMachineSystem
       y = roomPos.get('y') + (row * MapConfig.tileHeight)
       comps = Enemies.factory.createComponents(id, x:x, y:y)
       cjs = _.map comps, (c) -> c.toJS()
-      console.log "setupRoomAction creating enemy with comps:",cjs
       @newEntity comps
-
-
 
     # Spawn items:
     hoff = 8
@@ -57,13 +53,13 @@ class RoomSystem extends StateMachineSystem
 
 
     # Spawn doors:
-    for [style,col,row] in (roomDef.doors || [])
+    for [style,col,row] in ((roomDef.fixtures || {})['doors'] || [])
       x = roomPos.get('x') + (col * MapConfig.tileWidth)
       y = roomPos.get('y') + (row * MapConfig.tileHeight)
-      @newEntity Doors.factory.createComponents('doorEnclosure', x:x,y:y, style:style, roomId: roomId)
-      @newEntity Doors.factory.createComponents('doorGel', x:x, y:y, style:style, roomId: roomId)
-
-    # TODO: spawn powerups
+      doorEnclosure = Doors.factory.createComponents('doorEnclosure', x:x,y:y, style:style, roomId: roomId)
+      doorGel = Doors.factory.createComponents('doorGel', x:x, y:y, style:style, roomId: roomId)
+      @newEntity doorEnclosure
+      @newEntity doorGel
 
       
   teardownRoomAction: ->
@@ -85,7 +81,6 @@ class RoomSystem extends StateMachineSystem
     # Remove doors
     @searchEntities([{match:{type:'door_gel',roomId:roomId}, as: 'door_gel'}]).forEach (comps) =>
       @destroyEntity comps.getIn(['door_gel','eid'])
-
     @searchEntities([{match:{type:'door_frame',roomId:roomId}, as: 'door_frame'}]).forEach (comps) =>
       @destroyEntity comps.getIn(['door_frame','eid'])
 

@@ -2,6 +2,7 @@ Immutable = require 'immutable'
 BaseSystem = require '../../ecs/base_system'
 MathUtils = require '../../utils/math_utils'
 Common = require '../entity/components'
+MapConfig = require '../map/config'
 
 class ViewportSystem extends BaseSystem
   @Subscribe: [
@@ -72,8 +73,8 @@ class ViewportSystem extends BaseSystem
           y: viewportPosition.get('y')
         Immutable.Map().merge  # TODO: Destination component
           type: 'destination'
-          x: nextRoom.col * worldMap.roomWidthInPx
-          y: nextRoom.row * worldMap.roomHeightInPx
+          x: nextRoom.col * MapConfig.roomWidthInPixels
+          y: nextRoom.row * MapConfig.roomHeightInPixels
       ]
       return true
 

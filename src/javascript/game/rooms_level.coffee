@@ -32,8 +32,8 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
   brinstarEntrance = {x:648,y:191}
   nearBushTunnel = {x:1800,y:207}
   nearMorphBall = {x:400,y:175}
-  # samusStartPos = brinstarEntrance
-  samusStartPos = nearMorphBall
+  samusStartPos = brinstarEntrance
+  # samusStartPos = nearMorphBall
   # samusStartPos = nearBushTunnel
   estore.createEntity Samus.factory.createComponents('samus', position: samusStartPos)
 
