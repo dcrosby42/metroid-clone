@@ -69,8 +69,8 @@ class RoomSystem extends StateMachineSystem
 
     roomLeft = roomPos.get('x')
     roomTop = roomPos.get('y')
-    roomRight = roomLeft + worldMap.roomWidthInPx
-    roomBottom = roomTop + worldMap.roomHeightInPx
+    roomRight = roomLeft + MapConfig.roomWidthInPixels
+    roomBottom = roomTop + MapConfig.roomHeightInPixels
 
     # Despawn enemies
     @searchEntities(enemyFilter).forEach (comps) =>
