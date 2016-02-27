@@ -20,17 +20,31 @@ expandChunks = (chunks) ->
     expandChunkInto(grid, x,y, ChunkData[ch])
   grid
 
+_itemId = 1
+nextItemId = ->
+  id = _itemId
+  _itemId += 1
+  return id
+
 newRoomDef = (id,rd) ->
   unless rd?
     console.log "!! RoomDefs.mkRoomDef got id=#{id}, rd=#{rd}"
     return
   grid = expandChunks(rd.chunks)
-  new Types.RoomDef
+  roomDef = new Types.RoomDef
     id: id
     grid: expandChunks(rd.chunks)
     items: rd.items || []
     fixtures: rd.fixtures || []
     enemies: rd.enemies || []
+
+  # Mutate the item defs by giving each a unique ID
+  for item in roomDef.items
+    unless item.id?
+      item.id = "item-#{nextItemId()}"
+
+  return roomDef
+
 
 class Cache
   constructor: (@data,@builder) ->

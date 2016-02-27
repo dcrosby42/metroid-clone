@@ -8,14 +8,11 @@ CommonSystems = require '../systems'
 SamusSystems = require '../entity/samus/systems'
 SystemAccumulator = require '../../ecs/system_accumulator'
 
-# RoomsLevel = require '../rooms_level'
-
 class PowerupState extends GameState
   @StateName: 'powerup'
 
   constructor: (machine) ->
     super(machine)
-    # @level = RoomsLevel
     @estore = new EntityStore()
     @ecsMachine = new EcsMachine(systems: @_getSystems())
 

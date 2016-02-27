@@ -46,7 +46,7 @@ roomData[0x17] =
     [0x4,0xB, 'basicZoomer']
   ]
   items: [
-    [0x6,0x9, 'maru_mari']
+    { col: 0x6, row: 0x9, type: 'maru_mari' }
   ]
 
 # Solid fill end of hall
@@ -109,8 +109,6 @@ roomData[0x13] =
     [0xE,0x0, 0x0B] # right wall up
     [0xE,0x8, 0x0B]
     # [0xF,0x5, 0xF0] # XXX stand-in for the door
-  ]
-  items: [
   ]
   fixtures:
     doors: [

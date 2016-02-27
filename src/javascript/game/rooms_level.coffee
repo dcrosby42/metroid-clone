@@ -52,6 +52,14 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
 
   # XXX testing powerup placement
   # estore.createEntity Items.factory.createComponents('maru_mari', position: {x:360,y:152})
+ 
+  # Items
+  # estore.createEntity [
+  #   Common.Name.merge(name: 'Item Locations')
+  #   Immutable.Map
+  #     type: 'item_locations'
+  #
+  # ]
 
   # Viewport
   vpConf = Immutable.fromJS

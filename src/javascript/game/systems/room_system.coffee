@@ -46,10 +46,17 @@ class RoomSystem extends StateMachineSystem
     # Spawn items:
     hoff = 8
     voff = 8
-    for [col,row,id] in (roomDef.items || [])
-      x = roomPos.get('x') + (col * MapConfig.tileWidth) + hoff
-      y = roomPos.get('y') + (row * MapConfig.tileHeight) + voff
-      @newEntity Items.factory.createComponents(id, position: {x: x, y: y})
+    for itemDef  in (roomDef.items || [])
+      {col,row,type,id} = itemDef
+      # console.log "itemDef:",itemDef,col,row,type,id
+      if itemIsInWorld(id)
+        console.log "room_system: spawning item",itemDef
+        x = roomPos.get('x') + (col * MapConfig.tileWidth) + hoff
+        y = roomPos.get('y') + (row * MapConfig.tileHeight) + voff
+        @newEntity Items.factory.createComponents(type, position: {x: x, y: y})
+      else
+        console.log "room_system: NOT spawning item, since it is not out there anymore",itemDef
+
 
 
     # Spawn doors:
@@ -87,7 +94,7 @@ class RoomSystem extends StateMachineSystem
     # Remove room
     @destroyEntity()
 
-
+itemIsInWorld = -> true
 
 module.exports = RoomSystem
 

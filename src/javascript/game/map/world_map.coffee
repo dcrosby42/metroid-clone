@@ -9,25 +9,27 @@ emptyGrid = Utils.emptyGrid
 RoomDefs = require './room_defs'
 Types = require './types'
 
+instanceRoom = (roomDef,r,c) ->
+  if roomDef?
+    room = new Types.Room
+      id: "room_r#{r}_c#{c}"
+      roomDef: roomDef
+      row:r
+      col:c
+      x: c * Config.roomWidthInPixels
+      y: r * Config.roomHeightInPixels
+    room.tiles = tilesForRoom(room)
+    room
+  else
+    null
+
 # Convert a grid of room types into a grid of room data objects
 mapLayoutToRoomGrid = (mapLayout, roomDefs, mapConfig) ->
   roomGrid = emptyGrid(mapLayout.rows, mapLayout.cols)
   for row,r in mapLayout.data
     for roomTypeId,c in row
       roomDef = roomDefs.get(roomTypeId)
-      if roomDef?
-        room = new Types.Room
-          id: "room_r#{r}_c#{c}"
-          roomDef: roomDef
-          row:r
-          col:c
-          x: c * Config.roomWidthInPixels
-          y: r * Config.roomHeightInPixels
-        room.tiles = tilesForRoom(room)
-        roomGrid[r][c] = room
-      else
-        # TODO: determine if this is an error or is normal
-        console.log "!! ERR: No roomDef for roomTypeId=#{roomTypeId} at row=#{r} col=#{c}"
+      roomGrid[r][c] = instanceRoom(roomDef,r,c)
 
   roomGrid
 
@@ -87,14 +89,16 @@ setRoomAreas = (roomGrid,areas) ->
             area.rooms.push(room)
 
 
-# Retuen a mapping from room.id -> room
+# Retuen a list of all rooms, and a mapping from room.id -> room
 indexRoomGrid = (roomGrid) ->
   index = {}
+  all = []
   for row in roomGrid
     for room in row
       if room?
         index[room.id] = room
-  index
+        all.push room
+  return [all,index]
 
 # Convert an area's metadata def into a Types.Area object
 makeArea = (areaDef) ->
@@ -117,7 +121,7 @@ makeArea = (areaDef) ->
 
 class WorldMap
   constructor: ({@roomGrid,@tileGrid,@areas}) ->
-    @_roomsById = indexRoomGrid(@roomGrid)
+    [@rooms, @_roomsById] = indexRoomGrid(@roomGrid)
 
   # Return an array of Rooms that overlap the given px rectangle
   searchRooms: (top,left,bottom,right) ->
