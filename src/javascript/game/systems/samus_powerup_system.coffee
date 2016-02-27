@@ -6,8 +6,9 @@ BaseSystem = require '../../ecs/base_system'
 
 class SamusPowerupSystem extends BaseSystem
   @Subscribe: [
-      [ "samus", "hit_box" ],
+      [ "samus", "hit_box" ]
       [ "powerup", "hit_box"]
+      [ "collected_items" ]
     ]
   @ImplyEntity: 'powerup'
 
@@ -19,9 +20,15 @@ class SamusPowerupSystem extends BaseSystem
     powerupBox = new AnchoredBox(powerupHitBox.toJS())
 
     if samusBox.overlaps(powerupBox)
-      @addComp Items.components.Collected.merge
-        byEid: @getProp('samus','eid')
-        
+      # Add the 'Collected' component to the powerup.  Triggers the powerup_collection system
+      samusEid = @getProp('samus','eid')
+      @addComp Items.components.Collected.merge(byEid: samusEid)
+
+      # Identify this item as collected
+      itemId = @getProp 'powerup','itemId'
+      @updateProp 'collected_items', 'itemIds', (ids) -> ids.add(itemId)
+
+      # Let the world know
       @publishGlobalEvent 'PowerupTouched'
 
 

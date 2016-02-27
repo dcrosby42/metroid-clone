@@ -70,7 +70,7 @@ class BaseSystem
     if !comp?
       comp = @comps.get(compName)
       unless comp?
-        console.log "!! BaseSystem#get: system not subscribed for '#{compName}'"
+        throw new Error("BaseSystem#get: system not subscribed for '#{compName}'")
       @cache[compName] = comp
       @nameCache[comp.get('cid')] = compName
     comp

@@ -7,10 +7,12 @@ F = {}
 F.powerup = (args) ->
   x = args.position.x
   y = args.position.y
-  name = args.name
+  name = args.powerup.type
+  itemId = args.powerup.itemId
   comps = Immutable.List([
     Items.Powerup.merge
       powerupType: name
+      itemId: itemId
     Common.Name.merge
       name: "Powerup #{name}"
     Common.Position.merge
@@ -33,44 +35,12 @@ F.powerup = (args) ->
   comps
 
 F.maru_mari = (args) ->
-  args.name = 'maru_mari'
+  args ?= {}
+  args['powerup'] ?= {}
+  args.powerup.type = 'maru_mari'
   F.powerup(args)
     .push(Items.MaruMari)
   
-
-  
-
-# F.healthPickup = (args) ->
-#   x = args.x - 16
-#   y = args.y - 16
-#   value = args.value
-#   value ?= 5
-#   comps = [
-#     Common.Animation.merge
-#       layer: 'creatures'
-#       spriteName: 'health_drop'
-#       state: 'default'
-#     Common.Position.merge
-#       x: x
-#       y: y
-#     Common.Pickup.merge
-#       item: 'health'
-#       value: value
-#     Common.HitBoxVisual.merge
-#       layer: 'creatures'
-#       color: 0xcccccc
-#     Common.HitBox.merge
-#       x: x
-#       y: y
-#       width: 8
-#       height: 8
-#       anchorX: -1.75 + 2.5*(0.0625)
-#       anchorY: -1.75 + 0.0625
-#   ]
-#   if args.time?
-#     comps.push Common.DeathTimer.merge(time: args.time)
-#   comps
-
 module.exports =
   createComponents: (entityType, args) ->
     fact = F[entityType]
@@ -78,4 +48,3 @@ module.exports =
       fact(args)
     else
       throw new Error("Items.Factory cannot build entityType=",entityType)
-

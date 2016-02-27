@@ -20,7 +20,6 @@ SystemAccumulator = require '../ecs/system_accumulator'
 
 RoomsLevel = {}
 
-
 RoomsLevel.populateInitialEntities = (estore,params) ->
   # RNG
   estore.createEntity [
@@ -54,12 +53,12 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
   # estore.createEntity Items.factory.createComponents('maru_mari', position: {x:360,y:152})
  
   # Items
-  # estore.createEntity [
-  #   Common.Name.merge(name: 'Item Locations')
-  #   Immutable.Map
-  #     type: 'item_locations'
-  #
-  # ]
+  estore.createEntity [
+    Common.Name.merge(name: 'Collected Items')
+    Immutable.Map
+      type: 'collected_items'
+      itemIds: Immutable.Set()
+  ]
 
   # Viewport
   vpConf = Immutable.fromJS

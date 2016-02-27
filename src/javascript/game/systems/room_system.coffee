@@ -9,7 +9,11 @@ FilterExpander = require '../../ecs/filter_expander'
 enemyFilter = FilterExpander.expandFilterGroups(['enemy','position'])
 
 class RoomSystem extends StateMachineSystem
-  @Subscribe: [ 'room', 'position' ]
+  @Subscribe: [
+    ['room', 'position'],
+    ['collected_items']
+  ]
+  @ImplyEntity: 'room'
   @StateMachine:
     componentProperty: ['room','state']
     start: 'begin'
@@ -30,12 +34,13 @@ class RoomSystem extends StateMachineSystem
 
   setupRoomAction: ->
     roomId = @getProp 'room', 'roomId'
-    roomPos = @getComp 'position'
+    roomPos = @getComp 'room-position'
     worldMap = @input.getIn(['static','worldMap'])
     mapRoom = worldMap.getRoomById(roomId)
     roomDef = mapRoom.roomDef
 
     # Spawn enemies:
+    console.log "setupRoomAction roomId=#{roomId} roomDef=",roomDef
     for [col,row,id] in (roomDef.enemies || [])
       x = roomPos.get('x') + (col * MapConfig.tileWidth)
       y = roomPos.get('y') + (row * MapConfig.tileHeight)
@@ -49,11 +54,12 @@ class RoomSystem extends StateMachineSystem
     for itemDef  in (roomDef.items || [])
       {col,row,type,id} = itemDef
       # console.log "itemDef:",itemDef,col,row,type,id
-      if itemIsInWorld(id)
+      console.log "HEY"
+      if @itemStillInWorld(id)
         console.log "room_system: spawning item",itemDef
         x = roomPos.get('x') + (col * MapConfig.tileWidth) + hoff
         y = roomPos.get('y') + (row * MapConfig.tileHeight) + voff
-        @newEntity Items.factory.createComponents(type, position: {x: x, y: y})
+        @newEntity Items.factory.createComponents(type, powerup: { itemId: id }, position: {x: x, y: y})
       else
         console.log "room_system: NOT spawning item, since it is not out there anymore",itemDef
 
@@ -71,7 +77,7 @@ class RoomSystem extends StateMachineSystem
       
   teardownRoomAction: ->
     roomId = @getProp 'room', 'roomId'
-    roomPos = @getComp 'position'
+    roomPos = @getComp 'room-position'
     worldMap = @input.getIn(['static','worldMap'])
 
     roomLeft = roomPos.get('x')
@@ -94,7 +100,10 @@ class RoomSystem extends StateMachineSystem
     # Remove room
     @destroyEntity()
 
-itemIsInWorld = -> true
+  itemStillInWorld: (itemId) ->
+    collected = @getProp('collected_items','itemIds')
+    return !collected.has(itemId)
+
 
 module.exports = RoomSystem
 
