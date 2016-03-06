@@ -1,5 +1,10 @@
 ChunkDefs = []
 
+# long platform
+ChunkDefs[0x06] = [
+  [ 0, 1, 0, 7, 0, 7, 1, 0 ]
+]
+
 # platform
 ChunkDefs[0x09] = [
   [ 0, 7, 7, 0 ]
@@ -50,6 +55,11 @@ ChunkDefs[0x15] = [
 ChunkDefs[0x16] = [
   [ 9, 9, 9, 9, 9, 9, 9 ]
   [ 9,13, 9,12, 9,13, 9 ]
+]
+
+# Destructible bricks
+ChunkDefs[0x20] = [
+  [ 14, 14, 14, 14 ]
 ]
 
 # skull-on-post

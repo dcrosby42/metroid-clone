@@ -49,34 +49,44 @@ class ViewportSystem extends BaseSystem
     targetArea = worldMap.getAreaAt(targetPosition.get('x'), targetPosition.get('y'))
     
     if targetArea and viewportArea and targetArea.name != viewportArea.name
-      # What room are we shuttling to?
-      nextRoom = worldMap.getRoomAt(targetPosition.get('x'), targetPosition.get('y'))
-      return false if nextRoom.nil?
-      # What entity should be re-targeted once we're there?
-      viewportTarget = @getComp('viewport_target')
-      return false if viewportTarget.nil?
+      # We need to transition to new area
+    else
+      return false
 
-      targetEid = viewportTarget.get('eid')
-      # Remove target from entity
-      @deleteComp viewportTarget
+    # ViewportShuttle: alternate means of adjusting the viewport.
+    # Remove the "normal" gameplay viewport tracking behavior (loose-follow of Samus)
+    # and temporarliy lock the viewport onto a traveler that smoothly slides from 
+    # one "area" to the next.  ...and then start following Samus again.
+    
+    # What room are we shuttling to?
+    nextRoom = worldMap.getRoomAt(targetPosition.get('x'), targetPosition.get('y'))
+    return false if nextRoom.nil?
+    # What entity should be re-targeted once we're there?
+    viewportTarget = @getComp('viewport_target')
+    return false if viewportTarget.nil?
 
-      # Create a "shuttle"
-      @newEntity [
-        Common.Name.merge
-          name: "Viewport Shuttle"
-        Immutable.Map().merge  # TODO: ViewportShuttle component
-          type: 'viewport_shuttle'
-          destArea: targetArea.name
-          thenTarget: targetEid
-        Common.Position.merge
-          x: viewportPosition.get('x')
-          y: viewportPosition.get('y')
-        Immutable.Map().merge  # TODO: Destination component
-          type: 'destination'
-          x: nextRoom.col * MapConfig.roomWidthInPixels
-          y: nextRoom.row * MapConfig.roomHeightInPixels
-      ]
-      return true
+    # Remove the viewport_target component from the currently-tracked entity:
+    targetEid = viewportTarget.get('eid')
+    @deleteComp viewportTarget
+
+    # Create a "shuttle" 
+    @newEntity [
+      Common.Name.merge
+        name: "Viewport Shuttle"
+      Immutable.Map().merge  # TODO: ViewportShuttle component
+        type: 'viewport_shuttle'
+        destArea: targetArea.name
+        thenTarget: targetEid # Which entity to resume tracking after the shuttle ride
+      Common.Position.merge
+        x: viewportPosition.get('x')
+        y: viewportPosition.get('y')
+      Immutable.Map().merge  # TODO: Destination component
+        type: 'destination'
+        x: nextRoom.col * MapConfig.roomWidthInPixels
+        y: nextRoom.row * MapConfig.roomHeightInPixels
+    ]
+    # Don't forget to return "true"
+    return true
 
 module.exports = ViewportSystem
 
