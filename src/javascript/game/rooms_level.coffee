@@ -31,8 +31,8 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
   brinstarEntrance = {x:648,y:191}
   nearBushTunnel = {x:1800,y:207}
   nearMorphBall = {x:400,y:175}
-  samusStartPos = brinstarEntrance
-  # samusStartPos = nearMorphBall
+  # samusStartPos = brinstarEntrance
+  samusStartPos = nearMorphBall
   # samusStartPos = nearBushTunnel
   estore.createEntity Samus.factory.createComponents('samus', position: samusStartPos)
 
@@ -83,17 +83,6 @@ RoomsLevel.populateInitialEntities = (estore,params) ->
       roomIds: Immutable.Set()
   ]
 
-  # Background music
-  estore.createEntity [
-    Common.Name.merge(name: "BG Music")
-    Immutable.Map
-      type: 'background_music'
-    Common.Sound.merge
-      soundId: 'brinstar'
-      volume: 1
-      loop:true
-      timeLimit: 110*1000
-  ]
 
   estore
 
@@ -169,7 +158,10 @@ RoomsLevel.graphicsToPreload = ->
   assets
 
 RoomsLevel.soundsToPreload = ->
-  songs = ["brinstar"]
+  songs = [
+    "brinstar"
+    "powerup_jingle"
+  ]
   effects = [
     "enemy_die1"
     "health"
