@@ -57,6 +57,7 @@ class MetroidCloneDelegate
     @adminState = Immutable.fromJS
       controller:{}
       paused: false
+      muted: false
       drawHitBoxes: false
 
     @stateHistory = ImmRingBuffer.create(5*60)
@@ -121,10 +122,17 @@ class MetroidCloneDelegate
     adminEvents.forEach (e) =>
       switch e.get('name')
         when 'pausedChanged'
-          if @adminState.get('paused')
+          if !@adminState.get('muted')
+            if @adminState.get('paused')
+              @viewMachine.uiState.muteAudio()
+            else
+              @viewMachine.uiState.unmuteAudio()
+        when 'mutedChanged'
+          if @adminState.get('muted')
             @viewMachine.uiState.muteAudio()
           else
             @viewMachine.uiState.unmuteAudio()
+
     @viewMachine.uiState.drawHitBoxes = @adminState.get('drawHitBoxes')
     @viewMachine.update2 gameState if gameState?
 
@@ -176,8 +184,9 @@ createControllerEventMux = ->
       "g": 'toggle_gamepad'
       "b": 'toggle_bgm'
       "p": 'toggle_pause'
+      "m": 'toggle_mute'
       "d": 'toggle_bounding_box'
-      "m": 'cycle_admin_mover'
+      # "m": 'cycle_admin_mover'
       "<": 'time_walk_back'
       ">": 'time_walk_forward'
       ",": 'time_scroll_back'

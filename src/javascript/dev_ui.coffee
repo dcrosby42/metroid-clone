@@ -5,6 +5,7 @@ class DevUI
   constructor: (@element) ->
     @meta = [
       ['#paused', 'toggle_pause', 'paused']
+      ['#muted', 'toggle_mute', 'muted']
       ['#draw-hitboxes', 'toggle_draw_hitboxes', 'draw-hitboxes']
     ]
     for [sel,evt,_] in @meta
@@ -29,6 +30,7 @@ class DevUI
   setState: (adminState) ->
     state = Immutable.Map()
       .set('paused', adminState.get('paused'))
+      .set('muted', adminState.get('muted'))
       .set('draw-hitboxes', adminState.get('drawHitBoxes'))
 
     return if state.equals(@state)

@@ -14,12 +14,6 @@ mapControllerEvents = (events,mappings) ->
 
 toggle = (x) -> !x
   
-# _calcDevUIState = (admin) ->
-#   dui = admin.get('devUIState')
-#     .set('paused', admin.get('paused'))
-#     .set('draw-hitboxes', admin.get('drawHitBoxes'))
-#   dui
-    
 toggleProp = (map,prop,events) ->
   before = map.get(prop)
   map = map.update(prop, toggle)
@@ -34,11 +28,12 @@ exports.updateAdmin = (admin, cevts, devUIEvents) ->
   events = []
 
   if controller.get('toggle_pausePressed') or devUIEvents.get('toggle_pause')
-    # admin = admin.update 'paused', toggle
     admin = toggleProp(admin,'paused',events)
 
+  if controller.get('toggle_mutePressed') or devUIEvents.get('toggle_mute')
+    admin = toggleProp(admin,'muted',events)
+
   if controller.get('toggle_bounding_boxPressed') or devUIEvents.get('toggle_draw_hitboxes')
-    # admin = admin.update 'drawHitBoxes', toggle
     admin = toggleProp(admin,'drawHitBoxes',events)
    
   admin = if admin.get('paused')
