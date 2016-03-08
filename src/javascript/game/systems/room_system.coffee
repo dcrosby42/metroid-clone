@@ -40,7 +40,6 @@ class RoomSystem extends StateMachineSystem
     roomDef = mapRoom.roomDef
 
     # Spawn enemies:
-    console.log "setupRoomAction roomId=#{roomId} roomDef=",roomDef
     for [col,row,id] in (roomDef.enemies || [])
       x = roomPos.get('x') + (col * MapConfig.tileWidth)
       y = roomPos.get('y') + (row * MapConfig.tileHeight)
@@ -53,17 +52,10 @@ class RoomSystem extends StateMachineSystem
     voff = 8
     for itemDef  in (roomDef.items || [])
       {col,row,type,id} = itemDef
-      # console.log "itemDef:",itemDef,col,row,type,id
-      console.log "HEY"
       if @itemStillInWorld(id)
-        console.log "room_system: spawning item",itemDef
         x = roomPos.get('x') + (col * MapConfig.tileWidth) + hoff
         y = roomPos.get('y') + (row * MapConfig.tileHeight) + voff
         @newEntity Items.factory.createComponents(type, powerup: { itemId: id }, position: {x: x, y: y})
-      else
-        console.log "room_system: NOT spawning item, since it is not out there anymore",itemDef
-
-
 
     # Spawn doors:
     for [style,col,row] in ((roomDef.fixtures || {})['doors'] || [])
