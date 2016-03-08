@@ -57,7 +57,7 @@ class MetroidCloneDelegate
     @adminState = Immutable.fromJS
       controller:{}
       paused: false
-      muted: false
+      muted: true
       drawHitBoxes: false
 
     @stateHistory = ImmRingBuffer.create(5*60)
@@ -96,9 +96,8 @@ class MetroidCloneDelegate
     controllerEvents = @controllerEventMux.next()
     devUIEvents = @devUI.getEvents()
 
-    [@adminState,adminEvents] = Transforms.updateAdmin(@adminState, controllerEvents.get('admin'), devUIEvents)
-    if adminEvents.size > 0
-      console.log "adminEvents:",adminEvents
+    priorAdminState = @adminState
+    @adminState = Transforms.updateAdmin(@adminState, controllerEvents.get('admin'), devUIEvents)
 
     [@stateHistory, action] = Transforms.selectAction(@stateHistory,dt,controllerEvents,@adminState)
     gameState = switch action.get('type')
@@ -118,20 +117,18 @@ class MetroidCloneDelegate
       else
         throw new Error("WTF Transforms.selectAction returned unknown action #{action.toJS()}")
 
-    # Update the view:
-    adminEvents.forEach (e) =>
-      switch e.get('name')
-        when 'pausedChanged'
-          if !@adminState.get('muted')
-            if @adminState.get('paused')
-              @viewMachine.uiState.muteAudio()
-            else
-              @viewMachine.uiState.unmuteAudio()
-        when 'mutedChanged'
-          if @adminState.get('muted')
-            @viewMachine.uiState.muteAudio()
-          else
-            @viewMachine.uiState.unmuteAudio()
+    if !Immutable.is(@adminState, priorAdminState)
+      if !@adminState.get('muted')
+        if @adminState.get('paused')
+          @viewMachine.uiState.muteAudio()
+        else
+          @viewMachine.uiState.unmuteAudio()
+
+      if !@adminState.get('paused')
+        if @adminState.get('muted')
+          @viewMachine.uiState.muteAudio()
+        else
+          @viewMachine.uiState.unmuteAudio()
 
     @viewMachine.uiState.drawHitBoxes = @adminState.get('drawHitBoxes')
     @viewMachine.update2 gameState if gameState?
