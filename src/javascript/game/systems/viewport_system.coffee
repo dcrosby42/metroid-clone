@@ -4,6 +4,34 @@ MathUtils = require '../../utils/math_utils'
 Common = require '../entity/components'
 MapConfig = require '../map/config'
 
+trackTarget = (targetPosition,viewportPosition,viewportArea,config) ->
+  viewportX = MathUtils.clamp(
+    MathUtils.keepWithin(
+      viewportPosition.get('x')
+      targetPosition.get('x')
+      config.get('trackBufLeft')
+      config.get('trackBufRight'))
+    viewportArea.bounds.left
+    viewportArea.bounds.right - config.get('width') # TODO area.bounds.right
+  )
+  
+  viewportY = MathUtils.clamp(
+    MathUtils.keepWithin(
+      viewportPosition.get('y')
+      targetPosition.get('y')
+      config.get('trackBufTop')
+      config.get('trackBufBottom'))
+    viewportArea.bounds.top # TODO area.bounds
+    viewportArea.bounds.bottom - config.get('height') # TODO area.bounds
+  )
+  return viewportPosition.set('x',viewportX).set('y',viewportY)
+
+shuttleZoneBuffer=32
+withinShuttlingDistance = (targetPosition, viewportPosition) ->
+  tpx = targetPosition.get('x')
+  vpx = viewportPosition.get('x')
+  return (tpx - (vpx + MapConfig.roomWidthInPixels) <= shuttleZoneBuffer) and (tpx - vpx >= -shuttleZoneBuffer)
+
 class ViewportSystem extends BaseSystem
   @Subscribe: [
     ['viewport_target', 'position']
@@ -16,48 +44,24 @@ class ViewportSystem extends BaseSystem
     worldMap = @input.getIn(['static','worldMap'])
     viewport = @getComp('viewport')
 
-    if @_transitionToNewArea(worldMap, viewportPosition, targetPosition)
-      return
-
-    viewportArea = worldMap.getAreaAt(viewportPosition.get('x'), viewportPosition.get('y'))
     config = viewport.get('config')
 
-    viewportX = MathUtils.clamp(
-      MathUtils.keepWithin(
-        viewportPosition.get('x')
-        targetPosition.get('x')
-        config.get('trackBufLeft')
-        config.get('trackBufRight'))
-      viewportArea.bounds.left
-      viewportArea.bounds.right - config.get('width') # TODO area.bounds.right
-    )
-    
-    viewportY = MathUtils.clamp(
-      MathUtils.keepWithin(
-        viewportPosition.get('y')
-        targetPosition.get('y')
-        config.get('trackBufTop')
-        config.get('trackBufBottom'))
-      viewportArea.bounds.top # TODO area.bounds
-      viewportArea.bounds.bottom - config.get('height') # TODO area.bounds
-    )
-
-    @updateComp viewportPosition.set('x',viewportX).set('y',viewportY)
-    
-  _transitionToNewArea: (worldMap, viewportPosition, targetPosition) ->
     viewportArea = worldMap.getAreaAt(viewportPosition.get('x'), viewportPosition.get('y'))
     targetArea = worldMap.getAreaAt(targetPosition.get('x'), targetPosition.get('y'))
-    
-    if targetArea and viewportArea and targetArea.name != viewportArea.name
-      # We need to transition to new area
-    else
-      return false
 
-    # ViewportShuttle: alternate means of adjusting the viewport.
-    # Remove the "normal" gameplay viewport tracking behavior (loose-follow of Samus)
-    # and temporarliy lock the viewport onto a traveler that smoothly slides from 
-    # one "area" to the next.  ...and then start following Samus again.
+    if viewportArea.name != targetArea.name
+      if withinShuttlingDistance(targetPosition,viewportPosition)
+        @_shuttleToNewArea(worldMap, targetPosition,targetArea, viewportPosition)
+        return
+      else
+        # This will cause trackTarget to directly calculate the proper new viewport
+        viewportArea = targetArea
+
+    newViewportPos = trackTarget(targetPosition, viewportPosition, viewportArea, config)
+    @updateComp newViewportPos
+
     
+  _shuttleToNewArea: (worldMap, targetPosition, targetArea, viewportPosition ) ->
     # What room are we shuttling to?
     nextRoom = worldMap.getRoomAt(targetPosition.get('x'), targetPosition.get('y'))
     return false if nextRoom.nil?
@@ -85,8 +89,6 @@ class ViewportSystem extends BaseSystem
         x: nextRoom.col * MapConfig.roomWidthInPixels
         y: nextRoom.row * MapConfig.roomHeightInPixels
     ]
-    # Don't forget to return "true"
-    return true
 
 module.exports = ViewportSystem
 
