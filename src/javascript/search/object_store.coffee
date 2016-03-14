@@ -65,13 +65,18 @@ ObjectStore.getIndices = (store) ->
   store.get('indexedData').keySeq()
 
 # TODO return a Seq instead of the actual Set?
-ObjectStore.getIndexedObjects = (store, indexedBy, keyPath) ->
+ObjectStore.getIndexedObjectIds = (store, indexedBy, keyPath) ->
   index = store.get('indexedData').get(indexedBy)
   if index? then index.getIn(keyPath) else Immutable.Set()
 
+ObjectStore.getIndexedObjects = (store, indexedBy, keyPath) ->
+  ObjectStore.getIndexedObjectIds(store,indexedBy,keyPath).map (cid) -> ObjectStore.getObject(store,cid)
 
 # TODO: removeObject
 # TODO: allObjects
+ObjectStore.allObjects = (store) ->
+  Immutable.List(store.get('data').values())
+
 
 listSize = (l) -> l.size
 
@@ -92,6 +97,7 @@ class Wrapper
   addAll: (objs) -> @store = ObjectStore.addObjects @store, objs
   addIndex: (indexedBy) -> @store = ObjectStore.addIndex @store, indexedBy
   get: (key) -> ObjectStore.getObject @store, key
+  getIndexedObjectIds: (indexedBy, keyPath) -> ObjectStore.getIndexedObjectIds @store, indexedBy, keyPath
   getIndexedObjects: (indexedBy, keyPath) -> ObjectStore.getIndexedObjects @store, indexedBy, keyPath
   getIndices: () -> ObjectStore.getIndices @store
   hasIndex: (indexedBy) -> ObjectStore.hasIndex @store, indexedBy

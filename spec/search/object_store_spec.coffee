@@ -14,27 +14,6 @@ assert = chai.assert
 imm = Immutable.fromJS
 immset = (xs...) -> Immutable.Set(xs)
 
-zeldaObjects = imm [
-  { cid: 'c1', eid: 'e1', type: 'tag', value: 'hero' }
-  { cid: 'c2', eid: 'e1', type: 'character', name: 'Link' }
-  { cid: 'c3', eid: 'e1', type: 'bbox', shape: [1,2,3,4] }
-  { cid: 'c4', eid: 'e1', type: 'inventory', stuff: 'items' }
-
-  { cid: 'c5', eid: 'e1', type: 'tag', value: 'enemy' }
-  { cid: 'c6', eid: 'e2', type: 'character', name: 'Tektike' }
-  { cid: 'c7', eid: 'e2', type: 'bbox', shape: [3,4,5,6] }
-  { cid: 'c8', eid: 'e2', type: 'digger', status: 'burrowing' }
-
-  { cid: 'c9', eid: 'e1', type: 'hat', color: 'green' }
-  { cid: 'c10', eid: 'e99', extraneous: 'hat', type: 'other-thing', sha: 'zam' }
-]
-
-# searchZelda = (filters) -> Finder.search zeldaObjects, imm(filters)
-
-# typeFilter = (t) -> imm { match: { type: t } }
-insp = (immObj) -> util.inspect(immObj.toJS())
-p = console.log
-
 padThai = imm dishId: 'i1', dish: 'Pad Thai', base: 'noodles'
 houseSpecial = imm dishId: 'i2', dish: 'Curry fried rice', base: 'rice'
 curryPadThai = imm dishId: 'i3', dish: 'Basil Cury', base: 'rice'
@@ -48,6 +27,9 @@ books = imm [
   { bookId: 'b3', cat: 'fiction', genre: 'fantasy', title: 'The Wheel of Time' }
   { bookId: 'b4', cat: 'fiction', genre: 'scifi', title: 'Time Enough for Love' }
 ]
+mappedBooks = ObjectStore.mappedBy(books,'bookId')
+book1 = mappedBooks.get('b1')
+book4 = mappedBooks.get('b4')
 
 describe "ObjectStore", ->
   describe "data transformation fns", ->
@@ -99,25 +81,36 @@ describe "ObjectStore", ->
         expect(ObjectStore.getObject(store, null)).to.be.null
 
 
-    describe "addIndex() and getIndexedObjects()", ->
+    describe "addIndex(), getIndexedObjectIds() and getIndexedObjects()", ->
       it "can add multiple objects and index them and retrieve by indexed search", ->
         store = ObjectStore.addIndex(store, imm(['genre']))
         store = ObjectStore.addObjects(store, books)
-        scifiBooks = ObjectStore.getIndexedObjects(store, imm(['genre']), imm(['scifi']))
-        expectIs scifiBooks, immset('b1', 'b4')
+        scifiBookIds = ObjectStore.getIndexedObjectIds(store, imm(['genre']), imm(['scifi']))
+        expectIs scifiBookIds, immset('b1', 'b4')
+
 
         store = ObjectStore.addIndex(store, imm(['cat','genre']))
-        helps = ObjectStore.getIndexedObjects(store, imm(['cat','genre']), imm(['nonfiction','selfhelp']))
+        helps = ObjectStore.getIndexedObjectIds(store, imm(['cat','genre']), imm(['nonfiction','selfhelp']))
         expectIs helps, immset('b2')
         store = ObjectStore.addObject(store, imm { bookId: 'b05', cat: 'nonfiction', genre: 'selfhelp', title: '7 Habits of Highly Effective People' })
-        helps = ObjectStore.getIndexedObjects(store, imm(['cat','genre']), imm(['nonfiction','selfhelp']))
+        helps = ObjectStore.getIndexedObjectIds(store, imm(['cat','genre']), imm(['nonfiction','selfhelp']))
         expectIs helps, immset('b2','b05')
 
+      it "can retrieve actual objects", ->
+        store = ObjectStore.addIndex(store, imm(['genre']))
+        store = ObjectStore.addObjects(store, books)
+
+        scifiBooks = ObjectStore.getIndexedObjects(store, imm(['genre']), imm(['scifi']))
+        expectIs scifiBooks, immset(book1, book4)
+
       it "returns empty Set when requested index isn't there", ->
-        res = ObjectStore.getIndexedObjects(store, imm(['something','wicked']), imm(['this way','comes']))
+        res = ObjectStore.getIndexedObjectIds(store, imm(['something','wicked']), imm(['this way','comes']))
         expectIs res, immset()
 
-        res = ObjectStore.getIndexedObjects(store, imm([]), imm(['this way','comes']))
+        res = ObjectStore.getIndexedObjectIds(store, imm([]), imm(['this way','comes']))
+        expectIs res, immset()
+
+        res = ObjectStore.getIndexedObjectIds(store, null, imm(['this way','comes']))
         expectIs res, immset()
 
         res = ObjectStore.getIndexedObjects(store, null, imm(['this way','comes']))
@@ -172,13 +165,11 @@ describe "ObjectStore", ->
         index = ObjectStore.bestIndexForKeys(store,keys)
         expectIs index, imm(['cat','genre'])
 
-        match2 = match.delete('genre')
-        keys2 = match.keySeq().toSet()
+        keys2 = match.delete('genre').keySeq().toSet()
         index2 = ObjectStore.bestIndexForKeys(store,keys2)
-        expectIs index2, imm(['cat','genre'])
+        expectIs index2, imm(['cat'])
 
-        match3 = match2.delete('cat')
-        keys3 = match3.keySeq().toSet()
+        keys3 = match.delete('genre').delete('cat').keySeq().toSet()
         index3 = ObjectStore.bestIndexForKeys(store,keys3)
         expect(index3).to.be.null
 
@@ -195,15 +186,18 @@ describe "ObjectStore", ->
     it "can add multiple objects and index them and retrieve by indexed search", ->
       wrapper.addIndex(imm(['genre']))
       wrapper.addAll(books)
+      scifiBookIds = wrapper.getIndexedObjectIds(imm(['genre']), imm(['scifi']))
+      expectIs scifiBookIds, immset('b1', 'b4')
+
       scifiBooks = wrapper.getIndexedObjects(imm(['genre']), imm(['scifi']))
-      expectIs scifiBooks, immset('b1', 'b4')
+      expectIs scifiBooks, immset(book1, book4)
 
       wrapper.addIndex(imm(['cat','genre']))
-      helps = wrapper.getIndexedObjects(imm(['cat','genre']), imm(['nonfiction','selfhelp']))
+      helps = wrapper.getIndexedObjectIds(imm(['cat','genre']), imm(['nonfiction','selfhelp']))
       expectIs helps, immset('b2')
 
       store = wrapper.add(imm { bookId: 'b05', cat: 'nonfiction', genre: 'selfhelp', title: '7 Habits of Highly Effective People' })
-      helps = wrapper.getIndexedObjects(imm(['cat','genre']), imm(['nonfiction','selfhelp']))
+      helps = wrapper.getIndexedObjectIds(imm(['cat','genre']), imm(['nonfiction','selfhelp']))
       expectIs helps, immset('b2','b05')
 
       expectIs wrapper.getIndices(), imm([['genre'],['cat','genre']])
