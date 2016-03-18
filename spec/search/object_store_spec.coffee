@@ -1,5 +1,6 @@
 # Finder = require '../../src/javascript/search/immutable_object_finder'
 Immutable = require 'immutable'
+{Set,List} = Immutable
 ExpectHelpers = require '../helpers/expect_helpers'
 expectIs = ExpectHelpers.expectIs
 
@@ -12,7 +13,7 @@ expect = chai.expect
 assert = chai.assert
 
 imm = Immutable.fromJS
-immset = (xs...) -> Immutable.Set(xs)
+immset = (xs...) -> Set(xs)
 
 padThai = imm dishId: 'i1', dish: 'Pad Thai', base: 'noodles'
 houseSpecial = imm dishId: 'i2', dish: 'Curry fried rice', base: 'rice'
@@ -133,18 +134,53 @@ describe "ObjectStore", ->
         expect(ObjectStore.hasIndex(store, [])).to.equal(false)
         expect(ObjectStore.hasIndex(store, null)).to.equal(false)
 
-    describe "getIndices()", ->
+    describe "addIndices() and getIndices()", ->
       it "returns a sequence of index definers", ->
         index1 = imm(['genre'])
         index2 = imm(['cat','genre'])
-        store = ObjectStore.addIndex(store, index1)
-        store = ObjectStore.addIndex(store, index2)
+        store = ObjectStore.addIndices(store, imm([
+          ['genre']
+          ['cat','genre']
+        ]))
         indices = ObjectStore.getIndices(store)
         expectIs indices.toList(), imm([ ['genre'], ['cat','genre'] ])
 
       it "returns empty List when no indexes are present", ->
         indices = ObjectStore.getIndices(store)
         expectIs indices.toList(), imm([])
+
+    describe "create with indices", ->
+      it "adds all indices on creation", ->
+        index1 = imm(['genre'])
+        index2 = imm(['cat','genre'])
+        store = ObjectStore.create('bookId', List([index1,index2]))
+        # store = ObjectStore.addIndices(store, imm([index1,index2]))
+        indices = ObjectStore.getIndices(store)
+        expectIs indices.toList(), imm([ ['genre'], ['cat','genre'] ])
+
+      it "returns empty List when no indexes are present", ->
+        indices = ObjectStore.getIndices(store)
+        expectIs indices.toList(), imm([])
+
+    describe "selectMatchingIndex()", ->
+      it "given a set of keys, decide which index (keyset) is the best (biggest) match", ->
+        catIndex = imm(['cat'])
+        catGenreIndex = imm(['cat','genre'])
+        indices = List([catIndex, catGenreIndex])
+        keys = Set(['genre','cat','dude'])
+        
+        index = ObjectStore.selectMatchingIndex(indices, keys)
+        expectIs index, catGenreIndex
+
+        keys2 = keys.delete('genre')
+        index2 = ObjectStore.selectMatchingIndex(indices,keys2)
+        expectIs index2, catIndex
+
+        keys3 = keys2.delete('cat')
+        index3 = ObjectStore.selectMatchingIndex(indices,keys3)
+        expect(index3).to.be.null
+
+
 
     describe "bestIndexForKeys()", ->
       catIndex = imm(['cat'])
@@ -163,16 +199,15 @@ describe "ObjectStore", ->
 
         keys = match.keySeq().toSet()
         index = ObjectStore.bestIndexForKeys(store,keys)
-        expectIs index, imm(['cat','genre'])
+        expectIs index, catGenreIndex
 
         keys2 = match.delete('genre').keySeq().toSet()
         index2 = ObjectStore.bestIndexForKeys(store,keys2)
-        expectIs index2, imm(['cat'])
+        expectIs index2, catIndex
 
         keys3 = match.delete('genre').delete('cat').keySeq().toSet()
         index3 = ObjectStore.bestIndexForKeys(store,keys3)
         expect(index3).to.be.null
-
 
   describe "ObjectStore.Wrapper", ->
     wrapper = null

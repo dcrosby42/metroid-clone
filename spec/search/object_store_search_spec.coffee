@@ -36,11 +36,13 @@ zeldaObjects = imm [
 ]
 
 describe "ObjectStoreSearch", ->
-  store = ObjectStore.create('cid')
-  store = ObjectStore.addIndex(store, imm(['eid']))
-  store = ObjectStore.addIndex(store, imm(['type']))
-  store = ObjectStore.addIndex(store, imm(['eid','type']))
-  zeldaObjects.forEach (obj) -> store = ObjectStore.addObject(store, obj)
+  indices = imm([
+    ['eid']
+    ['type']
+    ['eid','type']
+  ])
+  store = ObjectStore.create('cid', indices)
+  store = ObjectStore.addObjects(store, zeldaObjects)
 
   describe "convertMatchesToIndexLookups", ->
     cases = [
@@ -72,7 +74,7 @@ describe "ObjectStoreSearch", ->
     ]
     makeTest = ([desc,input,expected]) ->
       ->
-        res = ObjectStoreSearch.convertMatchesToIndexLookups(imm(input), store)
+        res = ObjectStoreSearch.convertMatchesToIndexLookups(imm(input), indices)
         expectIs res, imm(expected)
 
     it "transforms filter with #{c[0]}", makeTest(c) for c in cases
@@ -124,7 +126,6 @@ describe "ObjectStoreSearch", ->
           { as: 'character', match: { type: 'character' } }
           { as: 'hat', match: { type: 'hat', eid: ['character','eid'] } }
         ]
-        # [ { character: 'c2', bbox: 'c9' }, { character: 'c6', bbox: 'c7' } ]
         [ { character: 'c2', hat: 'c9' } ]
       ]
       [

@@ -38,9 +38,9 @@ cleanupEmptyMap = (key,map) ->
   else
     map
 
-convertMatchesToIndexLookups = (filter,store) ->
+convertMatchesToIndexLookups = (filter,indices) ->
   match = filter.get('match')
-  if index = ObjectStore.bestIndexForKeys(store,keysInMatch(match))
+  if index = ObjectStore.selectMatchingIndex(indices,keysInMatch(match))
     cleanupEmptyMap 'match', filter.set('lookup', Immutable.Map(
       index: index
       keypath: index.map (key) -> match.get(key)

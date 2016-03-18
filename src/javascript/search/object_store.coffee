@@ -1,31 +1,36 @@
 Immutable = require 'immutable'
-EmptySet = Immutable.Set()
+{List,Set,Map,OrderedMap} = Immutable
+EmptySet = Set()
+EmptyMap = Map()
+EmptyList = List()
+EmptyOrderedMap = OrderedMap()
 
 ObjectStore = {}
 
-ObjectStore.Empty = Immutable.Map
-  data: Immutable.Map()
+ObjectStore.Empty = Map
+  data: EmptyMap
   dataKey: 'id'
-  indexedData: Immutable.OrderedMap()
+  indexedData: EmptyOrderedMap
   
-
 ObjectStore.mappedBy = (objs,key) ->
   objs.reduce (map, obj) ->
     map.set obj.get(key), obj
-  , Immutable.Map()
+  , EmptyMap
 
 ObjectStore.indexObjects = (objs, indexKeys, identKey) ->
   objs.reduce (map, obj) ->
     keyPath = indexKeys.map (key) -> obj.get(key)
     map.updateIn keyPath, EmptySet, (set) -> set.add(obj.get(identKey))
-  , Immutable.Map()
+  , EmptyMap
     
 #
 # Store fns
 #
 
-ObjectStore.create = (dataKey) ->
-  ObjectStore.Empty.set('dataKey', dataKey)
+ObjectStore.create = (dataKey, indices=EmptyList) ->
+  ObjectStore.addIndices(
+    ObjectStore.Empty.set('dataKey', dataKey),
+    indices)
 
 reindex = (store) ->
   store.update 'indexedData', (indexedData) ->
@@ -53,10 +58,17 @@ ObjectStore.addObjects = (store, objects) ->
 ObjectStore.getObject = (store, key) ->
   store.get('data').get(key) or null
 
-ObjectStore.addIndex = (store, indexedBy) ->
+ObjectStore.addIndex = (store, indexKeyset) ->
+  reindex(
+    store.update 'indexedData', (m) -> m.set(indexKeyset, EmptyMap)
+  )
+
+ObjectStore.addIndices = (store, indexKeysets) ->
   reindex(
     store.update 'indexedData', (indexedData) ->
-      indexedData.set indexedBy, Immutable.Map()
+      indexKeysets.reduce (indexedData,keyset) ->
+        indexedData.set(keyset, EmptyMap)
+      , indexedData
   )
 
 ObjectStore.hasIndex = (store, indexedBy) ->
@@ -80,18 +92,20 @@ ObjectStore.getIndexedObjects = (store, indexedBy, keyPath) ->
 # TODO: removeObject
 # TODO: allObjects
 ObjectStore.allObjects = (store) ->
-  Immutable.List(store.get('data').values())
+  List(store.get('data').values())
 
 
 listSize = (l) -> l.size
 
-ObjectStore.bestIndexForKeys = (store, keys) ->
+ObjectStore.selectMatchingIndex = (indices, keys) ->
   matchAllKeys = (index) -> index.every (k) -> keys.has(k)
-  ObjectStore.getIndices(store)
+  indices
     .filter(matchAllKeys)
     .sortBy(listSize)
     .last() or null
 
+ObjectStore.bestIndexForKeys = (store, keys) ->
+  ObjectStore.selectMatchingIndex(ObjectStore.getIndices(store), keys)
 
 #
 # ObjectStore wrapper class:
