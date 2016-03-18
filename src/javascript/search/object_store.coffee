@@ -1,4 +1,5 @@
 Immutable = require 'immutable'
+EmptySet = Immutable.Set()
 
 ObjectStore = {}
 
@@ -16,7 +17,7 @@ ObjectStore.mappedBy = (objs,key) ->
 ObjectStore.indexObjects = (objs, indexKeys, identKey) ->
   objs.reduce (map, obj) ->
     keyPath = indexKeys.map (key) -> obj.get(key)
-    map.updateIn keyPath, Immutable.Set(), (set) -> set.add(obj.get(identKey))
+    map.updateIn keyPath, EmptySet, (set) -> set.add(obj.get(identKey))
   , Immutable.Map()
     
 #
@@ -67,10 +68,14 @@ ObjectStore.getIndices = (store) ->
 # TODO return a Seq instead of the actual Set?
 ObjectStore.getIndexedObjectIds = (store, indexedBy, keyPath) ->
   index = store.get('indexedData').get(indexedBy)
-  if index? then index.getIn(keyPath) else Immutable.Set()
+  if index?
+    index.getIn(keyPath) || EmptySet
+  else
+    EmptySet
 
 ObjectStore.getIndexedObjects = (store, indexedBy, keyPath) ->
-  ObjectStore.getIndexedObjectIds(store,indexedBy,keyPath).map (cid) -> ObjectStore.getObject(store,cid)
+  ObjectStore.getIndexedObjectIds(store,indexedBy,keyPath).map (cid) ->
+    ObjectStore.getObject(store,cid)
 
 # TODO: removeObject
 # TODO: allObjects
