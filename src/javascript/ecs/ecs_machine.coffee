@@ -1,6 +1,7 @@
 Immutable = require 'immutable'
 EventBucket = require './event_bucket'
-EntityStore = require './entity_store'
+# EntityStore = require './entity_store'
+EntityStore = require './entity_store2'
 
 class EcsMachine
   constructor: ({systems}) ->

@@ -1,7 +1,7 @@
 Immutable = require 'immutable'
 SeqGen = require './id_sequence_generator'
-Finder = require '../search/immutable_object_finder'
-ObjectStore = require './object_store'
+ObjectStore = require '../search/object_store'
+ObjectStoreSearch = require '../search/object_store_search'
 
 EidIndex     = Immutable.List(['eid'])
 TypeIndex    = Immutable.List(['type'])
@@ -37,7 +37,7 @@ class ReadOnlyEntityStore
 
 class EntityStore extends ReadOnlyEntityStore
 
-  @initalCompStore: ->
+  @initialCompStore: ->
     s = ObjectStore.create('cid')
     s = ObjectStore.addIndex(s, TypeIndex)
     s = ObjectStore.addIndex(s, EidIndex)
@@ -88,7 +88,7 @@ class EntityStore extends ReadOnlyEntityStore
   #
   # PRIVATE
   #
-  _update: (key,fn) -> @state = @state.upddate key, fn
+  _update: (key,fn) -> @state = @state.update key, fn
 
   _newComponent: (eid, cid, props) ->
     comp = Immutable.fromJS(props)

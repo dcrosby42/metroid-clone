@@ -1,7 +1,8 @@
 GameState = require './game_state'
 
 EcsMachine = require '../../ecs/ecs_machine'
-EntityStore = require '../../ecs/entity_store'
+# EntityStore = require '../../ecs/entity_store'
+EntityStore = require '../../ecs/entity_store2'
 
 MainTitleLevel = require '../main_title_level'
 

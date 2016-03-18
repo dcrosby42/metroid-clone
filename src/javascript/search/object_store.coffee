@@ -90,7 +90,11 @@ ObjectStore.getIndexedObjects = (store, indexedBy, keyPath) ->
     ObjectStore.getObject(store,cid)
 
 # TODO: removeObject
-# TODO: allObjects
+ObjectStore.removeObject = (store,object) ->
+  reindex(
+    store.update 'data', (data) -> data.delete(object.get(store.get('dataKey')))
+  )
+
 ObjectStore.allObjects = (store) ->
   List(store.get('data').values())
 

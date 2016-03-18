@@ -1,3 +1,4 @@
+Immutable = require 'immutable'
 FilterExpander = require './filter_expander'
 
 class BaseSystem
@@ -126,7 +127,7 @@ class BaseSystem
 
   # Searches for Name components by name value, yields eid of each entity having such a Name component
   eachEntityNamed: (name,fn) ->
-    res = @estore.search([{match: { type: 'name', name: name}, as: 'nameComp'}])
+    res = @estore.search(Immutable.fromJS([{match: { type: 'name', name: name}, as: 'nameComp'}]))
     if fn?
       res.forEach (comps) ->
         fn(comps.getIn(['nameComp', 'eid']))

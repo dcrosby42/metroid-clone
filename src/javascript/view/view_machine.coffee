@@ -1,4 +1,6 @@
-EntityStore  = require '../ecs/entity_store'
+# EntityStore  = require '../ecs/entity_store'
+EntityStore  = require '../ecs/entity_store2'
+
 class ViewMachine
   constructor: ({@systems, @uiState, @uiConfig}) ->
     @estore = new EntityStore()
