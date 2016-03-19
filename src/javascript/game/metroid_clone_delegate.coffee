@@ -22,9 +22,6 @@ TitleState = require './states/title'
 AdventureState = require './states/adventure'
 PowerupState = require './states/powerup'
 
-RoomsLevel = require './rooms_level'
-MainTitleLevel = require './main_title_level'
-
 ImmRingBuffer = require '../utils/imm_ring_buffer'
 
 class MetroidCloneDelegate
@@ -63,13 +60,13 @@ class MetroidCloneDelegate
     @stateHistory = ImmRingBuffer.create(5*60)
 
   graphicsToPreload: ->
-    assets = RoomsLevel.graphicsToPreload()
-    assets = assets.concat(MainTitleLevel.graphicsToPreload())
+    assets = AdventureState.graphicsToPreload()
+    assets = assets.concat(TitleState.graphicsToPreload())
     assets
 
   soundsToPreload: ->
-    sounds = RoomsLevel.soundsToPreload()
-    sounds = _.merge(sounds, MainTitleLevel.soundsToPreload())
+    sounds = AdventureState.soundsToPreload()
+    sounds = _.merge(sounds, TitleState.soundsToPreload())
     sounds
 
   setupStage: (stage, width, height,zoom, soundController) ->
@@ -83,7 +80,7 @@ class MetroidCloneDelegate
 
     uiConfig = UIConfig.create
       worldMap: @worldMap
-      spriteConfigs: RoomsLevel.spriteConfigs()
+      spriteConfigs: AdventureState.spriteConfigs()
       
     viewSystems = createViewSystems()
 
