@@ -40,6 +40,7 @@ cleanupEmptyMap = (key,map) ->
 
 convertMatchesToIndexLookups = (filter,indices) ->
   match = filter.get('match')
+  return filter unless match?
   if index = ObjectStore.selectMatchingIndex(indices,keysInMatch(match))
     cleanupEmptyMap 'match', filter.set('lookup', Immutable.Map(
       index: index
@@ -65,6 +66,9 @@ search = (object_store,filters,row=Immutable.Map()) ->
   search_logCall(object_store,filters,row)
   if filters.size == 0
     return Immutable.List([row])
+
+  if !Immutable.List.isList(filters)
+    throw new Error("ObjectStoreSearch.search requires filters to be an Immutable.List, but was #{filters}")
 
   f0 = filters.first()
   f0 = expandLookup(expandMatch(f0,row), row)

@@ -9,6 +9,7 @@ class ViewSystem
   constructor: ->
     if @constructor.Subscribe?
       @componentFilters = FilterExpander.expandFilterGroups(@constructor.Subscribe)
+      # console.log "ViewSystem @Subscribe=#{@constructor.Subscribe} -> ",@componentFilters.toJS()
 
   searchComponents: ->
     if @componentFilters?
@@ -28,7 +29,7 @@ class ViewSystem
     @config = null
 
   process: ->
-    console.log "!! ViewSystem requires you to implement a process() method"
+    throw new Error("ViewSystem requires you to implement a process() method")
 
 module.exports = ViewSystem
 

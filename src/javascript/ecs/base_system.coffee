@@ -140,7 +140,7 @@ class BaseSystem
     return @eachEntityNamed(name).first()
 
   searchEntities: (filters) ->
-    @estore.search(filters)
+    @estore.search(Immutable.fromJS(filters))
 
 
 

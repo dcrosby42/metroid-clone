@@ -1,11 +1,14 @@
 Immutable = require 'immutable'
+{Map,List} = Immutable
+
 SeqGen = require './id_sequence_generator'
 ObjectStore = require '../search/object_store'
 ObjectStoreSearch = require '../search/object_store_search'
 
-EidIndex     = Immutable.List(['eid'])
-TypeIndex    = Immutable.List(['type'])
-EidTypeIndex = Immutable.List(['eid','type'])
+EidIndex     = List(['eid'])
+TypeIndex    = List(['type'])
+EidTypeIndex = List(['eid','type'])
+Indices = List([EidIndex,TypeIndex,EidTypeIndex])
 
 class ReadOnlyEntityStore
   constructor: (@state) ->
@@ -21,13 +24,13 @@ class ReadOnlyEntityStore
     
   getEntityComponents: (eid,type,matchKey=null,matchVal=null) ->
     if type?
-      comps = ObjectStore.getIndexedObjects(@state.get('compStore'), EidTypeIndex, [eid])
+      comps = ObjectStore.getIndexedObjects(@state.get('compStore'), EidTypeIndex, List([eid,type]))
       if matchKey? and matchVal?
         comps.filter (comp) -> comp.get(matchKey) == matchVal
       else
         comps
     else
-      ObjectStore.getIndexedObjects(@state.get('compStore'), EidIndex, [eid])
+      ObjectStore.getIndexedObjects(@state.get('compStore'), EidIndex, List([eid]))
 
   allComponentsByCid: ->
     ObjectStore.allObjects(@state.get('compStore'))
@@ -38,21 +41,20 @@ class ReadOnlyEntityStore
 class EntityStore extends ReadOnlyEntityStore
 
   @initialCompStore: ->
-    s = ObjectStore.create('cid')
-    s = ObjectStore.addIndex(s, TypeIndex)
-    s = ObjectStore.addIndex(s, EidIndex)
-    s = ObjectStore.addIndex(s, EidTypeIndex)
-    s
+    ObjectStore.create('cid', List [
+      TypeIndex,
+      EidIndex,
+      EidTypeIndex
+    ])
 
   @initialState: ->
-    Immutable.Map
+    Map
       compStore: EntityStore.initialCompStore()
       eidGen:    SeqGen.new('e', 0)
       cidGen:    SeqGen.new('c', 0)
 
   constructor: ->
     super EntityStore.initialState()
-    # @restoreSnapshot EntityStore.initialState()
 
   #
   # WRITE
@@ -63,7 +65,7 @@ class EntityStore extends ReadOnlyEntityStore
   createEntity: (compProps) ->
     eid = @_nextEntityId()
     if compProps?
-      Immutable.List(compProps).forEach (props) =>
+      List(compProps).forEach (props) =>
         @createComponent eid, props
     eid
 
@@ -108,6 +110,7 @@ class EntityStore extends ReadOnlyEntityStore
     @_update('cidGen', SeqGen.next)
       .getIn(['cidGen','value'])
 
+EntityStore.Indices = Indices
 
 module.exports = EntityStore
 

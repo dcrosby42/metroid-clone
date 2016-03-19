@@ -79,12 +79,10 @@ class MainTitleSystem extends StateMachineSystem
 
   newGameAction: ->
     @_destroySubMenu()
-    # console.log "(start new game)"
     @publishGlobalEvent 'StartNewGame'
 
   continueAction: ->
     @_destroySubMenu()
-    # console.log "(continue game)"
     @publishGlobalEvent 'ContinueGame'
 
   _createSubMenu: ->

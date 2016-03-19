@@ -48,8 +48,12 @@ class ViewportSystem extends BaseSystem
 
     viewportArea = worldMap.getAreaAt(viewportPosition.get('x'), viewportPosition.get('y'))
     targetArea = worldMap.getAreaAt(targetPosition.get('x'), targetPosition.get('y'))
+    if !targetArea?
+      console.log "!! viewport_system: WTF cannot find viewportArea based on viewportPosition",viewportPosition.toJS()
+    if !targetArea?
+      console.log "!! viewport_system: WTF cannot find targetArea based on targetPosition",targetPosition.toJS()
 
-    if viewportArea.name != targetArea.name
+    if viewportArea? and targetArea? and (viewportArea.name != targetArea.name)
       if withinShuttlingDistance(targetPosition,viewportPosition)
         @_shuttleToNewArea(worldMap, targetPosition,targetArea, viewportPosition)
         return

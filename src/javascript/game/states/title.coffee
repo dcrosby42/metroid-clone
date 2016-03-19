@@ -52,6 +52,7 @@ class TitleState extends GameState
 
   enter: (data=null) ->
     @estore = new EntityStore()
+    window.estore = @estore
 
     @estore.createEntity [
       Immutable.Map(

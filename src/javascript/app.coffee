@@ -2,6 +2,7 @@ jquery    = require 'jquery'
 
 PixiHarness = require './pixi_ext/pixi_harness'
 Immutable = require 'immutable'
+window.Immutable = Immutable
 
 React = require 'react'
 
@@ -20,6 +21,9 @@ BigScreen = require './vendor/bigscreen_wrapper'
 
 Inspector = require './inspector'
 DevUI = require './dev_ui'
+
+window.ObjectStore = require './search/object_store'
+window.ObjectStoreSearch = require './search/object_store'
 
 inspectorConfig = Immutable.fromJS
   componentLayout:

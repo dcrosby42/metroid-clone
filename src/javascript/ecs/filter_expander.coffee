@@ -2,6 +2,9 @@ Immutable = require 'immutable'
 Map = Immutable.Map
 List = Immutable.List
 
+ObjectStoreSearch = require '../search/object_store_search'
+EntityStore = require './entity_store2'
+
 isString = (x) -> (typeof x) == 'string'
 
 expandFilterGroups = (filterGroups) ->
@@ -17,7 +20,10 @@ expandFilters = (fs,opts=Map()) ->
   filters = filters.map(expandFilter)
   if opts.get('prefixGroup')
     filters = applyGroupPrefix(filters)
-  joinAll(filters, 'eid')
+  filters = joinAll(filters, 'eid')
+  filters = filters.map (filter) ->
+    ObjectStoreSearch.convertMatchesToIndexLookups(filter, EntityStore.Indices)
+  filters
 
 expandFilter = (f) ->
   filter = if isString(f)
@@ -57,14 +63,9 @@ applyGroupPrefix = (filters) ->
 
 joinAll = (filters,key) ->
   return filters if filters.size <= 1
-
   first = filters.first()
-
-  join = "#{first.get('as')}.#{key}" # TODO don't do this like "obj.key" but rather ["obj","key"]
-  rest = filters.shift().map (f) ->
-    return f if f.has('join')
-    f.set('join', join)
-
+  join = List([first.get('as'), key])
+  rest = filters.shift().map (f) -> f.setIn(['match',key], join)
   rest.unshift(first)
 
 module.exports =
