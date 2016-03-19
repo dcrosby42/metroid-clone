@@ -1,5 +1,4 @@
-# EntityStore = require '../ecs/entity_store'
-EntityStore = require '../ecs/entity_store2'
+EntityStore = require '../ecs/entity_store'
 
 #
 # TODO: break refactor this to use a 'generic machine', where the update logic

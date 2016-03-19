@@ -16,8 +16,7 @@ Common = require '../entity/components'
 CommonSystems = require '../systems'
 
 EcsMachine = require '../../ecs/ecs_machine'
-# EntityStore = require '../../ecs/entity_store'
-EntityStore = require '../../ecs/entity_store2'
+EntityStore = require '../../ecs/entity_store'
 
 class TitleState extends GameState
   @StateName: 'title'

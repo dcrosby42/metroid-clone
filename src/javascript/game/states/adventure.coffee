@@ -2,8 +2,7 @@ Immutable = require 'immutable'
 GameState = require './game_state'
 
 EcsMachine = require '../../ecs/ecs_machine'
-# EntityStore = require '../../ecs/entity_store'
-EntityStore = require '../../ecs/entity_store2'
+EntityStore = require '../../ecs/entity_store'
 FilterExpander = require '../../ecs/filter_expander'
 SystemAccumulator = require '../../ecs/system_accumulator'
 
