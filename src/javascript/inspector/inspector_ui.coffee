@@ -5,6 +5,8 @@ List = Immutable.List
 Set = Immutable.Set
 imm = Immutable.fromJS
 
+{div,span,table,tbody,td,tr} = React.DOM
+
 ComponentSearchBox = require './component_search_box'
 
 InspectorUI = React.createClass
@@ -21,24 +23,32 @@ InspectorUI = React.createClass
 
   render: ->
     folder = if @state.foldOpen
-        React.DOM.span {className: 'inspector-folder open'}, "- "
+        span {className: 'inspector-folder open'}, "- "
       else
-        React.DOM.span {className: 'inspector-folder closed'}, "+ "
+        span {className: 'inspector-folder closed'}, "+ "
 
-    header = React.DOM.div {className: "inspector-header", onClick: @headerClicked}, folder, "Entity Inspector"
+    header = div {className: "inspector-header", onClick: @headerClicked}, folder, "Entity Inspector"
 
-    views = if @state.foldOpen
-      List([
-        React.DOM.div {className: 'entities'},
+    views = []
+    if @state.foldOpen
+      countComps = (sum,comps) -> sum + comps.size
+      views.push(
+        div {className: 'entitiesSummary'},
+          "#{@props.entities.size} entities, #{@props.entities.valueSeq().reduce(countComps, 0)} components"
+      )
+      views.push(
+        div {className: 'entities'},
           @props.entities.map((components,eid) =>
             React.createElement Entity, {eid: eid, components: components, key: eid, inspectorConfig: @props.inspectorConfig}
           ).toList()
-        React.createElement ComponentSearchBox, {key: 'component-search-box', entityStore: @props.entityStore}
-      ])
-    else
-      List()
+      )
 
-    React.DOM.div {className: 'component-inspector'},
+    if @state.showSearchBox
+      views.push(
+        React.createElement ComponentSearchBox, {key: 'component-search-box', entityStore: @props.entityStore}
+      )
+
+    div {className: 'component-inspector'},
       header,
       views
 
@@ -56,16 +66,16 @@ Entity = React.createClass
 
   render: ->
     folder = if @state.foldOpen
-        React.DOM.span {className: 'entity-folder open'}, "[ - ] "
+        span {className: 'entity-folder open'}, "[ - ] "
       else
-        React.DOM.span {className: 'entity-folder closed'}, "[ + ] "
+        span {className: 'entity-folder closed'}, "[ + ] "
 
     nameLabel = "Entity #{@props.eid}"
     @props.components.forEach (comp,cid) =>
       if comp.get('type') == 'name'
         nameLabel = comp.get('name') + " (#{@props.eid})"
 
-    header = React.DOM.div {className: "entity-header", onClick: @headerClicked},
+    header = div {className: "entity-header", onClick: @headerClicked},
       folder
       nameLabel
 
@@ -77,7 +87,7 @@ Entity = React.createClass
       List()
 
 
-    React.DOM.div {className: 'entity'},
+    div {className: 'entity'},
       header,
       componentViews
 
@@ -102,16 +112,16 @@ Component = React.createClass
     comp = @props.component
 
     folder = if @state.foldOpen
-        React.DOM.span {className: 'component-folder open'}, "[ - ] "
+        span {className: 'component-folder open'}, "[ - ] "
       else
-        React.DOM.span {className: 'component-folder closed'}, "[ + ] "
+        span {className: 'component-folder closed'}, "[ + ] "
 
-    header = React.DOM.div {className: "component-header", onClick: @headerClicked},
+    header = div {className: "component-header", onClick: @headerClicked},
       folder
-      React.DOM.span {className: 'component-type'},
+      span {className: 'component-type'},
         comp.get('type')
       " "
-      React.DOM.span {className: 'component-cid'},
+      span {className: 'component-cid'},
         comp.get('cid')
 
     if @state.foldOpen
@@ -120,30 +130,30 @@ Component = React.createClass
         React.createElement PropRow, {key: key, name: key, value: value}
       ).toList()
 
-      props = React.DOM.table {className: 'component-props'},
-        React.DOM.tbody null,
+      props = table {className: 'component-props'},
+        tbody null,
         rows
 
-      React.DOM.div {className: 'component'},
+      div {className: 'component'},
         header,
         props
 
     else
-      React.DOM.div {className: 'component'},
+      div {className: 'component'},
         header
 
 PropRow = React.createClass
   displayName: 'PropRow'
   render: ->
-    React.DOM.tr null,
-      React.DOM.td {className:'prop-name'}, @props.name
+    tr null,
+      td {className:'prop-name'}, @props.name
       React.createElement PropValueCell, {value: @props.value}
 
 PropValueCell = React.createClass
   displayName: 'PropValueCell'
   render: ->
     val = if @props.value? then @props.value.toString() else "?"
-    React.DOM.td {className:'prop-value'}, val
+    td {className:'prop-value'}, val
     
 module.exports = InspectorUI
 
