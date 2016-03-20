@@ -33,11 +33,7 @@ class ReadOnlyEntityStore
       ObjectStore.getIndexedObjects(@state.get('compStore'), EidIndex, List([eid]))
 
   forEachComponent: (f) ->
-    iter = ObjectStore.allObjectsIter(@state.get('compStore'))
-    x = iter.next()
-    while !x.done
-      f(iter.value)
-      x = iter.next()
+    ObjectStore.allObjects(@state.get('compStore')).forEach f
 
   search: (filters) ->
     ObjectStoreSearch.search @state.get('compStore'), filters

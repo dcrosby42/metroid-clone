@@ -28,7 +28,6 @@ ObjectStore.addObjectToIndex = (obj,index,identKey,map) ->
     else
       return
     x = iter.next()
-
   map.updateIn keypath, EmptySet, (s) -> s.add(obj.get(identKey))
 
 ObjectStore.removeObjectFromIndex = (indexStructure,indexKeys,object,objectId) ->
@@ -98,9 +97,8 @@ ObjectStore.updateObject = (store, object) ->
   store.setIn ['data', object.get(store.get('dataKey'))], object
 
 ObjectStore.addObjects = (store, objects) ->
-  reindex(
-    store.set 'data', ObjectStore.mappedBy(objects, store.get('dataKey'))
-  )
+  objects.forEach (o) -> store = ObjectStore.addObject(store,o)
+  store
 
 ObjectStore.getObject = (store, key) ->
   store.get('data').get(key) or null

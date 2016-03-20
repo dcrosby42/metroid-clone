@@ -1,8 +1,6 @@
 _ = require 'lodash'
 Immutable = require 'immutable'
-Map = Immutable.Map
-Set = Immutable.Set
-List = Immutable.List
+{Map,Set,Seq,List} = Immutable
 imm = Immutable.fromJS
 
 
@@ -15,6 +13,7 @@ expect = chai.expect
 assert = chai.assert
 
 EntityStore = require '../../src/javascript/ecs/entity_store'
+FilterExpander = require '../../src/javascript/ecs/filter_expander'
 
 findEntityComponent = (estore, eid, key,val) ->
   found = estore.getEntityComponents(eid).filter((c) -> c.get(key) == val).first()
@@ -248,17 +247,10 @@ describe 'The new EntityStore', ->
       tektikeCharacter = findEntityComponent estore, tektike, 'type','character'
       tektikeBox       = findEntityComponent estore, tektike, 'type','bbox'
 
-      results = estore.search [
-        {
-          match: { type: 'character' }
-        }
-        {
-          match: { type: 'bbox' }
-          join:  "character.eid"
-        }
-      ]
 
-      expectIs results, imm [
+      expandedFilters = FilterExpander.expandFilterGroups(['character','bbox'])
+      results = estore.search(expandedFilters)
+      expectIs results.valueSeq(), imm [
         { character: linkCharacter, bbox: linkBox }
         { character: tektikeCharacter, bbox: tektikeBox }
       ]
@@ -282,26 +274,11 @@ describe 'The new EntityStore', ->
       samus = findEntityComponent estore, samusEid, 'type','samus'
       controller = findEntityComponent estore, samusEid, 'type','controller'
 
-      results = estore.search [
-        {
-          match: { type: 'samus' }
-          as: 'samus'
-        }
-        {
-          match: { type: 'controller' }
-          as: 'controller'
-          join: 'samus.eid'
-        }
-      ]
-
-      expectIs results, imm [
-        { samus: samus, controller: controller }
-      ]
-
-      # expectIs results, imm [
-      #   { character: linkCharacter, bbox: linkBox }
-      #   { character: tektikeCharacter, bbox: tektikeBox }
-      # ]
+      expandedFilters = FilterExpander.expandFilterGroups(['samus','controller'])
+      results = estore.search(expandedFilters)
+      expectIs results.valueSeq(), Seq([
+        Map(samus: samus, controller: controller)
+      ])
       
   describe "destroyEntity", ->
     estore = newEntityStore()
@@ -326,7 +303,6 @@ describe 'The new EntityStore', ->
     tkComps = Immutable.Set.of(tk,tkPl)
 
     comps = estore.getEntityComponents(eid1)
-    console.log comps.toString()
     expectIs comps, linkComps
 
     # Remove Link

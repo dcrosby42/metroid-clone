@@ -84,10 +84,10 @@ search = (object_store,filters,row=Immutable.Map()) ->
     index = lookup.get('index')
     keypath = lookup.get('keypath')
     # search_logIndex(index,keypath)
-    ObjectStore.getIndexedObjects(object_store, index, keypath).toSeq()
+    ObjectStore.getIndexedObjects(object_store, index, keypath).toList()
   else
     # No indexed lookup available; we must scan all objects
-    ObjectStore.allObjects(object_store)
+    ObjectStore.allObjects(object_store).toList()
 
   #
   # Second: apply any non-indexed match criteria to the objectset
@@ -106,7 +106,10 @@ search = (object_store,filters,row=Immutable.Map()) ->
       matchProps.every (v,k) -> obj.get(k) == v
 
   if objs.size == 0 and f0.get('optional',false) == true
+    console.log "objs.size == 0 and is optional",f0,objs.size,f0.get('optional',false)
     objs = new Immutable.Seq([null])
+  else
+    console.log "objs.size == 0 and but is NOT optional",f0,objs.size,f0.get('optional',false)
 
   #
   # Recurse / join
