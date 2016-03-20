@@ -64,12 +64,13 @@
     "gulp-mocha": "*"
   },
   "dependencies": {
-    "jquery": "~2.1.0",
-    "pixi.js": "~2.2.0",
-    "lodash": "*",
-    "mousetrap": "~1.4.6",
-    "react": "~0.13.2",
+    "howler": "2.0.0-beta7",
     "immutable": "~3.7.2",
-    "howler": "2.0.0-beta7"
+    "jquery": "~2.1.0",
+    "lodash": "*",
+    "microtime": "^2.0.0",
+    "mousetrap": "~1.4.6",
+    "pixi.js": "~2.2.0",
+    "react": "~0.13.2"
   }
 }
