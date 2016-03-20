@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "howler": "2.0.0-beta7",
-    "immutable": "~3.7.2",
+    "immutable": "~3.7.6",
     "jquery": "~2.1.0",
     "lodash": "*",
     "microtime": "^2.0.0",

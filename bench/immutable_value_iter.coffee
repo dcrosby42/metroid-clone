@@ -7,7 +7,8 @@ bench = new MyBench("Map value iteration")
 bench.setup (ctx) ->
   map = Immutable.Map()
   data = []
-  for x in [1..100]
+  for i in [1..100]
+    x = Math.random()
     data.push x
     map = map.set("key-#{x}",x)
 
@@ -19,6 +20,16 @@ bench.setup (ctx) ->
   ctx.seq = seq
   ctx.set = set
   ctx.map = map
+
+  ctx.listSeq = Immutable.Seq(list.toArray())
+  ctx.setSeq = Immutable.Seq(set.toArray())
+  ctx.mapSeq = Immutable.Seq(map.toArray())
+
+  # console.log ctx.seq
+  # console.log ctx.listSeq
+  # console.log ctx.setSeq
+  # console.log ctx.mapSeq
+
   ctx.doWork = (x) -> x + 1
 
 bench.add "list.values() iter", (ctx) ->
@@ -39,6 +50,12 @@ bench.add "list.forEach() iter", (ctx) ->
   ctx.list.forEach (x) ->
     ctx.doWork(x)
 
+bench.add "listSeq iter", (ctx) ->
+  seq = ctx.listSeq
+  i = 0
+  while i < seq.size
+    ctx.doWork(seq.get(i))
+    i++
 
 
 bench.add "seq.values() iter", (ctx) ->
@@ -78,6 +95,14 @@ bench.add "set.forEach() iter", (ctx) ->
   ctx.set.forEach (x) ->
     ctx.doWork(x)
 
+bench.add "setSeq iter", (ctx) ->
+  seq = ctx.setSeq
+  i = 0
+  while i < seq.size
+    ctx.doWork(seq.get(i))
+    i++
+
+
 bench.add "map.values() iter", (ctx) ->
   iter = ctx.map.values()
   x = iter.next()
@@ -95,5 +120,12 @@ bench.add "map.valueSeq() iter", (ctx) ->
 bench.add "map.forEach() iter", (ctx) ->
   ctx.map.forEach (x) ->
     ctx.doWork(x)
+
+bench.add "mapSeq iter", (ctx) ->
+  seq = ctx.setSeq
+  i = 0
+  while i < seq.size
+    ctx.doWork(seq.get(i))
+    i++
 
 bench.run()
