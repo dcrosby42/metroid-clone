@@ -50,6 +50,10 @@ bench.add "list.forEach() iter", (ctx) ->
   ctx.list.forEach (x) ->
     ctx.doWork(x)
 
+bench.add "list.map()", (ctx) ->
+  ctx.list.map (x) ->
+    ctx.doWork(x)
+
 bench.add "listSeq iter", (ctx) ->
   seq = ctx.listSeq
   i = 0
@@ -76,6 +80,10 @@ bench.add "seq.forEach() iter", (ctx) ->
   ctx.seq.forEach (x) ->
     ctx.doWork(x)
 
+bench.add "seq.map()", (ctx) ->
+  ctx.seq.map (x) ->
+    ctx.doWork(x)
+
 
 bench.add "set.values() iter", (ctx) ->
   iter = ctx.set.values()
@@ -93,6 +101,10 @@ bench.add "set.valueSeq() iter", (ctx) ->
 
 bench.add "set.forEach() iter", (ctx) ->
   ctx.set.forEach (x) ->
+    ctx.doWork(x)
+
+bench.add "set.map() iter", (ctx) ->
+  ctx.set.map (x) ->
     ctx.doWork(x)
 
 bench.add "setSeq iter", (ctx) ->
@@ -119,6 +131,10 @@ bench.add "map.valueSeq() iter", (ctx) ->
 
 bench.add "map.forEach() iter", (ctx) ->
   ctx.map.forEach (x) ->
+    ctx.doWork(x)
+
+bench.add "map.map()", (ctx) ->
+  ctx.map.map (x) ->
     ctx.doWork(x)
 
 bench.add "mapSeq iter", (ctx) ->
