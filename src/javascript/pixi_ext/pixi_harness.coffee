@@ -3,6 +3,7 @@ StopWatch = require './stop_watch'
 CompositeEvent = require '../utils/composite_event'
 SoundController = require './sound_controller'
 Profiler = require '../profiler'
+# microtime = require 'microtime'
 
 class PixiHarness
   constructor: ({@domElement, @delegate, stageBgColor, width, height,@zoom})->
@@ -53,20 +54,17 @@ class PixiHarness
     if @lastT?
       dt = t - @lastT
     @lastT = t
-    # dt = @stopWatch.lapInMillis()
     if dt?
       if dt > 1000
         console.log "SKIPPING UPDATE, long dt: #{dt}"
-      # else if dt > 25
-      #   console.log "dt over 25:",dt
       else
-        # updateStart = @stopWatch.currentTimeMillis()
+        start = new Date().getTime()
         @delegate.update dt
-        # updateTime = @stopWatch.currentTimeMillis() - updateStart
+        ellapsedMillis = new Date().getTime() - start
 
     @renderer.render(@stage)
 
-    # Profiler.tear(dt: dt, updateTime: updateTime)
+    Profiler.tear(dt: dt, updateTime: ellapsedMillis)
 
     requestAnimationFrame (t) => @update(t)
 
