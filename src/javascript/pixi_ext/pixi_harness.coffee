@@ -19,7 +19,7 @@ class PixiHarness
       console.log "Assets loaded."
       @delegate.setupStage @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight, @zoom, @soundController
       @stopWatch.start()
-      requestAnimationFrame => @update()
+      requestAnimationFrame (t) => @update(t)
 
   _loadAssets: (callback) ->
     allDone = CompositeEvent.create ["graphics", "sounds"], callback
@@ -48,19 +48,26 @@ class PixiHarness
     else
       callback()
    
-  update: ->
-    dt = @stopWatch.lapInMillis()
-    if dt > 1000
-      console.log "SKIPPING UPDATE, long dt: #{dt}"
-    else
-      updateStart = @stopWatch.currentTimeMillis()
-      @delegate.update dt
-      updateTime = @stopWatch.currentTimeMillis() - updateStart
+  update: (t) ->
+    dt = null
+    if @lastT?
+      dt = t - @lastT
+    @lastT = t
+    # dt = @stopWatch.lapInMillis()
+    if dt?
+      if dt > 1000
+        console.log "SKIPPING UPDATE, long dt: #{dt}"
+      # else if dt > 25
+      #   console.log "dt over 25:",dt
+      else
+        # updateStart = @stopWatch.currentTimeMillis()
+        @delegate.update dt
+        # updateTime = @stopWatch.currentTimeMillis() - updateStart
 
     @renderer.render(@stage)
 
-    Profiler.tear(dt: dt, updateTime: updateTime)
+    # Profiler.tear(dt: dt, updateTime: updateTime)
 
-    requestAnimationFrame => @update()
+    requestAnimationFrame (t) => @update(t)
 
 module.exports = PixiHarness

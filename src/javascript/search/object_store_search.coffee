@@ -63,7 +63,7 @@ convertMatchesToIndexLookups = (filter,indices) ->
 # }
 
 search = (object_store,filters,row=Immutable.Map()) ->
-  search_logCall(object_store,filters,row)
+  # search_logCall(object_store,filters,row)
   if filters.size == 0
     return Immutable.List([row])
 
@@ -83,7 +83,7 @@ search = (object_store,filters,row=Immutable.Map()) ->
   objs = if lookup = f0.get('lookup')
     index = lookup.get('index')
     keypath = lookup.get('keypath')
-    search_logIndex(index,keypath)
+    # search_logIndex(index,keypath)
     ObjectStore.getIndexedObjects(object_store, index, keypath)
   else
     # No indexed lookup available; we must scan all objects
@@ -93,7 +93,7 @@ search = (object_store,filters,row=Immutable.Map()) ->
   # Second: apply any non-indexed match criteria to the objectset
   # 
   if matchProps = f0.get('match')
-    search_logFilter(objs,matchProps)
+    # search_logFilter(objs,matchProps)
     # PRESUMABLY, THIS IS THE EXPENSIVE PART.
     # The following (potentially mutli-field) comparison (matchProps.every) is run once
     # per existing component.  

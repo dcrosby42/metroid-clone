@@ -17,10 +17,41 @@ ObjectStore.mappedBy = (objs,key) ->
     map.set obj.get(key), obj
   , EmptyMap
 
-ObjectStore.indexObjects = (objs, indexKeys, identKey) ->
+ObjectStore.addObjectToIndex = (obj,index,identKey,map) ->
+  keypath = []
+  iter = index.values()
+  x = iter.next()
+  while !x.done
+    v = obj.get(x.value)
+    if v?
+      keypath.push(v)
+    else
+      return
+    x = iter.next()
+
+  # keypath = index.map (key) -> obj.get(key)
+  map.updateIn keypath, EmptySet, (s) -> s.add(obj.get(identKey))
+
+ObjectStore.removeObjectFromIndex = (indexStructure,indexKeys,object,objectId) ->
+  keypath = []
+  iter = indexKeys.values()
+  x = iter.next()
+  while !x.done
+    v = object.get(x.value)
+    if v?
+      keypath.push(v)
+    else
+      return
+    x = iter.next()
+
+  # keypath = index.map (key) -> obj.get(key)
+  indexStructure.updateIn keypath, EmptySet, (s) -> s.remove(objectId)
+
+ObjectStore.indexObjects = (objs, index, identKey) ->
   objs.reduce (map, obj) ->
-    keyPath = indexKeys.map (key) -> obj.get(key)
-    map.updateIn keyPath, EmptySet, (set) -> set.add(obj.get(identKey))
+    ObjectStore.addObjectToIndex(obj, index, identKey, map)
+    # keyPath = indexKeys.map (key) -> obj.get(key)
+    # map.updateIn keyPath, EmptySet, (set) -> set.add(obj.get(identKey))
   , EmptyMap
     
 #
@@ -33,18 +64,34 @@ ObjectStore.create = (dataKey, indices=EmptyList) ->
     indices)
 
 reindex = (store) ->
+  objects = store.get('data').toList()
+  dataKey = store.get('dataKey')
   store.update 'indexedData', (indexedData) ->
-    indexedData.map (_, indexedBy) ->
-      ObjectStore.indexObjects(
-        store.get('data').toList()
-        indexedBy
-        store.get('dataKey')
-      )
+    indexedData.map (_, index) ->
+      ObjectStore.indexObjects(objects, index, dataKey)
 
 ObjectStore.addObject = (store, object) ->
-  reindex(
-    store.setIn ['data', object.get(store.get('dataKey'))], object
-  )
+  dataKey = store.get('dataKey')
+  store = store.setIn ['data', object.get(dataKey)], object
+  # updateIndexedData
+  store.update 'indexedData', (indexedData) ->
+    indexedData.map (indexStructure, indexKeys) ->
+      ObjectStore.addObjectToIndex(object, indexKeys, dataKey, indexStructure)
+
+  # reindex(
+  #   store.setIn ['data', object.get(store.get('dataKey'))], object
+  # )
+
+ObjectStore.removeObject = (store,object) ->
+  objectId = object.get(store.get('dataKey'))
+  store = store.update 'data', (data) -> data.delete(objectId)
+  store.update 'indexedData', (indexedData) ->
+    indexedData.map (indexStructure, indexKeys) ->
+      ObjectStore.removeObjectFromIndex(indexStructure, indexKeys, object, objectId)
+
+  # reindex(
+  #   store.update 'data', (data) -> data.delete(object.get(store.get('dataKey')))
+  # )
 
 # TODO: testme
 ObjectStore.updateObject = (store, object) ->
@@ -89,11 +136,6 @@ ObjectStore.getIndexedObjects = (store, indexedBy, keyPath) ->
   ObjectStore.getIndexedObjectIds(store,indexedBy,keyPath).map (cid) ->
     ObjectStore.getObject(store,cid)
 
-# TODO: removeObject
-ObjectStore.removeObject = (store,object) ->
-  reindex(
-    store.update 'data', (data) -> data.delete(object.get(store.get('dataKey')))
-  )
 
 ObjectStore.allObjects = (store) ->
   List(store.get('data').values())

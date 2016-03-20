@@ -1,3 +1,5 @@
+Config = require './config'
+
 jquery    = require 'jquery'
 
 PixiHarness = require './pixi_ext/pixi_harness'
@@ -15,6 +17,7 @@ Profiler = require './profiler'
 Profiler.useAjaxReporter()
 # Profiler.enable()
 # Profiler.disable()
+#
 
 
 BigScreen = require './vendor/bigscreen_wrapper'
@@ -38,9 +41,11 @@ inspectorConfig = Immutable.fromJS
 
 jquery ->
   inspectorHolder = jquery('#inspector-holder')[0]
-  componentInspector = Inspector.createComponentInspector
-    mountNode: inspectorHolder
-    inspectorConfig: inspectorConfig
+  componentInspector = null
+  if Config.inspector.enabled
+    componentInspector = Inspector.createComponentInspector
+      mountNode: inspectorHolder
+      inspectorConfig: inspectorConfig
   devUIDiv = jquery('#dev-ui')
   devUI = DevUI.create(devUIDiv)
 

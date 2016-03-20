@@ -47,9 +47,10 @@ class MetroidCloneDelegate
 
     @controllerEventMux = createControllerEventMux()
 
-    @componentInspectorMachine = new ComponentInspectorMachine(
-      componentInspector: componentInspector
-    )
+    if componentInspector?
+      @componentInspectorMachine = new ComponentInspectorMachine(
+        componentInspector: componentInspector
+      )
 
     @adminState = Immutable.fromJS
       controller:{}
@@ -131,7 +132,8 @@ class MetroidCloneDelegate
     @viewMachine.update2 gameState if gameState?
 
     # Update the component inspector:
-    @componentInspectorMachine.update2 gameState if gameState?
+    if @componentInspectorMachine? and gameState?
+      @componentInspectorMachine.update2 gameState
 
     @devUI.setState(@adminState)
 
