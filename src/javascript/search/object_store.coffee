@@ -29,7 +29,6 @@ ObjectStore.addObjectToIndex = (obj,index,identKey,map) ->
       return
     x = iter.next()
 
-  # keypath = index.map (key) -> obj.get(key)
   map.updateIn keypath, EmptySet, (s) -> s.add(obj.get(identKey))
 
 ObjectStore.removeObjectFromIndex = (indexStructure,indexKeys,object,objectId) ->
@@ -44,15 +43,16 @@ ObjectStore.removeObjectFromIndex = (indexStructure,indexKeys,object,objectId) -
       return
     x = iter.next()
 
-  # keypath = index.map (key) -> obj.get(key)
   indexStructure.updateIn keypath, EmptySet, (s) -> s.remove(objectId)
 
-ObjectStore.indexObjects = (objs, index, identKey) ->
-  objs.reduce (map, obj) ->
-    ObjectStore.addObjectToIndex(obj, index, identKey, map)
-    # keyPath = indexKeys.map (key) -> obj.get(key)
-    # map.updateIn keyPath, EmptySet, (set) -> set.add(obj.get(identKey))
-  , EmptyMap
+ObjectStore.indexObjects = (objectsIter, indexKeys, identKey) ->
+  indexStructure = EmptyMap
+  x = objectsIter.next()
+  while !x.done
+    object = x.value
+    indexStructure = ObjectStore.addObjectToIndex(object, indexKeys, identKey, indexStructure)
+    x = objectsIter.next()
+  return indexStructure
     
 #
 # Store fns
@@ -64,11 +64,11 @@ ObjectStore.create = (dataKey, indices=EmptyList) ->
     indices)
 
 reindex = (store) ->
-  objects = store.get('data').toList()
+  # objects = store.get('data').toList()
   dataKey = store.get('dataKey')
   store.update 'indexedData', (indexedData) ->
     indexedData.map (_, index) ->
-      ObjectStore.indexObjects(objects, index, dataKey)
+      ObjectStore.indexObjects(store.get('data').values(), index, dataKey)
 
 ObjectStore.addObject = (store, object) ->
   dataKey = store.get('dataKey')
@@ -138,8 +138,10 @@ ObjectStore.getIndexedObjects = (store, indexedBy, keyPath) ->
 
 
 ObjectStore.allObjects = (store) ->
-  List(store.get('data').values())
+  store.get('data').valueSeq()
 
+ObjectStore.allObjectsIter = (store) ->
+  store.get('data').values()
 
 listSize = (l) -> l.size
 
@@ -156,19 +158,19 @@ ObjectStore.bestIndexForKeys = (store, keys) ->
 #
 # ObjectStore wrapper class:
 #
-class Wrapper
-  constructor: (@store) ->
-  add: (obj) -> @store = ObjectStore.addObject @store, obj
-  addAll: (objs) -> @store = ObjectStore.addObjects @store, objs
-  addIndex: (indexedBy) -> @store = ObjectStore.addIndex @store, indexedBy
-  get: (key) -> ObjectStore.getObject @store, key
-  getIndexedObjectIds: (indexedBy, keyPath) -> ObjectStore.getIndexedObjectIds @store, indexedBy, keyPath
-  getIndexedObjects: (indexedBy, keyPath) -> ObjectStore.getIndexedObjects @store, indexedBy, keyPath
-  getIndices: () -> ObjectStore.getIndices @store
-  hasIndex: (indexedBy) -> ObjectStore.hasIndex @store, indexedBy
-
-ObjectStore.Wrapper = Wrapper
-
-ObjectStore.createWrapper = (dataKey) -> new Wrapper(ObjectStore.create(dataKey))
+# class Wrapper
+#   constructor: (@store) ->
+#   add: (obj) -> @store = ObjectStore.addObject @store, obj
+#   addAll: (objs) -> @store = ObjectStore.addObjects @store, objs
+#   addIndex: (indexedBy) -> @store = ObjectStore.addIndex @store, indexedBy
+#   get: (key) -> ObjectStore.getObject @store, key
+#   getIndexedObjectIds: (indexedBy, keyPath) -> ObjectStore.getIndexedObjectIds @store, indexedBy, keyPath
+#   getIndexedObjects: (indexedBy, keyPath) -> ObjectStore.getIndexedObjects @store, indexedBy, keyPath
+#   getIndices: () -> ObjectStore.getIndices @store
+#   hasIndex: (indexedBy) -> ObjectStore.hasIndex @store, indexedBy
+#
+# ObjectStore.Wrapper = Wrapper
+#
+# ObjectStore.createWrapper = (dataKey) -> new Wrapper(ObjectStore.create(dataKey))
 
 module.exports = ObjectStore

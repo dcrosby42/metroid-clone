@@ -50,14 +50,14 @@ describe "ObjectStore", ->
 
     describe "indexObjects", ->
       it "given objects and a prop names, group the objects' identKeys by the given prop name", ->
-        idx = ObjectStore.indexObjects(dishList, ['base'], 'dishId')
+        idx = ObjectStore.indexObjects(dishList.values(), ['base'], 'dishId')
         expectIs idx, imm(
           rice: immset('i2','i3')
           noodles: immset('i1','i4')
         )
 
       it "given objects and a list of n prop names, return an n-ary keyed map of key-paths to their identifier keys", ->
-        idx = ObjectStore.indexObjects(books, ['cat','genre'], 'bookId')
+        idx = ObjectStore.indexObjects(books.values(), ['cat','genre'], 'bookId')
         expectIs idx, imm(
           fiction:
             scifi: immset('b1','b4')
@@ -209,38 +209,38 @@ describe "ObjectStore", ->
         index3 = ObjectStore.bestIndexForKeys(store,keys3)
         expect(index3).to.be.null
 
-  describe "ObjectStore.Wrapper", ->
-    wrapper = null
-    beforeEach ->
-      wrapper = ObjectStore.createWrapper('bookId')
-
-    it "can store and retrieve objects according to the dataKey", ->
-      wrapper.add(books.get(0))
-      expectIs wrapper.get('b1'), books.get(0)
-
-    it "can add multiple objects and index them and retrieve by indexed search", ->
-      wrapper.addIndex(imm(['genre']))
-      wrapper.addAll(books)
-      scifiBookIds = wrapper.getIndexedObjectIds(imm(['genre']), imm(['scifi']))
-      expectIs scifiBookIds, immset('b1', 'b4')
-
-      scifiBooks = wrapper.getIndexedObjects(imm(['genre']), imm(['scifi']))
-      expectIs scifiBooks, immset(book1, book4)
-
-      wrapper.addIndex(imm(['cat','genre']))
-      helps = wrapper.getIndexedObjectIds(imm(['cat','genre']), imm(['nonfiction','selfhelp']))
-      expectIs helps, immset('b2')
-
-      store = wrapper.add(imm { bookId: 'b05', cat: 'nonfiction', genre: 'selfhelp', title: '7 Habits of Highly Effective People' })
-      helps = wrapper.getIndexedObjectIds(imm(['cat','genre']), imm(['nonfiction','selfhelp']))
-      expectIs helps, immset('b2','b05')
-
-      expectIs wrapper.getIndices(), imm([['genre'],['cat','genre']])
-
-    it "can indicate presence of an index", ->
-      expect(wrapper.hasIndex(imm(['genre']))).to.equal(false)
-      wrapper.addIndex(imm(['genre']))
-      expect(wrapper.hasIndex(imm(['genre']))).to.equal(true)
+  # describe "ObjectStore.Wrapper", ->
+  #   wrapper = null
+  #   beforeEach ->
+  #     wrapper = ObjectStore.createWrapper('bookId')
+  #
+  #   it "can store and retrieve objects according to the dataKey", ->
+  #     wrapper.add(books.get(0))
+  #     expectIs wrapper.get('b1'), books.get(0)
+  #
+  #   it "can add multiple objects and index them and retrieve by indexed search", ->
+  #     wrapper.addIndex(imm(['genre']))
+  #     wrapper.addAll(books)
+  #     scifiBookIds = wrapper.getIndexedObjectIds(imm(['genre']), imm(['scifi']))
+  #     expectIs scifiBookIds, immset('b1', 'b4')
+  #
+  #     scifiBooks = wrapper.getIndexedObjects(imm(['genre']), imm(['scifi']))
+  #     expectIs scifiBooks, immset(book1, book4)
+  #
+  #     wrapper.addIndex(imm(['cat','genre']))
+  #     helps = wrapper.getIndexedObjectIds(imm(['cat','genre']), imm(['nonfiction','selfhelp']))
+  #     expectIs helps, immset('b2')
+  #
+  #     store = wrapper.add(imm { bookId: 'b05', cat: 'nonfiction', genre: 'selfhelp', title: '7 Habits of Highly Effective People' })
+  #     helps = wrapper.getIndexedObjectIds(imm(['cat','genre']), imm(['nonfiction','selfhelp']))
+  #     expectIs helps, immset('b2','b05')
+  #
+  #     expectIs wrapper.getIndices(), imm([['genre'],['cat','genre']])
+  #
+  #   it "can indicate presence of an index", ->
+  #     expect(wrapper.hasIndex(imm(['genre']))).to.equal(false)
+  #     wrapper.addIndex(imm(['genre']))
+  #     expect(wrapper.hasIndex(imm(['genre']))).to.equal(true)
 
 
 # [

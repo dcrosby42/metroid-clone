@@ -9,25 +9,10 @@ class ComponentInspectorMachine
   constructor: ({@componentInspector}) ->
     @estore = new EntityStore()
 
-  update: (entityFinder) ->
-    entityFinder.allComponentsByCid().forEach (comp) =>
-      @componentInspector.update comp
-    @componentInspector.sync()
-    
-  update2: (gameState) ->
+  update: (gameState) ->
     @estore.restoreSnapshot(gameState)
     @estore.allComponentsByCid().forEach (comp) =>
       @componentInspector.update comp
     @componentInspector.sync()
 
 module.exports = ComponentInspectorMachine
-
-## This is a copy of the old system, saved for reference:
-# ViewSystem = require "../view_system"
-#
-# class ComponentInspectorSystem extends ViewSystem
-#   process: ->
-#     @entityFinder.allComponentsByCid().forEach (comp) =>
-#       @ui.componentInspector.update comp
-#
-# module.exports = ComponentInspectorSystem

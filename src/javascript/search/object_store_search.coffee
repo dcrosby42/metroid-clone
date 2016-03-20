@@ -84,7 +84,7 @@ search = (object_store,filters,row=Immutable.Map()) ->
     index = lookup.get('index')
     keypath = lookup.get('keypath')
     # search_logIndex(index,keypath)
-    ObjectStore.getIndexedObjects(object_store, index, keypath)
+    ObjectStore.getIndexedObjects(object_store, index, keypath).toSeq()
   else
     # No indexed lookup available; we must scan all objects
     ObjectStore.allObjects(object_store)
@@ -106,15 +106,28 @@ search = (object_store,filters,row=Immutable.Map()) ->
       matchProps.every (v,k) -> obj.get(k) == v
 
   if objs.size == 0 and f0.get('optional',false) == true
-    objs = Immutable.List([null])
+    objs = new Immutable.Seq([null])
 
   #
   # Recurse / join
   #
-
+  # results = []
+  # i = 0
+  # while i < objs.size
+  #   thisRow = row.set(as,objs.get(i))
+  #   if rest.size == 0
+  #     results.push new Immutable.Seq([thisRow])
+  #   else
+  #     subSearchResults = search(object_store,rest,thisRow)
+  #     j = 0
+  #     while j < subSearchResults.size
+  #       results.push subSearchResults.get(j)
+  #       j++
+  #   i++
+  # return new Immutable.Seq(results)
   objs.map((c) ->
     if rest.size == 0
-      Immutable.List([row.set(as,c)])
+      new Immutable.Seq([row.set(as,c)])
     else
       search(object_store,rest,row.set(as,c))
   ).flatten(1)

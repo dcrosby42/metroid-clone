@@ -133,7 +133,7 @@ class MetroidCloneDelegate
 
     # Update the component inspector:
     if @componentInspectorMachine? and gameState?
-      @componentInspectorMachine.update2 gameState
+      @componentInspectorMachine.update gameState
 
     @devUI.setState(@adminState)
 

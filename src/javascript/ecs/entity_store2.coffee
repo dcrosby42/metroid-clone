@@ -32,8 +32,12 @@ class ReadOnlyEntityStore
     else
       ObjectStore.getIndexedObjects(@state.get('compStore'), EidIndex, List([eid]))
 
-  allComponentsByCid: ->
-    ObjectStore.allObjects(@state.get('compStore'))
+  forEachComponent: (f) ->
+    iter = ObjectStore.allObjectsIter(@state.get('compStore'))
+    x = iter.next()
+    while !x.done
+      f(iter.value)
+      x = iter.next()
 
   search: (filters) ->
     ObjectStoreSearch.search @state.get('compStore'), filters

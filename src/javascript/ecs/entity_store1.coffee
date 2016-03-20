@@ -79,7 +79,13 @@ class EntityStore
   search: (filters) ->
     Finder.search @componentsByCid.toList(), filters
 
-  allComponentsByCid: -> @componentsByCid
+  forEachComponent: (f) ->
+    iter = @componentsByCid.values()
+    x = iter.next()
+    while !x.done
+      f(x.value)
+      x = iter.next()
+
 
   takeSnapshot: ->
     Immutable.Map
@@ -148,7 +154,7 @@ class ReadOnlyEntityStore
   constructor: (@estore) ->
 
   search:             (filters) -> @estore.search(filters)
-  allComponentsByCid:           -> @estore.allComponentsByCid()
+  forEachComponent: (f) -> @estore.forEachComponent(f)
   getEntityComponents: (eid,type,matchKey=null,matchVal=null) ->
     @estore.getEntityComponents(eid,type,matchKey,matchVal)
   getEntityComponent: (eid,type,matchKey=null,matchVal=null) ->
