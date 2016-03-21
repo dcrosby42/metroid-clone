@@ -1,6 +1,7 @@
 Immutable = require 'immutable'
 EventBucket = require './event_bucket'
 EntityStore = require './entity_store'
+Config = require '../config'
 
 class EcsMachine
   constructor: ({systems}) ->
@@ -12,11 +13,19 @@ class EcsMachine
 
   update: (estore, input) ->
     @eventBucket.reset()
+    systemLogs = if Config.system_log.enabled
+      {}
+    else
+      null
 
     @systems.forEach (system) =>
-      system.update(estore, input, @eventBucket)
+      systemLog = null
+      if systemLogs?
+        systemLog = {}
+        systemLogs[system.constructor.name] = systemLog
+      system.update(estore, input, @eventBucket, systemLog)
 
-    return [estore,@eventBucket.globalEvents]
+    return [estore,@eventBucket.globalEvents,systemLogs]
 
   update2: (state, input) ->
     @eventBucket.reset()

@@ -106,10 +106,7 @@ search = (object_store,filters,row=Immutable.Map()) ->
       matchProps.every (v,k) -> obj.get(k) == v
 
   if objs.size == 0 and f0.get('optional',false) == true
-    console.log "objs.size == 0 and is optional",f0,objs.size,f0.get('optional',false)
     objs = new Immutable.Seq([null])
-  else
-    console.log "objs.size == 0 and but is NOT optional",f0,objs.size,f0.get('optional',false)
 
   #
   # Recurse / join

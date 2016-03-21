@@ -63,8 +63,9 @@ class TitleState extends GameState
     ]
 
   update: (gameInput) ->
-    [@estore,events] = @ecsMachine.update(@estore,gameInput)
+    [@estore,events,systemLog] = @ecsMachine.update(@estore,gameInput)
     events.forEach (e) => @["event_#{e.get('name')}"]?(e)
+    systemLog
 
   gameData: ->
     @estore.takeSnapshot()

@@ -57,7 +57,9 @@ exports.selectAction = (stateHistory,dt,controllerEvents,adminState) ->
   if adminState.get('paused')
     if adminState.get('replay_forward')
       stateHistory = ImmRingBuffer.forward(stateHistory)
-      gameState1 = ImmRingBuffer.read(stateHistory)
+      marker = ImmRingBuffer.read(stateHistory)
+      console.log marker
+      gameState1 = marker.gameState
       if gameState1 == null
         return [stateHistory,imm(type:"nothing")]
       action = imm(type:'useState', gameState:gameState1)
@@ -65,7 +67,8 @@ exports.selectAction = (stateHistory,dt,controllerEvents,adminState) ->
 
     else if adminState.get('replay_back')
       stateHistory = ImmRingBuffer.backward(stateHistory)
-      gameState1 = ImmRingBuffer.read(stateHistory)
+      marker = ImmRingBuffer.read(stateHistory)
+      gameState1 = marker.gameState
       if gameState1 == null
         return [stateHistory,imm(type:"nothing")]
       action = imm(type:'useState', gameState:gameState1)
@@ -79,7 +82,8 @@ exports.selectAction = (stateHistory,dt,controllerEvents,adminState) ->
 
     else
       # paused. no change.
-      gameState1 = ImmRingBuffer.read(stateHistory)
+      marker = ImmRingBuffer.read(stateHistory)
+      gameState1 = marker.gameState
       if gameState1 == null
         return [stateHistory,imm(type:"nothing")]
       action = imm(type:'useState', gameState:gameState1)

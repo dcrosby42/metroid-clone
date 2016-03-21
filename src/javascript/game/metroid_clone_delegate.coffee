@@ -104,8 +104,8 @@ class MetroidCloneDelegate
 
       when "computeState"
         input = @defaultInput.merge(action.get('input'))
-        gameState = @gameStateMachine.update(input)
-        @stateHistory = ImmRingBuffer.add(@stateHistory, gameState)
+        [gameState,systemLog] = @gameStateMachine.update(input)
+        @stateHistory = ImmRingBuffer.add(@stateHistory, {input:input, systemLog: systemLog, gameState:gameState})
         gameState
 
       when "nothing"

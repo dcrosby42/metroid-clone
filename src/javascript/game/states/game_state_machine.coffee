@@ -27,7 +27,7 @@ class GameStateMachine
     null
 
   update: (params...) ->
-    @currentState.update(params...)
-    return @currentState.gameData()
+    systemLog = @currentState.update(params...)
+    return [@currentState.gameData(),systemLog]
     
 module.exports = GameStateMachine

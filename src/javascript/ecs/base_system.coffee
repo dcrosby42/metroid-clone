@@ -1,6 +1,11 @@
 Immutable = require 'immutable'
 FilterExpander = require './filter_expander'
 
+addToResult = (result,key,obj) ->
+  if result?
+    result[key] ?= []
+    result[key].push obj
+
 class BaseSystem
   # Search pattern for components
   @Subscribe: null
@@ -17,16 +22,27 @@ class BaseSystem
     @componentFilters = FilterExpander.expandFilterGroups(@constructor.Subscribe)
     @_primaryComponentName = @constructor.ImplyEntity || @constructor.Subscribe[0]
 
-  update: (estore, input, eventBucket) ->
+  update: (estore, input, eventBucket, systemLog) ->
     @estore = estore
     @input = input
     @eventBucket = eventBucket
-    estore.search(@componentFilters).forEach (comps) =>
-      @comps = comps
+    if systemLog?
+      systemLog.search = @componentFilters
+      systemLog.results = []
 
+    estore.search(@componentFilters).forEach (comps) =>
+      result = null
+      if systemLog?
+        result = {
+          components: comps
+        }
+        systemLog.results.push(result)
+
+      @comps = comps
       @resetCache()
       @process()
-      @sync()
+      # @captureChanges(comps,systemLog) if systemLog?
+      @sync(result)
       @resetCache() # for cleanliness; not strictly necessary
 
       @comps = null
@@ -48,17 +64,30 @@ class BaseSystem
 
   process: ->
 
-  sync: ->
+  sync: (result) ->
     for name in @updatedCompNames
+      comp = @updatedComps[name]
       @estore.updateComponent @updatedComps[name]
+      addToResult result, 'updatedComponents', comp
+      # result.updatedComponents.push comp if result?
+
     for comp in @compsToDelete
       @estore.deleteComponent comp
+      addToResult result, 'deletedComponents', comp
+      # result.deletedComponents.push comp if result?
+      
     for [eid,props] in @compsToAdd
-      @estore.createComponent eid, props
+      comp = @estore.createComponent eid, props
+      addToResult result, 'newComponents', comp
+      # result.newComponents.push comp if result?
+
     for comps in @entitiesToAdd
-      @estore.createEntity comps
+      eid = @estore.createEntity comps
+      addToResult result, 'newEntities', {eid: eid, comps: comps} 
+
     for eid in @entitiesToDelete
       @estore.destroyEntity eid
+      addToResult result, 'deletedEntities', eid
 
   dt: ->
     @input.get('dt')
