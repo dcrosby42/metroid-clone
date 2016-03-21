@@ -25,7 +25,7 @@ PowerupState = require './states/powerup'
 ImmRingBuffer = require '../utils/imm_ring_buffer'
 
 class MetroidCloneDelegate
-  constructor: ({componentInspector,@devUI}) ->
+  constructor: ({componentInspector,@devUI,@systemLogInspector}) ->
 
     @gameStateMachine = new GameStateMachine([
       TitleState
@@ -98,23 +98,27 @@ class MetroidCloneDelegate
     @adminState = Transforms.updateAdmin(@adminState, controllerEvents.get('admin'), devUIEvents)
 
     [@stateHistory, action] = Transforms.selectAction(@stateHistory,dt,controllerEvents,@adminState)
-    gameState = switch action.get('type')
+    gameState = null
+    input = null
+    systemLog = null
+    switch action.get('type')
       when "useState"
-        action.get('gameState')
+        systemLog = action.get('systemLog')
+        input = action.get('input')
+        gameState = action.get('gameState')
 
       when "computeState"
         input = @defaultInput.merge(action.get('input'))
         [gameState,systemLog] = @gameStateMachine.update(input)
         @stateHistory = ImmRingBuffer.add(@stateHistory, {input:input, systemLog: systemLog, gameState:gameState})
-        gameState
+        systemLog = null # don't update the inspector during normal runtime
 
       when "nothing"
-        console.log "'nothing' action returned.  This is not preferrable."
-        null
-
+        throw new Error("'nothing' action returned.  This is not preferrable.")
       else
         throw new Error("WTF Transforms.selectAction returned unknown action #{action.toJS()}")
 
+    # Update the view based on admin controls and updated gamestate
     if !Immutable.is(@adminState, priorAdminState)
       if !@adminState.get('muted')
         if @adminState.get('paused')
@@ -134,6 +138,9 @@ class MetroidCloneDelegate
     # Update the component inspector:
     if @componentInspectorMachine? and gameState?
       @componentInspectorMachine.update gameState
+
+    if @systemLogInspector? and systemLog?
+      @systemLogInspector.update(input,systemLog,gameState)
 
     @devUI.setState(@adminState)
 

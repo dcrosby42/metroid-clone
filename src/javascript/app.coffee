@@ -24,6 +24,7 @@ BigScreen = require './vendor/bigscreen_wrapper'
 
 Inspector = require './inspector'
 DevUI = require './dev_ui'
+SystemLogInspector = require './system_log_inspector'
 
 window.ObjectStore = require './search/object_store'
 window.ObjectStoreSearch = require './search/object_store'
@@ -48,8 +49,12 @@ jquery ->
       inspectorConfig: inspectorConfig
   devUIDiv = jquery('#dev-ui')
   devUI = DevUI.create(devUIDiv)
+  systemLogInspector = null
+  if Config.system_log.enabled
+    systemLogDiv = jquery('#system-log-holder')
+    systemLogInspector = SystemLogInspector.create(systemLogDiv)
 
-  del = new DelegateClass(componentInspector: componentInspector, devUI: devUI)
+  del = new DelegateClass(componentInspector: componentInspector, devUI: devUI, systemLogInspector: systemLogInspector)
 
   gameHolder = jquery('#game-holder')[0]
   harness = new PixiHarness

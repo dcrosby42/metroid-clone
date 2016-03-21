@@ -11,7 +11,7 @@ class ComponentInspectorMachine
 
   update: (gameState) ->
     @estore.restoreSnapshot(gameState)
-    @estore.allComponentsByCid().forEach (comp) =>
+    @estore.forEachComponent (comp) =>
       @componentInspector.update comp
     @componentInspector.sync()
 
