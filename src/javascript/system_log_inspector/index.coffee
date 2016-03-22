@@ -1,9 +1,5 @@
-class SystemLogInspector
-  update: (input,systemLog,gameState) ->
-    if input? and systemLog? and gameState?
-      console.log "SystemLogInspector: ",input.toJS(),systemLog.toJS(),gameState.toJS()
+SystemLogInspector = require './system_log_inspector'
 
-  @create: (div) ->
-    return new @()
 
-module.exports = SystemLogInspector
+module.exports =
+  create: (args...) -> new SystemLogInspector(args...)

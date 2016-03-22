@@ -64,6 +64,7 @@
     "gulp-mocha": "*"
   },
   "dependencies": {
+    "classnames": "^2.2.3",
     "howler": "2.0.0-beta7",
     "immutable": "~3.7.6",
     "jquery": "~2.1.0",

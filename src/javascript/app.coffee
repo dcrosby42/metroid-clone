@@ -51,8 +51,8 @@ jquery ->
   devUI = DevUI.create(devUIDiv)
   systemLogInspector = null
   if Config.system_log.enabled
-    systemLogDiv = jquery('#system-log-holder')
-    systemLogInspector = SystemLogInspector.create(systemLogDiv)
+    systemLogInspector = SystemLogInspector.create
+      mountNode: jquery('#system-log-holder')[0]
 
   del = new DelegateClass(componentInspector: componentInspector, devUI: devUI, systemLogInspector: systemLogInspector)
 
