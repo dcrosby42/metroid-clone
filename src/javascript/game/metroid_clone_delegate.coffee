@@ -55,7 +55,8 @@ class MetroidCloneDelegate
     @adminState = Immutable.fromJS
       controller:{}
       paused: false
-      muted: true
+      # muted: true
+      muted: false
       drawHitBoxes: false
 
     @stateHistory = ImmRingBuffer.create(5*60)
