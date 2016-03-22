@@ -92,6 +92,18 @@ class MetroidCloneDelegate
 
   update: (dt) ->
     controllerEvents = @controllerEventMux.next()
+    # Dumb temp hack: smush gamepad events onto keyboard events  XXX
+    gpe = controllerEvents.get('p1Gamepad')
+    if gpe?
+      console.log gpe.toJS()
+      controllerEvents = controllerEvents.update 'p1Keyboard', (k) ->
+        if k?
+          k.merge(gpe)
+        else
+          gpe
+      
+
+
     devUIEvents = @devUI.getEvents()
 
     priorAdminState = @adminState
@@ -180,6 +192,7 @@ createControllerEventMux = ->
     "DPAD_DOWN": 'down'
     "FACE_1": 'action2'
     "FACE_3": 'action1'
+    "START_FORWARD": 'start'
 
 
   adminController = new KeyboardController
