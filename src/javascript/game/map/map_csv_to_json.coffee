@@ -3,7 +3,7 @@ csvParse = require 'csv-parse'
 jsonfile = require 'jsonfile'
 
 infile=__dirname+'/world_map.csv'
-outfile=__dirname+'/world_map.json'
+outfile=__dirname+'../../../../build/data/world_map.json'
 
 convertCsvData = (data) ->
   for row,r in data
@@ -11,7 +11,7 @@ convertCsvData = (data) ->
       if cell == ''
         data[r][c] = null
       else
-        data[r][c] = parseInt(cell,16)
+        data[r][c] = cell
 
 getInGrid1 = (data,col,row) -> data[row-1][col-1]
         

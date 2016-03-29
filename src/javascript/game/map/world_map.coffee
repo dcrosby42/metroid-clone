@@ -60,6 +60,7 @@ getArea = (areas,name,r,c) ->
       bounds: {}
     areas[name] = area
   updateBounds(area,r,c)
+
   return area
 
 # Convert a grid of room types into a grid of room data objects
@@ -120,19 +121,6 @@ roomGridToTileGrid = (roomGrid) ->
               tileGrid[tile.worldRow][tile.worldCol] = tile
   tileGrid
 
-# Relate rooms to their areas (and vice versa) comparing the Area's defined coverage to the rooms' locations.
-# Sets room.area and adds to area.rooms[]
-setRoomAreas = (roomGrid,areas) ->
-  for row in roomGrid
-    for room in row
-      if room?
-        for area in areas
-          a = area.rowColBounds
-          if room.row >= a.topRow && room.row <= a.bottomRow && room.col >= a.leftCol && room.col <= a.rightCol
-            room.area = area
-            area.rooms.push(room)
-
-
 # Retuen a list of all rooms, and a mapping from room.id -> room
 indexRoomGrid = (roomGrid) ->
   index = {}
@@ -143,25 +131,6 @@ indexRoomGrid = (roomGrid) ->
         index[room.id] = room
         all.push room
   return [all,index]
-
-# Convert an area's metadata def into a Types.Area object
-makeArea = (areaDef) ->
-  [name, [topRow,leftCol],[bottomRow,rightCol]] = areaDef
-  new Types.Area
-    name: name
-    rowColBounds:
-      topRow: topRow
-      bottomRow: bottomRow
-      leftCol: leftCol
-      rightCol: rightCol
-    bounds:
-      left: leftCol * Config.roomWidthInPixels
-      top: topRow * Config.roomHeightInPixels
-      right: (rightCol+1) * Config.roomWidthInPixels
-      bottom: (bottomRow+1) * Config.roomHeightInPixels
-    rooms: []
-    zone: null
-    music: "brinstar"
 
 class WorldMap
   constructor: ({@roomGrid,@tileGrid}) ->
@@ -197,29 +166,20 @@ class WorldMap
 expandWorldMap = (mapDef) ->
   roomGrid = mapDefToRoomGrid(mapDef, RoomDefs)
   tileGrid = roomGridToTileGrid(roomGrid)
-  # areas = _.map layout.areas, (areaDef) -> makeArea(areaDef)
-  # setRoomAreas(roomGrid,areas)
   new WorldMap
     roomGrid: roomGrid
     tileGrid: tileGrid
 
-proto_mapDef =
-  rows: 5
-  cols: 15
-  data: [
-    # mainEntry-------------------                       |--|       roomA-----------------   roomB----------------------- 
-    ['0x13-E',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]
-    ['0x08-A', '0x17-A', '0x09-A', '0x14-A', '0x13-A',  '0x18-B',  '0x12-C', '0x14-C', '0x19-C', '0x13-C',  '0x12-D', '0x14-D', '0x14-D', '0x14-D', '0x13-D']
-  ]
-  # areas: [
-  #   ["mainEntry", [0,0], [0,4]]
-  #   ["bridge", [0,5], [0,5]]
-  #   ["roomA", [0,6], [0,9]]
-  #   ["roomB", [0,10], [0,14]]
-  # ]
+# proto_mapDef =
+#   rows: 5
+#   cols: 15
+#   data: [
+#     [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+#     ['0x08-A', '0x17-A', '0x09-A', '0x14-A', '0x13-A',  '0x18-B',  '0x12-C', '0x14-C', '0x19-C', '0x13-C',  '0x12-D', '0x14-D', '0x14-D', '0x14-D', '0x13-D']
+#   ]
 
 module.exports =
-  getDefaultWorldMap: FnUtils.memoizeThunk -> expandWorldMap(proto_mapDef)
+  # getDefaultWorldMap: FnUtils.memoizeThunk -> expandWorldMap(proto_mapDef)
+  buildMap: expandWorldMap
 
 
-window.WorldMap = module.exports.getDefaultWorldMap

@@ -79,10 +79,12 @@ class AdventureState extends GameState
     
     # Samus start position
     # brinstarEntrance = {x:648,y:191}
-    brinstarEntrance = {x:648,y:431}
+    brinstarEntrance = {x:648,y:191+(13*240)}
+    shaft1 = {x:2600, y:3247}
     # nearMorphBall = {x:400,y:175}
     # onBridge = {x:1466,y:95}
-    samusStartPos = brinstarEntrance
+    # samusStartPos = brinstarEntrance
+    samusStartPos = shaft1
     # samusStartPos = nearMorphBall
     # samusStartPos = onBridge
     estore.createEntity Samus.factory.createComponents('samus', position: samusStartPos)

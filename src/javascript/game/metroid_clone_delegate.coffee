@@ -33,17 +33,6 @@ class MetroidCloneDelegate
       PowerupState
     ])
 
-    @worldMap = WorldMap.getDefaultWorldMap()
-
-    @defaultInput = Immutable.fromJS
-      controllers:
-        player1: {}
-        player2: {}
-        debug1: {}
-        admin: {}
-      dt: 0
-      static:
-        worldMap: @worldMap
 
     @controllerEventMux = createControllerEventMux()
 
@@ -62,6 +51,7 @@ class MetroidCloneDelegate
     @stateHistory = ImmRingBuffer.create(5*60)
 
   dataToPreload: ->
+    # TODO move this data to AdventureState?
     {
       world_map: "data/world_map.json"
     }
@@ -77,6 +67,10 @@ class MetroidCloneDelegate
     sounds
 
   setupStage: (stage, width, height,zoom, soundController, data) ->
+
+    worldMap = WorldMap.buildMap(data['world_map'])
+    window.worldMap = worldMap # XXX
+    
     uiState = UIState.create
       stage: stage
       zoomScale: zoom
@@ -86,7 +80,7 @@ class MetroidCloneDelegate
         y: 1
 
     uiConfig = UIConfig.create
-      worldMap: @worldMap
+      worldMap: worldMap
       spriteConfigs: AdventureState.spriteConfigs()
       
     viewSystems = createViewSystems()
@@ -95,6 +89,16 @@ class MetroidCloneDelegate
       systems: viewSystems
       uiConfig: uiConfig
       uiState: uiState
+
+    @defaultInput = Immutable.fromJS
+      controllers:
+        player1: {}
+        player2: {}
+        debug1: {}
+        admin: {}
+      dt: 0
+      static:
+        worldMap: worldMap
 
   update: (dt) ->
     controllerEvents = @controllerEventMux.next()
