@@ -55,11 +55,16 @@ class MetroidCloneDelegate
     @adminState = Immutable.fromJS
       controller:{}
       paused: false
-      # muted: true
-      muted: false
+      muted: true
+      # muted: false
       drawHitBoxes: false
 
     @stateHistory = ImmRingBuffer.create(5*60)
+
+  dataToPreload: ->
+    {
+      world_map: "data/world_map.json"
+    }
 
   graphicsToPreload: ->
     assets = AdventureState.graphicsToPreload()
@@ -71,7 +76,7 @@ class MetroidCloneDelegate
     sounds = _.merge(sounds, TitleState.soundsToPreload())
     sounds
 
-  setupStage: (stage, width, height,zoom, soundController) ->
+  setupStage: (stage, width, height,zoom, soundController, data) ->
     uiState = UIState.create
       stage: stage
       zoomScale: zoom
