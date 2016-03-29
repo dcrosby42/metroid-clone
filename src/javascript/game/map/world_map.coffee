@@ -9,11 +9,12 @@ emptyGrid = Utils.emptyGrid
 RoomDefs = require './room_defs'
 Types = require './types'
 
-instanceRoom = (roomDef,r,c) ->
+instanceRoom = (roomDef,area,r,c) ->
   if roomDef?
     room = new Types.Room
       id: "room_r#{r}_c#{c}"
       roomDef: roomDef
+      area: area
       row:r
       col:c
       x: c * Config.roomWidthInPixels
@@ -23,13 +24,56 @@ instanceRoom = (roomDef,r,c) ->
   else
     null
 
+updateBounds = (area,r,c) ->
+  if !area.rowColBounds.leftCol?
+    area.rowColBounds.leftCol = c
+  else if c < area.rowColBounds.leftCol
+    area.rowColBounds.leftCol = c
+
+  if !area.rowColBounds.rightCol?
+    area.rowColBounds.rightCol = c
+  else if c > area.rowColBounds.rightCol
+    area.rowColBounds.rightCol = c
+
+  if !area.rowColBounds.topRow?
+    area.rowColBounds.topRow = r
+  else if r < area.rowColBounds.topRow
+    area.rowColBounds.topRow = r
+
+  if !area.rowColBounds.bottomRow?
+    area.rowColBounds.bottomRow = r
+  else if r > area.rowColBounds.bottomRow
+    area.rowColBounds.bottomRow = r
+  
+  area.bounds.left   =  area.rowColBounds.leftCol      * Config.roomWidthInPixels
+  area.bounds.top    =  area.rowColBounds.topRow       * Config.roomHeightInPixels
+  area.bounds.right  = (area.rowColBounds.rightCol+1)  * Config.roomWidthInPixels
+  area.bounds.bottom = (area.rowColBounds.bottomRow+1) * Config.roomHeightInPixels
+      
+getArea = (areas,name,r,c) ->
+  area = areas[name]
+  if !area?
+    area = new Types.Area
+      name: name
+      music: "brinstar"
+      rowColBounds: {}
+      bounds: {}
+    areas[name] = area
+  updateBounds(area,r,c)
+  return area
+
 # Convert a grid of room types into a grid of room data objects
-mapLayoutToRoomGrid = (mapLayout, roomDefs, mapConfig) ->
-  roomGrid = emptyGrid(mapLayout.rows, mapLayout.cols)
-  for row,r in mapLayout.data
-    for roomTypeId,c in row
-      roomDef = roomDefs.get(roomTypeId)
-      roomGrid[r][c] = instanceRoom(roomDef,r,c)
+mapDefToRoomGrid = (mapDef, roomDefs, mapConfig) ->
+  areas = {}
+  roomGrid = emptyGrid(mapDef.rows, mapDef.cols)
+  for row,r in mapDef.data
+    for pair,c in row
+      if pair?
+        [roomTypeId,areaName] = pair.split("-")
+        roomTypeId = parseInt(roomTypeId,16)
+        roomDef = roomDefs.get(roomTypeId)
+        area = getArea(areas, areaName, r, c)
+        roomGrid[r][c] = instanceRoom(roomDef,area,r,c)
 
   roomGrid
 
@@ -120,7 +164,7 @@ makeArea = (areaDef) ->
     music: "brinstar"
 
 class WorldMap
-  constructor: ({@roomGrid,@tileGrid,@areas}) ->
+  constructor: ({@roomGrid,@tileGrid}) ->
     [@rooms, @_roomsById] = indexRoomGrid(@roomGrid)
 
   # Return an array of Rooms that overlap the given px rectangle
@@ -150,34 +194,32 @@ class WorldMap
     else
       null
 
-  @create: (layout) ->
-
-expandWorldMap = (layout) ->
-  roomGrid = mapLayoutToRoomGrid(layout, RoomDefs)
+expandWorldMap = (mapDef) ->
+  roomGrid = mapDefToRoomGrid(mapDef, RoomDefs)
   tileGrid = roomGridToTileGrid(roomGrid)
-  areas = _.map layout.areas, (areaDef) -> makeArea(areaDef)
-  setRoomAreas(roomGrid,areas)
+  # areas = _.map layout.areas, (areaDef) -> makeArea(areaDef)
+  # setRoomAreas(roomGrid,areas)
   new WorldMap
     roomGrid: roomGrid
     tileGrid: tileGrid
-    areas: areas
 
-mapDef =
-  rows: 10
-  cols: 10
+proto_mapDef =
+  rows: 5
+  cols: 15
   data: [
-    # mainEntry-------------------  |--|   roomA-----------------   roomB----------------------- 
-    [0x08, 0x17, 0x09, 0x14, 0x13,  0x18,  0x12, 0x14, 0x19, 0x13,  0x12, 0x14, 0x14, 0x14, 0x13]
+    # mainEntry-------------------                       |--|       roomA-----------------   roomB----------------------- 
+    ['0x13-E',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+    ['0x08-A', '0x17-A', '0x09-A', '0x14-A', '0x13-A',  '0x18-B',  '0x12-C', '0x14-C', '0x19-C', '0x13-C',  '0x12-D', '0x14-D', '0x14-D', '0x14-D', '0x13-D']
   ]
-  areas: [
-    ["mainEntry", [0,0], [0,4]]
-    ["bridge", [0,5], [0,5]]
-    ["roomA", [0,6], [0,9]]
-    ["roomB", [0,10], [0,14]]
-  ]
+  # areas: [
+  #   ["mainEntry", [0,0], [0,4]]
+  #   ["bridge", [0,5], [0,5]]
+  #   ["roomA", [0,6], [0,9]]
+  #   ["roomB", [0,10], [0,14]]
+  # ]
 
 module.exports =
-  getDefaultWorldMap: FnUtils.memoizeThunk -> expandWorldMap(mapDef)
+  getDefaultWorldMap: FnUtils.memoizeThunk -> expandWorldMap(proto_mapDef)
 
 
 window.WorldMap = module.exports.getDefaultWorldMap
