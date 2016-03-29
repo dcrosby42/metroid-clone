@@ -3,7 +3,7 @@ csvParse = require 'csv-parse'
 jsonfile = require 'jsonfile'
 
 infile=__dirname+'/world_map.csv'
-outfile=__dirname+'../../../../build/data/world_map.json'
+outfile=__dirname+'/../../../../build/data/world_map.json'
 
 convertCsvData = (data) ->
   for row,r in data
