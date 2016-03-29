@@ -78,9 +78,10 @@ class AdventureState extends GameState
     ]
     
     # Samus start position
-    brinstarEntrance = {x:648,y:191}
-    nearMorphBall = {x:400,y:175}
-    onBridge = {x:1466,y:95}
+    # brinstarEntrance = {x:648,y:191}
+    brinstarEntrance = {x:648,y:431}
+    # nearMorphBall = {x:400,y:175}
+    # onBridge = {x:1466,y:95}
     samusStartPos = brinstarEntrance
     # samusStartPos = nearMorphBall
     # samusStartPos = onBridge
