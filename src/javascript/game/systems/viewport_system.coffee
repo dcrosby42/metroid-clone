@@ -48,21 +48,21 @@ class ViewportSystem extends BaseSystem
 
     viewportArea = worldMap.getAreaAt(viewportPosition.get('x'), viewportPosition.get('y'))
     targetArea = worldMap.getAreaAt(targetPosition.get('x'), targetPosition.get('y'))
-    if !targetArea?
-      console.log "!! viewport_system: WTF cannot find viewportArea based on viewportPosition",viewportPosition.toJS()
+    # if !viewportArea?
+    #   console.log "!! viewport_system: WTF cannot find viewportArea based on viewportPosition",viewportPosition.toJS()
+    #   throw new Error("Can't get viewportArea (see console error)")
     if !targetArea?
       console.log "!! viewport_system: WTF cannot find targetArea based on targetPosition",targetPosition.toJS()
+      throw new Error("Can't get targetArea (see console error)")
 
-    if viewportArea? and targetArea? and (viewportArea.name != targetArea.name)
-      if withinShuttlingDistance(targetPosition,viewportPosition)
-        @_shuttleToNewArea(worldMap, targetPosition,targetArea, viewportPosition)
-        return
-      else
-        # This will cause trackTarget to directly calculate the proper new viewport
-        viewportArea = targetArea
+    if viewportArea? and targetArea? and (viewportArea.name != targetArea.name) and withinShuttlingDistance(targetPosition,viewportPosition)
+      @_shuttleToNewArea(worldMap, targetPosition,targetArea, viewportPosition)
 
-    newViewportPos = trackTarget(targetPosition, viewportPosition, viewportArea, config)
-    @updateComp newViewportPos
+    else
+      # just jump to targetArea
+      viewportArea = targetArea
+
+      @updateComp trackTarget(targetPosition, viewportPosition, viewportArea, config)
 
     
   _shuttleToNewArea: (worldMap, targetPosition, targetArea, viewportPosition ) ->
