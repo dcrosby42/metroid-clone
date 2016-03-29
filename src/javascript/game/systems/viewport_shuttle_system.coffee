@@ -35,7 +35,7 @@ class ViewportShuttleSystem extends BaseSystem
       dy = (120 / 1000) * @input.get('dt')
       if shuttleY < destY
         # shuttle down
-        shuttleY = MathUtils.clamp(shuttleY+dY, shuttleY, destY)
+        shuttleY = MathUtils.clamp(shuttleY+dy, shuttleY, destY)
       else
         # shuttle up
         shuttleY = MathUtils.clamp(shuttleY-dy, destY, shuttleY)
