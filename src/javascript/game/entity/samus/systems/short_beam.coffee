@@ -55,7 +55,7 @@ newBullet = (weapon, position,direction,shootUp) ->
       soundId: 'short_beam'
       volume: 0.5
       playPosition: 0
-      timeLimit: 55
+      timeLimit: 500
       resound: true
 
     Common.DeathTimer.merge

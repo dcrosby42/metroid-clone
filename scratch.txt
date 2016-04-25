@@ -1,24 +1,19 @@
 Things to add
 
-- level bg music
-- powerup jingle
+- missiles
+- bombs
+- long beam powerup
 - door transition completion
 - Spin jump
 - High jump boots
-- bombs
-- long beam powerup
 - ice beam powerup
 - wave beam powerup
-- vertical rooms / shaft 1
-- missiles
 - enemy: big flappy
 
 Bugs
 
-- non-stereo sound?
 - Recoil from geting damaged -> samus keeps going, in suit or ball form, until interupted.
 - key-up-related events are missed when flip-flopping in and out of adeventure state to powerup state and back, causing sticky run/roll action
-
 
 Refinements
 
