@@ -29,26 +29,6 @@ PowerupState = require './states/powerup'
 
 ImmRingBuffer = require '../utils/imm_ring_buffer'
 
-# TODO THIS IS A CRACRA HAXYAL
-class GameStateMachineWrapper
-  constructor: (@gameStateMachine) ->
-
-  update: (gameState,event,defaultInput) ->
-    @input ?= defaultInput
-
-    switch event.get('type')
-      when 'DeltaTimeEvent'
-        @input = @input.set('dt', event.get('dt'))
-        [s1,syslog] = @gameStateMachine.update(@input)
-        @input = null
-        return s1
-      when 'ControllerEvent'
-        @input  = @input.setIn(['controllers',event.get('tag'),event.get('control')], if event.get('action') == 'down' then true else false)
-        return null
-    
-
-
-
 class MetroidCloneDelegate
   constructor: ({componentInspector,@devUI,@systemLogInspector}) ->
 
@@ -59,8 +39,6 @@ class MetroidCloneDelegate
       AdventureState
       PowerupState
     ])
-    @gameStateMachineWrapper = new GameStateMachineWrapper(@gameStateMachine)
-
 
     @controllerEventMux = createControllerEventMux()
 
@@ -73,6 +51,16 @@ class MetroidCloneDelegate
       "a": 'action2'
       "s": 'action1'
       "enter": 'start'
+    )
+    @playerControllerGpMailbox = @postOffice.newMailbox()
+    @playerControllerGp = new KeyboardController3(@playerControllerGpMailbox.address,
+      "DPAD_RIGHT": 'right'
+      "DPAD_LEFT": 'left'
+      "DPAD_UP": 'up'
+      "DPAD_DOWN": 'down'
+      "FACE_1": 'action2'
+      "FACE_2": 'action1'
+      "START_FORWARD": 'start'
     )
 
     @adminControllerMailbox = @postOffice.newMailbox()
@@ -161,28 +149,46 @@ class MetroidCloneDelegate
       static:
         worldMap: worldMap
 
+    ########################################################################################
+    # SIGNALLY STUFF 
+
     adminControlEvents = @adminControllerMailbox.signal
       .dropRepeats(Immutable.is)
       .map((event) -> event.set('tag','admin'))
 
     playerControlEvents = @playerControllerMailbox.signal
+      .merge(@playerControllerGpMailbox.signal)
       .dropRepeats(Immutable.is)
       .map((event) -> event.set('tag','player1'))
 
     dtEvents = @dtMailbox.signal
-      .map((dt) -> Immutable.Map(type:'DeltaTimeEvent',dt:dt))
+      .map((dt) -> Immutable.Map(type:'Tick',dt:dt))
 
-    events = adminControlEvents
-      .merge(playerControlEvents)
+    # Per time slice, bundle ticks and controller events into an "input" structure
+    bundleInput = (events) =>
+      input = @defaultInput
+      for e in events
+        switch e.get('type')
+          when 'Tick'
+            input = input.set('dt',e.get('dt'))
+          when 'ControllerEvent'
+            isDown = ('down' == e.get('action'))
+            input = input.setIn(['controllers' ,e.get('tag'), e.get('control')], isDown)
+      input
+    gameInput = playerControlEvents
       .merge(dtEvents)
+      .sliceOn(dtEvents)
+      .map(bundleInput)
 
-    gameStates = events.foldp (event,gameState) => @gameStateMachineWrapper.update(gameState, event, @defaultInput)
+    # Game state value over time:
+    updateGameState = (input,gameState) =>
+      [gameState1,syslog] = @gameStateMachine.update(input)
+      gameState1
+    newGameStates = gameInput.foldp(updateGameState)
 
-    gameStates.filter().subscribe (gameState) => @viewMachine.update2(gameState)
+    # When gameState changes, update view:
+    newGameStates.subscribe (s) => @viewMachine.update2(s)
 
-    # @dtMailbox.signal.sampleOn(controls).subscribe (v) -> console.log(v)
-    # [gameState,systemLog] = @gameStateMachine.update(input)
-    # @viewMachine.update2 gameState if gameState?
 
   update: (dt) ->
     # console.log "START update"

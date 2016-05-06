@@ -94,9 +94,20 @@ class Signal
 
   sampleOn: (triggerSig) ->
     outSig = new Signal()
-    triggerSig.subscribe (v) =>
+    triggerSig.subscribe (_) =>
       outSig.notify(@peek())
     outSig
+
+  sliceOn: (triggerSig) ->
+    buf = []
+    @subscribe (v) ->
+      buf.push(v)
+    outSig = new Signal()
+    triggerSig.subscribe (_) ->
+      outSig.notify(buf)
+      buf = []
+    outSig
+
 
 
 
