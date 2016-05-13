@@ -53,8 +53,9 @@ class EntityStore extends ReadOnlyEntityStore
       eidGen:    SeqGen.new('e', 0)
       cidGen:    SeqGen.new('c', 0)
 
-  constructor: ->
-    super EntityStore.initialState()
+  constructor: (state=null) ->
+    state ?= EntityStore.initialState()
+    super(state)
 
   #
   # WRITE

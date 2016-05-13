@@ -5,11 +5,11 @@ Transforms = require './transforms'
 PostOffice = require '../flarp/post_office'
 KeyboardController3 = require '../input/keyboard_controller3'
 
-KeyboardController = require '../input/keyboard_controller'
-KeyboardController2 = require '../input/keyboard_controller2'
+# KeyboardController = require '../input/keyboard_controller'
+# KeyboardController2 = require '../input/keyboard_controller2'
 
 GamepadController = require('../input/gamepad_controller')
-ControllerEventMux = require('../input/controller_event_mux')
+# ControllerEventMux = require('../input/controller_event_mux')
 
 ViewMachine = require '../view/view_machine'
 ViewSystems = require '../view/systems'
@@ -24,7 +24,10 @@ WorldMap = require './map/world_map'
 
 GameStateMachine = require './states/game_state_machine'
 TitleState = require './states/title'
+Title2 = require './states/title2'
 AdventureState = require './states/adventure'
+Adventure2 = require './states/adventure2'
+TheGame = require './states/the_game'
 PowerupState = require './states/powerup'
 
 ImmRingBuffer = require '../utils/imm_ring_buffer'
@@ -34,13 +37,13 @@ class MetroidCloneDelegate
 
     @postOffice = new PostOffice()
 
-    @gameStateMachine = new GameStateMachine([
-      TitleState
-      AdventureState
-      PowerupState
-    ])
+    # @gameStateMachine = new GameStateMachine([
+    #   TitleState
+    #   AdventureState
+    #   PowerupState
+    # ])
 
-    @controllerEventMux = createControllerEventMux()
+    # @controllerEventMux = createControllerEventMux()
 
     @playerControllerMailbox = @postOffice.newMailbox()
     @playerController = new KeyboardController3(@playerControllerMailbox.address,
@@ -175,19 +178,24 @@ class MetroidCloneDelegate
             isDown = ('down' == e.get('action'))
             input = input.setIn(['controllers' ,e.get('tag'), e.get('control')], isDown)
       input
+
     gameInput = playerControlEvents
       .merge(dtEvents)
       .sliceOn(dtEvents)
       .map(bundleInput)
 
     # Game state value over time:
-    updateGameState = (input,gameState) =>
-      [gameState1,syslog] = @gameStateMachine.update(input)
-      gameState1
-    newGameStates = gameInput.foldp(updateGameState)
+    updateGame = (input,s) ->
+      [s1,_events] = TheGame.update(s,input)
+      # TODO: process events?
+      return s1
 
+    gameState = gameInput
+      .foldp(updateGame, TheGame.initialState())
+      .map (s) -> s.get('gameState')
+    
     # When gameState changes, update view:
-    newGameStates.subscribe (s) => @viewMachine.update2(s)
+    gameState.subscribe (s) => @viewMachine.update2(s)
 
 
   update: (dt) ->

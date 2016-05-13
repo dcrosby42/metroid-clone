@@ -62,28 +62,16 @@ class TitleState extends GameState
         inputName: 'player1'
     ]
 
+  gameData: ->
+    @estore.takeSnapshot()
+
+
   update: (gameInput) ->
     [@estore,events,systemLog] = @ecsMachine.update(@estore,gameInput)
     events.forEach (e) => @["event_#{e.get('name')}"]?(e)
     systemLog
 
-  gameData: ->
-    @estore.takeSnapshot()
-
   event_StartNewGame: (e) ->
-    # TODO?
-    # data =
-    #   zone: 'brinstar'
-    #   pickups: []
-    #   samus:
-    #     energy: 30
-    #     missiles: 0
-    #     energyTanks: 0
-    #     missileTanks: 0
-    #     powerups: []
-      
-    # @transitionTo 'arrival', data # TODO?
-    # @machine.transition 'adventure', data
     @transition 'adventure'
 
 

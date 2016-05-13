@@ -11,6 +11,10 @@ class EcsMachine
     @eventBucket = new EventBucket()
     @estore = new EntityStore()
 
+  update3: (estore, input) ->
+    [_,events,systemLogs] = @update(estore,input)
+    return events
+
   update: (estore, input) ->
     @eventBucket.reset()
     systemLogs = if Config.system_log.enabled

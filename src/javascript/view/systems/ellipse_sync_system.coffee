@@ -9,7 +9,7 @@ class EllipseSyncSystem extends ViewObjectSyncSystem
   newObject: (comps) ->
     ellipse = comps.get('ellipse')
     layer = ellipse.get('layer')
-    position = comps.get('ellipse')
+    position = comps.get('position')
 
     gfx = new PIXI.Graphics()
     gfx._sidecar = {}
