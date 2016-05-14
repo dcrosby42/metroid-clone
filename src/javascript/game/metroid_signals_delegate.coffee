@@ -56,8 +56,6 @@ class MetroidSignalsDelegate
 
     @postOffice = new PostOffice()
 
-    # @playerControllerMailbox = @postOffice.newMailbox()
-    # KeyboardController3.bindKeys @playerControllerMailbox.address,
     @player1KbController = createKeyboardSignal @postOffice,
       "right": 'right'
       "left": 'left'
@@ -67,8 +65,6 @@ class MetroidSignalsDelegate
       "s": 'action1'
       "enter": 'start'
 
-    # @playerControllerGpMailbox = @postOffice.newMailbox()
-    # GamepadController2.bindButtons @playerControllerGpMailbox.address,
     @player1GpController = createGamepadSignal @postOffice,
       "DPAD_RIGHT": 'right'
       "DPAD_LEFT": 'left'
@@ -78,8 +74,6 @@ class MetroidSignalsDelegate
       "FACE_3": 'action1'
       "START_FORWARD": 'start'
 
-    # @adminControllerMailbox = @postOffice.newMailbox()
-    # KeyboardController3.bindKeys @adminControllerMailbox.address,
     @adminController = createKeyboardSignal @postOffice,
       "g": 'toggle_gamepad'
       "b": 'toggle_bgm'
@@ -99,10 +93,10 @@ class MetroidSignalsDelegate
     @dtMailbox = @postOffice.newMailbox()
 
     # TODO
-    # if componentInspector?
-    #   @componentInspectorMachine = new ComponentInspectorMachine(
-    #     componentInspector: componentInspector
-    #   )
+    if componentInspector?
+      @componentInspectorMachine = new ComponentInspectorMachine(
+        componentInspector: componentInspector
+      )
 
   dataToPreload: ->
     # TODO move this data to AdventureState?
@@ -225,11 +219,19 @@ class MetroidSignalsDelegate
     # State of history over time:
     history = adminState
       .foldp(updateHistory, initialHistory)
-      .dropRepeats(Immutable.is)
+      .dropRepeats(Immutable.is)  # (if a new history is identical to the prior history, send no change)
 
-    # When gameState changes, update view:
-    history.subscribe (h) =>
-      @viewMachine.update2(RollingHistory.current(h).get('gameState'))
+    innerGameState = history.map (h) ->
+      RollingHistory.current(h).get('gameState')
+
+    # Funnel updates into the view:
+    innerGameState.subscribe (s) =>
+      @viewMachine.update2(s)
+
+    # Funnel updates into the component inspector:
+    if @componentInspectorMachine?
+      innerGameState.subscribe (s) =>
+        @componentInspectorMachine.update s
 
   update: (dt) ->
     @dtMailbox.address.send dt
