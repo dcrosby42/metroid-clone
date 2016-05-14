@@ -28,13 +28,13 @@ class SoundSyncSystem extends ViewObjectSyncSystem
         sound.seekMillis(playPosition)
         sound.play()
         sound._sidecar.paused = false
-        console.log "sound_sync_system: seek/play"
+        # console.log "sound_sync_system: seek/play"
 
     else
       if playPosition > 0 && playPosition == sound._sidecar.playPosition
         sound.pause()
         sound._sidecar.paused = true
-        console.log "sound_sync_system: pause",playPosition, sound._sidecar.playPosition
+        # console.log "sound_sync_system: pause",playPosition, sound._sidecar.playPosition
       else
         sound._sidecar.playPosition = playPosition
 
