@@ -23,6 +23,8 @@ RollingHistory = require '../utils/state_history2'
 TheGame = require './states/the_game'
 Admin = require './states/admin'
 
+AdminUI = require '../admin_ui'
+
 
 #
 # HELPERS
@@ -39,6 +41,9 @@ inputBundler = (din) ->
         when 'ControllerEvent'
           isDown = ('down' == e.get('action'))
           input = input.setIn(['controllers' ,e.get('tag'), e.get('control')], isDown)
+        when 'AdminUIEvent'
+          input = input.update 'adminUIEvents', (es) ->
+            (es or Map()).set(e.get('name'),true)
     input
 
 createKeyboardSignal = (postOffice, mappings) ->
@@ -52,7 +57,7 @@ createGamepadSignal = (postOffice, mappings) ->
   return mbox.signal
 
 class MetroidSignalsDelegate
-  constructor: ({componentInspector,@devUI,@systemLogInspector}) ->
+  constructor: ({componentInspector,adminUIDiv,@systemLogInspector}) ->
 
     @postOffice = new PostOffice()
 
@@ -89,6 +94,8 @@ class MetroidSignalsDelegate
       "k": 'up'
       "l": 'right'
       "space": 'step_forward'
+
+    @adminUI = new AdminUI(@postOffice,adminUIDiv)
 
     @dtMailbox = @postOffice.newMailbox()
 
@@ -143,11 +150,16 @@ class MetroidSignalsDelegate
         worldMap: worldMap
 
     ########################################################################################
+    #
     # SIGNALLY STUFF 
     #
 
     dtEvents = @dtMailbox.signal
       .map((dt) -> Map(type:'Tick',dt:dt))
+
+    adminUIEvents = @adminUI.signal
+    # adminUIEvents.subscribe (e) ->
+    #   console.log e.toJS()
 
     playerControlEvents = @player1KbController.merge(@player1GpController)
       .dropRepeats(Immutable.is)
@@ -161,13 +173,24 @@ class MetroidSignalsDelegate
     # For each time slice, smush all events into a composite 'input' structure
     input = dtEvents
       .merge(playerControlEvents)
-      .merge(adminControlEvents) # all dt, keybd and gp events into one stream
+      .merge(adminControlEvents)
+      .merge(adminUIEvents)      # all dt, keybd and gp events into one stream
       .sliceOn(dtEvents)         # batch up the events in an array and release on arrival of dt event
       .map(inputBundler(@defaultInput)) # compile the 'input' structure (controller states, dt and static game data)
 
 
     adminState = input
       .foldp(Admin.update, Admin.initialState()) # process administrative controls and state first
+
+    adminState.subscribe (s) =>
+      @adminUI.update(s)
+
+      if s.get('muted')
+        @viewMachine.uiState.muteAudio()
+      else
+        @viewMachine.uiState.unmuteAudio()
+
+      @viewMachine.uiState.drawHitBoxes = s.get('drawHitBoxes')
 
 
     #

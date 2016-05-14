@@ -24,7 +24,8 @@ Profiler.useAjaxReporter()
 BigScreen = require './vendor/bigscreen_wrapper'
 
 Inspector = require './inspector'
-DevUI = require './dev_ui'
+# DevUI = require './dev_ui'
+# AdminUI = require './admin_ui'
 SystemLogInspector = require './system_log_inspector'
 
 window.ObjectStore = require './search/object_store'
@@ -49,13 +50,14 @@ jquery ->
       mountNode: inspectorHolder
       inspectorConfig: inspectorConfig
   devUIDiv = jquery('#dev-ui')
-  devUI = DevUI.create(devUIDiv)
+  # devUI = DevUI.create(devUIDiv)
+  # adminUI = AdminUI.create(devUIDiv)
   systemLogInspector = null
   if Config.system_log.enabled
     systemLogInspector = SystemLogInspector.create
       mountNode: jquery('#system-log-holder')[0]
 
-  del = new DelegateClass(componentInspector: componentInspector, devUI: devUI, systemLogInspector: systemLogInspector)
+  del = new DelegateClass(componentInspector: componentInspector, adminUIDiv: devUIDiv, systemLogInspector: systemLogInspector)
 
   gameHolder = jquery('#game-holder')[0]
   harness = new PixiHarness
