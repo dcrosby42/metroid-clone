@@ -220,13 +220,4 @@ class AdventureState extends GameState
       assets[effect] = "sounds/fx/#{effect}.wav"
     assets
 
-  @spriteConfigs: ->
-    spriteConfigs = {}
-    _.merge spriteConfigs, Samus.sprites
-    _.merge spriteConfigs, Enemies.sprites
-    _.merge spriteConfigs, General.sprites
-    _.merge spriteConfigs, Doors.sprites
-    _.merge spriteConfigs, Items.sprites
-    spriteConfigs
-
 module.exports = AdventureState

@@ -1,4 +1,5 @@
 Immutable = require 'immutable'
+{Map,List}=Immutable
 Comps = require '../entity/components'
 
 Systems = require '../systems'
@@ -10,6 +11,10 @@ EcsMachine = require '../../ecs/ecs_machine'
 EntityStore = require '../../ecs/entity_store'
 
 Samus = require '../entity/samus'
+Enemies =  require '../entity/enemies'
+Doors =  require '../entity/doors'
+General =  require '../entity/general'
+Items =  require '../entity/items'
 
 ecsMachine = new EcsMachine(systems: [
     Systems.timer_system
@@ -128,11 +133,58 @@ exports.initialState = () ->
 
 exports.update = (gameState,input) ->
   estore.restoreSnapshot(gameState)
-  
   events = ecsMachine.update3(estore,input)
-
-  # events.forEach (e) ->
-  #   switch e.get('name')
-  #     when ''
   return [estore.takeSnapshot(), events]
+
+exports.assetsToPreload = ->
+  graphics = List(
+    [ "images/brinstar.json" ]
+      .concat(Samus.assets)
+      .concat(Enemies.assets)
+      .concat(General.assets)
+      .concat(Doors.assets)
+      .concat(Items.assets))
+    .map (fname) ->
+      Map(type:'graphic', name:fname, file:fname)
+
+  songs = [
+    "brinstar"
+    "powerup_jingle"
+  ]
+  effects = [
+    "enemy_die1"
+    "health"
+    "step"
+    "step2"
+    "jump"
+    "samus_hurt"
+    "samus_die"
+    "short_beam"
+    "door"
+    "samus_morphball"
+  ]
+
+  sounds = List()
+  for song in songs
+    sounds = sounds.push Map(type: 'sound', name: song, file: "sounds/music/#{song}.mp3")
+  for effect in effects
+    sounds = sounds.push Map(type: 'sound', name: effect, file: "sounds/fx/#{effect}.wav")
   
+  data = List([
+    Map(type: 'data', name: 'world_map', file: 'data/world_map.json')
+  ])
+
+  return graphics
+    .concat(sounds)
+    .concat(data)
+
+exports.spriteConfigs = ->
+  cfgs = {}
+  _.merge cfgs, Samus.sprites
+  _.merge cfgs, Enemies.sprites
+  _.merge cfgs, General.sprites
+  _.merge cfgs, Doors.sprites
+  _.merge cfgs, Items.sprites
+  cfgs
+  
+

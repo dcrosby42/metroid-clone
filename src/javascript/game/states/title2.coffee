@@ -41,3 +41,8 @@ exports.update = (gameState,input) ->
 
   return [estore.takeSnapshot(), events]
 
+exports.assetsToPreload = ->
+  return List([
+    Map(type: 'graphic', name: 'images/main_title.png', file: 'images/main_title.png')
+    Map(type: 'sound', name: 'main_title', file: 'sounds/music/main_title.mp3')
+  ])

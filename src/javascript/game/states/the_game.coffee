@@ -31,8 +31,6 @@ exports.initialState = () ->
 
 # Action -> Model -> (Model, Effects Action)
 exports.update = (state,input) ->
-  # console.log "TheGame.update:", state.toJS()
-
   s = state.get('gameState')
   mode = modes[state.get('mode')]
   [s1,events] = mode.update(s, input)
@@ -50,6 +48,10 @@ exports.update = (state,input) ->
 
   return [state, null]
 
-# Signal.Address Action -> Model -> Html
-# exports.view = (address,model) ->
-  
+exports.assetsToPreload = ->
+  List([Adventure2,Title2])
+    .flatMap((s) ->
+      s.assetsToPreload())
+
+exports.spriteConfigs = ->
+  Adventure2.spriteConfigs()

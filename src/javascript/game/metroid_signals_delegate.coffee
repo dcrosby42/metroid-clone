@@ -15,9 +15,6 @@ ComponentInspectorMachine = require '../view/component_inspector_machine'
 
 WorldMap = require './map/world_map'
 
-TitleState = require './states/title'
-AdventureState = require './states/adventure'
-
 RollingHistory = require '../utils/state_history2'
 
 TheGame = require './states/the_game'
@@ -98,30 +95,33 @@ class MetroidSignalsDelegate
     @adminUI = new AdminUI(@postOffice,adminUIDiv)
 
     @dtMailbox = @postOffice.newMailbox()
+    @dtSignal = @dtMailbox.signal
 
-    # TODO
     if componentInspector?
       @componentInspectorMachine = new ComponentInspectorMachine(
         componentInspector: componentInspector
       )
 
-  dataToPreload: ->
-    # TODO move this data to AdventureState?
-    {
-      world_map: "data/world_map.json"
-    }
+  # dataToPreload: ->
+  #   # TODO move this data to AdventureState?
+  #   {
+  #     world_map: "data/world_map.json"
+  #   }
+  #
+  # graphicsToPreload: ->
+  #   assets = AdventureState.graphicsToPreload()
+  #   assets = assets.concat(TitleState.graphicsToPreload())
+  #   assets
+  #
+  # soundsToPreload: ->
+  #   sounds = AdventureState.soundsToPreload()
+  #   sounds = _.merge(sounds, TitleState.soundsToPreload())
+  #   sounds
 
-  graphicsToPreload: ->
-    assets = AdventureState.graphicsToPreload()
-    assets = assets.concat(TitleState.graphicsToPreload())
-    assets
+  assetsToPreload: ->
+    TheGame.assetsToPreload().toJS()
 
-  soundsToPreload: ->
-    sounds = AdventureState.soundsToPreload()
-    sounds = _.merge(sounds, TitleState.soundsToPreload())
-    sounds
-
-  setupStage: (stage, width, height,zoom, soundController, data) ->
+  initialize: (stage, width, height,zoom, soundController, data) ->
     worldMap = WorldMap.buildMap(data['world_map'])
     
     uiState = UIState.create
@@ -132,9 +132,11 @@ class MetroidSignalsDelegate
         x: 1.25
         y: 1
 
+    spriteConfigs = TheGame.spriteConfigs()
+    window.spriteConfigs = spriteConfigs #XXX
     uiConfig = UIConfig.create
       worldMap: worldMap
-      spriteConfigs: AdventureState.spriteConfigs()
+      spriteConfigs: spriteConfigs
       
     viewSystems = createViewSystems()
 
@@ -143,23 +145,16 @@ class MetroidSignalsDelegate
       uiConfig: uiConfig
       uiState: uiState
 
-    @defaultInput = Immutable.fromJS
-      controllers: {}
-      dt: 0
-      static:
-        worldMap: worldMap
 
     ########################################################################################
     #
     # SIGNALLY STUFF 
     #
 
-    dtEvents = @dtMailbox.signal
+    dtEvents = @dtSignal
       .map((dt) -> Map(type:'Tick',dt:dt))
 
     adminUIEvents = @adminUI.signal
-    # adminUIEvents.subscribe (e) ->
-    #   console.log e.toJS()
 
     playerControlEvents = @player1KbController.merge(@player1GpController)
       .dropRepeats(Immutable.is)
@@ -171,26 +166,23 @@ class MetroidSignalsDelegate
 
 
     # For each time slice, smush all events into a composite 'input' structure
+    defaultInput = Immutable.fromJS
+      controllers: {}
+      dt: 0
+      static:
+        worldMap: worldMap
+
     input = dtEvents
       .merge(playerControlEvents)
       .merge(adminControlEvents)
       .merge(adminUIEvents)      # all dt, keybd and gp events into one stream
       .sliceOn(dtEvents)         # batch up the events in an array and release on arrival of dt event
-      .map(inputBundler(@defaultInput)) # compile the 'input' structure (controller states, dt and static game data)
+      .map(inputBundler(defaultInput)) # compile the 'input' structure (controller states, dt and static game data)
 
 
+    # The current state of the administrative controls: 
     adminState = input
-      .foldp(Admin.update, Admin.initialState()) # process administrative controls and state first
-
-    adminState.subscribe (s) =>
-      @adminUI.update(s)
-
-      if s.get('muted')
-        @viewMachine.uiState.muteAudio()
-      else
-        @viewMachine.uiState.unmuteAudio()
-
-      @viewMachine.uiState.drawHitBoxes = s.get('drawHitBoxes')
+      .foldp(Admin.update, Admin.initialState())
 
 
     #
@@ -247,17 +239,29 @@ class MetroidSignalsDelegate
     innerGameState = history.map (h) ->
       RollingHistory.current(h).get('gameState')
 
-    # Funnel updates into the view:
-    innerGameState.subscribe (s) =>
-      @viewMachine.update2(s)
+    #
+    # OUTPUT
+    #
 
-    # Funnel updates into the component inspector:
+    # Funnel game updates into the view:
+    innerGameState.subscribe (s) =>
+      @viewMachine.update(s)
+
+    # Funnel game updates into the component inspector:
     if @componentInspectorMachine?
       innerGameState.subscribe (s) =>
         @componentInspectorMachine.update s
 
-    # XXX?
+    # Funnel game state into a global var for Console debugging:
     innerGameState.subscribe (s) -> window.gamestate = s
+    
+    # Funnel admin state into viewMachine's uiState debug stuff, and to the adminUI
+    adminState.subscribe (s) =>
+      @adminUI.update(s)
+      @viewMachine.setMute s.get('muted')
+      @viewMachine.setDrawHitBoxes s.get('drawHitBoxes')
+
+
 
   update: (dt) ->
     @dtMailbox.address.send dt

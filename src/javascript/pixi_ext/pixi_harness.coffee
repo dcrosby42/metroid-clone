@@ -10,6 +10,13 @@ class DataFileLoader
   constructor: ->
     @data = {}
 
+  loadDataAssets: (dataAssets,callback) ->
+    @data = {}
+    names = _.map(dataAssets, (a) -> a.name)
+    allDataLoaded = CompositeEvent.create names, callback
+    for a in dataAssets
+      @_loadFile a.name, a.file, allDataLoaded.notifier(a.name)
+
   loadDataFiles: (filemap,callback) ->
     @data = {}
     names = _.keys(filemap)
@@ -40,47 +47,89 @@ class PixiHarness
   start: ->
     @_loadAssets =>
       console.log "Assets loaded."
-      @delegate.setupStage @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight, @zoom, @soundController, @dataFileLoader.data
+      @delegate.initialize @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight, @zoom, @soundController, @dataFileLoader.data
       @stopWatch.start()
       requestAnimationFrame (t) => @update(t)
 
   _loadAssets: (callback) ->
     allDone = CompositeEvent.create ["graphics", "sounds", "data"], callback
 
-    if @delegate.dataToPreload?
-      @_loadData @delegate.dataToPreload(), allDone.notifier("data")
+    # if @delegate.dataToPreload?
+    #   @_loadData @delegate.dataToPreload(), allDone.notifier("data")
+    # else
+    #   allDone.notify "data"
+    #
+    # if @delegate.graphicsToPreload?
+    #   @_loadGraphicalAssets @delegate.graphicsToPreload(), allDone.notifier("graphics")
+    # else
+    #   allDone.notify "graphics"
+    #
+    # if @delegate.soundsToPreload?
+    #   @_loadSoundAssets @delegate.soundsToPreload(), allDone.notifier("sounds")
+    # else
+    #   allDone.notify "sounds"
+
+    if @delegate.assetsToPreload?
+      soundAssets = []
+      graphicAssets = []
+      dataAssets = []
+      for asset in @delegate.assetsToPreload()
+        switch asset.type
+          when 'sound'   then soundAssets.push(asset)
+          when 'graphic' then graphicAssets.push(asset)
+          when 'data'    then dataAssets.push(asset)
+      @_loadData            dataAssets,    allDone.notifier("data")
+      @_loadGraphicalAssets graphicAssets, allDone.notifier("graphics")
+      @_loadSoundAssets     soundAssets,   allDone.notifier("sounds")
     else
       allDone.notify "data"
-
-    if @delegate.graphicsToPreload?
-      @_loadGraphicalAssets @delegate.graphicsToPreload(), allDone.notifier("graphics")
-    else
       allDone.notify "graphics"
-
-    if @delegate.soundsToPreload?
-      @_loadSoundAssets @delegate.soundsToPreload(), allDone.notifier("sounds")
-    else
       allDone.notify "sounds"
 
-  _loadData: (filemap, callback) ->
-    if filemap? and _.keys(filemap).length > 0
-      @dataFileLoader.loadDataFiles(filemap, callback)
+
+  _loadData: (assets, callback) ->
+    if assets? and assets.length > 0
+      @dataFileLoader.loadDataAssets(assets, callback)
     else
       callback()
 
   _loadGraphicalAssets: (assets, callback) ->
     if assets? and assets.length > 0
-      loader = new PIXI.AssetLoader(assets)
+      files = _.map(assets, (a) -> a.file)
+      loader = new PIXI.AssetLoader(files)
       loader.onComplete = callback
       loader.load()
     else
       callback()
 
   _loadSoundAssets: (assets, callback) ->
-    if _.keys(assets).length > 0
-      @soundController.loadSoundMap assets, callback
+    if assets? and assets.length > 0
+      soundMap = {}
+      for a in assets
+        soundMap[a.name] = a.file
+      @soundController.loadSoundMap soundMap, callback
     else
       callback()
+
+  # _loadData: (filemap, callback) ->
+  #   if filemap? and _.keys(filemap).length > 0
+  #     @dataFileLoader.loadDataFiles(filemap, callback)
+  #   else
+  #     callback()
+  #
+  # _loadGraphicalAssets: (assets, callback) ->
+  #   if assets? and assets.length > 0
+  #     loader = new PIXI.AssetLoader(assets)
+  #     loader.onComplete = callback
+  #     loader.load()
+  #   else
+  #     callback()
+  #
+  # _loadSoundAssets: (assets, callback) ->
+  #   if _.keys(assets).length > 0
+  #     @soundController.loadSoundMap assets, callback
+  #   else
+  #     callback()
 
   update: (t) ->
     dt = null
