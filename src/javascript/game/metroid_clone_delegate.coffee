@@ -20,6 +20,9 @@ UIConfig = require '../view/ui_config'
 ComponentInspectorMachine = require '../view/component_inspector_machine'
 
 ImmRingBuffer = require '../utils/imm_ring_buffer'
+RollingHistory = require '../utils/state_history2'
+PressedReleased = require '../utils/pressed_released'
+PR = PressedReleased
 
 WorldMap = require './map/world_map'
 
@@ -187,47 +190,97 @@ class MetroidCloneDelegate
       .sliceOn(dtEvents)
       .map(inputBundler(@defaultInput))
 
-    updateAdmin = (input,s) ->
-      s1 = s
+    initialAdminState = Immutable.fromJS
+      input: {}
+      ctrl: {}
+      actualDt: 16.66
+      stepDt: 16.6
+      paused: false
+      muted: false
+      drawHitBoxes: false
+
+    toggle = (x) -> !x
+      
+    toggleProp = (map,prop) ->
+      before = map.get(prop)
+      map = map.update(prop, toggle)
+      after = map.get(prop)
+      map
+
+    updateAdmin = (input,admin0) ->
+      admin = admin0
         .set('input',input)
         .set('actualDt',input.get('dt'))
+        .delete('truncate_history')
+        .update('ctrl', (ctrl) -> PressedReleased.update(ctrl, input.getIn(['controllers','admin'])))
 
-      ctrl = input.getIn(['controllers','admin'])
-      if ctrl? and ctrl.get('toggle_pause')
-          s1 = s1.set('paused', !s1.get('paused'))
+      ctrl = admin.get('ctrl')
 
-      if ctrl? and ctrl.get('step_forward')
-        s1 = s1.set('stepDt',16.66)
+      if ctrl.get('toggle_pausePressed')
+        admin = toggleProp(admin,'paused')
+        if !admin.get('paused')
+          admin = admin.set('truncate_history',true)
+
+      if ctrl.get('toggle_mutePressed')
+        admin = toggleProp(admin,'muted')
+
+      if ctrl.get('toggle_bounding_boxPressed')
+        admin = toggleProp(admin,'drawHitBoxes')
+       
+      admin = if admin.get('paused')
+        admin.set('replay_back',
+          ctrl.get('time_walk_backPressed') or
+          ctrl.get('time_scroll_back')
+        ).set('replay_forward',
+          ctrl.get('time_walk_forwardPressed') or
+          ctrl.get('time_scroll_forward')
+        ).set('step_forward',
+          ctrl.get('step_forwardPressed')
+        )
       else
-        s1 = s1.delete('stepDt')
+        admin
+          .set('replay_back',false)
+          .set('replay_forward',false)
+          .set('step_forward',false)
 
-      return s1
+      return admin
 
-    initialAdminState = Map()
     adminState = input
       .foldp(updateAdmin, initialAdminState)
 
     # Game state value over time:
     updateGame = (input,s) ->
-      [s1,_events] = TheGame.update(s,input)
-      # TODO: process events?
+      [s1,_] = TheGame.update(s,input)
       return s1
 
-    adminStateToGameState = (adminState, s) ->
-      input = adminState.get('input')
-      if adminState.get('paused')
-        stepDt = adminState.get('stepDt')
-        if stepDt?
-          return updateGame(input.set('dt',stepDt), s)
-        else
-          return s
+    history0 = RollingHistory.add(RollingHistory.empty, TheGame.initialState())
+
+    updateHistory = (admin, history) ->
+      input = admin.get('input')
+      game = RollingHistory.current(history)
+      if admin.get('paused')
+        if admin.get('replay_back')
+          history = RollingHistory.back(history)
+        else if admin.get('replay_forward')
+          history = RollingHistory.forward(history)
+        else if admin.get('step_forward')
+          input1 = input.set('dt', admin.get('stepDt'))
+          history = RollingHistory.truncate(history)
+          history = RollingHistory.add(history, updateGame(input1, game))
       else
-        return updateGame(input,s)
+        if admin.get('truncate_history')
+          history = RollingHistory.truncate(history)
+        history = RollingHistory.add(history, updateGame(input,game))
+
+      return history
+
 
     gameState = adminState
-      .foldp(adminStateToGameState, TheGame.initialState())
+      # .foldp(adminStateToGameState, TheGame.initialState())
+      .foldp(updateHistory, history0)
       .dropRepeats(Immutable.is)
-      .map (s) -> s.get('gameState')
+      # .map (s) -> s.get('gameState')
+      .map (hist) -> RollingHistory.current(hist).get('gameState')
 
     # When gameState changes, update view:
     gameState.subscribe (s) =>
