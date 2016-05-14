@@ -1,4 +1,5 @@
 Immutable = require 'immutable'
+{Map,List}=Immutable
 
 Transforms = require './transforms'
 
@@ -143,46 +144,68 @@ class MetroidCloneDelegate
       uiState: uiState
 
     @defaultInput = Immutable.fromJS
-      controllers:
-        player1: {}
-        player2: {}
-        debug1: {}
-        admin: {}
+      # controllers:
+      #   player1: {}
+      #   player2: {}
+      #   debug1: {}
+      #   admin: {}
       dt: 0
       static:
         worldMap: worldMap
 
     ########################################################################################
     # SIGNALLY STUFF 
+    #
+    # Per time slice, bundle ticks and controller events into an "input" structure
+    inputBundler = (din) ->
+      (events) ->
+        input = din
+        for e in events
+          switch e.get('type')
+            when 'Tick'
+              input = input.set('dt',e.get('dt'))
+            when 'ControllerEvent'
+              isDown = ('down' == e.get('action'))
+              input = input.setIn(['controllers' ,e.get('tag'), e.get('control')], isDown)
+        input
 
-    adminControlEvents = @adminControllerMailbox.signal
-      .dropRepeats(Immutable.is)
-      .map((event) -> event.set('tag','admin'))
+    dtEvents = @dtMailbox.signal
+      .map((dt) -> Map(type:'Tick',dt:dt))
 
     playerControlEvents = @playerControllerMailbox.signal
       .merge(@playerControllerGpMailbox.signal)
       .dropRepeats(Immutable.is)
       .map((event) -> event.set('tag','player1'))
 
-    dtEvents = @dtMailbox.signal
-      .map((dt) -> Immutable.Map(type:'Tick',dt:dt))
+    adminControlEvents = @adminControllerMailbox.signal
+      .dropRepeats(Immutable.is)
+      .map((event) -> event.set('tag','admin'))
 
-    # Per time slice, bundle ticks and controller events into an "input" structure
-    bundleInput = (events) =>
-      input = @defaultInput
-      for e in events
-        switch e.get('type')
-          when 'Tick'
-            input = input.set('dt',e.get('dt'))
-          when 'ControllerEvent'
-            isDown = ('down' == e.get('action'))
-            input = input.setIn(['controllers' ,e.get('tag'), e.get('control')], isDown)
-      input
-
-    gameInput = playerControlEvents
-      .merge(dtEvents)
+    input = dtEvents
+      .merge(playerControlEvents)
+      .merge(adminControlEvents)
       .sliceOn(dtEvents)
-      .map(bundleInput)
+      .map(inputBundler(@defaultInput))
+
+    updateAdmin = (input,s) ->
+      s1 = s
+        .set('input',input)
+        .set('actualDt',input.get('dt'))
+
+      ctrl = input.getIn(['controllers','admin'])
+      if ctrl? and ctrl.get('toggle_pause')
+          s1 = s1.set('paused', !s1.get('paused'))
+
+      if ctrl? and ctrl.get('step_forward')
+        s1 = s1.set('stepDt',16.66)
+      else
+        s1 = s1.delete('stepDt')
+
+      return s1
+
+    initialAdminState = Map()
+    adminState = input
+      .foldp(updateAdmin, initialAdminState)
 
     # Game state value over time:
     updateGame = (input,s) ->
@@ -190,30 +213,33 @@ class MetroidCloneDelegate
       # TODO: process events?
       return s1
 
-    gameState = gameInput
-      .foldp(updateGame, TheGame.initialState())
-      .map (s) -> s.get('gameState')
-    
-    # When gameState changes, update view:
-    gameState.subscribe (s) => @viewMachine.update2(s)
+    adminStateToGameState = (adminState, s) ->
+      input = adminState.get('input')
+      if adminState.get('paused')
+        stepDt = adminState.get('stepDt')
+        if stepDt?
+          return updateGame(input.set('dt',stepDt), s)
+        else
+          return s
+      else
+        return updateGame(input,s)
 
+    gameState = adminState
+      .foldp(adminStateToGameState, TheGame.initialState())
+      .dropRepeats(Immutable.is)
+      .map (s) -> s.get('gameState')
+
+    # When gameState changes, update view:
+    gameState.subscribe (s) =>
+      @viewMachine.update2(s)
 
   update: (dt) ->
-    # console.log "START update"
     @dtMailbox.address.send dt
     @postOffice.sync()
-    # console.log "STOP update"
 
-    # e = @adminController.events()
-    # if e.size > 0
-    #   console.log e.toJS()
-    #
-    # e = @playerController.events()
-    # if e.size > 0
-    #   console.log e.toJS()
 
   _update: (dt) ->
-    empty = Immutable.Map(admin: null, debug: null, p1Keyboard: null, p1Gamepad: null)
+    empty = Map(admin: null, debug: null, p1Keyboard: null, p1Gamepad: null)
     controllerEvents = @controllerEventMux.next()
     # XXX:
     doDebug = false
@@ -309,7 +335,7 @@ createViewSystems = ->
     ViewSystems.sound_sync_system
     ViewSystems.room_sync_system
   ]
-  Immutable.List(systemDefs).map (s) -> s.createInstance()
+  List(systemDefs).map (s) -> s.createInstance()
 
 
 createControllerEventMux = ->
