@@ -8,9 +8,10 @@ window.Immutable = Immutable
 
 React = require 'react'
 
-MetroidCloneDelegate = require './game/metroid_clone_delegate'
-ShapesUiDelegate = require './game/shapes_ui_delegate'
-DelegateClass = MetroidCloneDelegate
+# MetroidCloneDelegate = require './game/metroid_clone_delegate'
+MetroidSignalsDelegate = require './game/metroid_signals_delegate'
+# ShapesUiDelegate = require './game/shapes_ui_delegate'
+DelegateClass = MetroidSignalsDelegate
 # DelegateClass = ShapesUiDelegate
 
 Profiler = require './profiler'
