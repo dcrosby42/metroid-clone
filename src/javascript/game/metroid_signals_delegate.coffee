@@ -41,13 +41,24 @@ inputBundler = (din) ->
           input = input.setIn(['controllers' ,e.get('tag'), e.get('control')], isDown)
     input
 
+createKeyboardSignal = (postOffice, mappings) ->
+  mbox = postOffice.newMailbox()
+  KeyboardController3.bindKeys mbox.address, mappings
+  return mbox.signal
+
+createGamepadSignal = (postOffice, mappings) ->
+  mbox = postOffice.newMailbox()
+  GamepadController2.bindButtons mbox.address, mappings
+  return mbox.signal
+
 class MetroidSignalsDelegate
   constructor: ({componentInspector,@devUI,@systemLogInspector}) ->
 
     @postOffice = new PostOffice()
 
-    @playerControllerMailbox = @postOffice.newMailbox()
-    KeyboardController3.bindKeys @playerControllerMailbox.address,
+    # @playerControllerMailbox = @postOffice.newMailbox()
+    # KeyboardController3.bindKeys @playerControllerMailbox.address,
+    @player1KbController = createKeyboardSignal @postOffice,
       "right": 'right'
       "left": 'left'
       "up": 'up'
@@ -56,8 +67,9 @@ class MetroidSignalsDelegate
       "s": 'action1'
       "enter": 'start'
 
-    @playerControllerGpMailbox = @postOffice.newMailbox()
-    GamepadController2.bindButtons @playerControllerGpMailbox.address,
+    # @playerControllerGpMailbox = @postOffice.newMailbox()
+    # GamepadController2.bindButtons @playerControllerGpMailbox.address,
+    @player1GpController = createGamepadSignal @postOffice,
       "DPAD_RIGHT": 'right'
       "DPAD_LEFT": 'left'
       "DPAD_UP": 'up'
@@ -66,8 +78,9 @@ class MetroidSignalsDelegate
       "FACE_3": 'action1'
       "START_FORWARD": 'start'
 
-    @adminControllerMailbox = @postOffice.newMailbox()
-    KeyboardController3.bindKeys @adminControllerMailbox.address,
+    # @adminControllerMailbox = @postOffice.newMailbox()
+    # KeyboardController3.bindKeys @adminControllerMailbox.address,
+    @adminController = createKeyboardSignal @postOffice,
       "g": 'toggle_gamepad'
       "b": 'toggle_bgm'
       "p": 'toggle_pause'
@@ -142,60 +155,81 @@ class MetroidSignalsDelegate
     dtEvents = @dtMailbox.signal
       .map((dt) -> Map(type:'Tick',dt:dt))
 
-    playerControlEvents = @playerControllerMailbox.signal
-      .merge(@playerControllerGpMailbox.signal)
+    playerControlEvents = @player1KbController.merge(@player1GpController)
       .dropRepeats(Immutable.is)
       .map((event) -> event.set('tag','player1'))
 
-    adminControlEvents = @adminControllerMailbox.signal
+    adminControlEvents = @adminController
       .dropRepeats(Immutable.is)
       .map((event) -> event.set('tag','admin'))
 
+
+    # For each time slice, smush all events into a composite 'input' structure
     input = dtEvents
       .merge(playerControlEvents)
-      .merge(adminControlEvents)
-      .sliceOn(dtEvents)
-      .map(inputBundler(@defaultInput))
+      .merge(adminControlEvents) # all dt, keybd and gp events into one stream
+      .sliceOn(dtEvents)         # batch up the events in an array and release on arrival of dt event
+      .map(inputBundler(@defaultInput)) # compile the 'input' structure (controller states, dt and static game data)
 
 
     adminState = input
-      .foldp(Admin.update, Admin.initialState())
+      .foldp(Admin.update, Admin.initialState()) # process administrative controls and state first
 
-    # Game state value over time:
+
+    #
+    # Rollingistory: a value object containing a rolling list of game state values...
+    # AND a pointer to where we are in that history.  (Often, current() is the most recently
+    # calculated game state, but our admin state may decide to adjust it back or forward 
+    # through the history buffer.)
+    # 
+    # As we calculate new game states, we accumulate a history of game states.
+    #
+    # This stage of the pipeline must produce an updated snapshot of the game universe
+    # and our place in that universe.
+    #
+    # NOTE: 'game state' is a nebulous term.  TheGame's idea of state looks like {mode:'adventure', gameState:(entityStoreGuts)}.
+    # Some code refers to 'game state' in this sense, other code (like the view machine) considers the 'entity store guts' to be game state.
+    #
+
+    # (convenience: simplify invocation of game engine updates)
     updateGame = (input,s) ->
       [s1,_] = TheGame.update(s,input)
       return s1
 
-    history0 = RollingHistory.add(RollingHistory.empty, TheGame.initialState())
+    initialHistory = RollingHistory.add(RollingHistory.empty, TheGame.initialState())
 
+    # Given a new admin state, change history....
     updateHistory = (admin, history) ->
       input = admin.get('input')
       game = RollingHistory.current(history)
       if admin.get('paused')
+        # (when paused, admin controls may choose to alter history in specific ways)
         if admin.get('replay_back')
-          history = RollingHistory.back(history)
+          history = RollingHistory.back(history)     #  ...by stepping back in time (min=oldest retained gamestate)
         else if admin.get('replay_forward')
-          history = RollingHistory.forward(history)
+          history = RollingHistory.forward(history)  #  ...by stepping forward in time (max=newest gamestate)
         else if admin.get('step_forward')
           input1 = input.set('dt', admin.get('stepDt'))
+          # (if we're currently in the past, step_forward starts a new timeline... wipe the previous future)
           history = RollingHistory.truncate(history)
-          history = RollingHistory.add(history, updateGame(input1, game))
+          history = RollingHistory.add(history, updateGame(input1, game)) # ...by calc'ing a new gamestate due to single-frame step
       else
+        # (the normal game-play scenario)
         if admin.get('truncate_history')
+          # (if we're currently in the past, step_forward starts a new timeline... wipe the previous future)
           history = RollingHistory.truncate(history)
-        history = RollingHistory.add(history, updateGame(input,game))
+        history = RollingHistory.add(history, updateGame(input,game)) # ...by calc'ing the next "natural" gamestate based on dt and controller inputs
 
       return history
 
-
-    gameState = adminState
-      .foldp(updateHistory, history0)
+    # State of history over time:
+    history = adminState
+      .foldp(updateHistory, initialHistory)
       .dropRepeats(Immutable.is)
-      .map (hist) -> RollingHistory.current(hist).get('gameState')
 
     # When gameState changes, update view:
-    gameState.subscribe (s) =>
-      @viewMachine.update2(s)
+    history.subscribe (h) =>
+      @viewMachine.update2(RollingHistory.current(h).get('gameState'))
 
   update: (dt) ->
     @dtMailbox.address.send dt
