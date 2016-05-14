@@ -22,7 +22,7 @@ expandFilters = (fs,opts=Map()) ->
     filters = applyGroupPrefix(filters)
   filters = joinAll(filters, 'eid')
   filters = filters.map (filter) ->
-    ObjectStoreSearch.convertMatchesToIndexLookups(filter, EntityStore.Indices)
+    ObjectStoreSearch.convertMatchesToIndexLookups(filter, EntityStore.indices)
   filters
 
 expandFilter = (f) ->

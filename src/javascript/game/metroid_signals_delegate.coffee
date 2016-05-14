@@ -233,6 +233,9 @@ class MetroidSignalsDelegate
       innerGameState.subscribe (s) =>
         @componentInspectorMachine.update s
 
+    # XXX?
+    innerGameState.subscribe (s) -> window.gamestate = s
+
   update: (dt) ->
     @dtMailbox.address.send dt
     @postOffice.sync()

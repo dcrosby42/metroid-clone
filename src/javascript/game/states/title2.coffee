@@ -38,16 +38,6 @@ exports.update = (gameState,input) ->
   estore.restoreSnapshot(gameState)
   
   events = ecsMachine.update3(estore,input)
-  # outEvents = List()
-  # events.forEach (e) ->
-  #
-  #   switch e.get('name')
-  #     when 'StartNewGame'
-  #       e = Map(name:'ChangeMode',data:'adventure')
-  #       outEvents = outEvents.push(e)
 
   return [estore.takeSnapshot(), events]
 
-# Signal.Address Action -> Model -> Html
-# exports.view = (address,model) ->
-  

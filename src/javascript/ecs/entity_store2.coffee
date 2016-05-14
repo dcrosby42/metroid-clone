@@ -8,7 +8,6 @@ ObjectStoreSearch = require '../search/object_store_search'
 EidIndex     = List(['eid'])
 TypeIndex    = List(['type'])
 EidTypeIndex = List(['eid','type'])
-Indices = List([EidIndex,TypeIndex,EidTypeIndex])
 
 class ReadOnlyEntityStore
   constructor: (@state) ->
@@ -40,21 +39,26 @@ class ReadOnlyEntityStore
 
 class EntityStore extends ReadOnlyEntityStore
 
-  @initialCompStore: ->
+  @emptyCompStore: ->
     ObjectStore.create('cid', List [
       TypeIndex,
       EidIndex,
       EidTypeIndex
     ])
 
-  @initialState: ->
-    Map
-      compStore: EntityStore.initialCompStore()
+  @initialState: Map
+      compStore: @emptyCompStore()
       eidGen:    SeqGen.new('e', 0)
       cidGen:    SeqGen.new('c', 0)
 
+  @indices: List [
+    EidIndex
+    TypeIndex
+    EidTypeIndex
+  ]
+
   constructor: (state=null) ->
-    state ?= EntityStore.initialState()
+    state ?= EntityStore.initialState
     super(state)
 
   #
@@ -110,8 +114,6 @@ class EntityStore extends ReadOnlyEntityStore
   _nextComponentId: ->
     @_update('cidGen', SeqGen.next)
       .getIn(['cidGen','value'])
-
-EntityStore.Indices = Indices
 
 module.exports = EntityStore
 

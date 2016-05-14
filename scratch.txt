@@ -12,6 +12,8 @@ Things to add
 
 Bugs
 
+- Key events conflict within time slice... if you key down/up in the same slice, the down event will get crushed by the inputBundler fn.
+  ALL INPUT ACTIONS NEED POTENTIAL FOR BEING LISTS.
 - Recoil from geting damaged -> samus keeps going, in suit or ball form, until interupted.
 - key-up-related events are missed when flip-flopping in and out of adeventure state to powerup state and back, causing sticky run/roll action
 
