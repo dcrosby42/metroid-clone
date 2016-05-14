@@ -1,7 +1,8 @@
 Immutable = require 'immutable'
 {Map,List} = Immutable
-Title2 = require './title2'
-Adventure2 = require './adventure2'
+
+Title = require './title'
+Adventure = require './adventure'
 
 Comps = require '../entity/components'
 Systems = require '../systems'
@@ -20,8 +21,8 @@ ecsMachine = new EcsMachine(systems: [
 estore = new EntityStore()
 
 modes = {
-  title: Title2
-  adventure: Adventure2
+  title: Title
+  adventure: Adventure
 }
 
 exports.initialState = () ->
@@ -49,9 +50,9 @@ exports.update = (state,input) ->
   return [state, null]
 
 exports.assetsToPreload = ->
-  List([Adventure2,Title2])
+  List([Adventure,Title])
     .flatMap((s) ->
       s.assetsToPreload())
 
 exports.spriteConfigs = ->
-  Adventure2.spriteConfigs()
+  Adventure.spriteConfigs()

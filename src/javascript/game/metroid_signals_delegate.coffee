@@ -3,8 +3,8 @@ Immutable = require 'immutable'
 
 PostOffice = require '../flarp/post_office'
 
-KeyboardController3 = require '../input/keyboard_controller3'
-GamepadController2 = require('../input/gamepad_controller2')
+KeyboardController = require '../input/keyboard_controller'
+GamepadController = require('../input/gamepad_controller')
 
 ViewMachine = require '../view/view_machine'
 ViewSystems = require '../view/systems'
@@ -45,12 +45,12 @@ inputBundler = (din) ->
 
 createKeyboardSignal = (postOffice, mappings) ->
   mbox = postOffice.newMailbox()
-  KeyboardController3.bindKeys mbox.address, mappings
+  KeyboardController.bindKeys mbox.address, mappings
   return mbox.signal
 
 createGamepadSignal = (postOffice, mappings) ->
   mbox = postOffice.newMailbox()
-  GamepadController2.bindButtons mbox.address, mappings
+  GamepadController.bindButtons mbox.address, mappings
   return mbox.signal
 
 class MetroidSignalsDelegate
@@ -101,22 +101,6 @@ class MetroidSignalsDelegate
       @componentInspectorMachine = new ComponentInspectorMachine(
         componentInspector: componentInspector
       )
-
-  # dataToPreload: ->
-  #   # TODO move this data to AdventureState?
-  #   {
-  #     world_map: "data/world_map.json"
-  #   }
-  #
-  # graphicsToPreload: ->
-  #   assets = AdventureState.graphicsToPreload()
-  #   assets = assets.concat(TitleState.graphicsToPreload())
-  #   assets
-  #
-  # soundsToPreload: ->
-  #   sounds = AdventureState.soundsToPreload()
-  #   sounds = _.merge(sounds, TitleState.soundsToPreload())
-  #   sounds
 
   assetsToPreload: ->
     TheGame.assetsToPreload().toJS()

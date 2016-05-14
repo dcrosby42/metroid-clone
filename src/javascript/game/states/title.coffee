@@ -1,81 +1,48 @@
-GameState = require './game_state'
-
-# _ = require 'lodash'
 Immutable = require 'immutable'
-
-# RoomsLevel = require './rooms_level'
-
-# Enemies = require './entity/enemies'
-# EnemiesSystems =  require './entity/enemies/systems'
-
-Common = require '../entity/components'
-# Samus = require './entity/samus'
-# SamusSystems =  require './entity/samus/systems'
-
-# General = require './entity/general'
-CommonSystems = require '../systems'
-
+{Map,List} = Immutable
+Comps = require '../entity/components'
+Systems = require '../systems'
 EcsMachine = require '../../ecs/ecs_machine'
 EntityStore = require '../../ecs/entity_store'
 
-class TitleState extends GameState
-  @StateName: 'title'
+# class Effect
+#   constructor: (@kind) ->
+#
+# Effect.none = new Effect("None")
 
-  @graphicsToPreload: ->
-    assets = []
-    assets.push("images/main_title.png")
-    assets
+ecsMachine = new EcsMachine(systems: [
+  Systems.timer_system
+  Systems.death_timer_system
+  Systems.animation_timer_system
+  Systems.sound_system
+  Systems.controller_system
+  Systems.main_title_system
+])
 
-  @soundsToPreload: ->
-    songs = ["main_title"]
-    effects = []
-    assets = {}
-    for song in songs
-      assets[song] = "sounds/music/#{song}.mp3"
-    for effect in effects
-      assets[effect] = "sounds/fx/#{effect}.wav"
-    assets
+estore = new EntityStore()
 
-  constructor: (machine) ->
-    super(machine)
+# (Model, Effects Action)
+exports.initialState = () ->
+  estore.createEntity [
+    Immutable.Map(
+      type: 'main_title'
+      state: 'begin'
+    )
+    Comps.Controller.merge
+      inputName: 'player1'
+  ]
+  return estore.takeSnapshot()
 
-    @ecsMachine = new EcsMachine
-      systems: [
-        CommonSystems.timer_system
-        CommonSystems.death_timer_system
-        CommonSystems.animation_timer_system
-        CommonSystems.sound_system
-        CommonSystems.controller_system
-        CommonSystems.main_title_system
-      ]
+# Action -> Model -> (Model, Effects Action)
+exports.update = (gameState,input) ->
+  estore.restoreSnapshot(gameState)
+  
+  events = ecsMachine.update3(estore,input)
 
-  enter: (data=null) ->
-    @estore = new EntityStore()
-    window.estore = @estore
+  return [estore.takeSnapshot(), events]
 
-    @estore.createEntity [
-      Immutable.Map(
-        type: 'main_title'
-        state: 'begin'
-      )
-      Common.Controller.merge
-        inputName: 'player1'
-    ]
-
-  gameData: ->
-    @estore.takeSnapshot()
-
-
-  update: (gameInput) ->
-    [@estore,events,systemLog] = @ecsMachine.update(@estore,gameInput)
-    events.forEach (e) => @["event_#{e.get('name')}"]?(e)
-    systemLog
-
-  event_StartNewGame: (e) ->
-    @transition 'adventure'
-
-
-  event_ContinueGame: (e) ->
-    @transition 'adventure'
-
-module.exports = TitleState
+exports.assetsToPreload = ->
+  return List([
+    Map(type: 'graphic', name: 'images/main_title.png', file: 'images/main_title.png')
+    Map(type: 'sound', name: 'main_title', file: 'sounds/music/main_title.mp3')
+  ])

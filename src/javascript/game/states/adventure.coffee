@@ -1,223 +1,190 @@
 Immutable = require 'immutable'
-GameState = require './game_state'
+{Map,List}=Immutable
+Comps = require '../entity/components'
+
+Systems = require '../systems'
+SamusSystems =  require '../entity/samus/systems'
+EnemiesSystems =  require '../entity/enemies/systems'
+DoorSystems =  require '../entity/doors/systems'
 
 EcsMachine = require '../../ecs/ecs_machine'
 EntityStore = require '../../ecs/entity_store'
-FilterExpander = require '../../ecs/filter_expander'
-SystemAccumulator = require '../../ecs/system_accumulator'
-
-Enemies = require '../entity/enemies'
-EnemiesSystems =  require '../entity/enemies/systems'
-
-Doors = require '../entity/doors'
-DoorSystems =  require '../entity/doors/systems'
 
 Samus = require '../entity/samus'
-SamusSystems =  require '../entity/samus/systems'
+Enemies =  require '../entity/enemies'
+Doors =  require '../entity/doors'
+General =  require '../entity/general'
+Items =  require '../entity/items'
 
-General = require '../entity/general'
-CommonSystems = require '../systems'
+ecsMachine = new EcsMachine(systems: [
+    Systems.timer_system
+    Systems.death_timer_system
+    Systems.animation_timer_system
+    Systems.sound_system
+    Systems.controller_system
 
-Common = require '../entity/components'
+    SamusSystems.samus_motion
 
-Items = require '../entity/items'
+    SamusSystems.suit_control
+    SamusSystems.suit_velocity
+    SamusSystems.suit_sound
 
-bgMusicFilter = FilterExpander.expandFilterGroups(['background_music'])
+    SamusSystems.morph_ball_control
+    SamusSystems.morph_ball_velocity
 
-class AdventureState extends GameState
-  @StateName: 'adventure'
+    SamusSystems.samus_morph
 
-  constructor: (machine) ->
-    super(machine)
-    @ecsMachine = new EcsMachine(systems: @_getSystems())
-    @estore = new EntityStore()
+    EnemiesSystems.zoomer_controller_system
+    SamusSystems.short_beam
 
-  enter: (data=null) ->
-    @estore = new EntityStore()
-    if data == null
-      @_populateEntities(@estore)
-    else
-      @estore.restoreSnapshot(data)
+    Systems.samus_pickup_system
+    Systems.samus_powerup_system
+    Systems.samus_hit_system
+    Systems.samus_damage_system
+    Systems.samus_death_system
 
-    @_stopMusic()
-    @_startMusic()
+    SamusSystems.samus_hud
+    EnemiesSystems.zoomer_crawl_system
+    Systems.gravity_system
+    Systems.map_physics_system
+    Systems.map_ghost_system
+    Systems.bullet_enemy_system
+    DoorSystems.bullet_door_system
+    Systems.bullet_system
+    Systems.enemy_hit_system
+    EnemiesSystems.skree_action
+    SamusSystems.suit_animation
+    SamusSystems.morph_ball_animation
+    Systems.viewport_shuttle_system
+    Systems.viewport_system
+    Systems.viewport_room_system
+    Systems.room_system
+    DoorSystems.door_gel_system
+])
 
-  update: (gameInput) ->
-    [@estore,events,systemLog] = @ecsMachine.update(@estore,gameInput)
-    events.forEach (e) => @["event_#{e.get('name')}"]?(e)
-    systemLog
+estore = new EntityStore()
 
-  gameData: ->
-    @estore.takeSnapshot()
-
-  event_Killed: (e) ->
-    @transition 'title'
-
-  event_PowerupTouched: (e) ->
-    @_stopMusic()
-    @transition 'powerup', @gameData()
-
-  _startMusic: ->
-    @estore.createEntity General.factory.createComponents(
-      'backgroundMusic',
-      music: 'brinstar'
-      volume: 1
-      timeLimit: '110*1000'
-    )
-    
-  _stopMusic: ->
-    @estore.search(bgMusicFilter).forEach (comps) =>
-      eid = comps.getIn(['background_music','eid'])
-      @estore.destroyEntity(eid)
-
-  _populateEntities: (estore) ->
-    # RNG
-    estore.createEntity [
-      Common.Name.merge(name: 'mainRandom')
-      Common.Rng.merge(state: 123123123)
-    ]
-    
-    # Samus start position
-    # brinstarEntrance = {x:648,y:191}
-    brinstarEntrance = {x:648,y:191+(13*240)}
-    shaft1 = {x:2600, y:3247}
-    # nearMorphBall = {x:400,y:175}
-    # onBridge = {x:1466,y:95}
-    # samusStartPos = brinstarEntrance
-    samusStartPos = shaft1
-    # samusStartPos = nearMorphBall
-    # samusStartPos = onBridge
-    estore.createEntity Samus.factory.createComponents('samus', position: samusStartPos)
+exports.initialState = () ->
+  # RNG
+  estore.createEntity [
+    Comps.Name.merge(name: 'mainRandom')
+    Comps.Rng.merge(state: 123123123)
+  ]
+  
+  # Samus start position
+  # brinstarEntrance = {x:648,y:191}
+  brinstarEntrance = {x:648,y:191+(13*240)}
+  shaft1 = {x:2600, y:3247}
+  # nearMorphBall = {x:400,y:175}
+  # onBridge = {x:1466,y:95}
+  # samusStartPos = brinstarEntrance
+  samusStartPos = shaft1
+  # samusStartPos = nearMorphBall
+  # samusStartPos = onBridge
+  estore.createEntity Samus.factory.createComponents('samus', position: samusStartPos)
 
 
-    # HUD
-    estore.createEntity [
-      Common.Hud
-      Common.Name.merge(name: 'hud')
-      Common.Label.merge
-        content: "E.?"
-        layer: 'overlay'
-      Common.Position.merge
-        x: 25
-        y: 35
-    ]
+  # HUD
+  estore.createEntity [
+    Comps.Hud
+    Comps.Name.merge(name: 'hud')
+    Comps.Label.merge
+      content: "E.?"
+      layer: 'overlay'
+    Comps.Position.merge
+      x: 25
+      y: 35
+  ]
 
-    # XXX testing powerup placement
-    # estore.createEntity Items.factory.createComponents('maru_mari', position: {x:360,y:152})
-   
-    # Items
-    estore.createEntity [
-      Common.Name.merge(name: 'Collected Items')
-      Immutable.Map
-        type: 'collected_items'
-        itemIds: Immutable.Set()
-    ]
+  # XXX testing powerup placement
+  # estore.createEntity Items.factory.createComponents('maru_mari', position: {x:360,y:152})
+ 
+  # Items
+  estore.createEntity [
+    Comps.Name.merge(name: 'Collected Items')
+    Immutable.Map
+      type: 'collected_items'
+      itemIds: Immutable.Set()
+  ]
 
-    # Viewport
-    vpConf = Immutable.fromJS
-      width:          16*16       # 16 tiles wide, 16 px per tile
-      height:         15*16       # 15 tiles high, 16 px per tile
-      trackBufLeft:   (8*18) - 16
-      trackBufRight:  (8*18) + 16
-      trackBufTop:    (8*18) - 16
-      trackBufBottom: (8*18) + 16
-    viewport = Common.Viewport.set('config', vpConf)
-    estore.createEntity [
-      Common.Name.merge(name: "Viewport")
-      viewport
-      Common.Position
-    ]
+  # Viewport
+  vpConf = Immutable.fromJS
+    width:          16*16       # 16 tiles wide, 16 px per tile
+    height:         15*16       # 15 tiles high, 16 px per tile
+    trackBufLeft:   (8*18) - 16
+    trackBufRight:  (8*18) + 16
+    trackBufTop:    (8*18) - 16
+    trackBufBottom: (8*18) + 16
+  viewport = Comps.Viewport.set('config', vpConf)
+  estore.createEntity [
+    Comps.Name.merge(name: "Viewport")
+    viewport
+    Comps.Position
+  ]
 
-    # RoomWatcher
-    estore.createEntity [
-      Common.Name.merge(name: "Room Watcher")
-      Immutable.Map
-        type: 'room_watcher'
-        roomIds: Immutable.Set()
-    ]
+  # RoomWatcher
+  estore.createEntity [
+    Comps.Name.merge(name: "Room Watcher")
+    Immutable.Map
+      type: 'room_watcher'
+      roomIds: Immutable.Set()
+  ]
+  return estore.takeSnapshot()
 
-  _getSystems: ->
-    sys = new SystemAccumulator()
-    sys.add CommonSystems, 'timer_system'
-    sys.add CommonSystems, 'death_timer_system'
-    sys.add CommonSystems, 'animation_timer_system'
-    sys.add CommonSystems, 'sound_system'
-    sys.add CommonSystems, 'controller_system'
+exports.update = (gameState,input) ->
+  estore.restoreSnapshot(gameState)
+  events = ecsMachine.update3(estore,input)
+  return [estore.takeSnapshot(), events]
 
-    sys.add SamusSystems, 'samus_motion'
+exports.assetsToPreload = ->
+  graphics = List(
+    [ "images/brinstar.json" ]
+      .concat(Samus.assets)
+      .concat(Enemies.assets)
+      .concat(General.assets)
+      .concat(Doors.assets)
+      .concat(Items.assets))
+    .map (fname) ->
+      Map(type:'graphic', name:fname, file:fname)
 
-    sys.add SamusSystems, 'suit_control'
-    sys.add SamusSystems, 'suit_velocity'
-    sys.add SamusSystems, 'suit_sound'
+  songs = [
+    "brinstar"
+    "powerup_jingle"
+  ]
+  effects = [
+    "enemy_die1"
+    "health"
+    "step"
+    "step2"
+    "jump"
+    "samus_hurt"
+    "samus_die"
+    "short_beam"
+    "door"
+    "samus_morphball"
+  ]
 
-    sys.add SamusSystems, 'morph_ball_control'
-    sys.add SamusSystems, 'morph_ball_velocity'
+  sounds = List()
+  for song in songs
+    sounds = sounds.push Map(type: 'sound', name: song, file: "sounds/music/#{song}.mp3")
+  for effect in effects
+    sounds = sounds.push Map(type: 'sound', name: effect, file: "sounds/fx/#{effect}.wav")
+  
+  data = List([
+    Map(type: 'data', name: 'world_map', file: 'data/world_map.json')
+  ])
 
-    sys.add SamusSystems, 'samus_morph'
+  return graphics
+    .concat(sounds)
+    .concat(data)
 
-    sys.add EnemiesSystems, 'zoomer_controller_system'
-    sys.add SamusSystems, 'short_beam'
+exports.spriteConfigs = ->
+  cfgs = {}
+  _.merge cfgs, Samus.sprites
+  _.merge cfgs, Enemies.sprites
+  _.merge cfgs, General.sprites
+  _.merge cfgs, Doors.sprites
+  _.merge cfgs, Items.sprites
+  cfgs
+  
 
-    sys.add CommonSystems, 'samus_pickup_system'
-    sys.add CommonSystems, 'samus_powerup_system'
-    sys.add CommonSystems, 'samus_hit_system'
-    sys.add CommonSystems, 'samus_damage_system'
-    sys.add CommonSystems, 'samus_death_system'
-
-    sys.add SamusSystems, 'samus_hud'
-    sys.add EnemiesSystems, 'zoomer_crawl_system'
-    sys.add CommonSystems, 'gravity_system'
-    sys.add CommonSystems, 'map_physics_system'
-    sys.add CommonSystems, 'map_ghost_system'
-    sys.add CommonSystems, 'bullet_enemy_system'
-    sys.add DoorSystems, 'bullet_door_system'
-    sys.add CommonSystems, 'bullet_system'
-    sys.add CommonSystems, 'enemy_hit_system'
-    sys.add EnemiesSystems, 'skree_action'
-    sys.add SamusSystems, 'suit_animation'
-    sys.add SamusSystems, 'morph_ball_animation'
-    sys.add CommonSystems, 'viewport_shuttle_system'
-    sys.add CommonSystems, 'viewport_system'
-    sys.add CommonSystems, 'viewport_room_system'
-    sys.add CommonSystems, 'room_system'
-    # sys.add CommonSystems, 'samus_room_system'
-    sys.add DoorSystems, 'door_gel_system'
-    return sys.systems
-
-  @graphicsToPreload: ->
-    assets = [
-      "images/brinstar.json"
-    ]
-    assets = assets.concat(Samus.assets)
-    assets = assets.concat(Enemies.assets)
-    assets = assets.concat(General.assets)
-    assets = assets.concat(Doors.assets)
-    assets = assets.concat(Items.assets)
-
-    assets
-
-  @soundsToPreload: ->
-    songs = [
-      "brinstar"
-      "powerup_jingle"
-    ]
-    effects = [
-      "enemy_die1"
-      "health"
-      "step"
-      "step2"
-      "jump"
-      "samus_hurt"
-      "samus_die"
-      "short_beam"
-      "door"
-      "samus_morphball"
-    ]
-    assets = {}
-    for song in songs
-      assets[song] = "sounds/music/#{song}.mp3"
-    for effect in effects
-      assets[effect] = "sounds/fx/#{effect}.wav"
-    assets
-
-module.exports = AdventureState
