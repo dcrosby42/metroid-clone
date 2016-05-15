@@ -50,6 +50,10 @@ module.exports = {
     src: src + "/htdocs/**",
     dest: dest
   },
+  mapConvert: {
+    src: src + "/javascript/game/map/world_map.csv",
+    dest: dest + "/data"
+  },
   browserify: {
     // Enable source maps
     debug: true,
