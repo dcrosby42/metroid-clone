@@ -36,9 +36,6 @@ class PowerupCollectionSystem extends StateMachineSystem
 
   installPowerupAction: ->
     powerup = @getComp 'powerup'
-    item = @getEntityComponent(@eid(), powerup.get('powerupType'))
-
-    
     # Grab the relevant powerup item (assumed to have the ctype matching powerupType field)
     item = @getEntityComponent(@eid(), powerup.get('powerupType'))
     heroEid = @getProp 'collected', 'byEid'

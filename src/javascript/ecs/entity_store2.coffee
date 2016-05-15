@@ -1,15 +1,30 @@
 Immutable = require 'immutable'
 {Map,List} = Immutable
 
-SeqGen = require './id_sequence_generator'
 ObjectStore = require '../search/object_store'
 ObjectStoreSearch = require '../search/object_store_search'
+FilterExpander = require './filter_expander'
+
+SeqGen = require './id_sequence_generator'
 
 EidIndex     = List(['eid'])
 TypeIndex    = List(['type'])
 EidTypeIndex = List(['eid','type'])
 
+Indices = List [
+  EidIndex
+  TypeIndex
+  EidTypeIndex
+]
+
+CleanSlate = Map
+  compStore: ObjectStore.create('cid',Indices)
+  eidGen:    SeqGen.new('e', 0)
+  cidGen:    SeqGen.new('c', 0)
+
+
 class ReadOnlyEntityStore
+  
   constructor: (@state) ->
 
   takeSnapshot: ->
@@ -38,28 +53,14 @@ class ReadOnlyEntityStore
     ObjectStoreSearch.search @state.get('compStore'), filters
 
 class EntityStore extends ReadOnlyEntityStore
-
-  @emptyCompStore: ->
-    ObjectStore.create('cid', List [
-      TypeIndex,
-      EidIndex,
-      EidTypeIndex
-    ])
-
-  @initialState: Map
-      compStore: @emptyCompStore()
-      eidGen:    SeqGen.new('e', 0)
-      cidGen:    SeqGen.new('c', 0)
-
-  @indices: List [
-    EidIndex
-    TypeIndex
-    EidTypeIndex
-  ]
+  @expandSearch: (filterGroups) ->
+    FilterExpander
+      .expandFilterGroups(filterGroups)
+      .map (filter) ->
+        ObjectStoreSearch.convertMatchesToIndexLookups(filter, Indices)
 
   constructor: (state=null) ->
-    state ?= EntityStore.initialState
-    super(state)
+    super(state or CleanSlate)
 
   #
   # WRITE
@@ -115,6 +116,7 @@ class EntityStore extends ReadOnlyEntityStore
     @_update('cidGen', SeqGen.next)
       .getIn(['cidGen','value'])
 
+EntityStore.Indices = Indices
 module.exports = EntityStore
 
 

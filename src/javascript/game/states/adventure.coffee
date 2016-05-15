@@ -78,7 +78,7 @@ exports.initialState = () ->
   # nearMorphBall = {x:400,y:175}
   # onBridge = {x:1466,y:95}
   # samusStartPos = brinstarEntrance
-  samusStartPos = shaft1
+  samusStartPos = brinstarEntrance
   # samusStartPos = nearMorphBall
   # samusStartPos = onBridge
   estore.createEntity Samus.factory.createComponents('samus', position: samusStartPos)

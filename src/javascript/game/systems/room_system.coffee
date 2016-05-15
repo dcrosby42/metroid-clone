@@ -5,8 +5,8 @@ Items = require '../entity/items'
 Doors = require '../entity/doors'
 MapConfig = require '../map/config'
 
-FilterExpander = require '../../ecs/filter_expander'
-enemyFilter = FilterExpander.expandFilterGroups(['enemy','position'])
+EntityStore = require '../../ecs/entity_store'
+enemyFilter = EntityStore.expandSearch(['enemy','position'])
 
 class RoomSystem extends StateMachineSystem
   @Subscribe: [

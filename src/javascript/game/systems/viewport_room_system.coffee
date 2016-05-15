@@ -3,9 +3,9 @@ BaseSystem = require '../../ecs/base_system'
 MathUtils = require '../../utils/math_utils'
 
 Common = require '../entity/components'
-FilterExpander = require '../../ecs/filter_expander'
+EntityStore = require '../../ecs/entity_store'
 
-roomFilter = FilterExpander.expandFilterGroups(['room'])
+roomFilter = EntityStore.expandSearch(['room'])
 
 class ViewportRoomSystem extends BaseSystem
   @Subscribe: [

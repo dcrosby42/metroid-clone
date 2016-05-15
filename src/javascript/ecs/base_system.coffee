@@ -1,5 +1,6 @@
 Immutable = require 'immutable'
-FilterExpander = require './filter_expander'
+# FilterExpander = require './filter_expander'
+EntityStore = require './entity_store'
 
 addToResult = (result,key,obj) ->
   if result?
@@ -19,7 +20,8 @@ class BaseSystem
     @_singleton_instance ||= new @()
 
   constructor: ->
-    @componentFilters = FilterExpander.expandFilterGroups(@constructor.Subscribe)
+    # @componentFilters = FilterExpander.expandFilterGroups(@constructor.Subscribe)
+    @componentFilters = EntityStore.expandSearch(@constructor.Subscribe)
     @_primaryComponentName = @constructor.ImplyEntity || @constructor.Subscribe[0]
 
   update: (estore, input, eventBucket, systemLog) ->

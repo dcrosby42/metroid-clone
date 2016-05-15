@@ -1,43 +1,23 @@
-GameState = require './game_state'
-Common = require '../entity/components'
-General = require '../entity/general'
 EcsMachine = require '../../ecs/ecs_machine'
 EntityStore = require '../../ecs/entity_store'
-
-CommonSystems = require '../systems'
+Systems = require '../systems'
 SamusSystems = require '../entity/samus/systems'
-SystemAccumulator = require '../../ecs/system_accumulator'
 
-class PowerupState extends GameState
-  @StateName: 'powerup'
+ecsMachine = new EcsMachine(systems: [
+  Systems.timer_system
+  Systems.sound_system
+  SamusSystems.powerup_collection
+])
 
-  constructor: (machine) ->
-    super(machine)
-    @estore = new EntityStore()
-    @ecsMachine = new EcsMachine(systems: @_getSystems())
+estore = new EntityStore()
 
-  enter: (data=null,args=null) ->
-    if !data?
-      throw new Error("PowerupState requires game data to be provided on transition")
+# exports.initialState = ->
 
-    @estore.restoreSnapshot(data)
+exports.update = (gameState,input) ->
+  estore.restoreSnapshot(gameState)
+  events = ecsMachine.update3(estore,input)
+  return [estore.takeSnapshot(), events]
 
-  update: (gameInput) ->
-    [@estore,events,systemLog] = @ecsMachine.update(@estore,gameInput)
-    events.forEach (e) =>
-      @["event_#{e.get('name')}"]?(e)
-    systemLog
+# exports.assetsToPreload = ->
 
-  gameData: ->
-    @estore.takeSnapshot()
-
-  event_PowerupInstalled: (e) ->
-    @transition 'adventure', @gameData()
-
-  _getSystems: ->
-    sys = new SystemAccumulator()
-    sys.add CommonSystems, 'timer_system'
-    sys.add SamusSystems, 'powerup_collection'
-    return sys.systems
-
-module.exports = PowerupState
+# exports.spriteConfigs = ->

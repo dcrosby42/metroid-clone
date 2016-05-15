@@ -1,5 +1,5 @@
 Immutable = require 'immutable'
-FilterExpander = require '../ecs/filter_expander'
+EntityStore = require '../ecs/entity_store'
 
 class ViewSystem
   @Subscribe: null
@@ -8,7 +8,7 @@ class ViewSystem
 
   constructor: ->
     if @constructor.Subscribe?
-      @componentFilters = FilterExpander.expandFilterGroups(@constructor.Subscribe)
+      @componentFilters = EntityStore.expandSearch(@constructor.Subscribe)
       # console.log "ViewSystem @Subscribe=#{@constructor.Subscribe} -> ",@componentFilters.toJS()
 
   searchComponents: ->

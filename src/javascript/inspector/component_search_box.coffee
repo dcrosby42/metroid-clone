@@ -3,7 +3,7 @@ Immutable = require 'immutable'
 List = Immutable.List
 Map = Immutable.Map
 
-FilterExpander = require '../ecs/filter_expander'
+EntityStore = require '../ecs/entity_store'
 
 ComponentSearchBox = React.createClass
   displayName: 'ComponentSearchBox'
@@ -20,7 +20,7 @@ ComponentSearchBox = React.createClass
 
   searchClicked: (e) ->
     filters = Immutable.fromJS(JSON.parse(@state.queryString))
-    @state.expandedFilters = FilterExpander.expandFilterGroups(filters)
+    @state.expandedFilters = EntityStore.expandSearch(filters)
     console.log "ComponentSearchBox: expanded filters: ",@state.expandedFilters.toJS()
     if @props.entityStore?
       @state.searchResults = @props.entityStore.search @state.expandedFilters

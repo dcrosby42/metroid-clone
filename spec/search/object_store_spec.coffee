@@ -50,14 +50,14 @@ describe "ObjectStore", ->
 
     describe "indexObjects", ->
       it "given objects and a prop names, group the objects' identKeys by the given prop name", ->
-        idx = ObjectStore.indexObjects(dishList.values(), ['base'], 'dishId')
+        idx = ObjectStore.indexObjects(dishList.values(), List(['base']), 'dishId')
         expectIs idx, imm(
           rice: immset('i2','i3')
           noodles: immset('i1','i4')
         )
 
       it "given objects and a list of n prop names, return an n-ary keyed map of key-paths to their identifier keys", ->
-        idx = ObjectStore.indexObjects(books.values(), ['cat','genre'], 'bookId')
+        idx = ObjectStore.indexObjects(books.values(), List(['cat','genre']), 'bookId')
         expectIs idx, imm(
           fiction:
             scifi: immset('b1','b4')

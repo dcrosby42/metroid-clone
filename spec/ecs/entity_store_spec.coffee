@@ -248,7 +248,7 @@ describe 'The new EntityStore', ->
       tektikeBox       = findEntityComponent estore, tektike, 'type','bbox'
 
 
-      expandedFilters = FilterExpander.expandFilterGroups(['character','bbox'])
+      expandedFilters = EntityStore.expandSearch(['character','bbox'])
       results = estore.search(expandedFilters)
       expectIs results.valueSeq(), imm [
         { character: linkCharacter, bbox: linkBox }
@@ -274,7 +274,7 @@ describe 'The new EntityStore', ->
       samus = findEntityComponent estore, samusEid, 'type','samus'
       controller = findEntityComponent estore, samusEid, 'type','controller'
 
-      expandedFilters = FilterExpander.expandFilterGroups(['samus','controller'])
+      expandedFilters = EntityStore.expandSearch(['samus','controller'])
       results = estore.search(expandedFilters)
       expectIs results.valueSeq(), Seq([
         Map(samus: samus, controller: controller)

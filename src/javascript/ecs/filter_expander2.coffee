@@ -2,15 +2,15 @@ Immutable = require 'immutable'
 Map = Immutable.Map
 List = Immutable.List
 
-ObjectStoreSearch = require '../search/object_store_search'
-EntityStore = require './entity_store2'
+# ObjectStoreSearch = require '../search/object_store_search'
+# EntityStore = require './entity_store2'
 
 isString = (x) -> (typeof x) == 'string'
 
 expandFilterGroups = (filterGroups) ->
   filterGroups = Immutable.fromJS(filterGroups)
   if List.isList(filterGroups.first())
-    expandedGroups = filterGroups.flatMap (gr) -> expandFilters(gr, prefixGroup: true)
+    filterGroups.flatMap (gr) -> expandFilters(gr, prefixGroup: true)
   else
     expandFilters filterGroups
 
@@ -21,8 +21,8 @@ expandFilters = (fs,opts=Map()) ->
   if opts.get('prefixGroup')
     filters = applyGroupPrefix(filters)
   filters = joinAll(filters, 'eid')
-  filters = filters.map (filter) ->
-    ObjectStoreSearch.convertMatchesToIndexLookups(filter, EntityStore.indices)
+  # filters = filters.map (filter) ->
+  #   ObjectStoreSearch.convertMatchesToIndexLookups(filter, EntityStore.Indices)
   filters
 
 expandFilter = (f) ->

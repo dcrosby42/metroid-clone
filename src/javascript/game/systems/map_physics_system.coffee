@@ -1,9 +1,9 @@
 AnchoredBox = require '../../utils/anchored_box'
 BaseSystem = require '../../ecs/base_system'
-FilterExpander = require '../../ecs/filter_expander'
+EntityStore = require '../../ecs/entity_store'
 
 # Things like doors are "map fixtures"
-fixtureFilter = FilterExpander.expandFilterGroups(['map_fixture', 'hit_box'])
+fixtureFilter = EntityStore.expandSearch(['map_fixture', 'hit_box'])
 
 class MapPhysicsSystem extends BaseSystem
   @Subscribe: [

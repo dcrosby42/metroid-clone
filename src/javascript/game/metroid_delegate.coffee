@@ -121,7 +121,6 @@ class MetroidSignalsDelegate
         y: 1
 
     spriteConfigs = TheGame.spriteConfigs()
-    window.spriteConfigs = spriteConfigs #XXX
     uiConfig = UIConfig.create
       worldMap: worldMap
       spriteConfigs: spriteConfigs
@@ -141,8 +140,6 @@ class MetroidSignalsDelegate
 
     dtEvents = @dtSignal
       .map((dt) -> Map(type:'Tick',dt:dt))
-
-    #XXX adminUIEvents = @adminUI.signal
 
     playerControlEvents = @player1KbController.merge(@player1GpController)
       .dropRepeats(Immutable.is)
