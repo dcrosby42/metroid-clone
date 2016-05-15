@@ -43,10 +43,12 @@ exports.update = (input,admin) ->
   admin = if admin.get('paused')
     admin.set('replay_back',
       ctrl.get('time_walk_backPressed') or
-      ctrl.get('time_scroll_back')
+      ctrl.get('time_scroll_back') or
+      uiEvents.get('time_walk_back')
     ).set('replay_forward',
       ctrl.get('time_walk_forwardPressed') or
-      ctrl.get('time_scroll_forward')
+      ctrl.get('time_scroll_forward') or
+      uiEvents.get('time_walk_forward')
     ).set('step_forward',
       ctrl.get('step_forwardPressed')
     )

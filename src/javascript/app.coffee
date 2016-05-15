@@ -49,7 +49,7 @@ jquery ->
     componentInspector = Inspector.createComponentInspector
       mountNode: inspectorHolder
       inspectorConfig: inspectorConfig
-  devUIDiv = jquery('#dev-ui')
+  devUIDiv = jquery('#dev-ui')[0]
   # devUI = DevUI.create(devUIDiv)
   # adminUI = AdminUI.create(devUIDiv)
   systemLogInspector = null

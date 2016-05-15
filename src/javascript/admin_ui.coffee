@@ -1,39 +1,39 @@
-$ = require 'jquery'
+React = require 'react'
 Immutable = require 'immutable'
-{Map}=Immutable
+RollingHistory = require './utils/state_history2'
+{Map,List} = Immutable
 
-class AdminUI
-  constructor: (@postOffice, @element) ->
-    mbox = @postOffice.newMailbox()
-    address = mbox.address
-    @signal = mbox.signal
+{div,span,table,tbody,td,tr} = React.DOM
 
-    @meta = [
-      ['#paused', 'toggle_pause', 'paused']
-      ['#muted', 'toggle_mute', 'muted']
-      ['#draw-hitboxes', 'toggle_bounding_box', 'draw-hitboxes']
-    ]
+createToggleLi = (address,text,action,state) ->
+  attrs = {}
+  attrs.className = "enabled" if state
+  attrs.onClick = ->
+    address.send Map(type: 'AdminUIEvent', name: action)
+  React.createElement('li', attrs, text)
 
-    _subscribeClick = (sel, evtName) =>
-      @element.find(sel).on 'click', (e) ->
-        address.send Map(type: 'AdminUIEvent', name: evtName)
-        e.preventDefault()
+AdminUI = React.createClass
+  displayName: 'AdminUI'
+  getInitialState: ->
+    {}
 
-    for [sel,evtName,_] in @meta
-      _subscribeClick(sel,evtName)
+  render: ->
+    h = @props.history
+    div {},
+      React.createElement 'ul', {className: 'toggles'},
+        createToggleLi @props.address, "[P]ause", 'toggle_pause', @props.admin.get('paused')
+        createToggleLi @props.address, "[M]ute", 'toggle_mute', @props.admin.get('muted')
+        createToggleLi @props.address, "[D]raw Hit Boxes", 'toggle_bounding_box', @props.admin.get('drawHitBoxes')
+        React.createElement('li',{onClick: => @props.address.send(Map(type:'AdminUIEvent',name:'time_walk_back'))}, '<<')
+        React.createElement('li',{onClick: => @props.address.send(Map(type:'AdminUIEvent',name:'time_walk_forward'))}, '>>')
 
+      div {}, "#{h.get('index')+1} of #{RollingHistory.size(h)} frames"
 
-  update: (adminState) ->
-    state = Immutable.Map()
-      .set('paused', adminState.get('paused'))
-      .set('muted', adminState.get('muted'))
-      .set('draw-hitboxes', adminState.get('drawHitBoxes'))
-
-    return if state.equals(@state)
-    @state = state
-    # console.log "DevUI updated state to",@state.toJS()
-    for [sel,_,key] in @meta
-      @element.find(sel).toggleClass('enabled',@state.get(key))
-
-module.exports = AdminUI
+# view : (Address, admin) -> ReactElement
+exports.view = (address, s) ->
+  React.createElement(AdminUI, {
+    address: address
+    admin: s.admin
+    history: s.history
+  })
   

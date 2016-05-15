@@ -1,3 +1,4 @@
+React = require 'react'
 Immutable = require 'immutable'
 {Map,List}=Immutable
 
@@ -28,9 +29,9 @@ AdminUI = require '../admin_ui'
 #
 
 # Per time slice, bundle ticks and controller events into an "input" structure
-inputBundler = (din) ->
+inputBundler = (defaultInput) ->
   (events) ->
-    input = din
+    input = defaultInput
     for e in events
       switch e.get('type')
         when 'Tick'
@@ -54,7 +55,7 @@ createGamepadSignal = (postOffice, mappings) ->
   return mbox.signal
 
 class MetroidSignalsDelegate
-  constructor: ({componentInspector,adminUIDiv,@systemLogInspector}) ->
+  constructor: ({componentInspector,@adminUIDiv,@systemLogInspector}) ->
 
     @postOffice = new PostOffice()
 
@@ -92,7 +93,10 @@ class MetroidSignalsDelegate
       "l": 'right'
       "space": 'step_forward'
 
-    @adminUI = new AdminUI(@postOffice,adminUIDiv)
+    @adminUIMailbox = @postOffice.newMailbox()
+    @adminUIAddress = @adminUIMailbox.address
+    @adminUISignal = @adminUIMailbox.signal
+    # @adminUI = new AdminUI(@adminUIAddress,@adminUIDiv)
 
     @dtMailbox = @postOffice.newMailbox()
     @dtSignal = @dtMailbox.signal
@@ -138,7 +142,7 @@ class MetroidSignalsDelegate
     dtEvents = @dtSignal
       .map((dt) -> Map(type:'Tick',dt:dt))
 
-    adminUIEvents = @adminUI.signal
+    #XXX adminUIEvents = @adminUI.signal
 
     playerControlEvents = @player1KbController.merge(@player1GpController)
       .dropRepeats(Immutable.is)
@@ -159,8 +163,8 @@ class MetroidSignalsDelegate
     input = dtEvents
       .merge(playerControlEvents)
       .merge(adminControlEvents)
-      .merge(adminUIEvents)      # all dt, keybd and gp events into one stream
-      .sliceOn(dtEvents)         # batch up the events in an array and release on arrival of dt event
+      .merge(@adminUISignal)     # all dt, keybd and gp events into one stream
+      .sliceOn(dtEvents)         # batch up the events in an array and release that array on arrival of dt event
       .map(inputBundler(defaultInput)) # compile the 'input' structure (controller states, dt and static game data)
 
 
@@ -239,13 +243,19 @@ class MetroidSignalsDelegate
     # Funnel game state into a global var for Console debugging:
     innerGameState.subscribe (s) -> window.gamestate = s
     
-    # Funnel admin state into viewMachine's uiState debug stuff, and to the adminUI
+    # Funnel admin state into viewMachine's uiState debug stuff
     adminState.subscribe (s) =>
-      @adminUI.update(s)
       @viewMachine.setMute s.get('muted')
       @viewMachine.setDrawHitBoxes s.get('drawHitBoxes')
 
-
+    adminState
+      .mapN(
+        ((admin,history) -> {admin:admin,history:history})
+        history).sampleOn(history).subscribe (s) =>
+    #   .sampleOn(adminState)
+    #   .subscribe (s) =>
+          adminView = AdminUI.view(@adminUIAddress,s)
+          React.render(adminView, @adminUIDiv)
 
   update: (dt) ->
     @dtMailbox.address.send dt
