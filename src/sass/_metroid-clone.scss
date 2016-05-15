@@ -128,3 +128,20 @@ table.map {
   }
 
 }
+
+.history-controls {
+  .control {
+    width: 100px;
+    font-size: 10pt;
+    padding: 5px;
+    cursor: pointer;
+  }
+}
+.history-meter {
+  border: 1px solid gray;
+  height: 10px;
+  .history-meter-fill {
+    background-color: #333;
+    height: 10px;
+  }
+}
