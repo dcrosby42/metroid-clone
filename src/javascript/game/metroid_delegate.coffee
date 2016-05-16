@@ -251,7 +251,7 @@ class MetroidDelegate
     adminState
       .mapN(
         ((admin,history) -> {admin:admin,history:history})
-        history).sampleOn(history).subscribe (s) =>
+        history).sampleOn(adminState).subscribe (s) =>
     #   .sampleOn(adminState)
     #   .subscribe (s) =>
           adminView = AdminUI.view(@adminUIAddress,s)

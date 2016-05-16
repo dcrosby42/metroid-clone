@@ -6,17 +6,28 @@ class ViewMachine
 
   update: (gameState) ->
     @estore.restoreSnapshot(gameState)
+    @_callSystems()
+    # @systems.forEach (system) =>
+    #   system.update(@uiState, @estore, @uiConfig)
+
+  _callSystems: ->
     @systems.forEach (system) =>
       system.update(@uiState, @estore, @uiConfig)
 
   setMute: (m) ->
-    if m
+    return if m == @_mute
+    @_mute = m
+    if @_mute
       @uiState.muteAudio()
     else
       @uiState.unmuteAudio()
+    @_callSystems()
 
   setDrawHitBoxes: (d) ->
-    @uiState.drawHitBoxes = d
+    return if d == @_dhb
+    @_dhb = d
+    @uiState.drawHitBoxes = @_dhb
+    @_callSystems()
 
 
 
