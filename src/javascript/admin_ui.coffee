@@ -1,6 +1,5 @@
 React = require 'react'
-# Slider = require('react-rangeslider')
-# ReactSlider = require('react-slider')
+classnames = require 'classnames'
 
 Immutable = require 'immutable'
 RollingHistory = require './utils/state_history2'
@@ -9,11 +8,8 @@ RollingHistory = require './utils/state_history2'
 {div,span,table,tbody,td,tr} = React.DOM
 
 createToggleLi = (address,text,action,state) ->
-  attrs = {}
-  attrs.className = "enabled" if state
-  attrs.onClick = ->
-    address.send Map(type: 'AdminUIEvent', name: action)
-  React.createElement('li', attrs, text)
+  sendAction = -> address.send Map(type: 'AdminUIEvent', name: action)
+  React.createElement('li', {onClick: sendAction, className:classnames(enabled:state)}, text)
 
 AdminUI = React.createClass
   displayName: 'AdminUI'
