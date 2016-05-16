@@ -18,7 +18,6 @@ class SamusPickupSystem extends BaseSystem
 
     if samusBox.overlaps(pickupBox)
       pickup = @getComp('pickup')
-      console.log "Pickup", pickup.toJS()
       item = pickup.get('item')
       value = pickup.get('value')
       switch item

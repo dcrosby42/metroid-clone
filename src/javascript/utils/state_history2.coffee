@@ -34,6 +34,12 @@ StateHistory =
       i = 0 if i < 0
       i
 
+  indexTo: (sh,i) ->
+    i = 0 if i < 0
+    max = sh.get('data').size-1
+    i = max if i > max
+    sh.set('index',i)
+
   indexToStart: (sh) ->
     sh.set('index',0)
 

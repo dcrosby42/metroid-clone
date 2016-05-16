@@ -41,7 +41,7 @@ exports.update = (input,admin) ->
     admin = toggleProp(admin,'drawHitBoxes')
 
   admin = if admin.get('paused')
-    admin.set('replay_back',
+    admin = admin.set('replay_back',
       ctrl.get('time_walk_backPressed') or
       ctrl.get('time_scroll_back') or
       uiEvents.get('time_walk_back')
@@ -52,10 +52,16 @@ exports.update = (input,admin) ->
     ).set('step_forward',
       ctrl.get('step_forwardPressed')
     )
+    admin = if uiEvents.has('history_jump_to')
+      admin.set('history_jump_to', uiEvents.get('history_jump_to'))
+    else
+      admin.delete('history_jump_to')
+    admin
   else
     admin
       .set('replay_back',false)
       .set('replay_forward',false)
       .set('step_forward',false)
+      .delete('history_jump_to')
 
   return admin

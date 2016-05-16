@@ -41,9 +41,12 @@ exports.update = (state,input) ->
 
   state = state.set('gameState',s1)
   events.forEach (e) ->
+    console.log "TheGame.update handling #{e.get('name')} event:",e.toJS()
     state = switch e.get('name')
       when 'StartNewGame'
-        initialState('adventure')
+        s = initialState('adventure')
+        console.log "  initialState('adventure') =>",s.toJS()
+        s
       when 'ContinueGame'
         pretendContinue(initialState('adventure'))
 

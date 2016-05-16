@@ -26,8 +26,6 @@ AdminUI = React.createClass
         createToggleLi @props.address, "[P]ause", 'toggle_pause', @props.admin.get('paused')
         createToggleLi @props.address, "[M]ute", 'toggle_mute', @props.admin.get('muted')
         createToggleLi @props.address, "[D]raw Hit Boxes", 'toggle_bounding_box', @props.admin.get('drawHitBoxes')
-        React.createElement('li',{onClick: => @props.address.send(Map(type:'AdminUIEvent',name:'time_walk_back'))}, '<<')
-        React.createElement('li',{onClick: => @props.address.send(Map(type:'AdminUIEvent',name:'time_walk_forward'))}, '>>')
 
       React.createElement HistorySlider, address: @props.address, history: @props.history
 
@@ -36,19 +34,16 @@ HistorySlider = React.createClass
   getInitialState: ->
     { value: 0 }
 
-  handleChange: (value) ->
-    console.log "SLIDER", value
+  handleSlider: (e) ->
+    value = parseInt(e.target.value)
+    @props.address.send(Map(type:'AdminUIEvent',name:'history_jump_to',data:value))
+
+
+  handleClick: (e) ->
+    console.log "AdminUI.handleClick",e
 
   render: ->
     h = @props.history
-    # React.createElement(Slider, {
-      # orientation: 'horizontal'
-      # value: 0 #@state.value
-      # onChange: @handleChange
-      # min: 1
-      # max: 300
-      # step: 1
-    # })
     fullSize = h.get('maxSize')
     currSize = RollingHistory.size(h)
     currLoc = h.get('index') + 1
@@ -59,9 +54,10 @@ HistorySlider = React.createClass
         React.createElement('span',{className:'control',onClick: => @props.address.send(Map(type:'AdminUIEvent',name:'toggle_pause'))}, 'Pause')
         React.createElement('span',{className:'control',onClick: => @props.address.send(Map(type:'AdminUIEvent',name:'time_walk_forward'))}, 'Forward')
       ]
-      div {className: "history-meter", style: {width:"#{currSize}px"}}, [
-        div {className: "history-meter-fill", style: {width:"#{currLoc}px"}}, []
-      ]
+      # div {className: "history-meter", onMouseMove: @handleMouseMove, onMouseDown: @handleMouseDown, onMouseUp: @handleMouseUp, style: {width:"#{currSize}px"}}, [
+      #   div {className: "history-meter-fill", style: {width:"#{currLoc}px"}}, []
+      # ]
+      React.createElement('input',{type:'range',style:{width:"#{currSize}px"},min:1,max:currSize, value:currLoc, onChange:@handleSlider})
     ]
       
 

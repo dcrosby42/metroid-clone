@@ -62,9 +62,9 @@ ecsMachine = new EcsMachine(systems: [
     DoorSystems.door_gel_system
 ])
 
-estore = new EntityStore()
 
 exports.initialState = () ->
+  estore = new EntityStore()
   # RNG
   estore.createEntity [
     Comps.Name.merge(name: 'mainRandom')
@@ -132,7 +132,8 @@ exports.initialState = () ->
   return estore.takeSnapshot()
 
 exports.update = (gameState,input) ->
-  estore.restoreSnapshot(gameState)
+  estore = new EntityStore(gameState)
+  # estore.restoreSnapshot(gameState)
   events = ecsMachine.update3(estore,input)
   return [estore.takeSnapshot(), events]
 

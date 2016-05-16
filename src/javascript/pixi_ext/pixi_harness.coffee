@@ -46,7 +46,8 @@ class PixiHarness
 
   start: ->
     @_loadAssets =>
-      console.log "Assets loaded."
+      # console.log "Assets loaded."
+      console.log "PixiHarness: initializing delegate"
       @delegate.initialize @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight, @zoom, @soundController, @dataFileLoader.data
       @stopWatch.start()
       requestAnimationFrame (t) => @update(t)

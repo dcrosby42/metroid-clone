@@ -41,7 +41,7 @@ inputBundler = (defaultInput) ->
           input = input.setIn(['controllers' ,e.get('tag'), e.get('control')], isDown)
         when 'AdminUIEvent'
           input = input.update 'adminUIEvents', (es) ->
-            (es or Map()).set(e.get('name'),true)
+            (es or Map()).set(e.get('name'),if e.has('data') then e.get('data') else true)
     input
 
 createKeyboardSignal = (postOffice, mappings) ->
@@ -54,7 +54,7 @@ createGamepadSignal = (postOffice, mappings) ->
   GamepadController.bindButtons mbox.address, mappings
   return mbox.signal
 
-class MetroidSignalsDelegate
+class MetroidDelegate
   constructor: ({componentInspector,@adminUIDiv,@systemLogInspector}) ->
 
     @postOffice = new PostOffice()
@@ -169,7 +169,6 @@ class MetroidSignalsDelegate
     adminState = input
       .foldp(Admin.update, Admin.initialState())
 
-
     #
     # Rollingistory: a value object containing a rolling list of game state values...
     # AND a pointer to where we are in that history.  (Often, current() is the most recently
@@ -202,6 +201,8 @@ class MetroidSignalsDelegate
           history = RollingHistory.back(history)     #  ...by stepping back in time (min=oldest retained gamestate)
         else if admin.get('replay_forward')
           history = RollingHistory.forward(history)  #  ...by stepping forward in time (max=newest gamestate)
+        else if jumpTo = admin.get('history_jump_to')
+          history = RollingHistory.indexTo(history,jumpTo)
         else if admin.get('step_forward')
           input1 = input.set('dt', admin.get('stepDt'))
           # (if we're currently in the past, step_forward starts a new timeline... wipe the previous future)
@@ -222,6 +223,8 @@ class MetroidSignalsDelegate
       .dropRepeats(Immutable.is)  # (if a new history is identical to the prior history, send no change)
 
     innerGameState = history.map (h) ->
+      if !RollingHistory.current(h)
+        console.log "FRICK!",h.toJS()
       RollingHistory.current(h).get('gameState')
 
     #
@@ -272,4 +275,4 @@ createViewSystems = ->
   ]
   List(systemDefs).map (s) -> s.createInstance()
 
-module.exports = MetroidSignalsDelegate
+module.exports = MetroidDelegate
