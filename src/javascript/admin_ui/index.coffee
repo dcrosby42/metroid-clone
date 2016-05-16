@@ -8,8 +8,10 @@ EntityStore = require '../ecs/entity_store'
 
 AdminToggles = require './admin_toggles'
 HistorySlider = require './history_slider'
-Inspector = require './inspector'
+EntityInspector = require './entity_inspector'
 SystemLogUI = require './system_log_ui'
+Folder = require './folder'
+
 
 AdminUI = React.createClass
   displayName: 'AdminUI'
@@ -18,20 +20,19 @@ AdminUI = React.createClass
 
   render: ->
     div {},
-      React.createElement AdminToggles, address: @props.address, admin: @props.admin
-      React.createElement HistorySlider, address: @props.address, history: @props.history
-      Inspector.createEntityInspector @props.history
-      createSystemLogUI @props.history
-
-createSystemLogUI = (h) ->
-  slog = RollingHistory.current(h).get('systemLogs')
-  # console.log slog
-  React.createElement SystemLogUI, systemLog: Immutable.fromJS(slog)
+      Folder.create {title:'Dev Controls',startOpen:true}, => [
+        React.createElement AdminToggles, address: @props.address, admin: @props.admin
+        React.createElement HistorySlider, address: @props.address, history: @props.history
+      ]
+      Folder.create {title:'Entities'}, =>
+        EntityInspector.create(@props.history)
+      Folder.create {title:'Entities (Alt)'}, =>
+        EntityInspector.create2(@props.history)
+      Folder.create {title:'Systems'}, =>
+        SystemLogUI.create(@props.history)
 
 # view : (Address, admin) -> ReactElement
 exports.view = (address, s) ->
-  # window['$S'] = s
-  # window.RollingHistory = RollingHistory
   React.createElement(AdminUI, {
     address: address
     admin: s.admin

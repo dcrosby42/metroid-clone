@@ -97,16 +97,9 @@ class MetroidDelegate
     @adminUIMailbox = @postOffice.newMailbox()
     @adminUIAddress = @adminUIMailbox.address
     @adminUISignal = @adminUIMailbox.signal
-    # @adminUI = new AdminUI(@adminUIAddress,@adminUIDiv)
 
-    @dtMailbox = @postOffice.newMailbox()
-    @dtSignal = @dtMailbox.signal
-
-    # XXX
-    # if componentInspector?
-    #   @componentInspectorMachine = new ComponentInspectorMachine(
-    #     componentInspector: componentInspector
-    #   )
+    @timeMailbox = @postOffice.newMailbox()
+    @time = @timeMailbox.signal
 
   assetsToPreload: ->
     TheGame.assetsToPreload().toJS()
@@ -140,14 +133,13 @@ class MetroidDelegate
     # SIGNALLY STUFF 
     #
 
-    dtEvents = @dtSignal
-      .map((dt) -> Map(type:'Tick',dt:dt))
+    tick = @time.map((dt) -> Map(type:'Tick',dt:dt))
 
-    playerControlEvents = @player1KbController.merge(@player1GpController)
+    playerControl = @player1KbController.merge(@player1GpController)
       .dropRepeats(Immutable.is)
       .map((event) -> event.set('tag','player1'))
 
-    adminControlEvents = @adminController
+    adminControl = @adminController
       .dropRepeats(Immutable.is)
       .map((event) -> event.set('tag','admin'))
 
@@ -159,11 +151,11 @@ class MetroidDelegate
       static:
         worldMap: worldMap
 
-    input = dtEvents
-      .merge(playerControlEvents)
-      .merge(adminControlEvents)
+    input = tick
+      .merge(playerControl)
+      .merge(adminControl)
       .merge(@adminUISignal)     # all dt, keybd and gp events into one stream
-      .sliceOn(dtEvents)         # batch up the events in an array and release that array on arrival of dt event
+      .sliceOn(tick)             # batch up the events in an array and release that array on arrival of dt event
       .map(inputBundler(defaultInput)) # compile the 'input' structure (controller states, dt and static game data)
 
 
@@ -204,7 +196,7 @@ class MetroidDelegate
         else if admin.get('replay_forward')
           history = RollingHistory.forward(history)  #  ...by stepping forward in time (max=newest gamestate)
         else if jumpTo = admin.get('history_jump_to')
-          history = RollingHistory.indexTo(history,jumpTo)
+          history = RollingHistory.indexTo(history,jumpTo) # ...by jumping to a specific frame of history
         else if admin.get('step_forward')
           input1 = input.set('dt', admin.get('stepDt'))
           # (if we're currently in the past, step_forward starts a new timeline... wipe the previous future)
@@ -261,7 +253,7 @@ class MetroidDelegate
           ReactDOM.render(adminView, @adminUIDiv)
 
   update: (dt) ->
-    @dtMailbox.address.send dt
+    @timeMailbox.address.send dt
     @postOffice.sync()
 
 

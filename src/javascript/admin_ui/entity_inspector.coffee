@@ -1,16 +1,16 @@
 React = require 'react'
 Immutable = require 'immutable'
-Map = Immutable.Map
-List = Immutable.List
-Set = Immutable.Set
-imm = Immutable.fromJS
+{Map,List,Set} = Immutable
+
+RollingHistory = require '../utils/rolling_history'
+EntityStore = require '../ecs/entity_store'
 
 {div,span,table,tbody,td,tr} = React.DOM
 
 ComponentSearchBox = require './component_search_box'
 
-InspectorUI = React.createClass
-  displayName: 'InspectorUI'
+EntityInspector = React.createClass
+  displayName: 'EntityInspector'
   getInitialState: ->
     {
       foldOpen: false
@@ -22,35 +22,25 @@ InspectorUI = React.createClass
       { foldOpen: !prev.foldOpen }
 
   render: ->
-    folder = if @state.foldOpen
-        span {className: 'inspector-folder open'}, "- "
-      else
-        span {className: 'inspector-folder closed'}, "+ "
-
-    header = div {className: "inspector-header", onClick: @headerClicked}, folder, "Entity Inspector"
-
-    views = []
-    if @state.foldOpen
-      countComps = (sum,comps) -> sum + comps.size
-      views.push(
-        div {className: 'entitiesSummary'},
-          "#{@props.entities.size} entities, #{@props.entities.valueSeq().reduce(countComps, 0)} components"
-      )
-      views.push(
-        div {className: 'entities'},
-          @props.entities.map((components,eid) =>
-            React.createElement Entity, {eid: eid, components: components, key: eid, inspectorConfig: @props.inspectorConfig}
-          ).toList()
-      )
-
-    if @state.showSearchBox
-      views.push(
-        React.createElement ComponentSearchBox, {key: 'component-search-box', entityStore: @props.entityStore}
-      )
-
+    # folder = if @state.foldOpen
+    #     span {className: 'inspector-folder open'}, "- "
+    #   else
+    #     span {className: 'inspector-folder closed'}, "+ "
+    #
+    # header = div {className: "inspector-header", onClick: @headerClicked}, folder, "Entity Inspector"
+    countComps = (sum,comps) -> sum + comps.size
     div {className: 'component-inspector'},
-      header,
-      views
+      div {className: 'entitiesSummary'}, "#{@props.entities.size} entities, #{@props.entities.valueSeq().reduce(countComps, 0)} components"
+      div {className: 'entities'},
+        @props.entities.map((components,eid) =>
+          React.createElement Entity, {eid: eid, components: components, key: eid, inspectorConfig: @props.inspectorConfig}
+        ).toList()
+
+    # if @state.showSearchBox
+    #   views.push(
+    #     React.createElement ComponentSearchBox, {key: 'component-search-box', entityStore: @props.entityStore}
+    #   )
+
 
 Entity = React.createClass
   displayName: 'Entity'
@@ -154,6 +144,44 @@ PropValueCell = React.createClass
   render: ->
     val = if @props.value? then @props.value.toString() else "?"
     td {className:'prop-value'}, val
+
+Structures = require './structures'
+
+EntityInspector.create2 = (h) ->
+  gameState = RollingHistory.current(h).get('gameState')
+  estore = new EntityStore(gameState)
+
+  entities = Map()
+  estore.forEachComponent (comp) ->
+    eid = comp.get('eid')
+    cid = comp.get('cid')
+    entities = entities.setIn([eid,cid], comp)
+  
+  React.createElement Structures.Map, data: entities
+
+EntityInspector.create  = (h) ->
+  gameState = RollingHistory.current(h).get('gameState')
+  estore = new EntityStore(gameState)
+
+  entities = Map()
+  estore.forEachComponent (comp) ->
+    eid = comp.get('eid')
+    cid = comp.get('cid')
+    entities = entities.setIn([eid,cid], comp)
+
+  React.createElement EntityInspector,
+    entities: entities
+    entityStore: estore
+    inspectorConfig: Immutable.fromJS
+      componentLayout:
+        samus:      { open: false }
+        skree:      { open: false }
+        zoomer:      { open: false }
+        hit_box:      { open: false }
+        controller: { open: false }
+        animation:     { open: false }
+        velocity:   { open: false }
+        position:   { open: false }
     
-module.exports = InspectorUI
+module.exports = EntityInspector
 

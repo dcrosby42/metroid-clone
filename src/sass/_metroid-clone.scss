@@ -66,6 +66,19 @@ table.map {
   }
 }
 
+.folder-container {
+  .folder-header {
+    cursor: pointer;
+    color: #ccc;
+    background-color: #333;
+    font-weight: bold;
+    border: solid 1px #ccc;
+
+    .folder-control {
+    }
+  }
+}
+
 .component-inspector {
   .inspector-header {
     cursor: pointer;
