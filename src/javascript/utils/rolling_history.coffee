@@ -1,7 +1,7 @@
 Immutable = require 'immutable'
 {Map,List} = Immutable
 
-StateHistory =
+RollingHistory =
   empty: Map
     maxSize: (5*60),
     data: List(),
@@ -54,4 +54,4 @@ StateHistory =
     sh.set('data',d)
 
     
-module.exports = StateHistory
+module.exports = RollingHistory

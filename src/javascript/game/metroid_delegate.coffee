@@ -17,7 +17,7 @@ ComponentInspectorMachine = require '../view/component_inspector_machine'
 
 WorldMap = require './map/world_map'
 
-RollingHistory = require '../utils/state_history2'
+RollingHistory = require '../utils/rolling_history'
 
 TheGame = require './states/the_game'
 Admin = require './states/admin'
