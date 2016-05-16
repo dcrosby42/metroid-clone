@@ -9,14 +9,10 @@ ecsMachine = new EcsMachine(systems: [
   SamusSystems.powerup_collection
 ])
 
-estore = new EntityStore()
-
 # exports.initialState = ->
 
 exports.update = (gameState,input) ->
-  estore.restoreSnapshot(gameState)
-  events = ecsMachine.update3(estore,input)
-  return [estore.takeSnapshot(), events]
+  ecsMachine.update(gameState,input)
 
 # exports.assetsToPreload = ->
 

@@ -132,10 +132,7 @@ exports.initialState = () ->
   return estore.takeSnapshot()
 
 exports.update = (gameState,input) ->
-  estore = new EntityStore(gameState)
-  # estore.restoreSnapshot(gameState)
-  events = ecsMachine.update3(estore,input)
-  return [estore.takeSnapshot(), events]
+  ecsMachine.update(gameState,input)
 
 exports.assetsToPreload = ->
   graphics = List(

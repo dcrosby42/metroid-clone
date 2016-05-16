@@ -19,10 +19,10 @@ ecsMachine = new EcsMachine(systems: [
   Systems.main_title_system
 ])
 
-estore = new EntityStore()
 
 # (Model, Effects Action)
 exports.initialState = () ->
+  estore = new EntityStore()
   estore.createEntity [
     Immutable.Map(
       type: 'main_title'
@@ -35,11 +35,7 @@ exports.initialState = () ->
 
 # Action -> Model -> (Model, Effects Action)
 exports.update = (gameState,input) ->
-  estore.restoreSnapshot(gameState)
-  
-  events = ecsMachine.update3(estore,input)
-
-  return [estore.takeSnapshot(), events]
+  ecsMachine.update(gameState,input)
 
 exports.assetsToPreload = ->
   return List([

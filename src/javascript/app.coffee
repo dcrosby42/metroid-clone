@@ -19,37 +19,14 @@ Profiler.useAjaxReporter()
 
 BigScreen = require './vendor/bigscreen_wrapper'
 
-Inspector = require './inspector'
-SystemLogInspector = require './system_log_inspector'
 
 window.ObjectStore = require './search/object_store'
 window.ObjectStoreSearch = require './search/object_store'
 
-inspectorConfig = Immutable.fromJS
-  componentLayout:
-    samus:      { open: false }
-    skree:      { open: false }
-    zoomer:      { open: false }
-    hit_box:      { open: false }
-    controller: { open: false }
-    animation:     { open: false }
-    velocity:   { open: false }
-    position:   { open: false }
-
 jquery ->
-  inspectorHolder = jquery('#inspector-holder')[0]
-  componentInspector = null
-  if Config.inspector.enabled
-    componentInspector = Inspector.createComponentInspector
-      mountNode: inspectorHolder
-      inspectorConfig: inspectorConfig
   devUIDiv = jquery('#dev-ui')[0]
-  systemLogInspector = null
-  if Config.system_log.enabled
-    systemLogInspector = SystemLogInspector.create
-      mountNode: jquery('#system-log-holder')[0]
 
-  del = new MetroidDelegate(componentInspector: componentInspector, adminUIDiv: devUIDiv, systemLogInspector: systemLogInspector)
+  del = new MetroidDelegate(adminUIDiv: devUIDiv)
 
   gameHolder = jquery('#game-holder')[0]
   harness = new PixiHarness
@@ -58,11 +35,9 @@ jquery ->
     # width: 640
     # height: 480
     # zoom: 1.0
-
     width: 640
     height: 480
     zoom: 2.0
-
     # width: 320
     # height: 240
     # zoom: 1.0

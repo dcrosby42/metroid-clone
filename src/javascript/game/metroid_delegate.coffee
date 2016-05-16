@@ -1,4 +1,5 @@
 React = require 'react'
+ReactDOM = require 'react-dom'
 Immutable = require 'immutable'
 {Map,List}=Immutable
 
@@ -55,7 +56,7 @@ createGamepadSignal = (postOffice, mappings) ->
   return mbox.signal
 
 class MetroidDelegate
-  constructor: ({componentInspector,@adminUIDiv,@systemLogInspector}) ->
+  constructor: ({componentInspector,@adminUIDiv}) ->
 
     @postOffice = new PostOffice()
 
@@ -101,10 +102,11 @@ class MetroidDelegate
     @dtMailbox = @postOffice.newMailbox()
     @dtSignal = @dtMailbox.signal
 
-    if componentInspector?
-      @componentInspectorMachine = new ComponentInspectorMachine(
-        componentInspector: componentInspector
-      )
+    # XXX
+    # if componentInspector?
+    #   @componentInspectorMachine = new ComponentInspectorMachine(
+    #     componentInspector: componentInspector
+    #   )
 
   assetsToPreload: ->
     TheGame.assetsToPreload().toJS()
@@ -223,8 +225,6 @@ class MetroidDelegate
       .dropRepeats(Immutable.is)  # (if a new history is identical to the prior history, send no change)
 
     innerGameState = history.map (h) ->
-      if !RollingHistory.current(h)
-        console.log "FRICK!",h.toJS()
       RollingHistory.current(h).get('gameState')
 
     #
@@ -235,27 +235,30 @@ class MetroidDelegate
     innerGameState.subscribe (s) =>
       @viewMachine.update(s)
 
+    # XXX
     # Funnel game updates into the component inspector:
-    if @componentInspectorMachine?
-      innerGameState.subscribe (s) =>
-        @componentInspectorMachine.update s
+    # if @componentInspectorMachine?
+    #   innerGameState.subscribe (s) =>
+    #     @componentInspectorMachine.update s
 
+    # XXX
     # Funnel game state into a global var for Console debugging:
-    innerGameState.subscribe (s) -> window.gamestate = s
+    # innerGameState.subscribe (s) -> window.gamestate = s
     
     # Funnel admin state into viewMachine's uiState debug stuff
     adminState.subscribe (s) =>
       @viewMachine.setMute s.get('muted')
       @viewMachine.setDrawHitBoxes s.get('drawHitBoxes')
 
+    # bundle admin state and history together and feed it into the admin ui
     adminState
       .mapN(
         ((admin,history) -> {admin:admin,history:history})
-        history).sampleOn(adminState).subscribe (s) =>
-    #   .sampleOn(adminState)
-    #   .subscribe (s) =>
+        history)
+      .sampleOn(adminState)
+      .subscribe (s) =>
           adminView = AdminUI.view(@adminUIAddress,s)
-          React.render(adminView, @adminUIDiv)
+          ReactDOM.render(adminView, @adminUIDiv)
 
   update: (dt) ->
     @dtMailbox.address.send dt

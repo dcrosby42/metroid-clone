@@ -29,7 +29,11 @@ modes = {
 }
 
 initialState = (mode) ->
-  Map(mode: mode, gameState: modes[mode].initialState())
+  Map(
+    mode: mode,
+    gameState: modes[mode].initialState(),
+    systemLogs: null
+  )
 
 exports.initialState = () -> initialState('title')
 
@@ -37,9 +41,12 @@ exports.initialState = () -> initialState('title')
 exports.update = (state,input) ->
   s = state.get('gameState')
   mode = modes[state.get('mode')]
-  [s1,events] = mode.update(s, input)
+  [s1,events,systemLogs] = mode.update(s, input)
 
-  state = state.set('gameState',s1)
+  state = state
+    .set('gameState',s1)
+    .set('systemLogs',systemLogs)
+
   events.forEach (e) ->
     console.log "TheGame.update handling #{e.get('name')} event:",e.toJS()
     state = switch e.get('name')

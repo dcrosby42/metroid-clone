@@ -11,12 +11,14 @@ class EcsMachine
     @eventBucket = new EventBucket()
     @estore = new EntityStore()
 
-  update3: (estore, input) ->
-    [_,events,systemLogs] = @update(estore,input)
-    return events
+  # update3: (estore, input) ->
+  #   [events,_syslogs] = @update(estore,input)
+  #   return events
 
-  update: (estore, input) ->
+  update: (gameState, input) ->
     @eventBucket.reset()
+    @estore.restoreSnapshot(gameState)
+
     systemLogs = if Config.system_log.enabled
       {}
     else
@@ -27,20 +29,22 @@ class EcsMachine
       if systemLogs?
         systemLog = {}
         systemLogs[system.constructor.name] = systemLog
-      system.update(estore, input, @eventBucket, systemLog)
+      system.update(@estore, input, @eventBucket, systemLog)
 
-    return [estore,@eventBucket.globalEvents,systemLogs]
+    gameState1 = @estore.takeSnapshot()
 
-  update2: (state, input) ->
-    @eventBucket.reset()
-    @estore.restoreSnapshot(state)
+    return [gameState1,@eventBucket.globalEvents,systemLogs]
 
-    @systems.forEach (system) =>
-      system.update(@estore, input, @eventBucket)
-
-    events = @eventBucket.globalEvents
-    state1 = @estore.takeSnapshot()
-    return [state1, events]
+  # update2: (state, input) ->
+  #   @eventBucket.reset()
+  #   @estore.restoreSnapshot(state)
+  #
+  #   @systems.forEach (system) =>
+  #     system.update(@estore, input, @eventBucket)
+  #
+  #   events = @eventBucket.globalEvents
+  #   state1 = @estore.takeSnapshot()
+  #   return [state1, events]
 
 module.exports = EcsMachine
 

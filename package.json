@@ -78,6 +78,7 @@
     "microtime": "^2.0.0",
     "mousetrap": "~1.4.6",
     "pixi.js": "~2.2.0",
-    "react": "~0.13.2"
+    "react": "15.0.2",
+    "react-dom": "^15.0.2"
   }
 }
