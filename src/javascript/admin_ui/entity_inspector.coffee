@@ -1,6 +1,6 @@
 React = require 'react'
 Immutable = require 'immutable'
-{Map,List,Set} = Immutable
+{OrderedMap,Map,List,Set} = Immutable
 
 RollingHistory = require '../utils/rolling_history'
 EntityStore = require '../ecs/entity_store'
@@ -147,8 +147,7 @@ PropValueCell = React.createClass
 
 Structures = require './structures'
 
-EntityInspector.create2 = (h) ->
-  gameState = RollingHistory.current(h).get('gameState')
+collectEntitiesFromState = (gameState) ->
   estore = new EntityStore(gameState)
 
   entities = Map()
@@ -157,17 +156,49 @@ EntityInspector.create2 = (h) ->
     cid = comp.get('cid')
     entities = entities.setIn([eid,cid], comp)
   
+  [entities,estore]
+
+sortEntityMap = (em) ->
+  em.sortBy((_,key) -> parseInt(key[1..-1]))
+
+
+EntityInspector.create = (h) ->
+  gameState = RollingHistory.current(h).get('gameState')
+
+  [entities,_] = collectEntitiesFromState(gameState)
+  entities = sortEntityMap(entities)
+
+  modify = (comps,eid) ->
+    newKey = eid
+    name = null
+    newComps = OrderedMap()
+    sortEntityMap(comps).forEach (comp,cid) ->
+      t = comp.get('type')
+      if t == 'name'
+        name = comp.get('name')
+
+      newComps = newComps.set(t,comp)
+
+
+    if name?
+       newKey = "#{name} (#{eid})"
+       # newKey = name
+    [newComps,newKey]
+
+  entities = entities.reduce (memo,comps,eid) ->
+    [newVal,newKey] = modify(comps,eid)
+    memo.set(newKey,newVal)
+  , OrderedMap()
+
   React.createElement Structures.Map, data: entities
 
-EntityInspector.create  = (h) ->
+
+EntityInspector.createOld  = (h) ->
   gameState = RollingHistory.current(h).get('gameState')
   estore = new EntityStore(gameState)
 
-  entities = Map()
-  estore.forEachComponent (comp) ->
-    eid = comp.get('eid')
-    cid = comp.get('cid')
-    entities = entities.setIn([eid,cid], comp)
+  [entities,estore] = collectEntitiesFromState(gameState)
+  entities = sortEntityMap(entities)
 
   React.createElement EntityInspector,
     entities: entities

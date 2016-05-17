@@ -13,6 +13,7 @@ SystemLogUI = React.createClass
 
 SystemLogUI.create = (history) ->
   slog = RollingHistory.current(history).get('systemLogs')
-  React.createElement SystemLogUI, systemLog: Immutable.fromJS(slog)
+  if slog?
+    React.createElement SystemLogUI, systemLog: slog
 
 module.exports = SystemLogUI

@@ -20,7 +20,7 @@ class EcsMachine
     @estore.restoreSnapshot(gameState)
 
     systemLogs = if Config.system_log.enabled
-      {}
+      Immutable.OrderedMap()
     else
       null
 
@@ -28,8 +28,9 @@ class EcsMachine
       systemLog = null
       if systemLogs?
         systemLog = {}
-        systemLogs[system.constructor.name] = systemLog
       system.update(@estore, input, @eventBucket, systemLog)
+      if systemLogs?
+        systemLogs = systemLogs.set(system.constructor.name, Immutable.fromJS(systemLog))
 
     gameState1 = @estore.takeSnapshot()
 

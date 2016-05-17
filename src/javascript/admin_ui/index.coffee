@@ -20,14 +20,14 @@ AdminUI = React.createClass
 
   render: ->
     div {},
-      Folder.create {title:'Dev Controls',startOpen:true}, => [
+      Folder.create {title:'Dev Controls',startOpen:false}, => [
         React.createElement AdminToggles, address: @props.address, admin: @props.admin
         React.createElement HistorySlider, address: @props.address, history: @props.history
       ]
       Folder.create {title:'Entities'}, =>
         EntityInspector.create(@props.history)
-      Folder.create {title:'Entities (Alt)'}, =>
-        EntityInspector.create2(@props.history)
+      # Folder.create {title:'Entities (Alt)'}, =>
+      #   EntityInspector.create2(@props.history)
       Folder.create {title:'Systems'}, =>
         SystemLogUI.create(@props.history)
 
