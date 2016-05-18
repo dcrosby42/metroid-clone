@@ -17,14 +17,23 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
 	"sourceSize": {"w":16,"h":16},
 	"pivot": {"x":0.5,"y":0.5}
+},
+"missile_container":
+{
+	"frame": {"x":38,"y":2,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16},
+	"pivot": {"x":0.5,"y":0.5}
 }},
 "meta": {
 	"app": "http://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "items.png",
 	"format": "RGBA8888",
-	"size": {"w":38,"h":20},
+	"size": {"w":56,"h":20},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:c60c8b93a84fb17d373eb4ceb8f27f7e:164d21260d04a3f4056da7275928544f:110e074689c9edd2c54833ce2e4d9270$"
+	"smartupdate": "$TexturePacker:SmartUpdate:dd99230174033516899f50760e4bb34b:a6839152b7c231b2702189831254bb2b:110e074689c9edd2c54833ce2e4d9270$"
 }
 }

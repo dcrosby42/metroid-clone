@@ -40,6 +40,14 @@ F.maru_mari = (args) ->
   args.powerup.type = 'maru_mari'
   F.powerup(args)
     .push(Items.MaruMari)
+
+F.missile_container = (args) ->
+  args ?= {}
+  args['powerup'] ?= {}
+  args.powerup.type = 'missile_container'
+  F.powerup(args)
+    .push(Items.MissileContainer)
+
   
 module.exports =
   createComponents: (entityType, args) ->

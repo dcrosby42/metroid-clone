@@ -10,6 +10,16 @@ sprites =
       anchor:
         x: 0.5
         y: 0.5
+
+  missile_container:
+    spriteSheet: "images/items.json"
+    states:
+      default:
+        frame: "missile_container"
+    props:
+      anchor:
+        x: 0.5
+        y: 0.5
 #
 #   health_drop:
 #     spriteSheet: "images/general.json"
