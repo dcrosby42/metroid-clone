@@ -1,6 +1,6 @@
 # Finder = require '../../src/javascript/search/immutable_object_finder'
 Immutable = require 'immutable'
-{Set,List} = Immutable
+{Map,Set,List} = Immutable
 ExpectHelpers = require '../helpers/expect_helpers'
 expectIs = ExpectHelpers.expectIs
 
@@ -116,6 +116,72 @@ describe "ObjectStore", ->
 
         res = ObjectStore.getIndexedObjects(store, null, imm(['this way','comes']))
         expectIs res, immset()
+
+    describe "removeObject()", ->
+      it "removes objects from the store", ->
+        # store = ObjectStore.addIndex(store, imm(['genre']))
+        store = ObjectStore.addObjects(store, books)
+        b1 = books.get(0)
+        b2 = books.get(1)
+        expectIs ObjectStore.getObject(store, 'b1'), b1
+        expectIs ObjectStore.getObject(store, 'b2'), b2
+
+        store = ObjectStore.removeObject(store, b1)
+        expect(ObjectStore.getObject(store, 'b1')).to.be.null
+
+        # b2 should still be there:
+        expectIs ObjectStore.getObject(store, 'b2'), b2
+
+        store = ObjectStore.removeObject(store, b2)
+        expect(ObjectStore.getObject(store, 'b2')).to.be.null
+
+      it "removes objects from their indices", ->
+        store = ObjectStore.addIndex(store, List(['genre']))
+        store = ObjectStore.addObjects(store, books)
+        b1 = books.get(0)
+        b4 = books.get(3)
+        
+        scifiBookIds = ObjectStore.getIndexedObjectIds(store, List(['genre']), List(['scifi']))
+        expectIs scifiBookIds, Set(['b1', 'b4'])
+
+        store = ObjectStore.removeObject(store, b1)
+        scifiBookIds = ObjectStore.getIndexedObjectIds(store, List(['genre']), List(['scifi']))
+        expectIs scifiBookIds, Set(['b4'])
+
+        store = ObjectStore.removeObject(store, b4)
+        scifiBookIds = ObjectStore.getIndexedObjectIds(store, List(['genre']), List(['scifi']))
+        expectIs scifiBookIds, Set()
+
+        expectIs store.getIn(['indexedData',List(['genre'])]).keySeq().toSet(), Set(['selfhelp','fantasy'])
+
+      it "removes objects from their multi-key indices", ->
+        store = ObjectStore.addIndex(store, List(['cat','genre']))
+        # console.log store.get('indexedData')
+        store = ObjectStore.addObjects(store, books)
+        # console.log store.get('indexedData')
+        b1 = books.get(0)
+        b2 = books.get(1)
+        b3 = books.get(2)
+        b4 = books.get(3)
+        #
+        selfHelpIds = ObjectStore.getIndexedObjectIds(store, List(['cat','genre']), List(['nonfiction','selfhelp']))
+        expectIs selfHelpIds, Set(['b2'])
+
+        store = ObjectStore.removeObject(store, b2)
+        # See the id is gone from the cache:
+        selfHelpIds = ObjectStore.getIndexedObjectIds(store, List(['cat','genre']), List(['nonfiction','selfhelp']))
+        expectIs selfHelpIds, Set()
+
+        # See the nonfiction index path was cleaned out:
+        expectIs store.getIn(['indexedData',List(['cat','genre'])]).keySeq().toSet(), Set(['fiction'])
+        # console.log store.get('indexedData')
+        store = ObjectStore.removeObject(store, b1)
+        # console.log store.get('indexedData')
+        store = ObjectStore.removeObject(store, b4)
+        # console.log store.get('indexedData')
+        store = ObjectStore.removeObject(store, b3)
+        # console.log store.get('indexedData')
+        expectIs store.getIn(['indexedData',List(['cat','genre'])]).keySeq().toSet(), Set()
 
     describe "hasIndex()", ->
       it 'tells you if an index is present or not', ->

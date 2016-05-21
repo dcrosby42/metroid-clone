@@ -122,7 +122,7 @@ EntityStore.TypeIndex = TypeIndex
 EntityStore.EidTypeIndex = EidTypeIndex
 
 module.exports = EntityStore
-window.EntityStore = EntityStore
+if window then window.EntityStore = EntityStore
 
 
 

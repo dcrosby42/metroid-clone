@@ -13,8 +13,6 @@ ViewSystems = require '../view/systems'
 UIState = require '../view/ui_state'
 UIConfig = require '../view/ui_config'
 
-ComponentInspectorMachine = require '../view/component_inspector_machine'
-
 WorldMap = require './map/world_map'
 
 RollingHistory = require '../utils/rolling_history'
@@ -220,12 +218,13 @@ class MetroidDelegate
     innerGameState = history.map (h) ->
       RollingHistory.current(h).get('gameState')
 
-    history.map (h) ->
-      window.$H = h
-      window.$S = RollingHistory.current(h)
-      window.$GS = window.$S.get('gameState')
-      window.$ES ?= new EntityStore()
-      window.$ES.restoreSnapshot($GS)
+    # TEMPORARY: plunk some global state out for console inspections:
+    # history.map (h) ->
+    #   window.$H = h
+    #   window.$S = RollingHistory.current(h)
+    #   window.$GS = window.$S.get('gameState')
+    #   window.$ES ?= new EntityStore()
+    #   window.$ES.restoreSnapshot($GS)
 
 
     #
@@ -236,40 +235,24 @@ class MetroidDelegate
     innerGameState.subscribe (s) =>
       @viewMachine.update(s)
 
-    # XXX
-    # Funnel game updates into the component inspector:
-    # if @componentInspectorMachine?
-    #   innerGameState.subscribe (s) =>
-    #     @componentInspectorMachine.update s
-
-    # XXX
-    # Funnel game state into a global var for Console debugging:
-    # innerGameState.subscribe (s) -> window.gamestate = s
-
     # (filter-down the admin state to be less volatile on dt and controllers n stuff)
     adminState2 = adminState
-      .map((s) -> s.delete('input'))
+      .map((s) -> s.delete('input').delete('controllers'))
       .dropRepeats(Immutable.is)
 
     # Funnel admin state into viewMachine's uiState debug stuff
-    adminState2
-      .map((s) -> s.delete('input').delete('controllers'))
-      .dropRepeats(Immutable.is)
-      .subscribe (s) =>
+    adminState2.subscribe (s) =>
         @viewMachine.setMute s.get('muted')
         @viewMachine.setDrawHitBoxes s.get('drawHitBoxes')
-        # console.log "Updateing muted and drawHitBoxes",s.get('muted'),s.get('drawHitBoxes')
 
     # bundle admin state and history together and feed it into the admin ui
     adminState2
       .mapN(
         ((admin,history,gameState) -> {admin:admin,history:history,gameState:gameState})
-          # console.log "squish",gameState.toJS()
         history
         innerGameState)
       .dropRepeats(Immutable.is)
       .subscribe (combined) =>
-          # console.log "Updating AdminUI"
           adminView = AdminUI.view(@adminUIAddress,combined)
           ReactDOM.render(adminView, @adminUIDiv)
 

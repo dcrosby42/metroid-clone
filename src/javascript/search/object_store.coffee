@@ -42,7 +42,22 @@ ObjectStore.removeObjectFromIndex = (indexStructure,indexKeys,object,objectId) -
       return
     x = iter.next()
 
-  indexStructure.updateIn keypath, EmptySet, (s) -> s.remove(objectId)
+  # Remove id from set:
+  ids = indexStructure.getIn(keypath)
+  ids = ids.remove(objectId)
+  if ids.isEmpty()
+    # Last member in the set! Remove this node from the index:
+    indexStructure = indexStructure.removeIn(keypath)
+    keypath.pop()
+    # Walk back up the path cleaning up as we go:
+    while keypath.length > 0 and indexStructure.getIn(keypath).isEmpty()
+      indexStructure = indexStructure.removeIn(keypath)
+      keypath.pop()
+  else
+    # no cleanup, just put the reduced set back:
+    indexStructure = indexStructure.setIn(keypath,ids)
+
+  return indexStructure
 
 ObjectStore.indexObjects = (objectsIter, indexKeys, identKey) ->
   indexStructure = EmptyMap
@@ -87,10 +102,6 @@ ObjectStore.removeObject = (store,object) ->
   store.update 'indexedData', (indexedData) ->
     indexedData.map (indexStructure, indexKeys) ->
       ObjectStore.removeObjectFromIndex(indexStructure, indexKeys, object, objectId)
-
-  # reindex(
-  #   store.update 'data', (data) -> data.delete(object.get(store.get('dataKey')))
-  # )
 
 # TODO: testme
 ObjectStore.updateObject = (store, object) ->

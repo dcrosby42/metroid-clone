@@ -38,13 +38,10 @@ groupComponentsByEntity = (gameState) ->
   compStore = gameState.get('compStore')
   data = compStore.get('data')
   indexed = compStore.getIn(['indexedData',EntityStore.EidTypeIndex])
-  # console.log indexed.toJS()
   sortEntityMap(indexed)
     .reduce (result,cidsByType,eid) ->
       compsByType = cidsByType.map((cidSet) -> cidSet.valueSeq().map((cid) -> data.get(cid)))
-      # console.log compsByType.toJS()
-      newKey = if compsByType.get('name')?
-        # console.log "  name",compsByType.get('name').get(0)
+      newKey = if compsByType.hasIn(['name',0])
         "#{compsByType.getIn(['name',0,'name'])} (#{eid})"
       else
         eid
