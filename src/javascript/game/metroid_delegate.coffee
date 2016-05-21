@@ -29,9 +29,9 @@ EntityStore = require '../ecs/entity_store'
 #
 
 # Per time slice, bundle ticks and controller events into an "input" structure
-inputBundler = (defaultInput) ->
+inputBundler = (baseInput) ->
   (events) ->
-    input = defaultInput
+    input = baseInput
     for e in events
       switch e.get('type')
         when 'Tick'
@@ -126,7 +126,42 @@ class MetroidDelegate
       uiConfig: uiConfig
       uiState: uiState
 
+    @defaultInput = Immutable.fromJS
+      controllers: {}
+      dt: 0
+      static:
+        worldMap: worldMap
 
+
+    # @_wireUp_production()
+    @_wireUp_development()
+
+  _wireUp_production: ->
+    tick = @time.map((dt) -> Map(type:'Tick',dt:dt))
+
+    playerControl = @player1KbController.merge(@player1GpController)
+      .dropRepeats(Immutable.is)
+      .map((event) -> event.set('tag','player1'))
+
+    input = tick
+      .merge(playerControl)
+      .sliceOn(tick)             # batch up the events in an array and release that array on arrival of dt event
+      .map(inputBundler(@defaultInput)) # compile the 'input' structure (controller states, dt and static game data)
+
+    updateGame = (input,s) ->
+      [s1,_] = TheGame.update(s,input)
+      return s1
+
+    state = input
+      .foldp(updateGame, TheGame.initialState())
+      .dropRepeats(Immutable.is)  # (if a new history is identical to the prior history, send no change)
+    
+    # Funnel game updates into the view:
+    state.subscribe (s) =>
+      @viewMachine.update(s.get('gameState'))
+
+
+  _wireUp_development: ->
     ########################################################################################
     #
     # SIGNALLY STUFF 
@@ -144,18 +179,12 @@ class MetroidDelegate
 
 
     # For each time slice, smush all events into a composite 'input' structure
-    defaultInput = Immutable.fromJS
-      controllers: {}
-      dt: 0
-      static:
-        worldMap: worldMap
-
     input = tick
       .merge(playerControl)
       .merge(adminControl)
       .merge(@adminUISignal)     # all dt, keybd and gp events into one stream
       .sliceOn(tick)             # batch up the events in an array and release that array on arrival of dt event
-      .map(inputBundler(defaultInput)) # compile the 'input' structure (controller states, dt and static game data)
+      .map(inputBundler(@defaultInput)) # compile the 'input' structure (controller states, dt and static game data)
 
 
     # The current state of the administrative controls: 
