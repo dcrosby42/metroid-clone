@@ -117,8 +117,12 @@ class EntityStore extends ReadOnlyEntityStore
       .getIn(['cidGen','value'])
 
 EntityStore.Indices = Indices
-module.exports = EntityStore
+EntityStore.EidIndex = EidIndex
+EntityStore.TypeIndex = TypeIndex
+EntityStore.EidTypeIndex = EidTypeIndex
 
+module.exports = EntityStore
+window.EntityStore = EntityStore
 
 
 

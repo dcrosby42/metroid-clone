@@ -11,6 +11,7 @@ HistorySlider = require './history_slider'
 EntityInspector = require './entity_inspector'
 SystemLogUI = require './system_log_ui'
 Folder = require './folder'
+Structures = require './structures'
 
 
 AdminUI = React.createClass
@@ -30,13 +31,12 @@ AdminUI = React.createClass
       #   EntityInspector.create2(@props.history)
       Folder.create {title:'Systems'}, =>
         SystemLogUI.create(@props.history)
+      Folder.create {title:'Full Game State'}, =>
+        React.createElement Structures.Map, className: 'gameState', data: @props.gameState
 
 # view : (Address, admin) -> ReactElement
 exports.view = (address, s) ->
-  React.createElement(AdminUI, {
-    address: address
-    admin: s.admin
-    history: s.history
-  })
+  s.address = address
+  React.createElement(AdminUI, s)
   
 

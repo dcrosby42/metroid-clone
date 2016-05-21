@@ -133,6 +133,8 @@ roomData[0x17] =
   ]
   items: [
     { col: 0x6, row: 0x9, type: 'maru_mari' }
+    { col: 0x7, row: 0x9, type: 'missile_container' }
+    { col: 0x8, row: 0x9, type: 'missile_container' }
   ]
 
 # Brinstar bridge (Kraid tower top)

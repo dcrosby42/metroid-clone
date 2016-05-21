@@ -7,212 +7,82 @@ EntityStore = require '../ecs/entity_store'
 
 {div,span,table,tbody,td,tr} = React.DOM
 
-ComponentSearchBox = require './component_search_box'
+# ComponentSearchBox = require './component_search_box'
 
-EntityInspector = React.createClass
-  displayName: 'EntityInspector'
-  getInitialState: ->
-    {
-      foldOpen: false
-    }
-
-  headerClicked: (e) ->
-    e.preventDefault()
-    @setState (prev) ->
-      { foldOpen: !prev.foldOpen }
-
-  render: ->
-    # folder = if @state.foldOpen
-    #     span {className: 'inspector-folder open'}, "- "
-    #   else
-    #     span {className: 'inspector-folder closed'}, "+ "
-    #
-    # header = div {className: "inspector-header", onClick: @headerClicked}, folder, "Entity Inspector"
-    countComps = (sum,comps) -> sum + comps.size
-    div {className: 'component-inspector'},
-      div {className: 'entitiesSummary'}, "#{@props.entities.size} entities, #{@props.entities.valueSeq().reduce(countComps, 0)} components"
-      div {className: 'entities'},
-        @props.entities.map((components,eid) =>
-          React.createElement Entity, {eid: eid, components: components, key: eid, inspectorConfig: @props.inspectorConfig}
-        ).toList()
-
-    # if @state.showSearchBox
-    #   views.push(
-    #     React.createElement ComponentSearchBox, {key: 'component-search-box', entityStore: @props.entityStore}
-    #   )
-
-
-Entity = React.createClass
-  displayName: 'Entity'
-  getInitialState: ->
-    {
-      foldOpen: false
-    }
-
-  headerClicked: (e) ->
-    e.preventDefault()
-    @setState (prev) ->
-      { foldOpen: !prev.foldOpen }
-
-  render: ->
-    folder = if @state.foldOpen
-        span {className: 'entity-folder open'}, "[ - ] "
-      else
-        span {className: 'entity-folder closed'}, "[ + ] "
-
-    nameLabel = "Entity #{@props.eid}"
-    @props.components.forEach (comp,cid) =>
-      if comp.get('type') == 'name'
-        nameLabel = comp.get('name') + " (#{@props.eid})"
-
-    header = div {className: "entity-header", onClick: @headerClicked},
-      folder
-      nameLabel
-
-    componentViews = if @state.foldOpen
-      @props.components.map((comp,cid) =>
-        React.createElement Component, {component: comp, key: cid, inspectorConfig: @props.inspectorConfig}
-      ).toList()
-    else
-      List()
-
-
-    div {className: 'entity'},
-      header,
-      componentViews
-
-
-ReservedComponentKeys = Set.of('type','eid','cid')
-
-Component = React.createClass
-  displayName: 'Component'
-  getInitialState: ->
-    layout = @props.inspectorConfig.getIn(['componentLayout',@props.component.get('type')])
-    open = if layout? then layout.get('open') else false
-    {
-      foldOpen: open
-    }
-
-  headerClicked: (e) ->
-    e.preventDefault()
-    @setState (prev) ->
-      { foldOpen: !prev.foldOpen }
-
-  render: ->
-    comp = @props.component
-
-    folder = if @state.foldOpen
-        span {className: 'component-folder open'}, "[ - ] "
-      else
-        span {className: 'component-folder closed'}, "[ + ] "
-
-    header = div {className: "component-header", onClick: @headerClicked},
-      folder
-      span {className: 'component-type'},
-        comp.get('type')
-      " "
-      span {className: 'component-cid'},
-        comp.get('cid')
-
-    if @state.foldOpen
-      pairs = comp.filterNot((value,key) -> ReservedComponentKeys.contains(key))
-      rows = pairs.map((value,key) ->
-        React.createElement PropRow, {key: key, name: key, value: value}
-      ).toList()
-
-      props = table {className: 'component-props'},
-        tbody null,
-        rows
-
-      div {className: 'component'},
-        header,
-        props
-
-    else
-      div {className: 'component'},
-        header
-
-PropRow = React.createClass
-  displayName: 'PropRow'
-  render: ->
-    tr null,
-      td {className:'prop-name'}, @props.name
-      React.createElement PropValueCell, {value: @props.value}
-
-PropValueCell = React.createClass
-  displayName: 'PropValueCell'
-  render: ->
-    val = if @props.value? then @props.value.toString() else "?"
-    td {className:'prop-value'}, val
+# ReservedComponentKeys = Set.of('type','eid','cid')
+      # pairs = comp.filterNot((value,key) -> ReservedComponentKeys.contains(key))
 
 Structures = require './structures'
 
-collectEntitiesFromState = (gameState) ->
-  estore = new EntityStore(gameState)
 
-  entities = Map()
-  estore.forEachComponent (comp) ->
-    eid = comp.get('eid')
-    cid = comp.get('cid')
-    entities = entities.setIn([eid,cid], comp)
-  
-  [entities,estore]
-
-sortEntityMap = (em) ->
-  em.sortBy((_,key) -> parseInt(key[1..-1]))
-
-
+EntityInspector={}
 EntityInspector.create = (h) ->
   gameState = RollingHistory.current(h).get('gameState')
+  # console.log gameState.toJS()
 
-  [entities,_] = collectEntitiesFromState(gameState)
-  entities = sortEntityMap(entities)
-
-  modify = (comps,eid) ->
-    newKey = eid
-    name = null
-    newComps = OrderedMap()
-    sortEntityMap(comps).forEach (comp,cid) ->
-      t = comp.get('type')
-      if t == 'name'
-        name = comp.get('name')
-
-      newComps = newComps.set(t,comp)
+  # [entities,_] = groupComponentsByEntity(gameState)
+  entities = groupComponentsByEntity(gameState)
+  # console.log entities.toJS()
+  # entities = sortEntityMap(entities)
 
 
-    if name?
-       newKey = "#{name} (#{eid})"
-       # newKey = name
-    [newComps,newKey]
-
-  entities = entities.reduce (memo,comps,eid) ->
-    [newVal,newKey] = modify(comps,eid)
-    memo.set(newKey,newVal)
-  , OrderedMap()
+  # entities = entities.reduce (memo,comps,eid) ->
+  #   [newVal,newKey] = modify(comps,eid)
+  #   memo.set(newKey,newVal)
+  # , OrderedMap()
 
   React.createElement Structures.Map, data: entities
 
 
-EntityInspector.createOld  = (h) ->
-  gameState = RollingHistory.current(h).get('gameState')
-  estore = new EntityStore(gameState)
+groupComponentsByEntity = (gameState) ->
+  compStore = gameState.get('compStore')
+  data = compStore.get('data')
+  indexed = compStore.getIn(['indexedData',EntityStore.EidTypeIndex])
+  # console.log indexed.toJS()
+  sortEntityMap(indexed)
+    .reduce (result,cidsByType,eid) ->
+      compsByType = cidsByType.map((cidSet) -> cidSet.valueSeq().map((cid) -> data.get(cid)))
+      # console.log compsByType.toJS()
+      newKey = if compsByType.get('name')?
+        # console.log "  name",compsByType.get('name').get(0)
+        "#{compsByType.getIn(['name',0,'name'])} (#{eid})"
+      else
+        eid
+      result.set newKey, compsByType
+    , OrderedMap()
 
-  [entities,estore] = collectEntitiesFromState(gameState)
-  entities = sortEntityMap(entities)
 
-  React.createElement EntityInspector,
-    entities: entities
-    entityStore: estore
-    inspectorConfig: Immutable.fromJS
-      componentLayout:
-        samus:      { open: false }
-        skree:      { open: false }
-        zoomer:      { open: false }
-        hit_box:      { open: false }
-        controller: { open: false }
-        animation:     { open: false }
-        velocity:   { open: false }
-        position:   { open: false }
-    
+  # estore = new EntityStore(gameState)
+  #
+  # entities = Map()
+  # estore.forEachComponent (comp) ->
+  #   eid = comp.get('eid')
+  #   cid = comp.get('cid')
+  #   entities = entities.updateIn([eid,cid], List(), (comps) -> comps.push(comp))
+  #   
+  #
+  # [entities,estore]
+
+sortEntityMap = (em) ->
+  em.sortBy((_,key) -> parseInt(key[1..-1]))
+
+modify = (comps,eid) ->
+  newKey = eid
+  name = null
+  newComps = OrderedMap()
+  sortEntityMap(comps).forEach (compL,cid) ->
+    friendlyKey = compL.get(0).get('type')
+    if friendlyKey == 'name'
+      name = compL.get(0).get('name')
+
+    newComps = newComps.set(friendlyKey,compL)
+    if friendlyKey == "missile_container"
+      console.log "missilie_container compL",compL.toJS()
+
+  if name?
+     newKey = "#{name} (#{eid})"
+     # newKey = name
+  [newComps,newKey]
+
 module.exports = EntityInspector
 

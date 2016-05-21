@@ -17,7 +17,7 @@ autoOpenKey = (key) ->
   autoOpenKeys.has(key)
 
 autoOpenVal = (val) ->
-  isScalar(val) or isShortList(val)
+  isScalar(val) #or isShortList(val)
 
 valueToElement = (val) ->
   if Immutable.Map.isMap(val)
@@ -64,12 +64,15 @@ MapEl = React.createClass
   displayName: 'MapEl'
 
   render: ->
-    rows = []
-    @props.data.forEach (val,key) ->
-      rows.push React.createElement MapEntryEl, key:key, keystr:key,val:val
-    table {className:classNames('map',@props.className)},
-      tbody {},
-        rows
+    if @props.data?
+      rows = []
+      @props.data.forEach (val,key) ->
+        rows.push React.createElement MapEntryEl, key:key, keystr:key,val:val
+      table {className:classNames('map',@props.className)},
+        tbody {},
+          rows
+    else
+      React.createElement 'span', null, "NULL"
 
 module.exports =
   Map: MapEl

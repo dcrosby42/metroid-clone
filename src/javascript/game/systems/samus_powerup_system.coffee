@@ -22,7 +22,9 @@ class SamusPowerupSystem extends BaseSystem
     if samusBox.overlaps(powerupBox)
       # Add the 'Collected' component to the powerup.  Triggers the powerup_collection system
       samusEid = @getProp('samus','eid')
-      @addComp Items.components.Collected.merge(byEid: samusEid)
+      @addComp Items.components.Collected.merge
+        byEid: samusEid
+        state:'shortcut' # XXX short circuits the item collection celebration song
 
       # Identify this item as collected
       itemId = @getProp 'powerup','itemId'

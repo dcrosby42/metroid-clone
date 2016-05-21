@@ -50,19 +50,22 @@ exports.update = (state,input) ->
   events.forEach (e) ->
     console.log "TheGame.update handling #{e.get('name')} event:",e.toJS()
     state = switch e.get('name')
+
       when 'StartNewGame'
-        s = initialState('adventure')
-        console.log "  initialState('adventure') =>",s.toJS()
-        s
+        initialState('adventure')
+
       when 'ContinueGame'
         pretendContinue(initialState('adventure'))
 
       when 'PowerupTouched'
         state.set('mode', 'powerup')
+
       when 'PowerupInstalled'
         state.set('mode', 'adventure')
+
       when 'Killed'
         initialState('title')
+
       else
         console.log "TheGame.update: unhandled event:", e.toJS()
         state

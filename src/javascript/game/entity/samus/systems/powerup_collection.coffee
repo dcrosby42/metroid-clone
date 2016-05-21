@@ -21,6 +21,9 @@ class PowerupCollectionSystem extends StateMachineSystem
             nextState: 'done'
       done: {}
 
+  shortcutState: ->
+    @installPowerupAction()
+
   readyState: ->
     @publishEvent 'started'
 

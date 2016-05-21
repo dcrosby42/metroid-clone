@@ -24,6 +24,7 @@ Admin = require './states/admin'
 
 AdminUI = require '../admin_ui'
 
+EntityStore = require '../ecs/entity_store'
 
 #
 # HELPERS
@@ -219,6 +220,14 @@ class MetroidDelegate
     innerGameState = history.map (h) ->
       RollingHistory.current(h).get('gameState')
 
+    history.map (h) ->
+      window.$H = h
+      window.$S = RollingHistory.current(h)
+      window.$GS = window.$S.get('gameState')
+      window.$ES ?= new EntityStore()
+      window.$ES.restoreSnapshot($GS)
+
+
     #
     # OUTPUT
     #
@@ -236,20 +245,32 @@ class MetroidDelegate
     # XXX
     # Funnel game state into a global var for Console debugging:
     # innerGameState.subscribe (s) -> window.gamestate = s
-    
+
+    # (filter-down the admin state to be less volatile on dt and controllers n stuff)
+    adminState2 = adminState
+      .map((s) -> s.delete('input'))
+      .dropRepeats(Immutable.is)
+
     # Funnel admin state into viewMachine's uiState debug stuff
-    adminState.subscribe (s) =>
-      @viewMachine.setMute s.get('muted')
-      @viewMachine.setDrawHitBoxes s.get('drawHitBoxes')
+    adminState2
+      .map((s) -> s.delete('input').delete('controllers'))
+      .dropRepeats(Immutable.is)
+      .subscribe (s) =>
+        @viewMachine.setMute s.get('muted')
+        @viewMachine.setDrawHitBoxes s.get('drawHitBoxes')
+        # console.log "Updateing muted and drawHitBoxes",s.get('muted'),s.get('drawHitBoxes')
 
     # bundle admin state and history together and feed it into the admin ui
-    adminState
+    adminState2
       .mapN(
-        ((admin,history) -> {admin:admin,history:history})
-        history)
-      .sampleOn(adminState)
-      .subscribe (s) =>
-          adminView = AdminUI.view(@adminUIAddress,s)
+        ((admin,history,gameState) -> {admin:admin,history:history,gameState:gameState})
+          # console.log "squish",gameState.toJS()
+        history
+        innerGameState)
+      .dropRepeats(Immutable.is)
+      .subscribe (combined) =>
+          # console.log "Updating AdminUI"
+          adminView = AdminUI.view(@adminUIAddress,combined)
           ReactDOM.render(adminView, @adminUIDiv)
 
   update: (dt) ->
