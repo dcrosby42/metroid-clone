@@ -7,7 +7,7 @@ MapConfig = require '../map/config'
 
 EntityStore = require '../../ecs/entity_store'
 enemyFilter = EntityStore.expandSearch(['enemy','position'])
-powerupFilter = EntityStore.expandSearch(['powerup','position'])
+pickupFilter = EntityStore.expandSearch(['pickup','position'])
 
 class RoomSystem extends StateMachineSystem
   @Subscribe: [
@@ -57,7 +57,14 @@ class RoomSystem extends StateMachineSystem
         if @itemStillInWorld(id)
           x = roomPos.get('x') + (col * MapConfig.tileWidth) + hoff
           y = roomPos.get('y') + (row * MapConfig.tileHeight) + voff
-          @newEntity Items.factory.createComponents(type, powerup: { itemId: id }, position: {x: x, y: y})
+          # @newEntity Items.factory.createComponents(type, powerup: { itemId: id }, position: {x: x, y: y})
+          comps = Items.factory.createPickup
+            pickup: { itemType: type, itemId: id }
+            position: {x: x, y: y}
+
+          @newEntity comps
+
+
 
     # Spawn doors:
     if roomDef.fixtures? and roomDef.fixtures['doors']?
@@ -87,7 +94,7 @@ class RoomSystem extends StateMachineSystem
         @destroyEntity pos.get('eid')
     
     # Despawn powerups
-    @searchEntities(powerupFilter).forEach (comps) =>
+    @searchEntities(pickupFilter).forEach (comps) =>
       pos = comps.get('position')
       if pos.get('x') >= roomLeft and pos.get('x') < roomRight and pos.get('y') >= roomTop and pos.get('y') < roomBottom
         @destroyEntity pos.get('eid')

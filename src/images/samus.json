@@ -27,16 +27,16 @@
 	"sourceSize": {"w":4,"h":5},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"morph-ball-a":
+"missile":
 {
-	"frame": {"x":2,"y":12,"w":12,"h":14},
+	"frame": {"x":2,"y":12,"w":12,"h":8},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":14},
-	"sourceSize": {"w":12,"h":14},
+	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":8},
+	"sourceSize": {"w":12,"h":8},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"morph-ball-b":
+"morph-ball-a":
 {
 	"frame": {"x":16,"y":12,"w":12,"h":14},
 	"rotated": false,
@@ -45,7 +45,7 @@
 	"sourceSize": {"w":12,"h":14},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"morph-ball-c":
+"morph-ball-b":
 {
 	"frame": {"x":2,"y":28,"w":12,"h":14},
 	"rotated": false,
@@ -54,7 +54,7 @@
 	"sourceSize": {"w":12,"h":14},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"morph-ball-d":
+"morph-ball-c":
 {
 	"frame": {"x":16,"y":28,"w":12,"h":14},
 	"rotated": false,
@@ -63,9 +63,18 @@
 	"sourceSize": {"w":12,"h":14},
 	"pivot": {"x":0.5,"y":0.5}
 },
+"morph-ball-d":
+{
+	"frame": {"x":2,"y":44,"w":12,"h":14},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":14},
+	"sourceSize": {"w":12,"h":14},
+	"pivot": {"x":0.5,"y":0.5}
+},
 "samus1-04-00":
 {
-	"frame": {"x":2,"y":44,"w":26,"h":38},
+	"frame": {"x":2,"y":60,"w":26,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
@@ -74,7 +83,7 @@
 },
 "samus1-06-00":
 {
-	"frame": {"x":2,"y":84,"w":26,"h":38},
+	"frame": {"x":2,"y":100,"w":26,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
@@ -83,7 +92,7 @@
 },
 "samus1-07-00":
 {
-	"frame": {"x":2,"y":124,"w":26,"h":38},
+	"frame": {"x":2,"y":140,"w":26,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
@@ -92,7 +101,7 @@
 },
 "samus1-08-00":
 {
-	"frame": {"x":2,"y":164,"w":26,"h":38},
+	"frame": {"x":2,"y":180,"w":26,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
@@ -101,7 +110,7 @@
 },
 "samus1-aim-up-run1":
 {
-	"frame": {"x":2,"y":204,"w":26,"h":38},
+	"frame": {"x":2,"y":220,"w":26,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
@@ -110,7 +119,7 @@
 },
 "samus1-aim-up-run2":
 {
-	"frame": {"x":2,"y":244,"w":26,"h":38},
+	"frame": {"x":2,"y":260,"w":26,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
@@ -119,7 +128,7 @@
 },
 "samus1-aim-up-run3":
 {
-	"frame": {"x":2,"y":284,"w":26,"h":38},
+	"frame": {"x":2,"y":300,"w":26,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
@@ -128,7 +137,7 @@
 },
 "samus1-aim-up":
 {
-	"frame": {"x":2,"y":324,"w":26,"h":38},
+	"frame": {"x":2,"y":340,"w":26,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
@@ -137,7 +146,7 @@
 },
 "samus1-jump-right-aim-up":
 {
-	"frame": {"x":2,"y":364,"w":22,"h":35},
+	"frame": {"x":2,"y":380,"w":22,"h":35},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":35},
@@ -146,7 +155,7 @@
 },
 "samus1-jump-right":
 {
-	"frame": {"x":2,"y":401,"w":26,"h":38},
+	"frame": {"x":2,"y":417,"w":26,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
@@ -155,7 +164,7 @@
 },
 "samus1-shoot-up":
 {
-	"frame": {"x":2,"y":441,"w":26,"h":38},
+	"frame": {"x":2,"y":457,"w":26,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":38},
@@ -164,7 +173,7 @@
 },
 "samus1-stand-shoot":
 {
-	"frame": {"x":2,"y":481,"w":20,"h":38},
+	"frame": {"x":2,"y":497,"w":20,"h":38},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":20,"h":38},
@@ -176,8 +185,8 @@
 	"version": "1.0",
 	"image": "samus.png",
 	"format": "RGBA8888",
-	"size": {"w":30,"h":521},
+	"size": {"w":30,"h":537},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:32ca2fec260beaf00399aacf8cff6fb4:e3d9e8a3b12868ff13d58fc28f219791:ee3397b934a0f7ddedb37d84ef594e2f$"
+	"smartupdate": "$TexturePacker:SmartUpdate:8d3606baf9874bce5af3d9a0dfa2c44e:4ec010b242b21943e15526221f2e395e:ee3397b934a0f7ddedb37d84ef594e2f$"
 }
 }

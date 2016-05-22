@@ -47,10 +47,10 @@ exports.update = (state,input) ->
       when 'ContinueGame'
         pretendContinue(initialState('adventure'))
 
-      when 'PowerupTouched'
+      when 'PowerupCelebrationStarted'
         state.set('mode', 'powerup')
 
-      when 'PowerupInstalled'
+      when 'PowerupCelebrationDone'
         state.set('mode', 'adventure')
 
       when 'Killed'

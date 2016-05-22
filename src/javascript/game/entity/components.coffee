@@ -129,11 +129,6 @@ C.Tags = imm
   type: 'tags'
   names: Immutable.Set()
 
-C.Pickup = imm
-  type: 'pickup'
-  item: 'health'
-  value: 5
-
 C.Rng = imm
   type: 'rng'
   state: 1234567890

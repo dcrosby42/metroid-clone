@@ -38,7 +38,7 @@ ecsMachine = new EcsMachine(systems: [
     SamusSystems.short_beam
 
     Systems.samus_pickup_system
-    Systems.samus_powerup_system
+    # Systems.samus_powerup_system
     Systems.samus_hit_system
     Systems.samus_damage_system
     Systems.samus_death_system

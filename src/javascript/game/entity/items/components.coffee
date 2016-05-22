@@ -4,14 +4,18 @@ imm = Immutable.fromJS
 C = {}
 module.exports = C
 
-C.Powerup = imm
-  type: 'powerup'
-  powerupType: '_UNSET_'
+C.Pickup = imm
+  type: 'pickup'
+  itemType: null
+  itemId: null
+  data: null
 
-C.Collected = imm
-  type: 'collected'
-  state: 'ready'
-  byEid: '_UNSET_'
+# C.Powerup = imm
+#   type: 'powerup'
+#   powerupType: '_UNSET_'
+
+C.PowerupCelebration = imm
+  type: 'powerup_celebration'
 
 C.MaruMari = imm
   type: 'maru_mari'
@@ -20,3 +24,8 @@ C.MaruMari = imm
 C.MissileContainer = imm
   type: 'missile_container'
   state: 'inactive'
+
+C.Missiles = imm
+   type: 'missiles'
+   max: 0
+   count: 0

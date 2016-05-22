@@ -103,7 +103,7 @@ class EntityStore extends ReadOnlyEntityStore
       .set('eid',eid)
       .set('cid',cid)
     if !comp.get('type')
-      console.log "EntityStore#_newComponent: creating component with no 'type' field", comp
+      console.log "EntityStore#_newComponent: creating component with no 'type' field", comp.toJS()
     comp
 
   # ID generators:

@@ -1,5 +1,6 @@
 Common = require '../entity/components'
-General = require '../entity/general'
+# General = require '../entity/general'
+Items = require '../entity/items'
 AnchoredBox = require '../../utils/anchored_box'
 Rng = require '../../utils/park_miller_rng'
 StateMachineSystem = require '../../ecs/state_machine_system'
@@ -127,10 +128,14 @@ class EnemyHitSystem extends StateMachineSystem
     if @_randBool()
       hitBoxComp = @getComp 'hit_box'
       box = new AnchoredBox(hitBoxComp.toJS())
-      x = box.centerX
-      y = box.centerY
-      @newEntity General.factory.createComponents('healthPickup', x: x, y: y, value: 5, time: 7000)
+      comps = Items.factory.createPickup
+        pickup:
+          itemType: 'health_drop'
+        position:
+          x: box.centerX
+          y: box.centerY
 
+      @newEntity comps
 
   _randBool: ->
     i = @_withRng 'mainRandom', (s) -> Rng.nextInt(s, 0, 1)

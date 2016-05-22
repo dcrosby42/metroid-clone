@@ -19,6 +19,25 @@ sprites =
             x: 0.5
             y: 0.5
 
+  missile:
+    spriteSheet: "images/samus.json"
+    states:
+      'normal':
+        frame: 'missile'
+        props:
+          anchor:
+            x: 0.5
+            y: 0.5
+      # 'splode':
+      #   frames: [
+      #     'missile-splode'
+      #     'blank'
+      #   ]
+      #   fps: 60
+      #   props:
+      #     anchor:
+      #       x: 0.5
+      #       y: 0.5
   samus:
     spriteSheet: "images/samus.json"
     states:
