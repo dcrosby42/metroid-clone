@@ -39,11 +39,14 @@ ObjectStore.removeObjectFromIndex = (indexStructure,indexKeys,object,objectId) -
     if v?
       keypath.push(v)
     else
-      return
+      return indexStructure
     x = iter.next()
 
   # Remove id from set:
   ids = indexStructure.getIn(keypath)
+  if !ids?
+    console.log "!! ObjectStore.removeObjectFromIndex: no id set in index for keypath #{keypath}", indexStructure.toJS(), indexKeys.toJS(),object.toJS(),objectId
+    return indexStructure
   ids = ids.remove(objectId)
   if ids.isEmpty()
     # Last member in the set! Remove this node from the index:
