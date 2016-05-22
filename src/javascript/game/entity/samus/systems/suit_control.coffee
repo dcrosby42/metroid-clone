@@ -38,24 +38,15 @@ MotionStates = imm
     left: 'tumble'
     right: 'tumble'
 
-transformEvents = (events, oracle, handlers, callback) ->
-  handlers.forEach (handlers,state) ->
-    if oracle[state]?()
-      events.forEach (inEvent) ->
-        ename = handlers.get(inEvent.get('name'))
-        if ename?
-          callback(ename)
-
-
 class SuitControlSystem extends BaseSystem
   @Subscribe: [ 'suit', 'samus', 'motion' ]
 
   process: ->
     motion = @getComp('motion')
-    # events = @getEvents()
     oracle = new SuitMotionOracle(motion)
-    @handleEventsByState oracle, MotionStates, (name,data=null) =>
+    handleEventsByState @getEvents(), oracle, MotionStates, (name,data=null) =>
       switch name
+        # as a shortcut we handle some suit posture events right here:
         when 'faceLeft'
           @setProp 'samus','direction','left'
         when 'faceRight'
@@ -65,14 +56,15 @@ class SuitControlSystem extends BaseSystem
         when 'aimStraight'
           @setProp 'samus','aim','straight'
         else
+          # most events go through here:
           @publishEvent name,data
 
-  handleEventsByState: (oracle,handlers,callback) ->
-    handlers.forEach (handlers,state) =>
+handleEventsByState = (events,oracle,stateMap,callback) ->
+  events.forEach (e) ->
+    stateMap.forEach (actions,state) =>
       if oracle[state]?()
-        @getEvents().forEach (inEvent) ->
-          ename = handlers.get(inEvent.get('name'))
-          if ename?
-            callback(ename,null)
+        mappedEvent = actions.get(e.get('name'))
+        if mappedEvent?
+          callback(mappedEvent,null)
 
 module.exports = SuitControlSystem
