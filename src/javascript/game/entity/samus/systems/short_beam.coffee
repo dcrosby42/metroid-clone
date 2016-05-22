@@ -5,67 +5,8 @@ StateMachineSystem = require '../../../../ecs/state_machine_system'
 MuzzleVelocity = 200/1000
 BulletLifetime = 50 / (200/1000)
 
-newBullet = (weapon, position,direction,shootUp) ->
-  offsetX = offsetY = vx = vy = 0
-
-  if shootUp
-    offsetX = 2.5
-    offsetY = -35
-    vx = 0
-    vy = -MuzzleVelocity
-    if direction == 'left'
-      offsetX = -2
-  else
-    offsetX = 10
-    offsetY = -22
-    vx = MuzzleVelocity
-    vy = 0
-    if direction == 'left'
-      offsetX = -offsetX
-      vx = -vx
-
-  fireX = position.get('x') + offsetX
-  fireY = position.get('y') + offsetY
-
-  return [
-    Common.Bullet.merge
-      damage: weapon.get('damage')
-    Common.Animation.merge
-      layer: 'creatures'
-      spriteName: 'bullet'
-      state: 'normal'
-
-    Common.Position.merge
-      x: fireX
-      y: fireY
-      direction: direction
-    Common.Velocity.merge
-      x: vx
-      y: vy
-    Common.MapCollider
-    Common.HitBox.merge
-      width: 4
-      height: 4
-      anchorX: 0.5
-      anchorY: 0.5
-    Common.HitBoxVisual.merge
-      color: 0xffffff
-
-    Common.Sound.merge
-      soundId: 'short_beam'
-      volume: 0.5
-      playPosition: 0
-      timeLimit: 500
-      resound: true
-
-    Common.DeathTimer.merge
-      time: BulletLifetime
-
-  ]
-
-
 class ShortBeamSystem extends StateMachineSystem
-  @Subscribe: ['short_beam', 'samus', 'controller', 'position']
+  @Subscribe: ['short_beam', 'samus', 'position']
 
   @StateMachine:
     componentProperty: ['short_beam','state']
@@ -124,6 +65,66 @@ class ShortBeamSystem extends StateMachineSystem
       time: ms
       event: 'cooldownComplete'
       name: 'shortBeamCooldown'
+
+
+newBullet = (weapon, position,direction,shootUp) ->
+  offsetX = offsetY = vx = vy = 0
+
+  if shootUp
+    offsetX = 2.5
+    offsetY = -35
+    vx = 0
+    vy = -MuzzleVelocity
+    if direction == 'left'
+      offsetX = -2
+  else
+    offsetX = 10
+    offsetY = -22
+    vx = MuzzleVelocity
+    vy = 0
+    if direction == 'left'
+      offsetX = -offsetX
+      vx = -vx
+
+  fireX = position.get('x') + offsetX
+  fireY = position.get('y') + offsetY
+
+  return [
+    Common.Bullet.merge
+      damage: weapon.get('damage')
+    Common.Animation.merge
+      layer: 'creatures'
+      spriteName: 'bullet'
+      state: 'normal'
+
+    Common.Position.merge
+      x: fireX
+      y: fireY
+      direction: direction
+    Common.Velocity.merge
+      x: vx
+      y: vy
+    Common.MapCollider
+    Common.HitBox.merge
+      width: 4
+      height: 4
+      anchorX: 0.5
+      anchorY: 0.5
+    Common.HitBoxVisual.merge
+      color: 0xffffff
+
+    Common.Sound.merge
+      soundId: 'short_beam'
+      volume: 0.5
+      playPosition: 0
+      timeLimit: 500
+      resound: true
+
+    Common.DeathTimer.merge
+      time: BulletLifetime
+
+  ]
+
 
 
 module.exports = ShortBeamSystem

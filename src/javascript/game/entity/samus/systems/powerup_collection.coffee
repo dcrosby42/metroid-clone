@@ -21,6 +21,7 @@ class PowerupCollectionSystem extends StateMachineSystem
             nextState: 'done'
       done: {}
 
+  # If the 'collected' component was constructed with state='shortcut':
   shortcutState: ->
     @installPowerupAction()
 

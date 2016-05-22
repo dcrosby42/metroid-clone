@@ -7,22 +7,12 @@ Powerup = require './powerup'
 
 Comps = require '../entity/components'
 Systems = require '../systems'
-EcsMachine = require '../../ecs/ecs_machine'
 EntityStore = require '../../ecs/entity_store'
 FilterExpander = require '../../ecs/filter_expander'
 
 Items =  require '../entity/items'
 
-ecsMachine = new EcsMachine(systems: [
-  Systems.timer_system
-  Systems.death_timer_system
-  Systems.animation_timer_system
-  Systems.sound_system
-  Systems.controller_system
-  Systems.main_title_system
-])
-
-modes = {
+Modes = {
   title: Title
   adventure: Adventure
   powerup: Powerup
@@ -31,7 +21,7 @@ modes = {
 initialState = (mode) ->
   Map(
     mode: mode,
-    gameState: modes[mode].initialState(),
+    gameState: Modes[mode].initialState(),
     systemLogs: null
   )
 
@@ -40,7 +30,7 @@ exports.initialState = () -> initialState('title')
 # Action -> Model -> (Model, Effects Action)
 exports.update = (state,input) ->
   s = state.get('gameState')
-  mode = modes[state.get('mode')]
+  mode = Modes[state.get('mode')]
   [s1,events,systemLogs] = mode.update(s, input)
 
   state = state
