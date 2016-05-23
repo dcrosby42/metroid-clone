@@ -5,81 +5,90 @@ StateMachineSystem = require '../../../../ecs/state_machine_system'
 MuzzleVelocity = 200/1000
 BulletLifetime = 50 / (200/1000)
 
-class ShortBeamSystem extends StateMachineSystem
-  @Subscribe: ['short_beam', 'samus', 'position']
+class MissileLauncherSystem extends StateMachineSystem
+  @Subscribe: ['missile_launcher', 'samus', 'position']
 
   @StateMachine:
-    componentProperty: ['short_beam','state']
+    componentProperty: ['missile_launcher','state']
     start: 'ready'
     states:
       ready:
         events:
-          fireBeam:
+          fireMissile:
             action:    'shoot'
             nextState: 'coolDown'
       coolDown:
         events:
-          fireBeamReleased:
+          fireMissileReleased:
             action:    'reset'
             nextState: 'ready'
-          cooldownComplete:
+          missileCooldownComplete:
             nextState: 'repeating'
       repeating:
         events:
           keepFiring:
             action: 'repeat'
             nextState: 'coolDown'
-          fireBeamReleased:
+          fireMissileReleased:
             action: 'reset'
             nextState: 'ready'
 
   shootAction: ->
-    @_fireBullet()
+    @_fireMissile()
     @_startCooldown(500)
 
   repeatingState: ->
     @publishEvent 'keepFiring'
 
   repeatAction: ->
-    @_fireBullet()
+    @_fireMissile()
     @_startCooldown(150)
 
   resetAction: ->
     # Clear cooldown timer(s):
-    @getEntityComponents(@eid(), 'timer', 'name', 'shortBeamCooldown').forEach (comp) =>
+    @getEntityComponents(@eid(), 'timer', 'name', 'missileCooldown').forEach (comp) =>
       @deleteComp comp
 
   repeatState: ->
     @publishEvent 'done'
   
 
-  _fireBullet: ->
+  _fireMissile: ->
     dir = @getProp('samus','direction')
     shootUp = @getProp('samus','aim') == 'up'
-    shortBeam = @getComp('short_beam')
+
+    missileLauncher = @getComp('missile_launcher')
+    count = missileLauncher.get('count')
+    if count <= 0
+      return
+    count -= 1
+    @updateComp missileLauncher.set('count',count)
+
     pos = @getComp('position')
-    @newEntity newBullet(shortBeam,pos,dir,shootUp)
+    @newEntity newMissile(missileLauncher,pos,dir,shootUp)
 
   _startCooldown: (ms) ->
     @addComp Common.Timer.merge
       time: ms
-      event: 'cooldownComplete'
-      name: 'shortBeamCooldown'
+      event: 'missileCooldownComplete'
+      name: 'missileCooldown'
 
 
-newBullet = (weapon, position,direction,shootUp) ->
+newMissile = (weapon, position,direction,shootUp) ->
   offsetX = offsetY = vx = vy = 0
 
+  animState = direction
   if shootUp
     offsetX = 2.5
-    offsetY = -35
+    offsetY = -37
     vx = 0
     vy = -MuzzleVelocity
     if direction == 'left'
-      offsetX = -2
+      offsetX = -3
+    animState = "up"
   else
-    offsetX = 10
-    offsetY = -22
+    offsetX = 13
+    offsetY = -20
     vx = MuzzleVelocity
     vy = 0
     if direction == 'left'
@@ -90,12 +99,13 @@ newBullet = (weapon, position,direction,shootUp) ->
   fireY = position.get('y') + offsetY
 
   return [
-    Common.Bullet.merge
-      damage: weapon.get('damage')
+    Common.Name.set 'name', 'missile'
+    Common.Missile
+      # damage: weapon.get('damage')
     Common.Animation.merge
       layer: 'creatures'
-      spriteName: 'bullet'
-      state: 'normal'
+      spriteName: 'missile'
+      state: animState
 
     Common.Position.merge
       x: fireX
@@ -120,12 +130,12 @@ newBullet = (weapon, position,direction,shootUp) ->
       timeLimit: 500
       resound: true
 
-    Common.DeathTimer.merge
-      time: BulletLifetime
+    # Common.DeathTimer.merge
+    #   time: BulletLifetime
 
   ]
 
 
 
-module.exports = ShortBeamSystem
+module.exports = MissileLauncherSystem
 

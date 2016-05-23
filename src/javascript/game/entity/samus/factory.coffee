@@ -10,6 +10,7 @@ F.samus = (args) ->
   pos = args.position || {x:50,y:50}
   [
     S.Samus
+    S.Weapons
     S.ShortBeam
     Common.ViewportTarget
     Common.Name.merge(name: 'Samus')

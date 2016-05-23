@@ -32,14 +32,14 @@ class SamusPickupSystem extends BaseSystem
         when 'missile_container'
           mcount = pickup.get('data')
           console.log "Missiles +",mcount
-          missiles = @getEntityComponent @eid(), 'missiles'
+          missiles = @getEntityComponent @eid(), 'missile_launcher'
           if missiles
             missiles = missiles
               .set('max', mcount + missiles.get('max'))
               .set('count', mcount + missiles.get('count'))
             @updateComp missiles
           else
-            missiles = Items.components.Missiles.merge
+            missiles = Items.components.MissileLauncher.merge
               max: mcount
               count: mcount
             @addComp missiles

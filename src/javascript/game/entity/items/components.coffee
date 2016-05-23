@@ -25,7 +25,7 @@ C.MissileContainer = imm
   type: 'missile_container'
   state: 'inactive'
 
-C.Missiles = imm
-   type: 'missiles'
+C.MissileLauncher = imm
+   type: 'missile_launcher'
    max: 0
    count: 0

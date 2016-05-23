@@ -22,12 +22,20 @@ sprites =
   missile:
     spriteSheet: "images/samus.json"
     states:
-      'normal':
+      'right':
+        frame: 'missile'
+      'left':
+       frame: 'missile'
+       props:
+          scale: { x: -1 }
+      'up':
         frame: 'missile'
         props:
-          anchor:
-            x: 0.5
-            y: 0.5
+          rotation: -(Math.PI / 2)
+    props:
+      anchor:
+        x: 0.5
+        y: 0.5
       # 'splode':
       #   frames: [
       #     'missile-splode'

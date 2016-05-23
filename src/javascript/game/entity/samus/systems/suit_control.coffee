@@ -16,6 +16,7 @@ MotionStates = imm
     upReleased: 'aimStraight'
     action1: 'gunTrigger'
     action1Released: 'gunTriggerReleased'
+    selectPressed: 'cycleWeapon'
   standing:
     action2Pressed: 'jump'
     down: 'crouch'
@@ -27,6 +28,7 @@ MotionStates = imm
     upReleased: 'aimStraight'
     action1: 'gunTrigger'
     action1Released: 'gunTriggerReleased'
+    selectPressed: 'cycleWeapon'
   rising:
     action2Released: 'fall'
   floating:
@@ -57,6 +59,8 @@ class SuitControlSystem extends BaseSystem
           @setProp 'samus','aim','straight'
         else
           # most events go through here:
+          if name == 'selectPressed'
+            console.log "SuitControl: selectPressed"
           @publishEvent name,data
 
 handleEventsByState = (events,oracle,stateMap,callback) ->

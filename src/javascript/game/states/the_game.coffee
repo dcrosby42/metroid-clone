@@ -76,11 +76,14 @@ pretendContinue = (state) ->
 
   filter = EntityStore.expandSearch(['samus'])
   samEid = estore.search(filter).first().getIn(['samus','eid'])
+
   estore.createComponent(samEid, Items.components.MaruMari)
+
+  estore.createComponent(samEid, Items.components.MissileLauncher.merge(max:5,count:4))
 
   filter2 = EntityStore.expandSearch(['collected_items'])
   collectedItems = estore.search(filter2).first().get('collected_items')
-  collectedItems = collectedItems.update 'itemIds', (ids) -> ids.add('item-1')
+  collectedItems = collectedItems.update 'itemIds', (ids) -> ids.add('item-1').add('item-2')
   estore.updateComponent(collectedItems)
 
   state.set('gameState',estore.takeSnapshot())

@@ -35,7 +35,9 @@ ecsMachine = new EcsMachine(systems: [
     SamusSystems.samus_morph
 
     EnemiesSystems.zoomer_controller_system
+    SamusSystems.weapons_system
     SamusSystems.short_beam
+    SamusSystems.missile_launcher_system
 
     Systems.samus_pickup_system
     # Systems.samus_powerup_system
@@ -51,6 +53,7 @@ ecsMachine = new EcsMachine(systems: [
     Systems.bullet_enemy_system
     DoorSystems.bullet_door_system
     Systems.bullet_system
+    Systems.missile_system
     Systems.enemy_hit_system
     EnemiesSystems.skree_action
     SamusSystems.suit_animation

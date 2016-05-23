@@ -101,6 +101,10 @@ C.Bullet = imm
   type: 'bullet'
   damage: 0
 
+C.Missile = imm
+  type: 'missile'
+  damage: 15
+
 C.Enemy = imm
   type: 'enemy'
   hp: 100

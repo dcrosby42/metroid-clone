@@ -14,6 +14,10 @@ exports.Samus = Immutable.fromJS
   recoil: 'no'
   weaponTrigger: 'released'
 
+exports.Weapons = Immutable.fromJS
+  type: 'weapons'
+  state: 'beam'
+
 exports.ShortBeam = Immutable.fromJS
   type: 'short_beam'
   state: 'ready'

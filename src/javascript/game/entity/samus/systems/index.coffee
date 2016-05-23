@@ -1,4 +1,5 @@
 module.exports =
+  missile_launcher_system: require './missile_launcher_system'
   morph_ball_animation: require './morph_ball_animation'
   morph_ball_control: require './morph_ball_control'
   morph_ball_motion_oracle: require './morph_ball_motion_oracle'
@@ -14,3 +15,4 @@ module.exports =
   suit_motion_oracle: require './suit_motion_oracle'
   suit_sound: require './suit_sound'
   suit_velocity: require './suit_velocity'
+  weapons_system: require './weapons_system'

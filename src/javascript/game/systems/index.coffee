@@ -11,6 +11,7 @@ module.exports =
   manual_mover_system: require './manual_mover_system'
   map_ghost_system: require './map_ghost_system'
   map_physics_system: require './map_physics_system'
+  missile_system: require './missile_system'
   room_system: require './room_system'
   samus_damage_system: require './samus_damage_system'
   samus_death_system: require './samus_death_system'

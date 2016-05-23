@@ -8,7 +8,8 @@ class ControllerSystem extends BaseSystem
     ins = @input.getIn(['controllers', @getProp('controller', 'inputName')])
     states = @updateProp('controller', 'states', (s) -> PressedReleased.update(s, ins))
     states.forEach (val,key) =>
-      @publishEvent key if val
+      # false vals would already be filtered out by PressedRelease.update
+      @publishEvent key
 
 
 module.exports = ControllerSystem
