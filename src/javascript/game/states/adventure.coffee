@@ -163,6 +163,7 @@ exports.assetsToPreload = ->
     "short_beam"
     "door"
     "samus_morphball"
+    "rocket_shot"
   ]
 
   sounds = List()

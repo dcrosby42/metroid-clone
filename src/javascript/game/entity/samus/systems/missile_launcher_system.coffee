@@ -121,7 +121,7 @@ newMissile = (weapon, position,direction,shootUp) ->
       color: 0xffffff
 
     Common.Sound.merge
-      soundId: 'short_beam'
+      soundId: 'rocket_shot'
       volume: 0.5
       playPosition: 0
       timeLimit: 500
