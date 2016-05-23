@@ -53,5 +53,9 @@ RollingHistory =
       d = d.pop()
     sh.set('data',d)
 
+  setMaxSize: (h,size) ->
+    h = h.update 'data', (d) -> d.take(size)
+    h = RollingHistory.indexToEnd(h)
+    h
     
 module.exports = RollingHistory

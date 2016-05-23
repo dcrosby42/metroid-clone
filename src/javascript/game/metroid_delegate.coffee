@@ -213,7 +213,7 @@ class MetroidDelegate
       [s1,_] = TheGame.update(s,input)
       return s1
 
-    initialHistory = RollingHistory.add(RollingHistory.empty, TheGame.initialState())
+    initialHistory = RollingHistory.add(RollingHistory.empty.set('maxSize',10*60), TheGame.initialState())
 
     # Given a new admin state, change history....
     updateHistory = (admin, history) ->

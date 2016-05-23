@@ -41,6 +41,7 @@ class MissileLauncherSystem extends StateMachineSystem
     @publishEvent 'keepFiring'
 
   repeatAction: ->
+    console.log "MissileLauncherSystem: repeat"
     @_fireMissile()
     @_startCooldown(150)
 
@@ -48,10 +49,6 @@ class MissileLauncherSystem extends StateMachineSystem
     # Clear cooldown timer(s):
     @getEntityComponents(@eid(), 'timer', 'name', 'missileCooldown').forEach (comp) =>
       @deleteComp comp
-
-  repeatState: ->
-    @publishEvent 'done'
-  
 
   _fireMissile: ->
     dir = @getProp('samus','direction')
