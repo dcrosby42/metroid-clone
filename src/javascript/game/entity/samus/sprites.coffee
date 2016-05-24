@@ -25,8 +25,8 @@ sprites =
       'right':
         frame: 'missile'
       'left':
-       frame: 'missile'
-       props:
+        frame: 'missile'
+        props:
           scale: { x: -1 }
       'up':
         frame: 'missile'
@@ -36,7 +36,34 @@ sprites =
       anchor:
         x: 0.5
         y: 0.5
-      # 'splode':
+
+  missile_shrapnel:
+    spriteSheet: "images/samus.json"
+    states:
+      'left':
+        frame: 'missile-shrap-01'
+      'right':
+        frame: 'missile-shrap-01'
+        props:
+          scale: { x: -1 }
+      'up-left':
+        frame: 'missile-shrap-02'
+      'down-left':
+        frame: 'missile-shrap-02'
+        props:
+          scale: { y: -1 }
+      'up-right':
+        frame: 'missile-shrap-02'
+        props:
+          scale: { x: -1 }
+      'down-right':
+        frame: 'missile-shrap-02'
+        props:
+          scale: { x: -1, y: -1 }
+    props:
+      anchor:
+        x: 0.5
+        y: 0.5
       #   frames: [
       #     'missile-splode'
       #     'blank'

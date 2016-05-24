@@ -18,14 +18,16 @@ Modes = {
   powerup: Powerup
 }
 
-initialState = (mode) ->
+initialStateForMode = (mode) ->
   Map(
     mode: mode,
     gameState: Modes[mode].initialState(),
     systemLogs: null
   )
 
-exports.initialState = () -> initialState('title')
+exports.initialState = () ->
+  # initialStateForMode('title')
+  pretendContinue(initialStateForMode('adventure'))
 
 # Action -> Model -> (Model, Effects Action)
 exports.update = (state,input) ->
@@ -42,10 +44,10 @@ exports.update = (state,input) ->
     state = switch e.get('name')
 
       when 'StartNewGame'
-        initialState('adventure')
+        initialStateForMode('adventure')
 
       when 'ContinueGame'
-        pretendContinue(initialState('adventure'))
+        pretendContinue(initialStateForMode('adventure'))
 
       when 'PowerupCelebrationStarted'
         state.set('mode', 'powerup')
@@ -54,7 +56,7 @@ exports.update = (state,input) ->
         state.set('mode', 'adventure')
 
       when 'Killed'
-        initialState('title')
+        initialStateForMode('title')
 
       else
         console.log "TheGame.update: unhandled event:", e.toJS()
@@ -79,7 +81,9 @@ pretendContinue = (state) ->
 
   estore.createComponent(samEid, Items.components.MaruMari)
 
-  estore.createComponent(samEid, Items.components.MissileLauncher.merge(max:5,count:4))
+  estore.createComponent(samEid,
+    # Items.components.MissileLauncher.merge(max:5,count:4))
+    Items.components.MissileLauncher.merge(max:50,count:50))
 
   filter2 = EntityStore.expandSearch(['collected_items'])
   collectedItems = estore.search(filter2).first().get('collected_items')

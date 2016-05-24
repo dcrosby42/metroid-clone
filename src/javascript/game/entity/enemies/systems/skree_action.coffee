@@ -68,9 +68,6 @@ class SkreeActionSystem extends StateMachineSystem
       @publishEvent 'destructTimerComplete'
 
   detonateAction: ->
-    console.log "Skree #{@eid()} EXPLODES"
-
-    @destroyEntity() # kill the Skree
     
     box = new AnchoredBox(@getComp('skree-hit_box').toJS())
     x = box.centerX
@@ -85,6 +82,8 @@ class SkreeActionSystem extends StateMachineSystem
     @_createShrapnel(x,y, -magnitude, 0)
     @_createShrapnel(x,y, ax,-ay)
     @_createShrapnel(x,y, -ax,-ay)
+
+    @destroyEntity() # kill the Skree
 
 
   _createShrapnel: (x,y, vx,vy) ->

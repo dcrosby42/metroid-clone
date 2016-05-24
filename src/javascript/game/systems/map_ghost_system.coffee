@@ -24,6 +24,7 @@ BaseSystem = require '../../ecs/base_system'
 #   hits
 
 class MapGhostSystem extends BaseSystem
+  # TODO: what about map ghosts that have no need for a hitbox?
   @Subscribe: ['map_ghost', 'hit_box', 'velocity','position']
 
   process: ->
