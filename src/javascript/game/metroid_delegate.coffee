@@ -67,7 +67,7 @@ class MetroidDelegate
       "a": 'action2'
       "s": 'action1'
       "enter": 'start'
-      "'": 'select'
+      "shift": 'select'
 
     @player1GpController = createGamepadSignal @postOffice,
       "DPAD_RIGHT": 'right'
