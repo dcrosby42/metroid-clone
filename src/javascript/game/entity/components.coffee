@@ -103,7 +103,7 @@ C.Bullet = imm
 
 C.Missile = imm
   type: 'missile'
-  damage: 15
+  damage: 20
 
 C.Enemy = imm
   type: 'enemy'

@@ -51,6 +51,7 @@ ecsMachine = new EcsMachine(systems: [
     Systems.map_physics_system
     Systems.map_ghost_system
     Systems.bullet_enemy_system
+    Systems.missile_enemy_system
     DoorSystems.bullet_door_system
     Systems.bullet_system
     Systems.missile_system
