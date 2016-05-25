@@ -1,7 +1,7 @@
 endsWithPressedOrReleased = /(Pressed|Released)$/
 updatePressedReleased = (s, input) ->
-  s = s.reduce (map, x, key) ->
-    if key.match endsWithPressedOrReleased
+  s = s.reduce (map, val, key) ->
+    if !val or key.match endsWithPressedOrReleased
       map.delete(key)
     else
       map
@@ -16,6 +16,7 @@ updatePressedReleased = (s, input) ->
           map = map.set("#{key}Pressed", true)
         map
       else
+        console.log "!val. map val key",map,val,key
         map = map.delete(key)
         if prevVal
           map = map.set("#{key}Released", true)

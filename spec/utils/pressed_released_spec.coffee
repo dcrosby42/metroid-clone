@@ -1,5 +1,6 @@
 Immutable = require 'immutable'
 imm = Immutable.fromJS
+{Map,List,Set}=Immutable
 
 chai = require('chai')
 expect = chai.expect
@@ -25,11 +26,10 @@ describe "PressedReleased.update", ->
     input = imm(right: false)
     s1 = PressedReleased.update(s, input)
     expectIs s1, imm
-      right: false
       rightReleased: true
 
     s2 = PressedReleased.update(s1, input)
-    expectIs s2, imm(right: false)
+    expectIs s2, Map()
     
   it "removes *Released and *Pressed keys if inputs not mentioned", ->
     s = imm
@@ -43,7 +43,6 @@ describe "PressedReleased.update", ->
     s1 = PressedReleased.update(s, input)
     expectIs s1, imm
       sheep: true
-      ram: false
       goat: true
       goatPressed: true
 
@@ -57,7 +56,6 @@ describe "PressedReleased.update", ->
     s1 = PressedReleased.update(s, null)
     expectIs s1, imm
       sheep: true
-      ram: false
 
   it "can handle multiple vars and transitions simultaneously", ->
     s = imm
@@ -73,7 +71,6 @@ describe "PressedReleased.update", ->
     expectIs s1, imm
       ant: true
       antPressed: true
-      dog: false
       dogReleased: true
       kat: true
 
@@ -90,10 +87,10 @@ describe "PressedReleased.update", ->
     expectIs s3, imm(a:true, b:true)
 
     s4 = PressedReleased.update(s3, imm({a:false}))
-    expectIs s4, imm(a:false, aReleased:true, b:true)
+    expectIs s4, imm(aReleased:true, b:true)
 
     s5 = PressedReleased.update(s4, imm({b:false}))
-    expectIs s5, imm(a:false, b:false, bReleased: true)
+    expectIs s5, imm(bReleased: true)
     
 
     
