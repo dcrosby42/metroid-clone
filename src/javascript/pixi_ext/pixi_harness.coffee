@@ -46,7 +46,6 @@ class PixiHarness
 
   start: ->
     @_loadAssets =>
-      # console.log "Assets loaded."
       console.log "PixiHarness: initializing delegate"
       @delegate.initialize @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight, @zoom, @soundController, @dataFileLoader.data
       @stopWatch.start()
@@ -54,21 +53,6 @@ class PixiHarness
 
   _loadAssets: (callback) ->
     allDone = CompositeEvent.create ["graphics", "sounds", "data"], callback
-
-    # if @delegate.dataToPreload?
-    #   @_loadData @delegate.dataToPreload(), allDone.notifier("data")
-    # else
-    #   allDone.notify "data"
-    #
-    # if @delegate.graphicsToPreload?
-    #   @_loadGraphicalAssets @delegate.graphicsToPreload(), allDone.notifier("graphics")
-    # else
-    #   allDone.notify "graphics"
-    #
-    # if @delegate.soundsToPreload?
-    #   @_loadSoundAssets @delegate.soundsToPreload(), allDone.notifier("sounds")
-    # else
-    #   allDone.notify "sounds"
 
     if @delegate.assetsToPreload?
       soundAssets = []
@@ -112,26 +96,6 @@ class PixiHarness
     else
       callback()
 
-  # _loadData: (filemap, callback) ->
-  #   if filemap? and _.keys(filemap).length > 0
-  #     @dataFileLoader.loadDataFiles(filemap, callback)
-  #   else
-  #     callback()
-  #
-  # _loadGraphicalAssets: (assets, callback) ->
-  #   if assets? and assets.length > 0
-  #     loader = new PIXI.AssetLoader(assets)
-  #     loader.onComplete = callback
-  #     loader.load()
-  #   else
-  #     callback()
-  #
-  # _loadSoundAssets: (assets, callback) ->
-  #   if _.keys(assets).length > 0
-  #     @soundController.loadSoundMap assets, callback
-  #   else
-  #     callback()
-
   update: (t) ->
     dt = null
     if @lastT?
@@ -150,5 +114,33 @@ class PixiHarness
     Profiler.tear(dt: dt, updateTime: ellapsedMillis)
 
     requestAnimationFrame (t) => @update(t)
+
+#
+# Debug stuff
+#
+PixiHarness.setupSceneDebug = (win,stage) ->
+  win.stage = stage
+  win.Scene =
+    nodes: ->
+      sceneToNames(stage)
+    printNodes: ->
+      printTree(sceneToNames(stage))
+
+sceneToNames = (obj) ->
+  n = {}
+  n.name = obj._name or "??"
+  if obj.children
+    n.children = _.map(obj.children, sceneToNames)
+  n
+
+printTree = (node, indent=0) ->
+  s = ""
+  s += "  " for [0...indent]
+  s += node.name
+  console.log s
+  if node.children
+    printTree(c, indent+1) for c in node.children
+  null
+
 
 module.exports = PixiHarness

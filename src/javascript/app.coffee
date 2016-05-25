@@ -1,28 +1,25 @@
-Config = require './config'
-
 jquery    = require 'jquery'
 
 PixiHarness = require './pixi_ext/pixi_harness'
-Immutable = require 'immutable'
-window.Immutable = Immutable
-
-React = require 'react'
-
+BigScreen = require './vendor/bigscreen_wrapper'
 MetroidDelegate = require './game/metroid_delegate'
 
 Profiler = require './profiler'
 Profiler.useAjaxReporter()
 # Profiler.enable()
 # Profiler.disable()
-#
 
 
-BigScreen = require './vendor/bigscreen_wrapper'
-
-
+# for console debugging and messing around:
+window.$  = jquery
+window._  = require 'lodash'
+window.Immutable = require 'immutable'
 window.ObjectStore = require './search/object_store'
 window.ObjectStoreSearch = require './search/object_store'
 
+#
+# ON STARTUP
+#
 jquery ->
   devUIDiv = jquery('#dev-ui')[0]
 
@@ -48,32 +45,6 @@ jquery ->
   $('#fullscreen').on "click", ->
     BigScreen.doTheBigThing harness.view
 
-  window.stage = harness.stage
-  
-  window.Scene =
-    nodes: ->
-      sceneToNames(harness.stage)
-    printNodes: ->
-      printTree(sceneToNames(harness.stage))
+  PixiHarness.setupSceneDebug(window,stage)
  
-
-# for console debugging and messing around:
-window.$  = jquery
-window._  = require 'lodash'
-
-sceneToNames = (obj) ->
-  n = {}
-  n.name = obj._name or "??"
-  if obj.children
-    n.children = _.map(obj.children, sceneToNames)
-  n
-
-printTree = (node, indent=0) ->
-  s = ""
-  s += "  " for [0...indent]
-  s += node.name
-  console.log s
-  if node.children
-    printTree(c, indent+1) for c in node.children
-  null
 
