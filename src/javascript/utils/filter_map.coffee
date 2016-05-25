@@ -1,7 +1,7 @@
 Immutable = require 'immutable'
-{Map,List,Set} = Immutable
+{Map,List,Set,OrderedMap} = Immutable
 
-EmptyMap = Map()
+EmptyMap = OrderedMap()
 EmptyList = List()
 
 isBlank = (s) -> !s? or s.match(/^\s*$/)
@@ -9,6 +9,9 @@ isBlank = (s) -> !s? or s.match(/^\s*$/)
 filterMap_string = (data,filter) ->
   return data if isBlank(filter)
   filterMap(data,List(filter.split('.')))
+
+matchStep = (step, str) ->
+  step == "*" or str.toString().match(///#{step}///i)
 
 filterMap = (data,filterSteps) ->
   return data if filterSteps.size == 0 or filterSteps.size == 1 and isBlank(filterSteps.get(0))
@@ -20,7 +23,7 @@ filterMap = (data,filterSteps) ->
     res = EmptyMap
     data.forEach (val,key) ->
       # console.log "  applying filter",key,step
-      if key.match(///#{step}///i)
+      if matchStep(step,key)
         #console.log "    matched key. val=",val
         if Map.isMap(val) or List.isList(val)
           #console.log "    submap is iterable."

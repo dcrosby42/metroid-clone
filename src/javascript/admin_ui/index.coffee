@@ -32,7 +32,7 @@ AdminUI = React.createClass
       Folder.create {title:'Systems'}, =>
         SystemLogUI.create(@props.history)
       Folder.create {title:'Full Game State'}, =>
-        React.createElement Structures.Map, className: 'gameState', data: @props.gameState
+        React.createElement Structures.FilterableMap, className: 'gameState', data: @props.gameState
 
 # view : (Address, admin) -> ReactElement
 exports.view = (address, s) ->

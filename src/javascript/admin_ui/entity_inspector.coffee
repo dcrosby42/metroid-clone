@@ -7,31 +7,16 @@ EntityStore = require '../ecs/entity_store'
 
 {div,span,table,tbody,td,tr} = React.DOM
 
-# ComponentSearchBox = require './component_search_box'
-
-# ReservedComponentKeys = Set.of('type','eid','cid')
-      # pairs = comp.filterNot((value,key) -> ReservedComponentKeys.contains(key))
-
 Structures = require './structures'
 
-
+ #shouldComponentUpdate: function(nextProps, nextState) {
 EntityInspector={}
 EntityInspector.create = (h) ->
   gameState = RollingHistory.current(h).get('gameState')
-  # console.log gameState.toJS()
 
-  # [entities,_] = groupComponentsByEntity(gameState)
   entities = groupComponentsByEntity(gameState)
-  # console.log entities.toJS()
-  # entities = sortEntityMap(entities)
 
-
-  # entities = entities.reduce (memo,comps,eid) ->
-  #   [newVal,newKey] = modify(comps,eid)
-  #   memo.set(newKey,newVal)
-  # , OrderedMap()
-
-  React.createElement Structures.Map, data: entities
+  React.createElement Structures.FilterableMap, data: entities
 
 
 groupComponentsByEntity = (gameState) ->
@@ -47,18 +32,6 @@ groupComponentsByEntity = (gameState) ->
         eid
       result.set newKey, compsByType
     , OrderedMap()
-
-
-  # estore = new EntityStore(gameState)
-  #
-  # entities = Map()
-  # estore.forEachComponent (comp) ->
-  #   eid = comp.get('eid')
-  #   cid = comp.get('cid')
-  #   entities = entities.updateIn([eid,cid], List(), (comps) -> comps.push(comp))
-  #   
-  #
-  # [entities,estore]
 
 sortEntityMap = (em) ->
   em.sortBy((_,key) -> parseInt(key[1..-1]))
@@ -78,7 +51,6 @@ modify = (comps,eid) ->
 
   if name?
      newKey = "#{name} (#{eid})"
-     # newKey = name
   [newComps,newKey]
 
 module.exports = EntityInspector

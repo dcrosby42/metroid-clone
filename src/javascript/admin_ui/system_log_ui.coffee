@@ -9,7 +9,7 @@ SystemLogUI = React.createClass
   displayName: 'SystemLogUI'
 
   render: ->
-    React.createElement Structures.Map, className: 'systemLog', data: @props.systemLog
+    React.createElement Structures.FilterableMap, className: 'systemLog', data: @props.systemLog
 
 SystemLogUI.create = (history) ->
   slog = RollingHistory.current(history).get('systemLogs')

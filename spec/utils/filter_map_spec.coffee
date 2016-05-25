@@ -104,5 +104,19 @@ describe "filterMap", ->
 
       expectIs filterMap(data, 'sam.an.type'), expected
 
+    it "supports wildcards", ->
+      expected = imm
+        "#{samusKey}":
+          animation: [ { type: 'animation' } ]
+          timer: [ { type: 'timer' } ]
+        "#{zoomerKey}":
+          animation: [ { type: 'animation' } ]
+          zoomer: [ { type: 'zoomer' } ]
+        "#{myisamKey}":
+          thingy: [ { type: 'thingy' } ]
+          animatorator: [ { type: 'whoknows' } ]
+
+      expectIs filterMap(data, '*.*.type'), expected
+
 
 

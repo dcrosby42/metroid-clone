@@ -90,6 +90,7 @@ newBullet = (weapon, position,direction,shootUp) ->
   fireY = position.get('y') + offsetY
 
   return [
+    Common.Name.merge(name: 'bullet')
     Common.Bullet.merge
       damage: weapon.get('damage')
     Common.Animation.merge
