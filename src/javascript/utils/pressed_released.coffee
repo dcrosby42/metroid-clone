@@ -16,7 +16,6 @@ updatePressedReleased = (s, input) ->
           map = map.set("#{key}Pressed", true)
         map
       else
-        console.log "!val. map val key",map,val,key
         map = map.delete(key)
         if prevVal
           map = map.set("#{key}Released", true)
