@@ -10,7 +10,7 @@ class Domain
     tid = @nextId
     @nextId++
     @typeIdsToNames[tid] = clazz.name
-    @typeIdsToClasses[tid] = clazz.name
+    @typeIdsToClasses[tid] = clazz
     @[clazz.name] = tid
     clazz.type = tid
     tid
