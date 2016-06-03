@@ -12,6 +12,7 @@ module.exports = class CompSet
     @ect = 0
 
   add: (comp) ->
+    # console.log "CompSet #{@name}: adding comp",comp
     if @count < @length
       for c,i in @comps
         if !c?
@@ -48,49 +49,21 @@ module.exports = class CompSet
           for c in @comps
             if c?
               @iterbuf[i] = c
-              console.log "  >> @iterbuf[#{i}] <-",c
+              # console.log "  >> @iterbuf[#{i}] <-",c
               i++
         @iterbufInvalid = false
 
     @ect++
-    
+    # console.log "CompSet #{@name}: START iterating iterbuf, ect=#{@ect}"
 
     i = 0
     while i < count
       fn(@iterbuf[i])
       i++
 
-    ## local iterbuf copy:
-    # console.log "CompSet(#{@name}).each ect=#{@ect}"
-    # iterbuf = new Array(@count)
-    # n=0
-    # for c,i in @comps
-    #   if c?
-    #     iterbuf[i] = c
-    #     n++
-    #     break if n >= @count
-    #
-    # for c in iterbuf
-    #   fn(c)
-
-    ## orig:
-    # for c in @comps
-    #   if c?
-    #     fn(c)
-
+    # console.log "CompSet #{@name}: END iterating iterbuf, ect=#{@ect}"
     @ect--
     null
-
-  # _prepIterbuf: ->
-  #   if @iterbuf.length < @count
-  #     @iterbuf = new Array(@length)
-  #   n = 0
-  #   for c,i in @comps
-  #     if c?
-  #       @iterbuf[i] = c
-  #       n++
-  #       if n >= @count
-  #         break
 
   single: ->
     for c in @comps
@@ -99,7 +72,7 @@ module.exports = class CompSet
           console.log "!! WARNING CompSet#single on NON-singleton list; returning component 1 of #{@count}",c
         return c
 
-    console.log "!! WARNING CompSet#single returning null"
+    # console.log "!! WARNING CompSet#single returning null"
     return null
 
   # getByCid: (cid) ->
@@ -108,6 +81,7 @@ module.exports = class CompSet
   #       return c
 
   deleteByCid: (cid) ->
+    # console.log "CompSet #{@name}: deleting cid #{cid}"
     for c,i in @comps
       if c? and c.cid == cid
         @comps[i] = null
