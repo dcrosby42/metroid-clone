@@ -69,6 +69,50 @@ describe "CompSet", ->
       target.deleteByCid(pos3.cid)
       expect(captureEach(target)).to.eql([])
 
+    it "protects from concurrent modification (add)", ->
+      pos1 = new Position(0,0,99,1)
+      pos2 = new Position(42,37,99,2)
+      pos3 = new Position(44,55,99,3)
+      target.add(pos1)
+      target.add(pos2)
+      target.add(pos3)
+
+      pos4 = new Position(401,402,99,4)
+      pos5 = new Position(501,502,99,5)
+      adds = [pos4,pos5]
+
+      res = []
+      target.each (comp) ->
+        res.push(comp)
+        if adds.length > 0
+          target.add adds.shift()
+
+      # As we iterated, the newly added comps should not have been encountered
+      expect(res).to.eql([pos1,pos2,pos3])
+
+      # ...but this time they should be there:
+      expect(captureEach(target)).to.eql([pos1,pos2,pos3,pos4,pos5])
+
+    it "protects from concurrent modification (delete)", ->
+      pos1 = new Position(0,0,99,1)
+      pos2 = new Position(42,37,99,2)
+      pos3 = new Position(44,55,99,3)
+      target.add(pos1)
+      target.add(pos2)
+      target.add(pos3)
+
+      res = []
+      target.each (comp) ->
+        res.push(comp)
+        target.deleteByCid(comp.cid)
+        target.deleteByCid(comp.cid+1)
+
+      # As we iterated, the deleted comps should still have been encountered
+      expect(res).to.eql([pos1,pos2,pos3])
+
+      # ...but this time they should be gone:
+      expect(captureEach(target)).to.eql([])
+
   describe "single()", ->
     it "retrieves the singular object", ->
       expect(target.single()).to.eql(null)
