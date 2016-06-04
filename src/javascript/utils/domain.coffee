@@ -14,6 +14,14 @@ class Domain
     @[clazz.name] = tid
     clazz.type = tid
     tid
+  
+  nameFor: (typeId) ->
+    name = @typeIdsToNames[typeId]
+    if !name?
+      console.log "!! Domain[#{@name}]: name requested for unknown typeId #{typeId}"
+      name = "UNKNOWN-COMP-TYPE-#{typeId}"
+    name
+
 
 module.exports = Domain
 
