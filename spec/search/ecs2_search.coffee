@@ -59,6 +59,22 @@ demo new EntitySearch.Query([anim,timer])
 demo new EntitySearch.Query([pos,vel,hit])
 demo new EntitySearch.Query([hit,hit,hit])
 
+cquery = new EntitySearch.CompoundQuery([
+  new EntitySearch.Query([anim,timer])
+  new EntitySearch.Query([pos,vel,hit])
+])
+
+console.log "======================="
+console.log cquery.toString()
+EntitySearch.runCompound estore, cquery, (a,b) ->
+    console.log "Compound Result [A: e#{a.entity.eid}, B: e#{b.entity.eid}]"
+    console.log "A:\n",a.comps
+    console.log "B:\n",b.comps
+
+
+
+
+
 # EntitySearch.CompoundQuery([f1
 
 # console.log "======================="
