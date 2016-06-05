@@ -22,6 +22,10 @@ class Domain
       name = "UNKNOWN-COMP-TYPE-#{typeId}"
     name
 
+  exists: (typeId) ->
+    @typeIdsToClasses[typeId] != null
+
+
 
 module.exports = Domain
 

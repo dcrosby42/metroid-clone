@@ -8,16 +8,7 @@ EntitySearch = require '../../src/javascript/ecs2/entity_search'
 
 
 C = require '../../src/javascript/components'
-Types = C.Types
-
-
-# expand [ Position,Velocity ] =>
-# [
-#    { compType: Position }
-#    { compType: Velocity }
-# ]
-
-
+T = C.Types
 
 class Fix
   constructor: ->
@@ -48,11 +39,11 @@ class Fix
     ])
 
   setupFilters: ->
-    @animFilter = new EntitySearch.filter(Types.Animation)
-    @posFilter = new EntitySearch.filter(Types.Position)
-    @velFilter = new EntitySearch.filter(Types.Velocity)
-    @hitboxFilter = new EntitySearch.filter(Types.HitBox)
-    @timerFilter = new EntitySearch.filter(Types.Timer)
+    @animFilter = new EntitySearch.filter(T.Animation)
+    @posFilter = new EntitySearch.filter(T.Position)
+    @velFilter = new EntitySearch.filter(T.Velocity)
+    @hitboxFilter = new EntitySearch.filter(T.HitBox)
+    @timerFilter = new EntitySearch.filter(T.Timer)
 
   runWithFilters: (filters) ->
     results = []
@@ -99,24 +90,24 @@ describe "EntitySearch", ->
     it "executes a simple search", ->
       comps = fix.runWithFilters [fix.posFilter]
       assertResultComps comps, [
-        [fix.e1.get(Types.Position)]
-        [fix.e2.get(Types.Position)]
-        [fix.e3.get(Types.Position)]
+        [fix.e1.get(T.Position)]
+        [fix.e2.get(T.Position)]
+        [fix.e3.get(T.Position)]
       ]
 
     it "can match multiple comps per entity", ->
       comps = fix.runWithFilters [fix.posFilter,fix.velFilter]
       assertResultComps comps, [
-        [fix.e1.get(Types.Position),fix.e1.get(Types.Velocity)]
-        [fix.e2.get(Types.Position),fix.e2.get(Types.Velocity)]
-        [fix.e3.get(Types.Position),fix.e3.get(Types.Velocity)]
+        [fix.e1.get(T.Position),fix.e1.get(T.Velocity)]
+        [fix.e2.get(T.Position),fix.e2.get(T.Velocity)]
+        [fix.e3.get(T.Position),fix.e3.get(T.Velocity)]
       ]
 
     it "doesn't return comps from entities unless all filters are satisfied", ->
       comps = fix.runWithFilters [fix.posFilter,fix.velFilter,fix.hitboxFilter]
       assertResultComps comps, [
-        [fix.e1.get(Types.Position),fix.e1.get(Types.Velocity),fix.e1.get(Types.HitBox)]
-        [fix.e2.get(Types.Position),fix.e2.get(Types.Velocity),fix.e2.get(Types.HitBox)]
+        [fix.e1.get(T.Position),fix.e1.get(T.Velocity),fix.e1.get(T.HitBox)]
+        [fix.e2.get(T.Position),fix.e2.get(T.Velocity),fix.e2.get(T.HitBox)]
       ]
 
     it "protects from concurrent modification", ->
@@ -148,6 +139,38 @@ describe "EntitySearch", ->
         # [ fix.e2.eid, fix.e2.eid ] # do not want
         [ fix.e2.eid, fix.e3.eid ]
       ])
+
+  describe "prepareSearcher", ->
+    it "converts a list of comp types into a prepared searcher", ->
+      searcher = EntitySearch.prepare([T.Position,T.Velocity])
+      # comps = fix.runWithFilters [fix.posFilter,fix.velFilter]
+      comps = []
+      searcher.run fix.estore, (r) ->
+        comps.push copyArray(r.comps)
+
+      assertResultComps comps, [
+        [fix.e1.get(T.Position),fix.e1.get(T.Velocity)]
+        [fix.e2.get(T.Position),fix.e2.get(T.Velocity)]
+        [fix.e3.get(T.Position),fix.e3.get(T.Velocity)]
+      ]
+
+    it "converts a list of lists of comp types into a prepared compound searcher", ->
+      searcher = EntitySearch.prepare([
+        [T.HitBox]
+        [T.Position,T.Velocity]
+      ])
+
+      entityCombinations = []
+      searcher.run fix.estore, (hitRes, pvRes) ->
+        entityCombinations.push [hitRes.entity.eid, pvRes.entity.eid]
+
+      expect(entityCombinations).to.eql([
+        [ fix.e1.eid, fix.e2.eid ]
+        [ fix.e1.eid, fix.e3.eid ]
+        [ fix.e2.eid, fix.e1.eid ]
+        [ fix.e2.eid, fix.e3.eid ]
+      ])
+
 
         
 # demo = (q) ->

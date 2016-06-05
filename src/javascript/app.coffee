@@ -2,7 +2,8 @@ jquery    = require 'jquery'
 
 PixiHarness = require './pixi_ext/pixi_harness'
 BigScreen = require './vendor/bigscreen_wrapper'
-MetroidDelegate = require './game/metroid_delegate'
+# MetroidDelegate = require './game/metroid_delegate'
+MutDelegate = require './game2/mut_delegate'
 
 Profiler = require './profiler'
 Profiler.useAjaxReporter()
@@ -23,7 +24,7 @@ window.ObjectStoreSearch = require './search/object_store'
 jquery ->
   devUIDiv = jquery('#dev-ui')[0]
 
-  del = new MetroidDelegate(adminUIDiv: devUIDiv)
+  del = new MutDelegate(adminUIDiv: devUIDiv)
 
   gameHolder = jquery('#game-holder')[0]
   harness = new PixiHarness

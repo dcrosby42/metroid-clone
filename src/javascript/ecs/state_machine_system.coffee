@@ -32,3 +32,5 @@ class StateMachineSystem extends BaseSystem
     @setProp(@_stateComponent,@_stateProperty, state1) unless state1 == state
 
 module.exports = StateMachineSystem
+
+

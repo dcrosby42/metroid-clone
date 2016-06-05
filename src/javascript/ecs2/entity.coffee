@@ -43,6 +43,9 @@ module.exports = class Entity
     @estore._deleteComponent(comp)
     null
 
+  destroy: ->
+    @estore.deleteEntityByEid(@eid)
+
   _trackCompType: (type) ->
     i = 0
     while i < @_compTypesI
