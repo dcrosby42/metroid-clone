@@ -9,6 +9,9 @@ EntityStore = require '../../../src/javascript/ecs2/entity_store'
 EntitySearch = require '../../../src/javascript/ecs2/entity_search'
 Immutable = require 'immutable'
 
+TestHelpers = require '../../ecs2/test_helpers'
+
+
 describe "Title mode", ->
   it "has initialState", ->
     estore = Title.initialState()
@@ -37,7 +40,15 @@ describe "Title mode", ->
         player1: {}
       dt: 0
 
-    estore = Title.update(estore,input)
+    [estore,events] = Title.update(estore,input)
+
+    ents = TestHelpers.searchEntities estore, [{type: T.Name, name: 'mainTitleImg'}]
+    expect(ents.length).to.equal(1)
+
+    ents = TestHelpers.searchEntities estore, [{type: T.Name, name: 'mainTitleLabel'}]
+    expect(ents.length).to.equal(1)
+
+
 
 
   

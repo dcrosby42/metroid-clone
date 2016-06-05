@@ -1,6 +1,7 @@
 Immutable = require 'immutable'
 imm = Immutable.fromJS
-{Map,List,Set} = Immutable
+{OrderedMap,Map,List,Set} = Immutable
+OMap=OrderedMap
 
 chai = require('chai')
 expect = chai.expect
@@ -10,28 +11,29 @@ expectIs = require('../helpers/expect_helpers').expectIs
 filterMap = require '../../src/javascript/utils/filter_map'
 
 describe "filterMap", ->
-  data = imm
-    "Samus (e2)":
-      animation: [
-        { type: "animation", cid: "c1", eid: "e2",  spriteName: "samus", state: "stand-right" }
-      ]
-      timer: [
-        { type: "timer", value: "100" }
-      ]
-    "Zoomer (e9)":
-      zoomer: [
-        { type: "zoomer", orientation: "up", crawlDir: "forward" }
-      ]
-      animation: [
-        { type: "animation", cid: "c3", eid: "e9",  spriteName: "basic_zoomer", state: "stand-right" }
-      ]
-    "myisam (e99)":
-      thingy: [
-        { type: 'thingy' }
-      ]
-      animatorator: [
-        { type: "whoknows", cid: "c1", eid: "e2",  spriteName: "samus", state: "stand-right" }
-      ]
+  data = OMap(
+    "Samus (e2)": OMap(
+      animation: List([
+        OMap( type: "animation", cid: "c1", eid: "e2",  spriteName: "samus", state: "stand-right" )
+      ])
+      timer: List([
+        OMap( type: "timer", value: "100" )
+      ]))
+    "Zoomer (e9)": OMap(
+      zoomer: List([
+        OMap( type: "zoomer", orientation: "up", crawlDir: "forward" )
+      ])
+      animation: List([
+        OMap( type: "animation", cid: "c3", eid: "e9",  spriteName: "basic_zoomer", state: "stand-right" )
+      ]))
+    "myisam (e99)": OMap(
+      thingy: List([
+        OMap( type: 'thingy' )
+      ])
+      animatorator: List([
+        OMap( type: "whoknows", cid: "c1", eid: "e2",  spriteName: "samus", state: "stand-right" )
+      ]))
+  )
 
   samusKey = "Samus (e2)"
   zoomerKey = "Zoomer (e9)"
@@ -45,7 +47,7 @@ describe "filterMap", ->
 
   describe "filtering simple maps", ->
     it "returns a Map less the keys that don't match the filter", ->
-      simple = Map
+      simple = OrderedMap
         bird: "cardinal"
         region: "NA"
         tird: "lots"
@@ -57,17 +59,17 @@ describe "filterMap", ->
 
   describe "filtering the toplevel map", ->
     it "returns a map with only the keys who match the given text", ->
-      expected = Map
+      expected = OrderedMap
         "#{zoomerKey}": data.get(zoomerKey)
       expectIs filterMap(data, 'zoome'), expected
 
-      expected = Map
+      expected = OrderedMap
         "#{samusKey}": data.get(samusKey)
       expectIs filterMap(data, 'Samus'), expected
       expectIs filterMap(data, 'samu'), expected
       expectIs filterMap(data, 'amu'), expected
 
-      expected = Map
+      expected = OrderedMap
         "#{samusKey}": data.get(samusKey)
         "#{myisamKey}": data.get(myisamKey)
 
@@ -75,46 +77,52 @@ describe "filterMap", ->
 
   describe "keypath-style filter text for first layer of submaps", ->
     it "filters child maps", ->
-      expected = Map
-        "#{samusKey}": data.get(samusKey).remove("timer")
+      expected = OMap(
+        "#{samusKey}": data.get(samusKey).remove("timer"))
       expectIs filterMap(data, 'samu.anim'), expected
 
-      expected = Map
+      expected = OMap(
         "#{samusKey}": data.get(samusKey).remove("timer")
         "#{myisamKey}": data.get(myisamKey).remove("thingy")
+      )
       expectIs filterMap(data, 'sam.anima'), expected
 
     it "excludes toplevel keys if further steps exclude all children", ->
-      expectIs filterMap(data, 'sam.funk'), Map()
+      expectIs filterMap(data, 'sam.funk'), OMap()
 
     it "filters subarrays", ->
-      expected = imm
-        "#{samusKey}":
-          animation: [
-            { cid: "c1", eid: "e2" }
-          ]
+      expected = OMap(
+        "#{samusKey}": OMap(
+          animation: List([
+            OMap( cid: "c1", eid: "e2" )
+          ]))
+      )
 
       expectIs filterMap(data, 'samu.anim.id'), expected
 
-      expected = imm
-        "#{samusKey}":
-          animation: [ { type: 'animation' } ]
-        "#{myisamKey}":
-          animatorator: [ { type: 'whoknows' } ]
+      expected = OMap(
+          "#{samusKey}": OMap(
+            animation: List([ OMap( type: 'animation' ) ]))
+          "#{myisamKey}": OMap(
+            animatorator: List([ OMap( type: 'whoknows' ) ]))
+      )
 
       expectIs filterMap(data, 'sam.an.type'), expected
 
     it "supports wildcards", ->
-      expected = imm
-        "#{samusKey}":
-          animation: [ { type: 'animation' } ]
-          timer: [ { type: 'timer' } ]
-        "#{zoomerKey}":
-          animation: [ { type: 'animation' } ]
-          zoomer: [ { type: 'zoomer' } ]
-        "#{myisamKey}":
-          thingy: [ { type: 'thingy' } ]
-          animatorator: [ { type: 'whoknows' } ]
+      expected = OMap(
+        "#{samusKey}": OMap(
+          animation: List([ OMap(type: 'animation' ) ])
+          timer: List([ OMap( type: 'timer' ) ]))
+
+        "#{zoomerKey}": OMap(
+          zoomer: List([ OMap( type: 'zoomer' ) ])
+          animation: List([ OMap( type: 'animation' ) ]))
+        "#{myisamKey}": OMap(
+          thingy: List([ OMap( type: 'thingy' ) ])
+          animatorator: List([ OMap( type: 'whoknows' ) ]))
+      )
+          
 
       expectIs filterMap(data, '*.*.type'), expected
 

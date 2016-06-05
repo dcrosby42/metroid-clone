@@ -1,7 +1,19 @@
 C = require '../components'
 
 class EntitySearchFilter
-  constructor: (@compType) ->
+  constructor: (@compType,@matchers=null) ->
+    @hasMatchers = if @matchers? then @matchers.length > 0 else false
+
+  satisfiedBy: (comp) ->
+    return true unless @hasMatchers
+    for matcher in @matchers
+      key = matcher[0]
+      val = matcher[1]
+      if comp[key] != val
+        # console.log "No match: key=#{key} val=#{val} comp[#{key}]=#{comp[key]}"
+        return false
+    return true
+
   toString: ->
     C.Types.nameFor(@compType)
 
@@ -60,15 +72,26 @@ class PreparedCompoundSearcher
   #TODO runParam
     
 
-
+badFilterSpec = (x) ->
+  console.log "!! EntitySearch.expandFilter: cannot grok",x
+  null
+  
 expandFilter = (fspec) ->
+  return badFilterSpec(fspec) unless fspec?
   if fspec.constructor == EntitySearchFilter
     return fspec
+  else if typeof fspec == 'object' and fspec.type? and C.Types.exists(fspec.type)
+    empty = C.Types.classFor(fspec.type).default()
+    matchers = null
+    for key,val of fspec
+      if key != 'type' and typeof empty[key] != 'undefined' # eligible matchers only plz
+        matchers ?= []
+        matchers.push [key,val]
+    return new EntitySearchFilter(fspec.type, matchers)
   else if C.Types.exists(fspec)
     return new EntitySearchFilter(fspec)
   else
-    console.log "!! EntitySearch.expandFilter: cannot grok",fspec
-    return null
+    return badFilterSpec(fspec)
 
 expandFilters = (list) ->
   expandFilter(fspec) for fspec in list
@@ -105,19 +128,20 @@ doSearch = (estore,query,handler) ->
   filter = query.filters[slot]  # TODO: handle empty filters
   if filter.compType?
     estore.each filter.compType, (comp) ->
-      # TODO: dedupe this?
-      result.entity = estore.getEntity(comp.eid) # THIS LINE IS NOT DUPED IN recurseSearch
-      result.eid = result.entity.eid # convenience for Systems
-      result.comps[slot] = comp
-      nextSlot = slot+1
-      if nextSlot == result.width
-        handler(result)
-      else
-        recurseSearch(estore,query,handler,nextSlot,result)
+      if filter.satisfiedBy(comp)
+        # TODO: dedupe this?
+        result.entity = estore.getEntity(comp.eid) # THIS LINE IS NOT DUPED IN recurseSearch
+        result.eid = result.entity.eid # convenience for Systems
+        result.comps[slot] = comp
+        nextSlot = slot+1
+        if nextSlot == result.width
+          handler(result)
+        else
+          recurseSearch(estore,query,handler,nextSlot,result)
   else
     console.log "!! EntitySearch TODO: support entity searches without compType"
   
-  # TODO: support filter.eid right off the bat?
+  # TODO: support filter.eid right off the bat? not likely needed, given EntityStore.getEntity
   result.comps[slot] = null
   result.entity = null
   result.eid = 0
@@ -130,13 +154,14 @@ recurseSearch = (estore,query,handler,slot,result) ->
   filter = query.filters[slot]
   if filter.compType?
     result.entity.each filter.compType, (comp) ->
-      # TODO: dedupe this
-      result.comps[slot] = comp
-      nextSlot = slot+1
-      if nextSlot == result.width
-        handler(result)
-      else
-        recurseSearch(estore,query,handler,nextSlot,result)
+      if filter.satisfiedBy(comp)
+        # TODO: dedupe this
+        result.comps[slot] = comp
+        nextSlot = slot+1
+        if nextSlot == result.width
+          handler(result)
+        else
+          recurseSearch(estore,query,handler,nextSlot,result)
   else
     console.log "!! EntitySearch.run2 TODO: support entity searches without compType"
   
@@ -189,8 +214,9 @@ module.exports =
   CompoundQuery: EntitySearchCompoundQuery
   Result: EntitySearchResult
 
-  filter: (compType) -> new EntitySearchFilter(compType)
+  filter: (compType,matchers=null) -> new EntitySearchFilter(compType,matchers)
   query: (filters) -> new EntitySearchQuery(filters)
   compoundQuery: (queries) -> new EntitySearchCompoundQuery(queries)
   prepare: (criteria) -> prepareSearcher(criteria)
+  _expandFilter: (fspec) -> expandFilter(fspec)
 

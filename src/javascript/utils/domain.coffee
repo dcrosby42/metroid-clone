@@ -22,8 +22,14 @@ class Domain
       name = "UNKNOWN-COMP-TYPE-#{typeId}"
     name
 
+  classFor: (typeId) ->
+    clazz = @typeIdsToClasses[typeId]
+    if !clazz?
+      console.log "!! Domain[#{@name}]: class requested for unknown typeId #{typeId}"
+    clazz
+
   exists: (typeId) ->
-    @typeIdsToClasses[typeId] != null
+    @typeIdsToClasses[typeId]?
 
 
 

@@ -5,6 +5,8 @@ assert = chai.assert
 
 EntityStore = require '../../src/javascript/ecs2/entity_store'
 EntitySearch = require '../../src/javascript/ecs2/entity_search'
+TestHelpers = require './test_helpers'
+{copyArray} = TestHelpers
 
 
 C = require '../../src/javascript/components'
@@ -22,6 +24,7 @@ class Fix
       new C.Velocity(1,1)
       new C.Animation("samus","running")
       new C.HitBox(-5,5,-7,3)
+      new C.Name("Ent One")
     ])
     @e2 = @estore.createEntity([
       new C.Position(101,202)
@@ -33,23 +36,25 @@ class Fix
     @e3 = @estore.createEntity([
       new C.Position(0.1,0.5)
       new C.Velocity(3,3)
-      new C.Animation("fragment","normal")
+      new C.Animation("skree","disolving")
       new C.Timer(250,"vanish")
       new C.Timer(100,"blink")
+      new C.Name("Ent Three")
     ])
 
   setupFilters: ->
-    @animFilter = new EntitySearch.filter(T.Animation)
-    @posFilter = new EntitySearch.filter(T.Position)
-    @velFilter = new EntitySearch.filter(T.Velocity)
-    @hitboxFilter = new EntitySearch.filter(T.HitBox)
-    @timerFilter = new EntitySearch.filter(T.Timer)
+    @animFilter = EntitySearch.filter(T.Animation)
+    @posFilter = EntitySearch.filter(T.Position)
+    @velFilter = EntitySearch.filter(T.Velocity)
+    @hitboxFilter = EntitySearch.filter(T.HitBox)
+    @timerFilter = EntitySearch.filter(T.Timer)
 
   runWithFilters: (filters) ->
     results = []
     EntitySearch.run @estore, EntitySearch.query(filters), (result) ->
       results.push copyArray(result.comps)
     results
+
 
 copyArray = (arr) ->
   res = new Array(arr.length)
@@ -123,6 +128,37 @@ describe "EntitySearch", ->
         comps.push copyArray(result.comps)
       expect(comps.length).to.equal(6)
 
+    it "can match component properties", ->
+      entThreeFilter = EntitySearch.filter(T.Name,[['name','Ent Three']])
+      comps = []
+      EntitySearch.run fix.estore, EntitySearch.query([entThreeFilter]), (result) ->
+        comps.push copyArray(result.comps)
+
+      expect(comps).to.eql([
+        [fix.e3.get(T.Name)]
+      ])
+
+      skreeFilter = EntitySearch.filter(T.Animation,[['spriteName','skree']])
+      comps = []
+      EntitySearch.run fix.estore, EntitySearch.query([fix.posFilter, skreeFilter]), (result) ->
+        comps.push copyArray(result.comps)
+
+      expect(comps).to.eql([
+        [fix.e2.get(T.Position), fix.e2.get(T.Animation)]
+        [fix.e3.get(T.Position), fix.e3.get(T.Animation)]
+      ])
+
+      skreeSpinFilter = EntitySearch.filter(T.Animation,[['spriteName','skree'],['state','spinning']])
+      comps = []
+      EntitySearch.run fix.estore, EntitySearch.query([fix.posFilter, skreeSpinFilter]), (result) ->
+        comps.push copyArray(result.comps)
+
+      expect(comps).to.eql([
+        [fix.e2.get(T.Position), fix.e2.get(T.Animation)]
+      ])
+      
+
+
   describe "runCompound()", ->
     it "produces a cartesian product of the results of each of its queries, MINUS combinations from the same entity", ->
       hitQ = EntitySearch.query([fix.hitboxFilter])
@@ -170,6 +206,46 @@ describe "EntitySearch", ->
         [ fix.e2.eid, fix.e1.eid ]
         [ fix.e2.eid, fix.e3.eid ]
       ])
+
+    it "converts objects into filters", ->
+      searcher = EntitySearch.prepare([ {type:T.Position}, { type: T.Animation, spriteName: 'skree', state: 'spinning' } ])
+      comps = []
+      searcher.run fix.estore, (r) ->
+        comps.push copyArray(r.comps)
+
+      expect(comps).to.eql([
+        [fix.e2.get(T.Position), fix.e2.get(T.Animation)]
+      ])
+
+  describe "expandFilter", ->
+    expandFilter = EntitySearch._expandFilter
+
+    it "returns simple filter if given a valid component type", ->
+      expect(expandFilter(T.Animation)).to.eql(EntitySearch.filter(T.Animation))
+      expect(expandFilter(T.Name)).to.eql(EntitySearch.filter(T.Name))
+
+    it "returns simple filter if given an object with a type prop", ->
+      expect(expandFilter({type: T.Animation})).to.eql(EntitySearch.filter(T.Animation))
+      expect(expandFilter({type: T.Name})).to.eql(EntitySearch.filter(T.Name))
+      
+    it "returns filter with matches if given an object with a type prop and extra keys", ->
+      expanded = expandFilter({type: T.Name, name: "axel"})
+      expect(expanded).to.eql(EntitySearch.filter(T.Name,[['name','axel']]))
+      # and drops superfluous attrs:
+      expanded = expandFilter({type: T.Name, name: "rose",extran:"eous"})
+      expect(expanded).to.eql(EntitySearch.filter(T.Name,[['name','rose']]))
+
+    it "returns filters that are already expanded", ->
+      expect(expandFilter(fix.animFilter)).to.eql(fix.animFilter)
+
+    it "returns null if given crap", ->
+      # console.log expandFilter(-1)
+      expect(expandFilter(-1)).to.be.null
+      expect(expandFilter(12345)).to.be.null
+      expect(expandFilter(null)).to.be.null
+      expect(expandFilter("dude")).to.be.null
+      expect(expandFilter({what:"evar"})).to.be.null
+
 
 
         

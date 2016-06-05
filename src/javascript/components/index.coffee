@@ -56,10 +56,10 @@ exports.Name = class Name
 # FIXME
 exports.Animation = class Animation
   Types.registerClass @
-  constructor: (@sprite,@state,@eid,@cid) -> @type = @constructor.type
+  constructor: (@spriteName,@state,@eid,@cid) -> @type = @constructor.type
   @default: -> new @("SPRITE","STATE")
-  clone: -> new @constructor(@sprite,@state,@eid,@cid)
-  equals: (o) -> @eid == o.eid and @cid == o.cid and @sprite == o.sprite and @state == o.state
+  clone: -> new @constructor(@spriteName,@state,@eid,@cid)
+  equals: (o) -> @eid == o.eid and @cid == o.cid and @spriteName == o.spriteName and @state == o.state
 
 # FIXME
 exports.Timer = class Timer
