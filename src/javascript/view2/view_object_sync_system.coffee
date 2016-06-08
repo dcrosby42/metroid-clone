@@ -45,7 +45,7 @@ class ViewObjectSyncSystem extends ViewSystem
         # (update it)
         @updateObject(r,object)
     
-    cache.each (cacheItem) ->
+    cache.each (cacheItem) =>
       if incomingCids.indexOf(cacheItem.cid) == -1
         # Delete no-longer-relevant display object
         @removeObject(cacheItem.object)

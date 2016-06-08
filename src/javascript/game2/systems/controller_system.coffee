@@ -9,12 +9,14 @@ class ControllerSystem extends BaseSystem
   process: (r) ->
     controller = r.comps[0]
 
-    # ins = @input.getIn(['controllers', @getProp('controller', 'inputName')])
-    ins = @input.get('controllers').get(controller.inputName)
-    ins = ins.toJS() if ins?
-    PressedReleased.update(controller.states, ins)
+    actionmap = @input.get('controllers').get(controller.inputName)
+    actions = if actionmap?
+      actionmap.toJS()
+    else
+      {}
+    PressedReleased.update(controller.states, actions)
     for key,val of controller.states
-      @publishEvent key
+      @publishEvent r.eid, key
 
 module.exports = -> new ControllerSystem()
 

@@ -7,6 +7,10 @@ Systems = require '../systems'
 EcsMachine = require '../../ecs2/ecs_machine'
 EntityStore = require '../../ecs2/entity_store'
 
+# XXX
+window.C = C
+window.T = C.Types
+
 General =  require '../../game/entity/general'
 
 # class Effect

@@ -70,7 +70,7 @@ module.exports = class EntityStore
     entity
 
   deleteEntityByEid: (eid) ->
-    @_entities[eid].each null, (comp) ->
+    @_entities[eid].each null, (comp) =>
       @_deleteComponent(comp)
     delete @_entities[eid]
     null
