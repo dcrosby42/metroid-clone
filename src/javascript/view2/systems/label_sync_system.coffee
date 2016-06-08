@@ -1,35 +1,38 @@
 PIXI = require 'pixi.js'
 ViewObjectSyncSystem = require "../view_object_sync_system"
+C = require '../../components'
+T = C.Types
 
 StyleDefaults =
   font: "normal 10pt Arial"
   fill: "white"
 
 class LabelSyncSystem extends ViewObjectSyncSystem
-  @Subscribe: ['label', 'position']
-  @SyncComponent: 'label'
-  # @CacheName: 'label'
-  # @Ident: ['label', 'cid']
+  @Subscribe: [ T.Label, T.Position ]
+  @SyncComponentInSlot: 0
+  @CacheName: 'label'
 
-  newObject: (comps) ->
-    labelComp = comps.get('label')
-    textContent = labelComp.get('content')
-    style =
-      font: labelComp.get('font', StyleDefaults.font)
-      fill: labelComp.get('fill_color', StyleDefaults.fill)
+  newObject: (r) ->
+    [labelComp] = r.comps
+    textContent = labelComp.content
+    style = {
+      font: labelComp.font
+      fill: labelComp.fill_color
+    }
+    style.font ?= StyleDefaults.font
+    style.fill ?= StyleDefaults.fill
 
     label = new PIXI.Text(textContent, style)
     label._name = "Label '#{textContent}'"
-    @ui.addObjectToLayer(label, labelComp.get('layer'))
+    @uiState.addObjectToLayer(label, labelComp.layer)
     label
 
-  updateObject: (comps, label) ->
-    labelComp = comps.get('label')
-    position = comps.get('position')
-    content = labelComp.get('content')
-    visible = labelComp.get('visible')
-    x = position.get('x')
-    y = position.get('y')
+  updateObject: (r, label) ->
+    [labelComp,position] = r.comps
+    content = labelComp.content
+    visible = labelComp.visible
+    x = position.x
+    y = position.y
 
     if x != label.position.x or y != label.position.y
       label.position.set x,y
@@ -41,5 +44,5 @@ class LabelSyncSystem extends ViewObjectSyncSystem
       label.visible = visible
 
 
-module.exports = LabelSyncSystem
+module.exports = -> new LabelSyncSystem()
 

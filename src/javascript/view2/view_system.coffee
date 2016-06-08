@@ -1,35 +1,19 @@
 Immutable = require 'immutable'
 EntityStore = require '../ecs/entity_store'
+BaseSystem = require '../ecs2/base_system'
 
-class ViewSystem
-  @Subscribe: null
+class ViewSystem extends BaseSystem
+  # It's gopry that we have to use an alternate method; BaseSystem should actually not assume that all updates are meant to be component iterators calling out to process() once per match.
+  updateView: (@estore, @uiState, @uiConfig) ->
 
-  @createInstance: (args...) -> new @(args...)
+    if @processAll?
+      @processAll() # graphic item sync systems do this
+    else if @process?
+      @searchAndIterate() # more like normal systems
 
-  constructor: ->
-    if @constructor.Subscribe?
-      @componentFilters = EntityStore.expandSearch(@constructor.Subscribe)
-      # console.log "ViewSystem @Subscribe=#{@constructor.Subscribe} -> ",@componentFilters.toJS()
-
-  searchComponents: ->
-    if @componentFilters?
-      @entityFinder.search(@componentFilters)
-    else
-      Immutable.List()
-
-  update: (uiState, entityFinder, uiConfig) ->
-    @ui = uiState
-    @entityFinder = entityFinder
-    @config = uiConfig
-
-    @process()
-
-    @ui = null
-    @entityFinder = null
-    @config = null
-
-  process: ->
-    throw new Error("ViewSystem requires you to implement a process() method")
+    @estore = null
+    @uiState = null
+    @uiConfig = null
 
 module.exports = ViewSystem
 

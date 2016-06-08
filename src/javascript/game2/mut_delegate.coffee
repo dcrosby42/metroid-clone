@@ -12,7 +12,7 @@ GamepadController = require('../input/gamepad_controller')
 MutViewMachine = require '../view2/view_machine'
 # ViewSystems = require '../view/systems'
 MutViewSystems = require '../view2/systems'
-UIState = require '../view/ui_state'
+UIState = require '../view2/ui_state'
 UIConfig = require '../view/ui_config'
 
 WorldMap = require '../game/map/world_map'
@@ -121,7 +121,7 @@ class MutDelegate
       worldMap: worldMap
       spriteConfigs: spriteConfigs
       
-    mutViewSystems = createMutViewSystems()
+    viewSystems = createMutViewSystems()
     @mutViewMachine = new MutViewMachine
       systems: viewSystems
       uiConfig: uiConfig
@@ -149,7 +149,9 @@ class MutDelegate
       .sliceOn(tick)             # batch up the events in an array and release that array on arrival of dt event
       .map(inputBundler(@defaultInput)) # compile the 'input' structure (controller states, dt and static game data)
 
-    updateGame = (input,s) -> TheMutGame.update(s,input)
+    updateGame = (input,s) ->
+      # console.log "updateGame", input, s
+      TheMutGame.update(s,input)
 
     state = input
       .foldp(updateGame, TheMutGame.initialState())
@@ -164,16 +166,16 @@ class MutDelegate
 
 
 createMutViewSystems = ->
-  systemDefs = [
-    MutViewSystems.animation_sync_system
-    MutViewSystems.label_sync_system
+  [
+    MutViewSystems.animation_sync_system()
+    MutViewSystems.label_sync_system()
     # MutViewSystems.ellipse_sync_system
     # MutViewSystems.rectangle_sync_system
     # MutViewSystems.hit_box_visual_sync_system
-    MutViewSystems.viewport_sync_system
+    MutViewSystems.viewport_sync_system()
     # MutViewSystems.sound_sync_system
     # MutViewSystems.room_sync_system
   ]
-  List(systemDefs).map (s) -> s.createInstance()
+  # List(systemDefs).map (s) -> s.createInstance()
 
 module.exports = MutDelegate

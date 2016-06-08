@@ -164,6 +164,11 @@ class WorldMap
       null
 
 expandWorldMap = (mapDef) ->
+  if !mapDef?
+    console.log "!! WorldMap.expandWorldMap called with bad mapDef",mapDef
+    return
+
+  console.log mapDef
   roomGrid = mapDefToRoomGrid(mapDef, RoomDefs)
   tileGrid = roomGridToTileGrid(roomGrid)
   new WorldMap

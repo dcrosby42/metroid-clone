@@ -2,11 +2,10 @@ EntityStore  = require '../ecs2/entity_store'
 
 class ViewMachine
   constructor: ({@systems, @uiState, @uiConfig}) ->
-    # @estore = new EntityStore()
 
   update: (estore) ->
     for system in @systems
-      system.update(@uiState, estore, @uiConfig)
+      system.updateView(estore, @uiState, @uiConfig)
 
   setMute: (m) ->
     return if m == @_mute
@@ -22,8 +21,6 @@ class ViewMachine
     @_dhb = d
     @uiState.drawHitBoxes = @_dhb
     @_callSystems()
-
-
 
 module.exports = ViewMachine
 

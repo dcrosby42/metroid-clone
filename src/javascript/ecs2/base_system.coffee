@@ -8,12 +8,11 @@ class BaseSystem
     @processFn = @process.bind(@)
     # @_primaryComponentName = @constructor.ImplyEntity || @constructor.Subscribe[0]
 
-  update: (estore, input, eventBucket) ->
-    @estore = estore
-    @input = input
-    @eventBucket = eventBucket
+  searchAndIterate: ->
+    @searcher.run @estore, @processFn
 
-    @searcher.run estore, @processFn
+  update: (@estore, @input, @eventBucket) ->
+    @searchAndIterate() # TODO: it's presumptous to assume all systems are this wway.  Instead thus behavior should be pulled into a subclases, IteratingSystem, and many systems should inherit therefrom.  Once this is fixed, update ViewSystem and ViewMachine and ViewObjectSyncSystem
 
     @estore = null
     @input = null

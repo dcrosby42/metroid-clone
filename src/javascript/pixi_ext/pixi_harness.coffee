@@ -46,7 +46,7 @@ class PixiHarness
 
   start: ->
     @_loadAssets =>
-      console.log "PixiHarness: initializing delegate"
+      console.log "PixiHarness: assets loaded; initializing delegate"
       @delegate.initialize @stage, @renderer.view.offsetWidth, @renderer.view.offsetHeight, @zoom, @soundController, @dataFileLoader.data
       @stopWatch.start()
       requestAnimationFrame (t) => @update(t)
@@ -82,7 +82,9 @@ class PixiHarness
     if assets? and assets.length > 0
       files = _.map(assets, (a) -> a.file)
       loader = new PIXI.AssetLoader(files)
-      loader.onComplete = callback
+      graphics = assets
+      loader.onComplete = ->
+        callback()
       loader.load()
     else
       callback()

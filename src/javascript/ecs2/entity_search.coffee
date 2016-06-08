@@ -73,11 +73,10 @@ class PreparedCompoundSearcher
     
 
 badFilterSpec = (x) ->
-  console.log "!! EntitySearch.expandFilter: cannot grok",x
-  null
+  throw new Error("EntitySearch.expandFilter: cannot grok filter spec... perhaps undefined Type?",x)
   
 expandFilter = (fspec) ->
-  return badFilterSpec(fspec) unless fspec?
+  badFilterSpec(fspec) unless fspec?
   if fspec.constructor == EntitySearchFilter
     return fspec
   else if typeof fspec == 'object' and fspec.type? and C.Types.exists(fspec.type)
@@ -91,7 +90,7 @@ expandFilter = (fspec) ->
   else if C.Types.exists(fspec)
     return new EntitySearchFilter(fspec)
   else
-    return badFilterSpec(fspec)
+    badFilterSpec(fspec)
 
 expandFilters = (list) ->
   expandFilter(fspec) for fspec in list

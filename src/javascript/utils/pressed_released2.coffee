@@ -5,16 +5,17 @@ updatePressedReleased = (states, input) ->
     if !val or key.match endsWithPressedOrReleased
       delete states[key]
 
-  for key,val of input
-    prevVal = states[key]
-    if val
-      states[key] = val
-      if !prevVal
-        states["#{key}Pressed"] = true
-    else
-      delete states[key]
-      if prevVal
-        states["#{key}Released"] = true
+  if input?
+    for key,val of input
+      prevVal = states[key]
+      if val
+        states[key] = val
+        if !prevVal
+          states["#{key}Pressed"] = true
+      else
+        delete states[key]
+        if prevVal
+          states["#{key}Released"] = true
 
   states
   

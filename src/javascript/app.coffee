@@ -46,6 +46,13 @@ jquery ->
   $('#fullscreen').on "click", ->
     BigScreen.doTheBigThing harness.view
 
+  window.stage = harness.stage
+  
+  window.Scene =
+    nodes: ->
+      sceneToNames(harness.stage)
+    printNodes: ->
+      printTree(sceneToNames(harness.stage))
   PixiHarness.setupSceneDebug(window,stage)
  
 

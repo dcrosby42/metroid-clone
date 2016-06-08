@@ -1,17 +1,16 @@
 ViewSystem = require '../view_system'
+C = require '../../components'
+T = C.Types
 
-class ViewportSystem extends ViewSystem
-  @Subscribe: [ 'viewport', 'position' ]
+class ViewportSyncSystem extends ViewSystem
+  @Subscribe: [ T.Viewport, T.Position ]
 
-  process: ->
-    @searchComponents().forEach (comps) =>
-      # viewport = comps.get('viewport')
-      position = comps.get('position')
+  process: (r) ->
+    [viewport,position] = r.comps
+    # layer = @ui.getLayer(viewport.get('layer'))
+    layer = @uiState.getLayer('base')
+    layer.x = -position.x
+    layer.y = -position.y
 
-      # layer = @ui.getLayer(viewport.get('layer'))
-      layer = @ui.getLayer('base')
-      layer.x = -position.get('x')
-      layer.y = -position.get('y')
-
-module.exports = ViewportSystem
+module.exports = -> new ViewportSyncSystem()
 

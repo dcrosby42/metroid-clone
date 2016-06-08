@@ -113,6 +113,23 @@ describe "CompSet", ->
       # ...but this time they should be gone:
       expect(captureEach(target)).to.eql([])
 
+    it "provides for early iteration exit via BreakEach", ->
+      pos1 = new Position(0,0,99,1)
+      pos2 = new Position(42,37,99,2)
+      pos3 = new Position(44,55,99,3)
+      target.add(pos1)
+      target.add(pos2)
+      target.add(pos3)
+
+      res = []
+      target.each (comp) ->
+        res.push(comp)
+        if res.length >= 2
+          return CompSet.BreakEach
+
+      expect(res).to.eql([pos1,pos2])
+
+
   describe "single()", ->
     it "retrieves the singular object", ->
       expect(target.single()).to.eql(null)
@@ -132,6 +149,16 @@ describe "CompSet", ->
       target.deleteByCid(pos2.cid)
       expect(target.single()).to.eql(null)
 
+  describe "getByCid()", ->
+    it "gets the component", ->
+      pos1 = new Position(0,0,1,2)
+      pos2 = new Position(3,4,1,6)
+      pos3 = new Position(3,4,1,7)
+      target.add(pos1)
+      target.add(pos2)
+      target.add(pos3)
+      expect(target.getByCid(2)).to.eql(pos1)
+      expect(target.getByCid(6)).to.eql(pos2)
 
 
 

@@ -1,5 +1,7 @@
 
 module.exports = class CompSet
+  @BreakEach = Symbol('BreakEach')
+
   constructor: (@initSize=20,@growSize=10,@name) ->
     @comps = new Array(@initSize)
     @iterbuf = new Array(@initSize)
@@ -58,7 +60,9 @@ module.exports = class CompSet
 
     i = 0
     while i < count
-      fn(@iterbuf[i])
+      ret = fn(@iterbuf[i])
+      if ret == @constructor.BreakEach
+        break
       i++
 
     # console.log "CompSet #{@name}: END iterating iterbuf, ect=#{@ect}"
@@ -75,7 +79,14 @@ module.exports = class CompSet
     # console.log "!! WARNING CompSet#single returning null"
     return null
 
-  # getByCid: (cid) ->
+  getByCid: (cid) ->
+    hit = null
+    @each (comp) ->
+      if comp.cid == cid
+        hit = comp
+        return CompSet.BreakEach
+    hit
+
   #   for c in @comps
   #     if c? and c.cid == cid
   #       return c

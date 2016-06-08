@@ -1,18 +1,19 @@
-Immutable = require 'immutable'
 ViewObjectSyncSystem = require '../view_object_sync_system'
-
 AnimatedSprite = require '../../pixi_ext/animated_sprite'
+C = require '../../components'
+T = C.Types
 
 class AnimationSyncSystem extends ViewObjectSyncSystem
-  @Subscribe: [ 'animation', 'position' ]
-  @SyncComponent: 'animation'
+  @Subscribe: [ T.Animation, T.Position ]
+  @SyncComponentInSlot: 0
+  @CacheName: 'animation'
 
-  newObject: (comps) ->
-    animation = comps.get('animation')
-    name = animation.get('spriteName')
-    layer = animation.get('layer')
-    # name = comps.getIn(['animation','spriteName'])
-    config = @config.getSpriteConfig(name)
+  newObject: (r) ->
+    animation = r.comps[0]
+    name = animation.spriteName
+    layer = animation.layer
+
+    config = @uiConfig.getSpriteConfig(name)
     if config?
       sprite = AnimatedSprite.create(config)
       sprite._name = "Animated Sprite - #{name}"
@@ -20,23 +21,22 @@ class AnimationSyncSystem extends ViewObjectSyncSystem
         animation: null
         position: null
       layer ?= sprite.layer
-      @ui.addObjectToLayer sprite, layer
+      @uiState.addObjectToLayer sprite, layer
       return sprite
     else
       console.log "!! AnimationSyncSystem: No sprite config defined for '#{name}'"
       return null
 
-  updateObject: (comps,sprite) ->
+  updateObject: (r,sprite) ->
+    [animation,position] = r.comps
     prev = sprite._sidecar
-    animation = comps.get('animation')
-    unless Immutable.is(animation, prev.animation)
-      sprite.visible = animation.get('visible')
-      sprite.displayAnimation animation.get('state'), animation.get('time')
-      prev.animation = animation
+    unless animation.equals(prev.animation)
+      sprite.visible = animation.visible
+      sprite.displayAnimation animation.state, animation.time
+      prev.animation = animation.clone()
 
-    position = comps.get('position')
-    unless Immutable.is(position, prev.position)
-      sprite.position.set position.get('x'), position.get('y')
-      prev.position = position
+    unless position.equals(prev.position)
+      sprite.position.set position.x, position.y
+      prev.position = position.clone()
 
-module.exports = AnimationSyncSystem
+module.exports = -> new AnimationSyncSystem()

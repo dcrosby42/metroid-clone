@@ -11,8 +11,7 @@ class ControllerSystem extends BaseSystem
 
     # ins = @input.getIn(['controllers', @getProp('controller', 'inputName')])
     ins = @input.get('controllers').get(controller.inputName)
-    ins = ins.toJS()
-
+    ins = ins.toJS() if ins?
     PressedReleased.update(controller.states, ins)
     for key,val of controller.states
       @publishEvent key

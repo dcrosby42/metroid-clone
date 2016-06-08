@@ -1,3 +1,6 @@
+_ = require 'lodash'
+Immutable = require 'immutable'
+{List} = Immutable
 
 Title = require './title'
 # Adventure = require './adventure'
@@ -9,13 +12,13 @@ Systems = require '../systems'
 
 Modes =
   Title: Title
-  Adventure: Adventure
-  Powerup: Powerup
+  # Adventure: Adventure
+  # Powerup: Powerup
 
 class TheState
   # modeName: valid key in Modes (see above)
   # gameState: EntityStore
-  @constructor: (@modeName,@gameState) ->
+  constructor: (@modeName,@gameState) ->
 
 initialStateForMode = (modeName) ->
   new TheState(
@@ -23,17 +26,20 @@ initialStateForMode = (modeName) ->
     Modes[modeName].initialState()
   )
 
+
 exports.initialState = () ->
   initialStateForMode('Title')
   # pretendContinue(initialStateForMode('adventure'))
 
 # Action -> Model -> (Model, Effects Action)
 exports.update = (state,input) ->
+  # console.log "TheGame.update", state,input.toJS()
   mode = Modes[state.modeName]
-  [state,events] = mode.update(state.gameState, input)
+  # console.log "  mode",mode
+  [state.gameState,events] = mode.update(state.gameState, input)
 
   events.forEach (e) ->
-    console.log "TheGame.update handling #{e.get('name')} event:",e.toJS()
+    # console.log "TheGame.update handling #{e.get('name')} event:",e.toJS()
     switch e.get('name')
 
       when 'StartNewGame'
@@ -62,12 +68,19 @@ exports.update = (state,input) ->
   return state
 
 exports.assetsToPreload = ->
-  List([Adventure,Title])
-    .flatMap((s) ->
+  List([
+    # Adventure
+    Title
+  ]).flatMap((s) ->
       s.assetsToPreload())
 
 exports.spriteConfigs = ->
-  Adventure.spriteConfigs()
+  cfgs = {}
+  _.merge cfgs, Title.spriteConfigs()
+  # _.merge cfgs, Adventure.spriteConfigs()
+  # _.merge cfgs, Powerup.spriteConfigs()
+  cfgs
+
 
 
 # pretendContinue = (state) ->
