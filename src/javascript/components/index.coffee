@@ -41,10 +41,10 @@ exports.Expire = class Expire
 
 exports.Label = class Label
   Types.registerClass @
-  constructor: (@content,@layer,@eid,@cid) -> @type = @constructor.type
-  @default: -> new @('A Label','a_layer')
-  clone: -> new @constructor(@content,@layer,@eid,@cid)
-  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @content == o.content and @layer == o.layer
+  constructor: (@content,@layer,@visible,@font,@fill_color,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @('LABEL','LAYER',true,'normal 10pt Arial','white')
+  clone: -> new @constructor(@content,@layer,@visible,@font,@fill_color,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @content == o.content and @layer == o.layer and @visible == o.visible and @font == o.font and @fill_color == o.fill_color
 
 exports.Name = class Name
   Types.registerClass @
@@ -56,17 +56,16 @@ exports.Name = class Name
 exports.Viewport = class Viewport
   Types.registerClass @
   constructor: (@width,@height,@trackBufLeft,@trackBufRight,@trackBufTop,@trackBufBottom,@eid,@cid) -> @type = @constructor.type
-  @default: -> new @(@name)
+  @default: -> new @(0,0, 0,0,0,0)
   clone: -> new @constructor(@width,@height,@trackBufLeft,@trackBufRight,@trackBufTop,@trackBufBottom,@eid,@cid)
-  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @name == o.name
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @width == o.width and @height == o.height and @trackBufLeft == o.trackBufLeft and @trackBufRight == o.trackBufRight and @trackBufTop == o.trackBufTop and @trackBufBottom == o.trackBufBottom
 
-# FIXME
 exports.Animation = class Animation
   Types.registerClass @
-  constructor: (@spriteName,@state,@eid,@cid) -> @type = @constructor.type
-  @default: -> new @("SPRITE","STATE")
-  clone: -> new @constructor(@spriteName,@state,@eid,@cid)
-  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @spriteName == o.spriteName and @state == o.state
+  constructor: (@spriteName,@state,@layer,@time,@paused,@visible,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @("SPRITE","STATE","LAYER",0.0,false,true)
+  clone: -> new @constructor(@spriteName,@state,@layer,@time,@paused,@visible,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @spriteName == o.spriteName and @state == o.state and @layer == o.layer and @time == o.time and @paused == o.paused and @visible == o.visible
 
 # FIXME
 exports.Timer = class Timer
@@ -87,6 +86,9 @@ exports.HitBox = class HitBox
 
 exports.Types = Types
 
+#
+# Auto-tests for components to catch typos etc:
+#
 ComponentTester = require './component_tester'
 ComponentTester.run(exports, types: Types, excused: [ 'Types' ])
 

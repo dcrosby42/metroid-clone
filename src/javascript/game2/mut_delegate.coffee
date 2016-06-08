@@ -151,6 +151,7 @@ class MutDelegate
 
     updateGame = (input,s) ->
       # console.log "updateGame", input, s
+      window.State = s
       TheMutGame.update(s,input)
 
     state = input

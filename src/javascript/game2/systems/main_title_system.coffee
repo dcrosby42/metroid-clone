@@ -97,9 +97,9 @@ class MainTitleSystem extends StateMachineSystem
     @_destroyEntityWithName 'cursor'
 
   _newLabel: (x,y,content,{name,layer}) ->
-    layer ?= 'overlay'
     comps = [
-      new C.Label(content,layer)
+      Object.assign C.Label.default(), content:content,layer:(layer or 'overlay')
+      # label
       new C.Position(x,y)
     ]
     comps.push(new C.Name(name)) if name?
@@ -109,7 +109,6 @@ class MainTitleSystem extends StateMachineSystem
     nameSearcher.run @estore, (r) ->
       if r.comps[0].name == name
         r.entity.destroy()
-    # @eachEntityNamed name, (eid) => @destroyEntity(eid)
 
   _withCursorPosition: (fn) ->
     nameSearcher.run @estore, (r) ->
