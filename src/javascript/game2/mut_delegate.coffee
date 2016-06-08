@@ -103,7 +103,8 @@ class MutDelegate
     @time = @timeMailbox.signal
 
   assetsToPreload: ->
-    TheMutGame.assetsToPreload().toJS()
+    # TheMutGame.assetsToPreload().toJS()
+    TheMutGame.assetsToPreload()#.toJS()
 
   initialize: (stage, width, height,zoom, soundController, data) ->
     worldMap = WorldMap.buildMap(data['world_map'])

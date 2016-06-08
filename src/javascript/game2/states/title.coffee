@@ -13,14 +13,9 @@ window.T = C.Types
 
 General =  require '../../game/entity/general'
 
-# class Effect
-#   constructor: (@kind) ->
-#
-# Effect.none = new Effect("None")
 
 ecsMachine = new EcsMachine([
   Systems.timer_system()
-  # Systems.death_timer_system()
   Systems.animation_timer_system()
   # Systems.sound_system() # TODO
   Systems.controller_system()
@@ -47,53 +42,20 @@ exports.update = (gameState,input) ->
   ecsMachine.update(gameState,input)
 
 exports.assetsToPreload = ->
-  # return List([
-  #   Map(type: 'graphic', name: 'images/main_title.png', file: 'images/main_title.png')
-  #   Map(type: 'sound', name: 'main_title', file: 'sounds/music/main_title.mp3')
-  # ])
-  graphics = List(
-    [ ]
-      .concat(General.assets)
-      # .concat(Samus.assets)
-      # .concat(Enemies.assets)
-      # .concat(Doors.assets)
-      # .concat(Items.assets)
-    )
-    .map (fname) ->
-      Map(type:'graphic', name:fname, file:fname)
+  assets = []
+  for fname in General.assets
+    assets.push {type:'graphic', name: fname, file: fname}
 
-  songs = [
-    # "main title theme TODO"
-    # "brinstar"
-    # "powerup_jingle"
-  ]
-  effects = [
-    # "enemy_die1"
-    # "health"
-    # "step"
-    # "step2"
-    # "jump"
-    # "samus_hurt"
-    # "samus_die"
-    # "short_beam"
-    # "door"
-    # "samus_morphball"
-    # "rocket_shot"
-  ]
+  # assets = assets.concat [
+    # {type:'sound', name: 'some_music', file: 'sounds/music/some_music.mp3'}
+    # {type:'sound', name: 'noise', file: 'sounds/fx/noise.wav'}
+  # ]
 
-  sounds = List()
-  for song in songs
-    sounds = sounds.push Map(type: 'sound', name: song, file: "sounds/music/#{song}.mp3")
-  for effect in effects
-    sounds = sounds.push Map(type: 'sound', name: effect, file: "sounds/fx/#{effect}.wav")
+  assets = assets.concat [
+    {type: 'data', name: 'world_map', file: 'data/world_map.json'}
+  ]
   
-  data = List([
-    Map(type: 'data', name: 'world_map', file: 'data/world_map.json')
-  ])
-
-  return graphics
-    .concat(sounds)
-    .concat(data)
+  return assets
 
 exports.spriteConfigs = ->
   cfgs = {}

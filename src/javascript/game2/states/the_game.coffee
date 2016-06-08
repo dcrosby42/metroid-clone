@@ -68,11 +68,11 @@ exports.update = (state,input) ->
   return state
 
 exports.assetsToPreload = ->
-  List([
-    # Adventure
-    Title
-  ]).flatMap((s) ->
-      s.assetsToPreload())
+  assets = Title.assetsToPreload()
+  # for a in assets
+  #   console.log a
+  # # assets = assets.concat(Adventure.assetsToPreload())
+  return assets
 
 exports.spriteConfigs = ->
   cfgs = {}
