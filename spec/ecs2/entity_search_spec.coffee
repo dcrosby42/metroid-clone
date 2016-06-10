@@ -177,7 +177,7 @@ describe "EntitySearch", ->
         [ fix.e2.eid, fix.e3.eid ]
       ])
 
-  describe "prepareSearcher", ->
+  describe "prepare()", ->
     it "converts a list of comp types into a prepared searcher", ->
       searcher = EntitySearch.prepare([T.Position,T.Velocity])
       # comps = fix.runWithFilters [fix.posFilter,fix.velFilter]

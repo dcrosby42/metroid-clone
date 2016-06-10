@@ -137,6 +137,20 @@ exports.CollectedItems = class CollectedItems
   clone: -> new @constructor(@itemIds,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and _.isEqual(@itemIds, o.itemIds)
 
+exports.Room = class Room
+  Types.registerClass @
+  constructor: (@roomId,@roomType,@state,@roomCol,@roomRow,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(0,'ROOMTYPE','ROOMSTATE',0,0)
+  clone: -> new @constructor(@roomId,@roomType,@state,@roomCol,@roomRow,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @roomId == o.roomId and @roomType == o.roomType and @state == o.state and @roomCol == o.roomCol and @roomRow == o.roomRow
+
+exports.RoomWatcher = class RoomWatcher
+  Types.registerClass @
+  constructor: (@roomIds,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(new Array(10))
+  clone: -> new @constructor(@roomIds,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and _.isEqual(@roomIds, o.roomIds)
+
 exports.Rng = class Rng
   Types.registerClass @
   constructor: (@state,@eid,@cid) -> @type = @constructor.type

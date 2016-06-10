@@ -92,18 +92,28 @@ exports.viewportShuttle = ({position,viewportShuttle,destination}={}) ->
 
 # console.log exports.viewportShuttle(position: {x:5,y:6},destination:{x:7,y:8},viewportShuttle:{destArea:'wat',thenTarget:'dude'})
 
+exports.room = (room) ->
+  [
+    buildComp Name, name: "Room #{room.id}"
+    buildComp T.Room, {
+      state: 'begin'
+      roomId: room.id
+      roomType: room.roomDef.id
+      roomRow: room.row
+      roomCol: room.col
+    }
+    buildComp Position,
+      x: room.x
+      y: room.y
+  ]
+# console.log exports.room(id:24,roomDef:{id:37},row:5,col:6,x:100,y:200)
+
 exports.roomWatcher = ->
   [
     buildComp Name, name: 'Room watcher'
-    # buildComp RoomWatcher
+    buildComp T.RoomWatcher
   ]
 # console.log exports.roomWatcher()
-  # estore.createEntity [
-  #   Comps.Name.merge(name: "Room Watcher")
-  #   Immutable.Map
-  #     type: 'room_watcher'
-  #     roomIds: Immutable.Set()
-  # ]
 
 exports.rng = ->
   [
