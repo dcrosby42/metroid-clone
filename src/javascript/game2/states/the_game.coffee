@@ -3,7 +3,7 @@ Immutable = require 'immutable'
 {List} = Immutable
 
 Title = require './title'
-# Adventure = require './adventure'
+Adventure = require './adventure'
 # Powerup = require './powerup'
 
 Systems = require '../systems'
@@ -12,7 +12,7 @@ Systems = require '../systems'
 
 Modes =
   Title: Title
-  # Adventure: Adventure
+  Adventure: Adventure
   # Powerup: Powerup
 
 class TheState
@@ -43,8 +43,7 @@ exports.update = (state,input) ->
     switch e.get('name')
 
       when 'StartNewGame'
-        console.log "Start new game! TODO"
-        # state = initialStateForMode('Adventure')
+        state = initialStateForMode('Adventure')
 
       when 'ContinueGame'
         console.log "Continue new game! TODO"
@@ -60,7 +59,7 @@ exports.update = (state,input) ->
 
       when 'Killed'
         console.log "Killed!"
-        initialStateForMode('Title')
+        state = initialStateForMode('Title')
 
       else
         console.log "TheGame.update: unhandled event:", e.toJS()
@@ -71,13 +70,13 @@ exports.assetsToPreload = ->
   assets = Title.assetsToPreload()
   # for a in assets
   #   console.log a
-  # # assets = assets.concat(Adventure.assetsToPreload())
+  assets = assets.concat(Adventure.assetsToPreload())
   return assets
 
 exports.spriteConfigs = ->
   cfgs = {}
   _.merge cfgs, Title.spriteConfigs()
-  # _.merge cfgs, Adventure.spriteConfigs()
+  _.merge cfgs, Adventure.spriteConfigs()
   # _.merge cfgs, Powerup.spriteConfigs()
   cfgs
 

@@ -1,15 +1,12 @@
 _ = require 'lodash'
-Immutable = require 'immutable'
-{Map,List} = Immutable
 
 C = require '../../components'
 Systems = require '../systems'
 EcsMachine = require '../../ecs2/ecs_machine'
 EntityStore = require '../../ecs2/entity_store'
 
-# XXX
-window.C = C
-window.T = C.Types
+window.C = C # WINDOWDEBUG
+window.T = C.Types #WINDOWDEBUG
 
 General =  require '../../game/entity/general'
 

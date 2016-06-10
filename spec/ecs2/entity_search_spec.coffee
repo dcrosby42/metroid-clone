@@ -11,6 +11,7 @@ TestHelpers = require './test_helpers'
 
 C = require '../../src/javascript/components'
 T = C.Types
+buildComp = C.buildCompForType
 
 class Fix
   constructor: ->
@@ -23,7 +24,7 @@ class Fix
       new C.Position(42,37)
       new C.Velocity(1,1)
       new C.Animation("samus","running")
-      new C.HitBox(-5,5,-7,3)
+      buildComp T.HitBox, (x:-5,y:5,width:7,height:3)
       new C.Name("Ent One")
     ])
     @e2 = @estore.createEntity([
@@ -31,7 +32,7 @@ class Fix
       new C.Velocity(2,2)
       new C.Animation("skree","spinning")
       new C.Timer(3500,"explode")
-      new C.HitBox(-5,5,-7,3)
+      buildComp T.HitBox, (x:-5,y:5,width:7,height:3)
     ])
     @e3 = @estore.createEntity([
       new C.Position(0.1,0.5)
@@ -67,7 +68,7 @@ compListEquals = (cla,clb) ->
   diff.length == 0
 
 compEquals = (a,b) ->
-  if !a?
+  if !(a?)
     console.log "!! compEquals a is null"
     return false
   if !b?
@@ -217,6 +218,35 @@ describe "EntitySearch", ->
         [fix.e2.get(T.Position), fix.e2.get(T.Animation)]
       ])
 
+    it "handles object filter specs in compound searches", ->
+      health = buildComp T.Health,hp:35
+      label = buildComp T.Label,content: "huddishness"
+      fix.estore.createEntity([
+        buildComp T.Tag,name:'samus'
+        health
+      ])
+      fix.estore.createEntity([
+        buildComp T.Tag,name:'hud'
+        label
+      ])
+      searcher = EntitySearch.prepare([
+        [{type:T.Tag,name:'samus'}, T.Health]
+        [{type:T.Tag,name:'hud'}, T.Label]
+      ])
+      count = 0
+      gothealth = null
+      gotlabel = null
+      searcher.run fix.estore, (samus,hud) ->
+        count++
+        [_,gothealth] = samus.comps
+        [_,gotlabel] = hud.comps
+
+      expect(gotlabel).to.eql(label)
+      expect(gothealth).to.eql(health)
+      expect(count).to.equal(1)
+
+      expect
+
   describe "expandFilter", ->
     expandFilter = EntitySearch._expandFilter
 
@@ -239,12 +269,14 @@ describe "EntitySearch", ->
       expect(expandFilter(fix.animFilter)).to.eql(fix.animFilter)
 
     it "returns null if given crap", ->
-      # console.log expandFilter(-1)
-      expect(expandFilter(-1)).to.be.null
-      expect(expandFilter(12345)).to.be.null
-      expect(expandFilter(null)).to.be.null
-      expect(expandFilter("dude")).to.be.null
-      expect(expandFilter({what:"evar"})).to.be.null
+      deferredExpandFilter = (x) ->
+        -> expandFilter(x)
+      expect(deferredExpandFilter(-1)).to.throw()
+      expect(deferredExpandFilter(-1)).to.throw()
+      expect(deferredExpandFilter(12345)).to.throw()
+      expect(deferredExpandFilter(null)).to.throw()
+      expect(deferredExpandFilter("dude")).to.throw()
+      expect(deferredExpandFilter({what:"evar"})).to.throw()
 
 
 
