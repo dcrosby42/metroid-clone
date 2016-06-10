@@ -5,10 +5,10 @@ Types = new Domain('ComponentTypes')
 
 exports.Position = class Position
   Types.registerClass @
-  constructor: (@x,@y,@eid,@cid) -> @type = @constructor.type
-  @default: -> new @(0,0)
-  clone: -> new @constructor(@x,@y,@eid,@cid)
-  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @x == o.x and @y == o.y
+  constructor: (@x,@y,@name,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(0,0,null)
+  clone: -> new @constructor(@x,@y,@name,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @x == o.x and @y == o.y and @name == o.name
 
 # FIXME
 exports.Velocity = class Velocity
@@ -66,6 +66,13 @@ exports.Viewport = class Viewport
   @default: -> new @(0,0, 0,0,0,0)
   clone: -> new @constructor(@width,@height,@trackBufLeft,@trackBufRight,@trackBufTop,@trackBufBottom,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @width == o.width and @height == o.height and @trackBufLeft == o.trackBufLeft and @trackBufRight == o.trackBufRight and @trackBufTop == o.trackBufTop and @trackBufBottom == o.trackBufBottom
+
+exports.ViewportShuttle = class ViewportShuttle
+  Types.registerClass @
+  constructor: (@destArea,@thenTarget,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @('DEST_AREA','THEN_TARGET')
+  clone: -> new @constructor(@destArea,@thenTarget,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @destArea == o.destArea and @thenTarget == o.thenTarget
 
 exports.Animation = class Animation
   Types.registerClass @

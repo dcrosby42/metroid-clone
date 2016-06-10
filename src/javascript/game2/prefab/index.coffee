@@ -45,7 +45,7 @@ exports.hud = ->
   [
     buildComp Name, name: 'HUD'
     buildComp Tag, name: 'hud'
-    buildComp T.Label, content: 'E.?'
+    buildComp T.Label, content: 'E.?', layer: 'overlay'
     buildComp Position, x: 25, y: 35
   ]
 
@@ -76,6 +76,21 @@ exports.viewport = ->
     }
   ]
 # console.log exports.viewport()
+
+exports.viewportShuttle = ({position,viewportShuttle,destination}={}) ->
+  position ?= {}
+  viewportShuttle ?= {}
+  destination ?= {}
+  destination.name = "destination"
+  position.name = "position"
+  [
+    buildComp Name, name: 'Viewport Shuttle'
+    buildComp T.ViewportShuttle, viewportShuttle
+    buildComp Position, position
+    buildComp Position, destination
+  ]
+
+# console.log exports.viewportShuttle(position: {x:5,y:6},destination:{x:7,y:8},viewportShuttle:{destArea:'wat',thenTarget:'dude'})
 
 exports.roomWatcher = ->
   [

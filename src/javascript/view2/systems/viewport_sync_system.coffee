@@ -7,7 +7,6 @@ class ViewportSyncSystem extends ViewSystem
 
   process: (r) ->
     [viewport,position] = r.comps
-    # layer = @ui.getLayer(viewport.get('layer'))
     layer = @uiState.getLayer('base')
     layer.x = -position.x
     layer.y = -position.y
