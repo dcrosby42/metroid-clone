@@ -3,40 +3,11 @@ EntitySearch = require '../../ecs2/entity_search'
 C = require '../../components'
 Prefab = require '../prefab'
 T = C.Types
-
-class Stack
-  constructor: (@capacity) ->
-    @_data = new Array(@capacity)
-    @_i = 0
-
-  push: (x) ->
-    @_data[@_i] = x
-    @_i++
-    return x
-
-  pop: ->
-    if @_i > 0
-      @_i--
-      x = @_data[@_i]
-      return x
-    return null
-
-  empty: ->
-    @_i == 0
-
-  clear: ->
-    @_i = 0
+Stack = require '../../utils/stack'
 
 newIds = new Stack(C.RoomWatcher.default().roomIds.length)
 lostIds = new Stack(C.RoomWatcher.default().roomIds.length)
 existIds = new Stack(C.RoomWatcher.default().roomIds.length)
-
-# existIds.push(1)
-# existIds.push(2)
-# existIds.push(3)
-# while !existIds.empty()
-#   console.log existIds.pop()
-
 
 class ViewportRoomSystem extends BaseSystem
   @Subscribe: [
