@@ -4,5 +4,7 @@ module.exports =
   expire_system: require './expire_system'
   hud_system: require './hud_system'
   main_title_system: require './main_title_system'
+  room_system: require './room_system'
   timer_system: require './timer_system'
+  viewport_room_system: require './viewport_room_system'
   viewport_system: require './viewport_system'

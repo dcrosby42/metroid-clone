@@ -1,6 +1,7 @@
 BaseSystem = require '../../ecs2/base_system'
 EntitySearch = require '../../ecs2/entity_search'
 C = require '../../components'
+Prefab = require '../prefab'
 T = C.Types
 
 class Stack
@@ -15,8 +16,8 @@ class Stack
 
   pop: ->
     if @_i > 0
-      x = @_data[@_i]
       @_i--
+      x = @_data[@_i]
       return x
     return null
 
@@ -30,11 +31,11 @@ newIds = new Stack(C.RoomWatcher.default().roomIds.length)
 lostIds = new Stack(C.RoomWatcher.default().roomIds.length)
 existIds = new Stack(C.RoomWatcher.default().roomIds.length)
 
-existIds.push(1)
-existIds.push(2)
-existIds.push(3)
-while !existIds.empty()
-  console.log existIds.pop()
+# existIds.push(1)
+# existIds.push(2)
+# existIds.push(3)
+# while !existIds.empty()
+#   console.log existIds.pop()
 
 
 class ViewportRoomSystem extends BaseSystem
@@ -64,7 +65,7 @@ class ViewportRoomSystem extends BaseSystem
         if room.id == curr
           # existing room
           roomExisted = true
-          existingIds.push(room.id)
+          existIds.push(room.id)
           break
       if !roomExisted
         # new room
@@ -103,6 +104,7 @@ class ViewportRoomSystem extends BaseSystem
     while i < roomWatcher.roomIds.length
       # null out any remaining items in the list
       roomWatcher.roomIds[i] = null
+      i++
 
     while !lostIds.empty()
       # EOL Room entities that are no longer on screen

@@ -92,7 +92,7 @@ exports.viewportShuttle = ({position,viewportShuttle,destination}={}) ->
 
 # console.log exports.viewportShuttle(position: {x:5,y:6},destination:{x:7,y:8},viewportShuttle:{destArea:'wat',thenTarget:'dude'})
 
-exports.room = (room) ->
+exports.room = ({room}) ->
   [
     buildComp Name, name: "Room #{room.id}"
     buildComp T.Room, {

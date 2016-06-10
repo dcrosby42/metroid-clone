@@ -176,7 +176,7 @@ createMutViewSystems = ->
     # MutViewSystems.hit_box_visual_sync_system
     MutViewSystems.viewport_sync_system()
     # MutViewSystems.sound_sync_system
-    # MutViewSystems.room_sync_system
+    MutViewSystems.room_sync_system()
   ]
   # List(systemDefs).map (s) -> s.createInstance()
 
