@@ -1,5 +1,6 @@
 _ = require 'lodash'
 Domain = require '../utils/domain'
+Motions = require './motions'
 
 Types = new Domain('ComponentTypes')
 
@@ -10,13 +11,19 @@ exports.Position = class Position
   clone: -> new @constructor(@x,@y,@name,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @x == o.x and @y == o.y and @name == o.name
 
-# FIXME
 exports.Velocity = class Velocity
   Types.registerClass @
   constructor: (@x,@y,@eid,@cid) -> @type = @constructor.type
   @default: -> new @(0,0)
   clone: -> new @constructor(@x,@y,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @x == o.x and @y == o.y
+
+exports.Gravity = class Gravity
+  Types.registerClass @
+  constructor: (@accel,@max,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(0,0)
+  clone: -> new @constructor(@accel,@max,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @accel == o.accel and @max == o.max
 
 exports.MainTitle = class MainTitle
   Types.registerClass @
@@ -91,10 +98,10 @@ exports.Timer = class Timer
 
 exports.HitBox = class HitBox
   Types.registerClass @
-  constructor: (@x,@y,@width,@height,@anchorX,@anchorY,@touching,@touchingSomething,@eid,@cid) -> @type = @constructor.type
-  @default: -> new @(0,0,0,0,0.5,0.5, Touching.default(), false)
-  clone: -> new @constructor(@x,@y,@width,@height,@anchorX,@anchorY,@touching.clone(),@touchingSomething,@eid,@cid)
-  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @x == o.x and @y == o.y and @width == o.width and @height == o.height and @anchorX == o.anchorX and @anchorY == o.anchorY and @touching.equals(o.touching) and @touchingSomething == o.touchingSomething
+  constructor: (@x,@y,@width,@height,@anchorX,@anchorY,@touching,@touchingSomething,@adjacent,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(0,0,0,0,0.5,0.5, Touching.default(), false, Touching.default())
+  clone: -> new @constructor(@x,@y,@width,@height,@anchorX,@anchorY,@touching.clone(),@touchingSomething,@adjacent.clone(),@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @x == o.x and @y == o.y and @width == o.width and @height == o.height and @anchorX == o.anchorX and @anchorY == o.anchorY and @touching.equals(o.touching) and @touchingSomething == o.touchingSomething and @adjacent.equals(o.adjacent)
 
   @Touching: class Touching
     constructor: (@left,@right,@top,@bottom) ->
@@ -111,10 +118,10 @@ exports.HitBoxVisual = class HitBoxVisual
 
 exports.Suit = class Suit
   Types.registerClass @
-  constructor: (@pose,@eid,@cid) -> @type = @constructor.type
-  @default: -> new @('standing')
-  clone: -> new @constructor(@pose,@eid,@cid)
-  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @pose == o.pose
+  constructor: (@pose,@direction,@aim,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @('standing','right','straight')
+  clone: -> new @constructor(@pose,@direction,@aim,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @pose == o.pose and @direction == o.direction and @aim == o.aim
 
 exports.Health = class Health
   Types.registerClass @
@@ -125,10 +132,10 @@ exports.Health = class Health
 
 exports.Motion = class Motion
   Types.registerClass @
-  constructor: (@states,@eid,@cid) -> @type = @constructor.type
-  @default: -> new @([])
-  clone: -> new @constructor(@states,@eid,@cid)
-  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and _.isEqual(@states, o.states)
+  constructor: (@motions,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(Motions.default())
+  clone: -> new @constructor(@motions.clone(),@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @motions.equals(o.motions)
 
 exports.CollectedItems = class CollectedItems
   Types.registerClass @

@@ -16,6 +16,7 @@ class ControllerSystem extends BaseSystem
       {}
     PressedReleased.update(controller.states, actions)
     for key,val of controller.states
+      # console.log "ControllerSystem: @publishEvent",r.eid,key,r.entity
       @publishEvent r.eid, key
 
 module.exports = -> new ControllerSystem()

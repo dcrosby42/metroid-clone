@@ -28,10 +28,10 @@ ecsMachine = new EcsMachine([
     # Systems.sound_system
     Systems.controller_system()
 
-    # SamusSystems.samus_motion
-    #
-    # SamusSystems.suit_control
-    # SamusSystems.suit_velocity
+    Systems.motion_system() # SamusSystems.samus_motion
+    
+    Systems.suit_control_system() # SamusSystems.suit_control
+    Systems.suit_velocity_system() # SamusSystems.suit_velocity
     # SamusSystems.suit_sound
     #
     # SamusSystems.morph_ball_control
@@ -51,8 +51,8 @@ ecsMachine = new EcsMachine([
     #
     Systems.hud_system()
     # EnemiesSystems.zoomer_crawl_system
-    # Systems.gravity_system
-    # Systems.map_physics_system
+    Systems.gravity_system()
+    Systems.map_physics_system()
     # Systems.map_ghost_system
     # Systems.bullet_enemy_system
     # Systems.missile_enemy_system
@@ -76,7 +76,7 @@ exports.initialState = () ->
   estore = new EntityStore()
 
   # RNG
-  samus = estore.createEntity(Prefab.rng())
+  estore.createEntity(Prefab.rng())
   
   # Samus start position
   # brinstarEntrance = {x:648,y:191}

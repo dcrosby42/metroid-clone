@@ -19,16 +19,15 @@ exports.samus = ->
     buildComp T.Suit, pose: 'standing'
     buildComp T.Motion
     buildComp T.Health
+    buildComp T.Gravity, max: 0.15, accel: 0.15/16
 
     # S.Weapons
     # S.ShortBeam
-    # Common.Gravity.merge
-    #   max: 0.15
-    #   accel: 0.15 / 16
     # Common.Vulnerable
     # Common.Health.merge
     #   hp: 30
     # Common.MapCollider
+    buildComp T.Tag, name: 'map_collider'
     buildComp T.HitBox, {
       x: 50
       y: 50
