@@ -1,4 +1,4 @@
-StateMachineSystem = require '../../ecs2/base_system'
+StateMachineSystem = require '../../ecs2/state_machine_system'
 C = require '../../components'
 T = C.Types
 
@@ -123,5 +123,5 @@ class RoomSystem extends StateMachineSystem
     # return !collected.has(itemId)
 
 
-module.exports = RoomSystem
+module.exports = -> new RoomSystem()
 

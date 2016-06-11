@@ -98,3 +98,4 @@ module.exports = class CompSet
         @comps[i] = null
         @count -= 1
         @iterbufInvalid = true
+

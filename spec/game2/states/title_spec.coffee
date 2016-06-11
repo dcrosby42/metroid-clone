@@ -30,7 +30,12 @@ describe "Title mode", ->
 
   it "has assetsToPreload", ->
     preload = Title.assetsToPreload()
-    expect(Immutable.List.isList(preload)).to.equal(true)
+    expect(preload.length).to.equal(2)
+    for asset in preload
+      expect(asset).to.not.be.undefined
+      expect(asset.type).to.not.be.undefined
+      expect(asset.name).to.not.be.undefined
+      expect(asset.file).to.not.be.undefined
 
   it "can update", ->
     estore = Title.initialState()

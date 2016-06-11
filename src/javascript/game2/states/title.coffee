@@ -5,9 +5,6 @@ Systems = require '../systems'
 EcsMachine = require '../../ecs2/ecs_machine'
 EntityStore = require '../../ecs2/entity_store'
 
-window.C = C # WINDOWDEBUG
-window.T = C.Types #WINDOWDEBUG
-
 General =  require '../../game/entity/general'
 
 

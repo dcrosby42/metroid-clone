@@ -4,7 +4,18 @@ assert = chai.assert
 
 CompSet = require '../../src/javascript/ecs2/comp_set'
 C = require '../../src/javascript/components'
+T = C.Types
 {Position} = C
+
+newPosition = (x,y,eid,cid) ->
+  pos = C.buildCompForType T.Position, {
+    x: x
+    y: y
+  }
+  pos.eid = eid
+  pos.cid = cid
+  pos
+
 describe "CompSet", ->
   target = null
 
@@ -17,27 +28,27 @@ describe "CompSet", ->
 
   describe "add()", ->
     it "adds a component", ->
-      target.add(new Position())
-      target.add(new Position())
+      target.add(newPosition())
+      target.add(newPosition())
       expect(target.length).to.eql(5)
       expect(target.count).to.eql(2)
 
     it "grows the internal storage as needed", ->
       for i in [0...5]
-        target.add(new Position())
+        target.add(newPosition())
       expect(target.length).to.eql(5)
       expect(target.count).to.eql(5)
       
-      target.add(new Position())
+      target.add(newPosition())
       expect(target.length).to.eql(15)
       expect(target.count).to.eql(6)
 
       for i in [0...9]
-        target.add(new Position())
+        target.add(newPosition())
       expect(target.length).to.eql(15)
       expect(target.count).to.eql(15)
 
-      target.add(new Position())
+      target.add(newPosition())
       expect(target.length).to.eql(25)
       expect(target.count).to.eql(16)
 
@@ -49,16 +60,16 @@ describe "CompSet", ->
 
     it "retrieves the objects that have been added", ->
       expect(captureEach(target)).to.eql([])
-      pos1 = new Position(0,0,1,2)
-      pos2 = new Position(42,37,1,3)
+      pos1 = newPosition(0,0,1,2)
+      pos2 = newPosition(42,37,1,3)
       target.add(pos1)
       target.add(pos2)
       expect(captureEach(target)).to.eql([pos1,pos2])
 
     it "excludes deleted comps", ->
-      pos1 = new Position(0,0,1,2)
-      pos2 = new Position(42,37,1,3)
-      pos3 = new Position(44,55,1,4)
+      pos1 = newPosition(0,0,1,2)
+      pos2 = newPosition(42,37,1,3)
+      pos3 = newPosition(44,55,1,4)
       target.add(pos1)
       target.add(pos2)
       target.add(pos3)
@@ -70,15 +81,15 @@ describe "CompSet", ->
       expect(captureEach(target)).to.eql([])
 
     it "protects from concurrent modification (add)", ->
-      pos1 = new Position(0,0,99,1)
-      pos2 = new Position(42,37,99,2)
-      pos3 = new Position(44,55,99,3)
+      pos1 = newPosition(0,0,99,1)
+      pos2 = newPosition(42,37,99,2)
+      pos3 = newPosition(44,55,99,3)
       target.add(pos1)
       target.add(pos2)
       target.add(pos3)
 
-      pos4 = new Position(401,402,99,4)
-      pos5 = new Position(501,502,99,5)
+      pos4 = newPosition(401,402,99,4)
+      pos5 = newPosition(501,502,99,5)
       adds = [pos4,pos5]
 
       res = []
@@ -94,9 +105,9 @@ describe "CompSet", ->
       expect(captureEach(target)).to.eql([pos1,pos2,pos3,pos4,pos5])
 
     it "protects from concurrent modification (delete)", ->
-      pos1 = new Position(0,0,99,1)
-      pos2 = new Position(42,37,99,2)
-      pos3 = new Position(44,55,99,3)
+      pos1 = newPosition(0,0,99,1)
+      pos2 = newPosition(42,37,99,2)
+      pos3 = newPosition(44,55,99,3)
       target.add(pos1)
       target.add(pos2)
       target.add(pos3)
@@ -114,9 +125,9 @@ describe "CompSet", ->
       expect(captureEach(target)).to.eql([])
 
     it "provides for early iteration exit via BreakEach", ->
-      pos1 = new Position(0,0,99,1)
-      pos2 = new Position(42,37,99,2)
-      pos3 = new Position(44,55,99,3)
+      pos1 = newPosition(0,0,99,1)
+      pos2 = newPosition(42,37,99,2)
+      pos3 = newPosition(44,55,99,3)
       target.add(pos1)
       target.add(pos2)
       target.add(pos3)
@@ -134,13 +145,13 @@ describe "CompSet", ->
     it "retrieves the singular object", ->
       expect(target.single()).to.eql(null)
 
-      pos1 = new Position(0,0,1,2)
+      pos1 = newPosition(0,0,1,2)
       target.add(pos1)
       expect(target.single()).to.eql(pos1)
 
     it "(actually for now) retrieves the first of several", ->
-      pos1 = new Position(0,0,1,2)
-      pos2 = new Position(3,4,1,6)
+      pos1 = newPosition(0,0,1,2)
+      pos2 = newPosition(3,4,1,6)
       target.add(pos1)
       target.add(pos2)
       expect(target.single()).to.eql(pos1)
@@ -151,9 +162,9 @@ describe "CompSet", ->
 
   describe "getByCid()", ->
     it "gets the component", ->
-      pos1 = new Position(0,0,1,2)
-      pos2 = new Position(3,4,1,6)
-      pos3 = new Position(3,4,1,7)
+      pos1 = newPosition(0,0,1,2)
+      pos2 = newPosition(3,4,1,6)
+      pos3 = newPosition(3,4,1,7)
       target.add(pos1)
       target.add(pos2)
       target.add(pos3)

@@ -3,6 +3,7 @@ _ = require 'lodash'
 # {Map,List}=Immutable
 # Comps = require '../entity/components'
 C = require '../../components'
+T = C.Types
 Systems = require '../systems'
 EcsMachine = require '../../ecs2/ecs_machine'
 EntityStore = require '../../ecs2/entity_store'
@@ -48,7 +49,7 @@ ecsMachine = new EcsMachine([
     # Systems.samus_damage_system
     # Systems.samus_death_system
     #
-    Systems.hud_system() # XXX --> SamusSystems.samus_hud
+    Systems.hud_system()
     # EnemiesSystems.zoomer_crawl_system
     # Systems.gravity_system
     # Systems.map_physics_system
@@ -66,7 +67,7 @@ ecsMachine = new EcsMachine([
     # Systems.viewport_shuttle_system
     Systems.viewport_system()
     Systems.viewport_room_system()
-    # Systems.room_system
+    Systems.room_system()
     # DoorSystems.door_gel_system
 ])
 
