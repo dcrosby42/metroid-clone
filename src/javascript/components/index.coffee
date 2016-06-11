@@ -118,10 +118,10 @@ exports.HitBoxVisual = class HitBoxVisual
 
 exports.Suit = class Suit
   Types.registerClass @
-  constructor: (@pose,@direction,@aim,@eid,@cid) -> @type = @constructor.type
-  @default: -> new @('standing','right','straight')
-  clone: -> new @constructor(@pose,@direction,@aim,@eid,@cid)
-  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @pose == o.pose and @direction == o.direction and @aim == o.aim
+  constructor: (@pose,@direction,@aim,@runSpeed,@jumpSpeed,@floatSpeed,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @('POSE','DIRECTION','AIM',0.0,0.0,0.0)
+  clone: -> new @constructor(@pose,@direction,@aim,@runSpeed,@jumpSpeed,@floatSpeed,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @pose == o.pose and @direction == o.direction and @aim == o.aim and @runSpeed == o.runSpeed and @jumpSpeed == o.jumpSpeed and @floatSpeed == o.floatSpeed
 
 exports.Health = class Health
   Types.registerClass @

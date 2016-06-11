@@ -28,7 +28,8 @@ initialStateForMode = (modeName) ->
 
 
 exports.initialState = () ->
-  initialStateForMode('Title')
+  # initialStateForMode('Title')
+  initialStateForMode('Adventure')
   # pretendContinue(initialStateForMode('adventure'))
 
 # Action -> Model -> (Model, Effects Action)

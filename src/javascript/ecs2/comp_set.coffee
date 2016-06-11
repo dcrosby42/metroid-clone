@@ -1,5 +1,5 @@
 
-module.exports = class CompSet
+class CompSet
   @BreakEach = Symbol('BreakEach')
 
   constructor: (@initSize=20,@growSize=10,@name) ->
@@ -99,3 +99,4 @@ module.exports = class CompSet
         @count -= 1
         @iterbufInvalid = true
 
+module.exports = CompSet

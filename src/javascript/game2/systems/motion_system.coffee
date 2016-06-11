@@ -41,6 +41,11 @@ class MotionSystem extends BaseSystem
       motions.xStill = true
 
     motion.motions = motions
+    if window.capturemotion # WINDOWDEBUG
+      console.log motion
+      window.motion = motion
+      window.hitBox = hitBox
+      window.capturemotion = false
 
 module.exports = -> new MotionSystem()
 

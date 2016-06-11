@@ -5,7 +5,7 @@ EstNumberOfCompTypes = 50
 CompSetInitialSize = 10
 CompSetGrowSize = 10
 
-module.exports = class EntityStore
+class EntityStore
   constructor: ->
     @_nextCid = 1
     @_nextEid = 1
@@ -77,3 +77,5 @@ module.exports = class EntityStore
 
   getEntity: (eid) ->
     @_entities[eid]
+
+module.exports = EntityStore

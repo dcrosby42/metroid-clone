@@ -22,6 +22,7 @@ class MapPhysicsSystem extends BaseSystem
     worldMap = @input.getIn(['static','worldMap'])
 
     vx = velocity.x
+    # console.log vx
     vy = velocity.y
     # hitBoxJS = hitBox.toJS()
 
@@ -32,8 +33,8 @@ class MapPhysicsSystem extends BaseSystem
     fboxes = []
     # @searchEntities(fixtureFilter).forEach (comps) ->
     fixtureSearcher.run @estore, (fixtureR) ->
-      [_mapFixture,hitBox] = fixtureR.comps
-      fboxes.push( new AnchoredBox(hitBox) )
+      [_mapFixture,fixHitBox] = fixtureR.comps
+      fboxes.push( new AnchoredBox(fixHitBox) )
 
     hits =
       left: []
@@ -72,6 +73,7 @@ class MapPhysicsSystem extends BaseSystem
     # Step 2: apply & restrict horizontal movement
     box.moveX(vx * @dt())
 
+
     # (check non-map-tile map fixture collisions, like doors and disappearing blocks)
     for fbox in fboxes
       if box.overlaps(fbox)
@@ -106,7 +108,7 @@ class MapPhysicsSystem extends BaseSystem
     position.y = box.y
 
     # some systems will expect the hitBox to be up-to-date with current position
-    hitBox = {}
+    # hitBox = {}
     hitBox.x = box.x
     hitBox.y = box.y
     hitBox.touching = {}
@@ -114,6 +116,7 @@ class MapPhysicsSystem extends BaseSystem
     hitBox.touching.right = hits.right.length > 0
     hitBox.touching.top = hits.top.length > 0
     hitBox.touching.bottom = hits.bottom.length > 0
+    # console.log "Mapphys",hitBox.touching.bottom
 
     hitBox.adjacent = {}
     hitBox.adjacent.top = adjacent.top.length > 0
@@ -129,6 +132,7 @@ class MapPhysicsSystem extends BaseSystem
       vx = 0
 
     if hitBox.touching.top or hitBox.touching.bottom
+      # console.log "mapphys vy 0"
       vy = 0
     
     # @updateComp velocity.set('x',vx).set('y',vy)

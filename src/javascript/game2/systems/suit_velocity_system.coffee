@@ -9,35 +9,27 @@ class SuitVelocitySystem extends BaseSystem
 
   process: (r) ->
     [suit,velocity] = r.comps
-    @handleEvents
+    @handleEvents r.eid,
       run: =>
-        # if @getProp('samus','direction') == 'right'
+        # console.log "suitvelsys run", suit,velocity
         if suit.direction == 'right'
-          velocity.x == suit.runSpeed
-          # @setProp 'velocity', 'x', @getProp('samus','runSpeed')
+          velocity.x = suit.runSpeed
         else
-          # @setProp 'velocity', 'x', -@getProp('samus','runSpeed')
-          velocity.x == -suit.runSpeed
+          velocity.x = -suit.runSpeed
 
       drift: =>
-        # if @getProp('samus','direction') == 'right'
         if suit.direction == 'right'
-          # @setProp 'velocity', 'x', @getProp('samus','floatSpeed')
-          velocity.x == suit.floatSpeed
+          velocity.x = suit.floatSpeed
         else
-          # @setProp 'velocity', 'x', -@getProp('samus','floatSpeed')
-          velocity.x == -suit.floatSpeed
+          velocity.x = -suit.floatSpeed
 
       stop: =>
-        # @setProp 'velocity', 'x', 0
         velocity.x = 0
 
       jump: =>
-        # @setProp 'velocity', 'y', -@getProp('samus','jumpSpeed')
         velocity.y = -suit.jumpSpeed
 
       fall: =>
-        # @setProp 'velocity', 'y', 0
         velocity.y = 0
 
 # jumping, falling, standing, running

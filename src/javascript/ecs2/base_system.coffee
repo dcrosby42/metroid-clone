@@ -28,7 +28,11 @@ class BaseSystem
   # EVENTS
   #
 
-  getEvents: (eid) -> @eventBucket.getEventsForEntity(eid)
+  getEvents: (eid) ->
+    es = @eventBucket.getEventsForEntity(eid)
+    # if eid == 2 # XXX
+    #   console.log "basesystem getEvetns eid==2", es
+    es
 
   getEvent: (eid,eventName) ->
     for event in @getEvents
@@ -41,8 +45,17 @@ class BaseSystem
   publishGlobalEvent: (event,data=null) -> @eventBucket.addGlobalEvent(event,data)
   
   handleEvents: (eid,handlerMap) ->
+    # if eid == 2 # XXX
+      # console.log "basesystem handleevents eid==2", @getEvents(eid)
+      # console.log "basesystem handleevents eid==2", handlerMap['run']
+      
     @getEvents(eid).forEach (e) ->
-      handlerMap[e.name]?(e.data)
+      handlerMap[e.get('name')]?(e.data)
+      # fn = handlerMap[e.get('name')]
+      # console.log e
+      # if fn?
+      #   console.log "invoking",fn
+        # fn(e.data)
 
   
 

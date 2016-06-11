@@ -3,7 +3,7 @@ CompSet = require './comp_set'
 CompSetInitialSize = 10
 CompSetGrowSize = 10
 
-module.exports = class Entity
+class Entity
   constructor: (@estore,@eid) ->
     @_compTypes = new Array(10)
     @_compTypesI = 0
@@ -62,3 +62,4 @@ module.exports = class Entity
     @_compTypesI++
     null
       
+module.exports = Entity

@@ -46,7 +46,9 @@ class SuitControlSystem extends BaseSystem
   process: (r) ->
     [suit,motion] = r.comps
     oracle = motion.motions.oracle()
-    handleEventsByState @getEvents(), oracle, MotionStates, (name,data=null) =>
+    window.oracle = oracle #WINDOWDEBUG
+    handleEventsByState @getEvents(r.eid), oracle, MotionStates, (name,data=null) =>
+      # console.log "SuitControlSystem handling event name",name
       switch name
         # as a shortcut we handle some suit posture events right here:
         when 'faceLeft'
@@ -59,12 +61,16 @@ class SuitControlSystem extends BaseSystem
           suit.aim = 'down'
         else
           # most events go through here:
+          # console.log "SuitControlSystem publish",r.eid,name,data
           @publishEvent r.eid, name,data
 
 handleEventsByState = (events,oracle,stateMap,callback) ->
   events.forEach (e) ->
-    eventName = g.get('name')
+    # console.log "event:",e.toJS()
+    eventName = e.get('name')
     for state,actions of stateMap
+      # console.log "state,actions",state,actions
+      # console.log "oracle",oracle
       if oracle[state]?()
         mappedEvent = actions[eventName]
         if mappedEvent?

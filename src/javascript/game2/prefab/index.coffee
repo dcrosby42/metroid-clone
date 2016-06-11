@@ -16,7 +16,14 @@ exports.samus = ->
 
     buildComp Position
     buildComp Velocity
-    buildComp T.Suit, pose: 'standing'
+    buildComp T.Suit, {
+      pose: 'standing'
+      direction: 'right',
+      aim: 'straight',
+      runSpeed: 88/1000 # 88 px/sec
+      jumpSpeed: 0.31
+      floatSpeed: 60/1000
+    }
     buildComp T.Motion
     buildComp T.Health
     buildComp T.Gravity, max: 0.15, accel: 0.15/16
