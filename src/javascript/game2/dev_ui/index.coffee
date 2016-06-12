@@ -15,8 +15,15 @@ exports.initialState = () ->
   model
 
 exports.update = (model,input) ->
-  model.admin = Admin.update(input, model.admin)
-  model.game = TheGame.update(model.game, input)
+  admin = Admin.update(input, model.admin)
+  if admin.get('paused')
+    if admin.get('step_forward')
+      input1 = input.set('dt', admin.get('stepDt'))
+      model.game = TheGame.update(model.game, input1)
+  else
+    model.game = TheGame.update(model.game, input)
+
+  model.admin = admin
   model
 
 #
