@@ -5,7 +5,7 @@ fill = (arr,fillFn,start,size) ->
     arr[i] = fillFn()
     i++
 
-class Ring
+class Pool
   constructor: (@initSize,@growSize,@fillFn) ->
     @data = new Array(@initSize)
     fill(@data,@fillFn,0,@initSize)
@@ -51,7 +51,7 @@ class Ring
 vec2 = ->
   console.log ">> new vec2!"
   [0.0,0.0]
-r = new Ring(5,10,vec2)
+r = new Pool(5,10,vec2)
 # console.log r
 for i in [0...7]
   console.log "\n\ti = #{i}\n"
