@@ -81,8 +81,8 @@ class ViewportRoomSystem extends BaseSystem
       # EOL Room entities that are no longer on screen
       id = lostIds.pop()
       # TODO: find Room comp(s) in gamestate that have roomId=id and destroy their entities
-      searcher = EntitySearch.prepare({type:T.Room,roomId:id}) # TODO figure out how to parameterize searchers
-      searcher.run @estore, (r) ->
+      searcher = EntitySearch.prepare([{type:T.Room,roomId:id}]) # TODO figure out how to parameterize searchers
+      searcher.run @estore, (r) =>
         @publishEvent r.eid,'gone'
 
 

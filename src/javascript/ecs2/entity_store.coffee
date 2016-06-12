@@ -73,6 +73,12 @@ class EntityStore
   getEntity: (eid) ->
     @_entities[eid]
 
+  # Don't use this except for debugging.
+  # Iterating object keys is slower than something else we could do if we cared.
+  eachEntity: (fn) ->
+    for eid,entity of @_entities
+      fn(entity)
+
   clone: ->
     cloned = new @constructor(false)
     cloned._nextCid = @_nextCid

@@ -113,8 +113,9 @@ prepareSearcher = (criteria) ->
       query = new EntitySearchQuery(expandFilters(criteria))
       return new PreparedSearcher(query)
   else
-    console.log "!! EntitySearch.prepareSearcher: must be an array of filterspecs, or an array thereof",criteria
-    return null
+    msg = "!! EntitySearch.prepareSearcher: must be an array of filterspecs, or an array thereof"
+    console.log msg,criteria
+    throw new Error("#{msg}, got #{JSON.stringify(criteria)}")
 
 
 # estore: EntityStore

@@ -47,14 +47,64 @@ exports.update = (model,input) ->
 # VIEW
 #
 React = require 'react'
+{div,span,table,tbody,td,tr} = React.DOM
+
 AdminToggles = require '../../admin_ui/admin_toggles'
 Folder = require '../../admin_ui/folder'
+Structures = require '../../admin_ui/structures'
 
-mkDevControlsElement = (address,admin) ->
-  Folder.create {title:'Dev Controls',startOpen:false}, => [
-    React.createElement AdminToggles, address: address, admin: admin
-  ]
 
 exports.view = (address,model) ->
-  mkDevControlsElement(address,model.admin)
+  div {}, [
+    Folder.create {title:'Dev Controls',startOpen:false}, =>
+      [
+        React.createElement AdminToggles, address: address, admin: model.admin
+      ]
+    Folder.create {title:'Entities',startOpen:false}, =>
+      entities = mutableEstoreToEntityMap(model.game.gameState)
+      [
+        React.createElement Structures.FilterableMap, data: entities
+      ]
+  ]
 
+Immutable = require 'immutable'
+{Map,List,OrderedMap} = Immutable
+C = require '../../components'
+T = C.Types
+
+mutableEstoreToEntityMap = (estore) ->
+  entities = OrderedMap()
+  estore.eachEntity (entity) ->
+    # window.entity = entity
+    # throw new Error("boom")
+    name = entity.get(T.Name)
+    name = if name?
+      "#{name.name} (e#{entity.eid})"
+    else
+      "e#{entity.eid}"
+
+    compsByType = OrderedMap()
+    entity.eachComponentType (type) ->
+      if type != T.Name
+        typeName = T.nameFor(type)
+        compList = List()
+        entity.each type, (comp) ->
+          immComp = OrderedMap()
+          for key,val of comp
+            if key != 'eid' and key != 'type' and typeof comp[key] != 'function'
+              val = if val? and typeof val == 'object'
+                if typeof val['length'] == 'number'
+                  List(val)
+                else
+                  OrderedMap(val)
+              else
+                val
+              # if key == 'touching'
+              #   console.log "hey touching",val,Immutable.fromJS(val)
+              immComp = immComp.set(key,val)
+          compList = compList.push(immComp)
+
+        compsByType = compsByType.set(typeName,compList)
+
+    entities = entities.set(name, compsByType)
+  entities

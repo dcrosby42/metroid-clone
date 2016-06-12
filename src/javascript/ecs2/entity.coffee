@@ -33,6 +33,14 @@ class Entity
       @[type]?.each fn
     null
 
+  eachComponentType: (fn) ->
+    i = 0
+    while i < @_compTypesI
+      fn(@_compTypes[i])
+      i++
+    null
+
+
   addComponent: (comp) ->
     @_backfill() if @_deferred
     @estore._addComponent(@eid,comp)
