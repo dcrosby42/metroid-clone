@@ -21,8 +21,7 @@ WorldMap = require '../game/map/world_map'
 
 TheMutGame = require './states/the_game'
 
-# Admin = require './stategame/s/admin'
-# AdminUI = require '../admin_ui'
+DevUI = require './dev_ui'
 
 #
 # HELPERS
@@ -136,7 +135,8 @@ class MutDelegate
         worldMap: worldMap
 
 
-    @_wireUp_mutable()
+    # @_wireUp_mutable()
+    @_wireUp_dev_mutable()
 
   _wireUp_mutable: ->
     tick = @time.map((dt) -> Map(type:'Tick',dt:dt))
@@ -147,12 +147,11 @@ class MutDelegate
 
     input = tick
       .merge(playerControl)
-      .sliceOn(tick)             # batch up the events in an array and release that array on arrival of dt event
-      .map(inputBundler(@defaultInput)) # compile the 'input' structure (controller states, dt and static game data)
+      .sliceOn(tick)
+      .map(inputBundler(@defaultInput))
 
     updateGame = (input,s) ->
-      # console.log "updateGame", input, s
-      window.State = s
+      window.State = s #WINDOWDEBUG
       TheMutGame.update(s,input)
 
     state = input
@@ -161,6 +160,39 @@ class MutDelegate
     # Funnel game updates into the view:
     state.subscribe (s) =>
       @mutViewMachine.update(s.gameState)
+
+  _wireUp_dev_mutable: ->
+    tick = @time.map((dt) -> Map(type:'Tick',dt:dt))
+
+    playerControl = @player1KbController.merge(@player1GpController)
+      .dropRepeats(Immutable.is)
+      .map((event) -> event.set('tag','player1'))
+
+    adminControl = @adminController
+      .dropRepeats(Immutable.is)
+      .map((event) -> event.set('tag','admin'))
+
+    input = tick
+      .merge(playerControl)
+      .merge(adminControl)
+      .merge(@adminUISignal)     # all dt, keybd and gp events into one stream
+      .sliceOn(tick)
+      .map(inputBundler(@defaultInput))
+
+    devModel = input
+      .foldp(
+        ((input,model) -> DevUI.update(model,input))
+        DevUI.initialState()
+      )
+    
+    # Render the game view:
+    devModel.subscribe (model) =>
+      @mutViewMachine.update(model.game.gameState)
+
+    # Render the dev view
+    devModel.subscribe (model) =>
+      devView = DevUI.view(@adminUIAddress,model)
+      ReactDOM.render(devView, @adminUIDiv)
 
   update: (dt) ->
     @timeMailbox.address.send dt
