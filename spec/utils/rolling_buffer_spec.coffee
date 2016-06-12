@@ -244,8 +244,5 @@ describe "RollingBuffer", ->
 
 
 
-
-
-
   # describe "remove()", ->
 

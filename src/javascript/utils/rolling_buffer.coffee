@@ -52,5 +52,18 @@ class RollingBuffer
   truncate: ->
     @size = @offset+1
 
+  cloneShallow: ->
+    cloned = new @constructor(@maxSize,true)
+    cloned.size = @size
+    cloned.offset = @offset
+    cloned.offsetI = @offset
+    i = 0
+    while i < @size
+      j = (@left+i) % @maxSize
+      cloned.data[i] = @data[j]
+      i++
+    cloned
+
+
 
 module.exports = RollingBuffer
