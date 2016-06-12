@@ -99,4 +99,17 @@ class CompSet
         @count -= 1
         @iterbufInvalid = true
 
+  clone: ->
+    initSize = if @count > @initSize
+      @count
+    else
+      @initSize
+    cloned = new @constructor(initSize,@growSize,@name)
+    i = 0
+    @each (c) ->
+      cloned.comps[i] = c.clone()
+      i++
+    cloned.count = @count
+    cloned
+
 module.exports = CompSet

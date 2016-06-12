@@ -6,7 +6,7 @@ assert = chai.assert
 EntityStore = require '../../src/javascript/ecs2/entity_store'
 EntitySearch = require '../../src/javascript/ecs2/entity_search'
 TestHelpers = require './test_helpers'
-{copyArray} = TestHelpers
+{copyArray, assertResultComps} = TestHelpers
 
 
 C = require '../../src/javascript/components'
@@ -55,34 +55,6 @@ class Fix
     EntitySearch.run @estore, EntitySearch.query(filters), (result) ->
       results.push copyArray(result.comps)
     results
-
-
-copyArray = (arr) ->
-  res = new Array(arr.length)
-  for x,i in arr
-    res[i] = x
-  res
-
-compListEquals = (cla,clb) ->
-  diff = _.differenceWith(cla,clb,compEquals) 
-  diff.length == 0
-
-compEquals = (a,b) ->
-  if !(a?)
-    console.log "!! compEquals a is null"
-    return false
-  if !b?
-    console.log "!! compEquals b is null"
-    return false
-  return a.equals(b)
- 
-assertResultComps = (gots,expects) ->
-  diff1 = _.differenceWith(expects,gots,compListEquals)
-  expect(diff1,"missing some expected comps #{JSON.stringify(diff1)}").to.be.empty
-  diff2 = _.differenceWith(gots,expects,compListEquals)
-  expect(diff2,"found extra comps #{JSON.stringify(diff2)}").to.be.empty
-
-
 
 describe "EntitySearch", ->
   fix = null

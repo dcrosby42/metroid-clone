@@ -6,18 +6,17 @@ CompSetInitialSize = 10
 CompSetGrowSize = 10
 
 class EntityStore
-  constructor: ->
+  constructor: (init=true) ->
     @_nextCid = 1
     @_nextEid = 1
-    @_initCompStorage()
 
-  _initCompStorage: ->
+    # initialize component storage:
     @_compsByType = new Array(EstNumberOfCompTypes)
     @_maxCompType = EstNumberOfCompTypes-1
-    for _,i in @_compsByType
-      @_compsByType[i] = new CompSet(CompSetInitialSize, CompSetGrowSize, "estore.compsByType[#{i}]")
+    if init
+      for _,i in @_compsByType
+        @_compsByType[i] = new CompSet(CompSetInitialSize, CompSetGrowSize, "estore.compsByType[#{i}]")
     @_entities = {}
-
 
   _growCompsByType: (toAccommodateType=null) ->
     throw new Exception("EntityStore#_growCompsByType(toAccommodateType=#{toAccommodateType}): IMPLEMENT ME")
@@ -45,11 +44,6 @@ class EntityStore
     null
 
   each: (type, fn) ->
-    if type == null
-      for compSet,t in @_compsByType
-        compSet.each fn
-      return null
-      
     if type <= @_maxCompType
       @_compsByType[type].each fn
     else
@@ -59,6 +53,7 @@ class EntityStore
   eachAndEveryComponent: (fn) ->
     for compSet,type in @_compsByType
       compSet.each fn
+    null
 
   createEntity: (comps=[]) ->
     eid = @_nextEid
@@ -77,5 +72,15 @@ class EntityStore
 
   getEntity: (eid) ->
     @_entities[eid]
+
+  clone: ->
+    cloned = new @constructor(false)
+    cloned._nextCid = @_nextCid
+    cloned._nextEid = @_nextEid
+    for compSet,i in @_compsByType
+      cloned._compsByType[i] = compSet.clone()
+    for eid,entity of @_entities
+      cloned._entities[eid] = entity.clone(cloned)
+    cloned
 
 module.exports = EntityStore
