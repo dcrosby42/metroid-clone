@@ -103,29 +103,22 @@ class MapPhysicsSystem extends BaseSystem
       adjacent.right = worldMap.tileSearchVertical(Math.ceil(box.right+1), box.top, box.bottom-1)
     
     # Update position and hit_box components 
-    # @updateComp) position.set('x', box.x).set('y', box.y)
     position.x = box.x
     position.y = box.y
 
     # some systems will expect the hitBox to be up-to-date with current position
-    # hitBox = {}
     hitBox.x = box.x
     hitBox.y = box.y
-    hitBox.touching = {}
     hitBox.touching.left = hits.left.length > 0
     hitBox.touching.right = hits.right.length > 0
     hitBox.touching.top = hits.top.length > 0
     hitBox.touching.bottom = hits.bottom.length > 0
-    # console.log "Mapphys",hitBox.touching.bottom
 
-    hitBox.adjacent = {}
     hitBox.adjacent.top = adjacent.top.length > 0
     hitBox.adjacent.bottom = adjacent.bottom.length > 0
     hitBox.adjacent.left = adjacent.left.length > 0
     hitBox.adjacent.right = adjacent.right.length > 0
     hitBox.touchingSomething = hitBox.touching.left or hitBox.touching.right or hitBox.touching.top or hitBox.touching.bottom or hitBox.adjacent.left or hitBox.adjacent.right or hitBox.adjacent.top or hitBox.adjacent.bottom
-
-    # @updateComp hitBox.merge(hitBoxJS)
 
     # Update velocity if needed based on running into objects:
     if hitBox.touching.left or hitBox.touching.right

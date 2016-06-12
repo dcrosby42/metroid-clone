@@ -15,13 +15,16 @@ Modes =
   Adventure: Adventure
   # Powerup: Powerup
 
-class TheState
+class Model
   # modeName: valid key in Modes (see above)
   # gameState: EntityStore
   constructor: (@modeName,@gameState) ->
 
+  clone: ->
+    new @constructor(@modeName,@gameState.clone())
+
 initialStateForMode = (modeName) ->
-  new TheState(
+  new Model(
     modeName,
     Modes[modeName].initialState()
   )
