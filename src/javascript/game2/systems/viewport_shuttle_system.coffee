@@ -5,10 +5,6 @@ T = C.Types
 MathUtils = require '../../utils/math_utils'
 
 class ViewportShuttleSystem extends BaseSystem
-  # @subscribe: [
-  #   ['viewport_shuttle', 'position', 'destination']
-  #   ['viewport', 'position']
-  # ]
   @Subscribe: [
     [T.ViewportShuttle, {type: T.Position, name: 'position'}, {type:T.Position, name:'destination'}]
     [T.Viewport, T.Position]
@@ -19,18 +15,16 @@ class ViewportShuttleSystem extends BaseSystem
     shuttleEnt = shuttleR.entity
     [viewport, viewportPosition] = viewportR.comps
     
-    # shuttlePosition = @getComp('viewport_shuttle-position')
     shuttleX = shuttlePosition.x
     shuttleY = shuttlePosition.y
 
-    # shuttleDest = @getComp('viewport_shuttle-destination')
     destX = shuttleDest.x
     destY = shuttleDest.y
 
     if shuttleX == destX
       # nothing
     else
-      dx = (128 / 1000) * @input.get('dt')
+      dx = (128 / 1000) * @input.get('dt') # 128px or half screen (horiz) per sec
       if shuttleX < destX
         # shuttle right
         shuttleX = MathUtils.clamp(shuttleX+dx, shuttleX, destX)
@@ -41,7 +35,7 @@ class ViewportShuttleSystem extends BaseSystem
     if shuttleY == destY
       # nothing
     else
-      dy = (120 / 1000) * @input.get('dt')
+      dy = (120 / 1000) * @input.get('dt') # 120px, or half screen (vertically) per sec
       if shuttleY < destY
         # shuttle down
         shuttleY = MathUtils.clamp(shuttleY+dy, shuttleY, destY)
@@ -49,16 +43,12 @@ class ViewportShuttleSystem extends BaseSystem
         # shuttle up
         shuttleY = MathUtils.clamp(shuttleY-dy, destY, shuttleY)
 
-
     # jump viewport to shuttle:
-    # viewportPosition = @getComp('viewport-position')
     viewportPosition.x = shuttleX
     viewportPosition.y = shuttleY
-    # @updateComp viewportPosition.set('x',shuttleX).set('y',shuttleY)
     
     if shuttleX == destX and shuttleY == destY
       # AT DESTINATION
-      # shuttle = @getComp('viewport_shuttle') # destArea, thenTarget
       # Resume targeting the previous targeted entity:
       target = @estore.getEntity(shuttle.thenTarget)
       target.addComponent Prefab.tag('viewport_target')
@@ -66,11 +56,10 @@ class ViewportShuttleSystem extends BaseSystem
       # Remove the shuttle entity
       @estore.deleteEntityByEid(shuttleR.eid)
 
-      # @destroyEntity shuttle.get('eid')
     else
+      # Just update the shuttle position
       shuttlePosition.x = shuttleX
       shuttlePosition.y = shuttleY
-      # @updateComp shuttlePosition.set('x',shuttleX).set('y',shuttleY)
 
 module.exports = -> new ViewportShuttleSystem()
 

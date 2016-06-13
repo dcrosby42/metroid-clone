@@ -16,17 +16,19 @@ Folder = React.createClass
 
   render: ->
     folder = if @state.foldOpen
-        span {className: 'folder-control open'}, "- "
+        span {className: 'folder-control open', key:"#{@props.folderkey}-fc"}, "- "
       else
-        span {className: 'folder-control closed'}, "+ "
+        span {className: 'folder-control closed', key:"#{@props.folderkey}-fc"}, "+ "
+    titleSpan = span {key:"#{@props.folderkey}-ts"}, @props.title
 
-    div {className: classnames('folder-container',@props.classNames)}, [
-      div {className: 'folder-header',onClick:@headerClicked,key:'folderhead'}, folder, @props.title
+    div {className: classnames('folder-container',@props.classNames), key:"#{@props.folderkey}-fcon"}, [
+      div {className: 'folder-header',onClick:@headerClicked, key: "#{@props.folderkey}-fh"}, folder, titleSpan
       @props.deferredChildren() if @state.foldOpen
     ]
 
 Folder.create = (props, deferredChildren) ->
   props.deferredChildren = deferredChildren
+  props.key=props.folderkey
   React.createElement Folder, props
 
 module.exports = Folder

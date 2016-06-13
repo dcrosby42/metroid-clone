@@ -55,15 +55,15 @@ Structures = require '../../admin_ui/structures'
 
 
 exports.view = (address,model) ->
-  div {}, [
-    Folder.create {title:'Dev Controls',startOpen:false}, =>
+  div {key:'wat'}, [
+    Folder.create {title:'Dev Controlz',startOpen:false, folderkey:'devctrls'}, =>
       [
-        React.createElement AdminToggles, address: address, admin: model.admin
+        React.createElement AdminToggles, address: address, admin: model.admin, key: 'admintoggles'
       ]
-    Folder.create {title:'Entities',startOpen:false}, =>
+    Folder.create {title:'Entities',startOpen:false,folderkey:'entityinsp'}, =>
       entities = mutableEstoreToEntityMap(model.game.gameState)
       [
-        React.createElement Structures.FilterableMap, data: entities
+        React.createElement Structures.FilterableMap, data: entities, key: 'entities'
       ]
   ]
 
@@ -99,8 +99,6 @@ mutableEstoreToEntityMap = (estore) ->
                   OrderedMap(val)
               else
                 val
-              # if key == 'touching'
-              #   console.log "hey touching",val,Immutable.fromJS(val)
               immComp = immComp.set(key,val)
           compList = compList.push(immComp)
 
