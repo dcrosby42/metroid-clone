@@ -64,7 +64,7 @@ ecsMachine = new EcsMachine([
     # EnemiesSystems.skree_action
     # SamusSystems.suit_animation
     # SamusSystems.morph_ball_animation
-    # Systems.viewport_shuttle_system
+    Systems.viewport_shuttle_system()
     Systems.viewport_system()
     Systems.viewport_room_system()
     Systems.room_system()

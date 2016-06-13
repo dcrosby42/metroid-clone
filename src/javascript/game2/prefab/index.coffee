@@ -4,13 +4,17 @@ T = C.Types
 
 buildComp = C.buildCompForType
 
-
+tag = (t) ->
+  buildComp T.Tag, name: t
+exports.tag = tag
 
 exports.samus = ->
   [
     buildComp Name, name: 'Samus'
-    buildComp Tag, name: 'samus'
-    buildComp Tag, name: 'viewport_target'
+    # buildComp Tag, name: 'samus'
+    tag('samus')
+    # buildComp Tag, name: 'viewport_target'
+    tag('viewport_target')
     buildComp Animation, spriteName: 'samus', state: 'stand-right', layer: 'creatures'
     buildComp T.Controller, inputName: 'player1'
 
@@ -34,7 +38,8 @@ exports.samus = ->
     # Common.Health.merge
     #   hp: 30
     # Common.MapCollider
-    buildComp T.Tag, name: 'map_collider'
+    # buildComp T.Tag, name: 'map_collider'
+    tag('map_collider')
     buildComp T.HitBox, {
       x: 50
       y: 50
@@ -50,7 +55,7 @@ exports.samus = ->
 exports.hud = ->
   [
     buildComp Name, name: 'HUD'
-    buildComp Tag, name: 'hud'
+    tag('hud')
     buildComp T.Label, content: 'E.?', layer: 'overlay'
     buildComp Position, x: 25, y: 35
   ]
@@ -126,3 +131,4 @@ exports.rng = ->
     buildComp Name, name: 'mainRandom'
     buildComp T.Rng, state: 123123123
   ]
+
