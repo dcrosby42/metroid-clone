@@ -12,7 +12,6 @@ class ViewportShuttleSystem extends BaseSystem
 
   process: (shuttleR,viewportR) ->
     [shuttle, shuttlePosition, shuttleDest] = shuttleR.comps
-    shuttleEnt = shuttleR.entity
     [viewport, viewportPosition] = viewportR.comps
     
     shuttleX = shuttlePosition.x
@@ -54,7 +53,7 @@ class ViewportShuttleSystem extends BaseSystem
       target.addComponent Prefab.tag('viewport_target')
 
       # Remove the shuttle entity
-      @estore.deleteEntityByEid(shuttleR.eid)
+      shuttleR.entity.destroy()
 
     else
       # Just update the shuttle position

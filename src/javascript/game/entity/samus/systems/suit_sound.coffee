@@ -19,7 +19,7 @@ class SuitSoundSystem extends BaseSystem
     else
       @_stopRunningSound()
 
-    # VISUAL POSE
+    # VISUAL POSE #FIXME WHY THE HELL IS THIS HIDING IN THE SOUND SYSTEM???
     @setProp 'suit','pose', if oracle.running()
       'running'
     else if oracle.airborn()

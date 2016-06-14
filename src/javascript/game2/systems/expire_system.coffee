@@ -3,10 +3,11 @@ C = require '../../components'
 T = C.Types
 
 class ExpireSystem extends BaseSystem
-  @Subscribe: [T.Expire]
+  @Subscribe: [{type:T.Tag, name:'expire_entity'}]
 
   process: (r) ->
-    if @getEvent r.eid, 'deathTimer'
-      e.entity.destroy()
+    @handleEvents r.eid,
+      deathTimer: ->
+        e.entity.destroy()
 
 module.exports = -> new ExpireSystem()

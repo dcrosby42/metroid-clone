@@ -58,7 +58,7 @@ class SuitControlSystem extends BaseSystem
         when 'aimUp'
           suit.aim = 'up'
         when 'aimStraight'
-          suit.aim = 'down'
+          suit.aim = 'straight'
         else
           # most events go through here:
           # console.log "SuitControlSystem publish",r.eid,name,data

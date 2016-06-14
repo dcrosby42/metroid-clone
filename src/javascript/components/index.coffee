@@ -165,6 +165,12 @@ exports.Rng = class Rng
   clone: -> new @constructor(@state,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state
 
+exports.Damaged = class Damaged
+  Types.registerClass @
+  constructor: (@state,@damage,@impulseX,@impulseY,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @('new',1,0.0,0.0)
+  clone: -> new @constructor(@state,@damage,@impulseX,@impulseY,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state and @damage == o.damage and @impulseX == o.impulseX and @impulseY == o.impulseY
 
 exports.Types = Types
 

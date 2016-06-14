@@ -22,8 +22,7 @@ Items =  require '../../game/entity/items'
 
 ecsMachine = new EcsMachine([
     Systems.timer_system()
-    # XXX Systems.death_timer_system
-    # TODO: use Expire instead of death timer
+    Systems.expire_system() #  Systems.death_timer_system
     Systems.animation_timer_system()
     # Systems.sound_system
     Systems.controller_system()
@@ -32,7 +31,7 @@ ecsMachine = new EcsMachine([
     
     Systems.suit_control_system() # SamusSystems.suit_control
     Systems.suit_velocity_system() # SamusSystems.suit_velocity
-    # SamusSystems.suit_sound
+    Systems.suit_sound_system() # SamusSystems.suit_sound
     #
     # SamusSystems.morph_ball_control
     # SamusSystems.morph_ball_velocity
@@ -62,7 +61,7 @@ ecsMachine = new EcsMachine([
     # Systems.missile_system
     # Systems.enemy_hit_system
     # EnemiesSystems.skree_action
-    # SamusSystems.suit_animation
+    Systems.suit_animation_system() # TODO SamusSystems.suit_animation
     # SamusSystems.morph_ball_animation
     Systems.viewport_shuttle_system()
     Systems.viewport_system()
