@@ -57,7 +57,7 @@ ecsMachine = new EcsMachine([
     # Systems.missile_enemy_system
     # DoorSystems.bullet_door_system
     # DoorSystems.missile_door_system
-    # Systems.bullet_system
+    Systems.bullet_system()
     # Systems.missile_system
     # Systems.enemy_hit_system
     # EnemiesSystems.skree_action
