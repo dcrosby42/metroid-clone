@@ -9,8 +9,9 @@ class TimerSystem extends BaseSystem
     timer = r.comps[0]
     timer.time -= @dt()
     if timer.time <= 0
-      r.entity.delete(timer)
-      @publishEvent r.eid, timer.get('name')
+      @publishEvent r.eid, timer.eventName
+      # console.log "TimerSystem published",r.eid, timer.eventName,timer
+      r.entity.deleteComponent(timer)
       
 module.exports = -> new TimerSystem()
 

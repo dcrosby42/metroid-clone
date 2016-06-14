@@ -8,6 +8,7 @@ module.exports =
   map_physics_system: require './map_physics_system'
   motion_system: require './motion_system'
   room_system: require './room_system'
+  short_beam_system: require './short_beam_system'
   sound_system: require './sound_system'
   suit_animation_system: require './suit_animation_system'
   suit_control_system: require './suit_control_system'
@@ -17,3 +18,4 @@ module.exports =
   viewport_room_system: require './viewport_room_system'
   viewport_shuttle_system: require './viewport_shuttle_system'
   viewport_system: require './viewport_system'
+  weapons_system: require './weapons_system'

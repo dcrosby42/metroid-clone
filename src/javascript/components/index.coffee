@@ -88,7 +88,6 @@ exports.Animation = class Animation
   clone: -> new @constructor(@spriteName,@state,@layer,@time,@paused,@visible,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @spriteName == o.spriteName and @state == o.state and @layer == o.layer and @time == o.time and @paused == o.paused and @visible == o.visible
 
-# FIXME
 exports.Timer = class Timer
   Types.registerClass @
   constructor: (@time,@eventName,@eid,@cid) -> @type = @constructor.type
@@ -178,6 +177,28 @@ exports.Sound = class Sound
   @default: -> new @('SOUND',1.0,1.0,0,false,false,false)
   clone: -> new @constructor(@soundId,@volume,@playPosition,@timeLimit,@loop,@restart,@resound,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @soundId == o.soundId and @volume == o.volume and @playPosition == o.playPosition and @timeLimit == o.timeLimit and @loop == o.loop and @restart == o.restart and @resound == o.resound
+
+exports.Bullet = class Bullet
+  Types.registerClass @
+  constructor: (@damage,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(0)
+  clone: -> new @constructor(@damage,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @damage == o.damage
+
+exports.ShortBeam = class ShortBeam
+  Types.registerClass @
+  constructor: (@state,@damage,@cooldown,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @('ready',5,0)
+  clone: -> new @constructor(@state,@damage,@cooldown,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state and @damage == o.damage and @cooldown == o.cooldown
+
+exports.Weapons = class Weapons
+  Types.registerClass @
+  constructor: (@state,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @('beam')
+  clone: -> new @constructor(@state,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state
+
 
 exports.Types = Types
 

@@ -11,9 +11,7 @@ exports.tag = tag
 exports.samus = ->
   [
     buildComp Name, name: 'Samus'
-    # buildComp Tag, name: 'samus'
     tag('samus')
-    # buildComp Tag, name: 'viewport_target'
     tag('viewport_target')
     buildComp Animation, spriteName: 'samus', state: 'stand-right', layer: 'creatures'
     buildComp T.Controller, inputName: 'player1'
@@ -32,13 +30,11 @@ exports.samus = ->
     buildComp T.Health
     buildComp T.Gravity, max: 0.15, accel: 0.15/16
 
-    # S.Weapons
-    # S.ShortBeam
-    # Common.Vulnerable
-    # Common.Health.merge
+    buildComp T.Weapons, state: 'beam'
+    buildComp T.ShortBeam, state: 'ready', damage: 5, cooldown: 0 #FIXME how is cooldown actually getting set?
+    # TODO Common.Vulnerable
+    # TODO Common.Health.merge
     #   hp: 30
-    # Common.MapCollider
-    # buildComp T.Tag, name: 'map_collider'
     tag('map_collider')
     buildComp T.HitBox, {
       x: 50
@@ -135,3 +131,67 @@ exports.rng = ->
 exports.soundComponent = (opts={}) ->
   buildComp T.Sound, opts
 
+exports.timerComponent = (opts={}) ->
+  buildComp T.Timer, opts
+
+exports.bullet = ({bullet,position,velocity,lifetime}) ->
+  comps = [
+    # Common.Name.merge(name: 'bullet')
+    buildComp T.Name, name: 'bullet'
+    # Common.Bullet.merge
+    #   damage: weapon.get('damage')
+    buildComp T.Bullet, bullet
+    # Common.Animation.merge
+    buildComp T.Animation, {
+      layer: 'creatures'
+      spriteName: 'bullet'
+      state: 'normal'
+    }
+    # Common.Position.merge
+    buildComp T.Position, position
+    # Common.Velocity.merge
+    buildComp T.Velocity, velocity
+    # Common.MapCollider
+    tag('map_collider')
+    # Common.HitBox.merge
+    buildComp T.HitBox, {
+      width: 4
+      height: 4
+      anchorX: 0.5
+      anchorY: 0.5
+    }
+    # Common.HitBoxVisual.merge
+    buildComp T.HitBoxVisual, color: 0xffffff
+
+    # Common.Sound.merge
+    buildComp T.Sound, {
+      soundId: 'short_beam'
+      volume: 0.5
+      playPosition: 0
+      timeLimit: 500
+      resound: true
+    }
+  ]
+  return comps.concat(exports.deathTimer(lifetime))
+
+exports.deathTimer = (time) ->
+  [
+    tag('expire_entity')
+    buildComp T.Timer, {
+      eventName: 'expire_entity'
+      time: time
+    }
+  ]
+
+# console.log exports.bullet(
+#     bullet:
+#       damage: 20
+#     position:
+#       x: 100
+#       y: 55
+#       # direction: direction
+#     velocity:
+#       x: 5
+#       y: 0
+#     lifetime: 1000
+# )

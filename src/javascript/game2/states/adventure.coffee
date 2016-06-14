@@ -39,8 +39,8 @@ ecsMachine = new EcsMachine([
     # SamusSystems.samus_morph
     #
     # EnemiesSystems.zoomer_controller_system
-    # SamusSystems.weapons_system
-    # SamusSystems.short_beam
+    Systems.weapons_system() # SamusSystems.weapons_system
+    Systems.short_beam_system()# SamusSystems.short_beam
     # SamusSystems.missile_launcher_system
     #
     # Systems.samus_pickup_system

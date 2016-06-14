@@ -8,7 +8,6 @@ class SoundSystem extends BaseSystem
 
   process: (r) ->
     sound = r.comps[0]
-    console.log "upodating ",sound
     newPlayPosition = sound.playPosition + @dt()
     if newPlayPosition > sound.timeLimit
       if sound.loop
@@ -16,7 +15,6 @@ class SoundSystem extends BaseSystem
       else
         r.entity.deleteComponent(sound)
     else
-      console.log "update playPosition to",newPlayPosition
       sound.playPosition = newPlayPosition
 
 module.exports = -> new SoundSystem()

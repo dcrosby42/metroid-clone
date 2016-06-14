@@ -6,8 +6,9 @@ class ExpireSystem extends BaseSystem
   @Subscribe: [{type:T.Tag, name:'expire_entity'}]
 
   process: (r) ->
+    # console.log "ExpireSystem events",@getEvents(r.eid)
     @handleEvents r.eid,
-      deathTimer: ->
-        e.entity.destroy()
+      expire_entity: ->
+        r.entity.destroy()
 
 module.exports = -> new ExpireSystem()
