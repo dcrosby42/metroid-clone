@@ -8,6 +8,7 @@ module.exports =
   map_physics_system: require './map_physics_system'
   motion_system: require './motion_system'
   room_system: require './room_system'
+  sound_system: require './sound_system'
   suit_animation_system: require './suit_animation_system'
   suit_control_system: require './suit_control_system'
   suit_sound_system: require './suit_sound_system'

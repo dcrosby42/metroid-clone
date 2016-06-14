@@ -24,7 +24,7 @@ ecsMachine = new EcsMachine([
     Systems.timer_system()
     Systems.expire_system() #  Systems.death_timer_system
     Systems.animation_timer_system()
-    # Systems.sound_system
+    Systems.sound_system()
     Systems.controller_system()
 
     Systems.motion_system() # SamusSystems.samus_motion

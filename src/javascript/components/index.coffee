@@ -172,6 +172,13 @@ exports.Damaged = class Damaged
   clone: -> new @constructor(@state,@damage,@impulseX,@impulseY,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state and @damage == o.damage and @impulseX == o.impulseX and @impulseY == o.impulseY
 
+exports.Sound = class Sound
+  Types.registerClass @
+  constructor: (@soundId,@volume,@playPosition,@timeLimit,@loop,@restart,@resound,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @('SOUND',1.0,1.0,0,false,false,false)
+  clone: -> new @constructor(@soundId,@volume,@playPosition,@timeLimit,@loop,@restart,@resound,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @soundId == o.soundId and @volume == o.volume and @playPosition == o.playPosition and @timeLimit == o.timeLimit and @loop == o.loop and @restart == o.restart and @resound == o.resound
+
 exports.Types = Types
 
 # exports.buildComp = (clazz,obj=null) ->

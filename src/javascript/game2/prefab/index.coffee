@@ -132,3 +132,6 @@ exports.rng = ->
     buildComp T.Rng, state: 123123123
   ]
 
+exports.soundComponent = (opts={}) ->
+  buildComp T.Sound, opts
+
