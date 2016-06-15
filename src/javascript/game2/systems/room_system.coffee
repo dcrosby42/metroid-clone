@@ -1,4 +1,5 @@
 StateMachineSystem = require '../../ecs2/state_machine_system'
+EntitySearch = require '../../ecs2/entity_search'
 C = require '../../components'
 T = C.Types
 Prefab = require '../prefab'
@@ -12,7 +13,7 @@ MapConfig = require '../../game/map/config'
 # enemyFilter = EntityStore.expandSearch(['enemy','position'])
 # pickupFilter = EntityStore.expandSearch(['pickup','position'])
 
-# enemySearcher = EntitySearch.prepare([T.Enemy,T.Position])
+enemySearcher = EntitySearch.prepare([T.Enemy,T.Position])
 # pickupSearcher = EntitySearch.prepare([T.Pickup,T.Position])
 
 class RoomSystem extends StateMachineSystem
@@ -52,14 +53,10 @@ class RoomSystem extends StateMachineSystem
     for [col,row,type] in (roomDef.enemies || [])
       x = roomPos.x + (col * MapConfig.tileWidth)
       y = roomPos.y + (row * MapConfig.tileHeight)
-      # TODO: create new enemy component
-      # comps = Enemies.factory.createComponents(id, x:x, y:y)
       @estore.createEntity Prefab.enemy type,
         position:
           x: x
           y: y
-
-      # @newEntity comps
 
     # Spawn items:
     hoff = 8
@@ -102,11 +99,11 @@ class RoomSystem extends StateMachineSystem
     roomRight = roomLeft + MapConfig.roomWidthInPixels
     roomBottom = roomTop + MapConfig.roomHeightInPixels
 
-    # TODO Despawn enemies
-    # @searchEntities(enemyFilter).forEach (comps) =>
-    #   pos = comps.get('position')
-    #   if pos.x >= roomLeft and pos.x < roomRight and pos.y >= roomTop and pos.y < roomBottom
-    #     @destroyEntity pos.get('eid')
+    # Despawn enemies
+    enemySearcher.run @estore, (r) ->
+      [enemy,pos] = r.comps
+      if pos.x >= roomLeft and pos.x < roomRight and pos.y >= roomTop and pos.y < roomBottom
+        r.entity.destroy()
     
     # TODO Despawn powerups
     # @searchEntities(pickupFilter).forEach (comps) =>
