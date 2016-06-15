@@ -22,27 +22,27 @@ Items =  require '../../game/entity/items'
 
 ecsMachine = new EcsMachine([
     Systems.timer_system()
-    Systems.expire_system() #  Systems.death_timer_system
+    Systems.expire_system()
     Systems.animation_timer_system()
     Systems.sound_system()
     Systems.controller_system()
 
-    Systems.motion_system() # SamusSystems.samus_motion
+    Systems.motion_system()
     
-    Systems.suit_control_system() # SamusSystems.suit_control
-    Systems.suit_velocity_system() # SamusSystems.suit_velocity
-    Systems.suit_sound_system() # SamusSystems.suit_sound
-    #
+    Systems.suit_control_system()
+    Systems.suit_velocity_system()
+    Systems.suit_sound_system()
+    
     # SamusSystems.morph_ball_control
     # SamusSystems.morph_ball_velocity
-    #
+   
     # SamusSystems.samus_morph
-    #
+  
     # EnemiesSystems.zoomer_controller_system
     Systems.weapons_system() # SamusSystems.weapons_system
     Systems.short_beam_system()# SamusSystems.short_beam
     # SamusSystems.missile_launcher_system
-    #
+ 
     # Systems.samus_pickup_system
     # Systems.samus_hit_system
     # Systems.samus_damage_system
@@ -60,6 +60,7 @@ ecsMachine = new EcsMachine([
     Systems.bullet_system()
     # Systems.missile_system
     # Systems.enemy_hit_system
+    #
     # EnemiesSystems.skree_action
     Systems.suit_animation_system() # TODO SamusSystems.suit_animation
     # SamusSystems.morph_ball_animation

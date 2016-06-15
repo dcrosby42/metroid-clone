@@ -1,12 +1,12 @@
 C = require '../../components'
 {Animation,Position,Velocity,Name,Tag} = C.Types
 T = C.Types
+Enemies = require './enemies'
 
-buildComp = C.buildCompForType
+Helpers = require './helpers'
+{name,tag,buildComp} = Helpers
 
-tag = (t) ->
-  buildComp T.Tag, name: t
-exports.tag = tag
+exports.tag = Helpers.tag
 
 exports.samus = ->
   [
@@ -195,3 +195,9 @@ exports.deathTimer = (time) ->
 #       y: 0
 #     lifetime: 1000
 # )
+
+exports.enemy = (type,opts={}) ->
+  enemyBuilder = Enemies[type]
+  if !enemyBuilder?
+    throw new Error("Prefab: no builder for type '#{type}'")
+  return enemyBuilder(opts)

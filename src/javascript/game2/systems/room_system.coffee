@@ -1,8 +1,8 @@
 StateMachineSystem = require '../../ecs2/state_machine_system'
 C = require '../../components'
 T = C.Types
+Prefab = require '../prefab'
 
-# Common = require '../entity/components'
 # Enemies = require '../entity/enemies'
 # Items = require '../entity/items'
 # Doors = require '../entity/doors'
@@ -36,7 +36,7 @@ class RoomSystem extends StateMachineSystem
             nextState: 'done'
 
   beginState: ->
-    @publishEvent 'ready'
+    @publishEvent @eid, 'ready'
 
   setupRoomAction: ->
     roomComp = @entity.get(T.Room)
@@ -49,11 +49,16 @@ class RoomSystem extends StateMachineSystem
 
 
     # Spawn enemies:
-    for [col,row,id] in (roomDef.enemies || [])
+    for [col,row,type] in (roomDef.enemies || [])
       x = roomPos.x + (col * MapConfig.tileWidth)
       y = roomPos.y + (row * MapConfig.tileHeight)
       # TODO: create new enemy component
       # comps = Enemies.factory.createComponents(id, x:x, y:y)
+      @estore.createEntity Prefab.enemy type,
+        position:
+          x: x
+          y: y
+
       # @newEntity comps
 
     # Spawn items:
@@ -62,8 +67,9 @@ class RoomSystem extends StateMachineSystem
     if roomDef.items?
       for itemDef in roomDef.items
          # TODO searcher for collected items
+        collectedItems = {itemIds: []} # XXX
         {col,row,type,id} = itemDef
-        if @itemStillInWorld(id,collectedItems) 
+        if @itemStillInWorld(id,collectedItems)
           x = roomPos.x + (col * MapConfig.tileWidth) + hoff
           y = roomPos.y + (row * MapConfig.tileHeight) + voff
           #TODO create new item entity
@@ -118,6 +124,7 @@ class RoomSystem extends StateMachineSystem
     # @destroyEntity()
 
   itemStillInWorld: (itemId,collectedItems) ->
+    return true #XXX
    #TODO
     # collected = @getProp('collected_items','itemIds')
     # return !collected.has(itemId)

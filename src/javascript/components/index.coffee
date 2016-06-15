@@ -199,6 +199,26 @@ exports.Weapons = class Weapons
   clone: -> new @constructor(@state,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state
 
+exports.Enemy = class Enemy
+  Types.registerClass @
+  constructor: (@hp,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(100)
+  clone: -> new @constructor(@hp,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @hp == o.hp
+
+exports.Zoomer = class Zoomer
+  Types.registerClass @
+  constructor: (@orientation,@crawlDir,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @('up','forward')
+  clone: -> new @constructor(@orientation,@crawlDir,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @orientation == o.orientation and @crawlDir == o.crawlDir
+
+exports.Harmful = class Harmful
+  Types.registerClass @
+  constructor: (@damage,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(1)
+  clone: -> new @constructor(@damage,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @damage == o.damage
 
 exports.Types = Types
 
@@ -208,7 +228,12 @@ exports.Types = Types
 #   comp
 
 exports.buildCompForType = (typeid,obj=null) ->
-  comp = Types.classFor(typeid).default()
+  clazz = Types.classFor(typeid)
+  if !clazz?
+    msg = "Components.buildCompForType() failed to get class for typeId '#{typeid}'"
+    console.log msg + ", obj:",obj
+    throw Error(msg)
+  comp = clazz.default()
   Object.assign comp, obj if obj?
   comp
   
