@@ -38,7 +38,7 @@ ecsMachine = new EcsMachine([
    
     # SamusSystems.samus_morph
   
-    # EnemiesSystems.zoomer_controller_system
+    # # dev only EnemiesSystems.zoomer_controller_system
     Systems.weapons_system() # SamusSystems.weapons_system
     Systems.short_beam_system()# SamusSystems.short_beam
     # SamusSystems.missile_launcher_system
@@ -49,10 +49,10 @@ ecsMachine = new EcsMachine([
     # Systems.samus_death_system
     #
     Systems.hud_system()
-    # EnemiesSystems.zoomer_crawl_system
+    Systems.zoomer_crawl_system() # EnemiesSystems.zoomer_crawl_system
     Systems.gravity_system()
     Systems.map_physics_system()
-    # Systems.map_ghost_system
+    Systems.map_ghost_system()
     # Systems.bullet_enemy_system
     # Systems.missile_enemy_system
     # DoorSystems.bullet_door_system
@@ -61,7 +61,7 @@ ecsMachine = new EcsMachine([
     # Systems.missile_system
     # Systems.enemy_hit_system
     #
-    # EnemiesSystems.skree_action
+    Systems.skree_action_system() # EnemiesSystems.skree_action
     Systems.suit_animation_system() # TODO SamusSystems.suit_animation
     # SamusSystems.morph_ball_animation
     Systems.viewport_shuttle_system()

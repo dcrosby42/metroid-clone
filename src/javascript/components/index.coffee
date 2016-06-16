@@ -213,6 +213,13 @@ exports.Zoomer = class Zoomer
   clone: -> new @constructor(@orientation,@crawlDir,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @orientation == o.orientation and @crawlDir == o.crawlDir
 
+exports.Skree = class Skree
+  Types.registerClass @
+  constructor: (@state,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @('sleeping')
+  clone: -> new @constructor(@state,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state
+
 exports.Harmful = class Harmful
   Types.registerClass @
   constructor: (@damage,@eid,@cid) -> @type = @constructor.type
