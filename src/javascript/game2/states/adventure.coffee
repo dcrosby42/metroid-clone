@@ -43,7 +43,7 @@ ecsMachine = new EcsMachine([
     Systems.short_beam_system()# SamusSystems.short_beam
     # SamusSystems.missile_launcher_system
  
-    # Systems.samus_pickup_system
+    Systems.samus_pickup_system()
     # Systems.samus_hit_system
     # Systems.samus_damage_system
     # Systems.samus_death_system

@@ -12,6 +12,7 @@ module.exports =
   map_physics_system: require './map_physics_system'
   motion_system: require './motion_system'
   room_system: require './room_system'
+  samus_pickup_system: require './samus_pickup_system'
   short_beam_system: require './short_beam_system'
   skree_action_system: require './skree_action_system'
   sound_system: require './sound_system'

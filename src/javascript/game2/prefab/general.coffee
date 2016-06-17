@@ -27,7 +27,7 @@ exports.samus = ->
       floatSpeed: 60/1000
     }
     buildComp T.Motion
-    buildComp T.Health
+    buildComp T.Health, hp: 30
     buildComp T.Gravity, max: 0.15, accel: 0.15/16
 
     buildComp T.Weapons, state: 'beam'
