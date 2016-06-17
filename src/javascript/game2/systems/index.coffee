@@ -1,7 +1,9 @@
 module.exports =
   animation_timer_system: require './animation_timer_system'
+  bullet_enemy_system: require './bullet_enemy_system'
   bullet_system: require './bullet_system'
   controller_system: require './controller_system'
+  enemy_hit_system: require './enemy_hit_system'
   expire_system: require './expire_system'
   gravity_system: require './gravity_system'
   hud_system: require './hud_system'

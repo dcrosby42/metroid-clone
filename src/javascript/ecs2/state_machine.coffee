@@ -5,6 +5,7 @@ DefaultHandlerDef = Immutable.Map(action: null, nextState: null)
 processEvent = (fsm, state, event, obj) ->
   state ||= fsm.get('start')
   eventName = event.get('name')
+  # console.log "StateMachine: event", event.toJS()
   handlerDef = fsm.getIn(['states',state,'events',eventName]) || DefaultHandlerDef
   
   nextState = getNextState(handlerDef,state,event,obj)

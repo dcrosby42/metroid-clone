@@ -90,4 +90,15 @@ Enemies.skreeShrapnel = ({position,velocity}) ->
   ]
   return comps.concat(General.deathTimer(100))
 
+Enemies.creatureExplosion = ({position}) ->
+  comps = [
+    buildComp T.Animation,
+      layer: 'creatures'
+      spriteName: 'creature_explosion'
+      state: 'explode'
+    buildComp T.Position, position
+  ]
+  # the splode anim lasts three or four twentieths of a second:
+  return comps.concat(General.deathTimer(3*(1000/20)))
+
 module.exports = Enemies

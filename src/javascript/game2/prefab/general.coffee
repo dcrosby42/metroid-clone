@@ -128,8 +128,16 @@ exports.rng = ->
     buildComp T.Rng, state: 123123123
   ]
 
+  
 exports.soundComponent = (opts={}) ->
   buildComp T.Sound, opts
+
+exports.sound = (opts={}) ->
+  snd = exports.soundComponent(opts)
+  [
+    name("#{snd.name} sound")
+    snd
+  ]
 
 exports.timerComponent = (opts={}) ->
   buildComp T.Timer, opts
@@ -183,3 +191,16 @@ exports.deathTimer = (time) ->
     }
   ]
 
+# exports.healthDrop = ({position}) ->
+#   [
+#     buildComp T.
+#
+#   ]
+#       comps = Items.factory.createPickup
+#         pickup:
+#           itemType: 'health_drop'
+#         position:
+#           x: box.centerX
+#           y: box.centerY
+#
+#       @newEntity comps

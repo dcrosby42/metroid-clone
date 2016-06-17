@@ -53,13 +53,13 @@ ecsMachine = new EcsMachine([
     Systems.gravity_system()
     Systems.map_physics_system()
     Systems.map_ghost_system()
-    # Systems.bullet_enemy_system
+    Systems.bullet_enemy_system()
     # Systems.missile_enemy_system
     # DoorSystems.bullet_door_system
     # DoorSystems.missile_door_system
     Systems.bullet_system()
     # Systems.missile_system
-    # Systems.enemy_hit_system
+    Systems.enemy_hit_system()
     #
     Systems.skree_action_system() # EnemiesSystems.skree_action
     Systems.suit_animation_system() # TODO SamusSystems.suit_animation

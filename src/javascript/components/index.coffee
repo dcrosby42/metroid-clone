@@ -201,10 +201,10 @@ exports.Weapons = class Weapons
 
 exports.Enemy = class Enemy
   Types.registerClass @
-  constructor: (@hp,@eid,@cid) -> @type = @constructor.type
-  @default: -> new @(100)
-  clone: -> new @constructor(@hp,@eid,@cid)
-  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @hp == o.hp
+  constructor: (@hp,@hitState,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(100,null)
+  clone: -> new @constructor(@hp,@hitState,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @hp == o.hp and @hitState == o.hitState
 
 exports.Zoomer = class Zoomer
   Types.registerClass @
@@ -226,6 +226,13 @@ exports.Harmful = class Harmful
   @default: -> new @(1)
   clone: -> new @constructor(@damage,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @damage == o.damage
+
+exports.Stashed = class Stashed
+  Types.registerClass @
+  constructor: (@name,@stashed,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(null,null)
+  clone: -> new @constructor(@name,@stashed,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @name == o.name and (if @stashed? then @stashed.equals(o.stashed) else @stashed == o.stashed)
 
 exports.Types = Types
 
