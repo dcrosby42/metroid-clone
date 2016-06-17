@@ -56,7 +56,7 @@ exports.Label = class Label
 exports.Name = class Name
   Types.registerClass @
   constructor: (@name,@eid,@cid) -> @type = @constructor.type
-  @default: -> new @(@name)
+  @default: -> new @(null)
   clone: -> new @constructor(@name,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @name == o.name
 
@@ -84,14 +84,14 @@ exports.ViewportShuttle = class ViewportShuttle
 exports.Animation = class Animation
   Types.registerClass @
   constructor: (@spriteName,@state,@layer,@time,@paused,@visible,@eid,@cid) -> @type = @constructor.type
-  @default: -> new @("SPRITE","STATE","LAYER",0.0,false,true)
+  @default: -> new @(null,null,null,0.0,false,true)
   clone: -> new @constructor(@spriteName,@state,@layer,@time,@paused,@visible,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @spriteName == o.spriteName and @state == o.state and @layer == o.layer and @time == o.time and @paused == o.paused and @visible == o.visible
 
 exports.Timer = class Timer
   Types.registerClass @
   constructor: (@time,@eventName,@eid,@cid) -> @type = @constructor.type
-  @default: -> new @(0,"UNSET")
+  @default: -> new @(0,null)
   clone: -> new @constructor(@time,@eventName,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @time == o.time and @eventName == o.eventName
 
@@ -234,12 +234,29 @@ exports.Stashed = class Stashed
   clone: -> new @constructor(@name,@stashed,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @name == o.name and (if @stashed? then @stashed.equals(o.stashed) else @stashed == o.stashed)
 
+exports.Pickup = class Pickup
+  Types.registerClass @
+  constructor: (@itemType,@itemId,@data,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(null,null,null)
+  clone: -> new @constructor(@itemType,@itemId,@data,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @itemType == o.itemType and @itemId == o.itemId and @data == o.data
+
 exports.Types = Types
 
 # exports.buildComp = (clazz,obj=null) ->
 #   comp = clazz.default()
 #   Object.assign comp, obj if obj?
 #   comp
+
+exports.emptyCompForType = (typeid,obj=null) ->
+  clazz = Types.classFor(typeid)
+  if !clazz?
+    msg = "Components.buildCompForType() failed to get class for typeId '#{typeid}'"
+    console.log msg + ", obj:",obj
+    throw Error(msg)
+  comp = new clazz()
+  Object.assign comp, obj if obj?
+  comp
 
 exports.buildCompForType = (typeid,obj=null) ->
   clazz = Types.classFor(typeid)
@@ -257,5 +274,5 @@ exports.buildCompForType = (typeid,obj=null) ->
 # Auto-tests for components to catch typos etc:
 #
 ComponentTester = require './component_tester'
-ComponentTester.run(exports, types: Types, excused: [ 'Types', 'buildCompForType' ])
+ComponentTester.run(exports, types: Types, excused: [ 'Types', 'buildCompForType', 'emptyCompForType' ])
 

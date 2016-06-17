@@ -1,6 +1,7 @@
 C = require '../../components'
 T = C.Types
 Enemies = require './enemies'
+Drops = require './drops'
 
 # {Animation,Position,Velocity,Name,Tag} = C.Types
 Helpers = require './helpers'
@@ -11,10 +12,11 @@ General = require './general'
 Object.assign(exports, General)
 
 exports.enemy = (type,opts={}) ->
-  enemyBuilder = Enemies[type]
-  if !enemyBuilder?
-    throw new Error("Prefab: no builder for type '#{type}'")
-  return enemyBuilder(opts)
+  builder = Enemies[type]
+  if !builder?
+    throw new Error("Prefab.enemy: no builder for type '#{type}'")
+  return builder(opts)
 
+exports.drop = Drops.build
 
   

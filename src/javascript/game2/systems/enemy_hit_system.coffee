@@ -9,7 +9,7 @@ Rng = require '../../utils/park_miller_rng'
 # StateMachineSystem = require '../../ecs/state_machine_system'
 
 class EnemyHitSystem extends StateMachineSystem
-  @Subscribe: [T.Enemy, T.HitBox, T.Animation ]
+  @Subscribe: [[T.Enemy, T.HitBox, T.Animation ], [T.Rng]]
 
   @StateMachine:
     componentProperty: [0,'hitState']
@@ -91,11 +91,7 @@ class EnemyHitSystem extends StateMachineSystem
 
     newAnim = animation.clone()
 
-    stashed = C.buildCompForType T.Stashed, stashed: animation.clone(), name: 'anim'
-    @entity.addComponent stashed
-    @entity.deleteComponent animation
-
-    # Prefab.stash @entity, 'anim', animation
+    stashComponent @entity, 'anim', animation
 
     newAnim.state = "stunned-#{animation.state}"
     newAnim.paused = true
@@ -105,32 +101,31 @@ class EnemyHitSystem extends StateMachineSystem
     [enemy,hitBox,animation] = @comps
 
     @entity.deleteComponent animation
-    @entity.each T.Stashed, (stashed) =>
-      if stashed.name == 'anim'
-        @entity.deleteComponent(animation)
-        restored = stashed.stashed
-        @entity.addComponent restored
-        @entity.deleteComponent(stashed)
-    # Prefab.unstash @entity, 'anim'
+
+    unstashComponent @entity, 'anim'
 
   _swapOutVelocity: ->
     if velocity = @entity.get T.Velocity
       stashComponent @entity, 'vel', velocity
-
-      # Prefab.stash @entity, 'vel', velocity
     
   _swapInVelocity: ->
     unstashComponent @entity, 'vel'
-    # @entity.each T.Stashed, (stashed) =>
-    #   if stashed.name == 'vel'
-    #     vel = stashed.stashed
-    #     @entity.addComponent vel
-    #     @entity.deleteComponent stashed
-
-
-    # Prefab.unstash @entity, 'vel'
 
   _dropSomething: ->
+    [enemy,hitBox,animation] = @rList[0].comps
+    [rng] = @rList[1].comps
+
+    [n, rng.state] = Rng.nextInt(rng.state,0,1)
+    if (n == 1)
+      box = new AnchoredBox(hitBox)
+      @estore.createEntity Prefab.drop(
+        pickup:
+          itemType: 'health_drop'
+        position:
+          x: box.centerX
+          y: box.centerY
+      )
+
     # [enemy,hitBox,animation] = @comps
     # if @_randBool()
     #   box = new AnchoredBox(hitBox)
@@ -140,9 +135,7 @@ class EnemyHitSystem extends StateMachineSystem
     #       y: box.centerY
 
 
-  # _randBool: ->
-  #   i = @_withRng 'mainRandom', (s) -> Rng.nextInt(s, 0, 1)
-  #   return (i == 1)
+  _randBool: ->
   #
   # _withRng: (name,fn) ->
   #   eid = @firstEntityNamed('mainRandom')
@@ -152,6 +145,9 @@ class EnemyHitSystem extends StateMachineSystem
   #   @updateComp rngComp.set('state',g1)
   #   return x
 
+#
+# TODO: move these somewhere more accessible :
+#
 stashComponent = (entity, name, comp) ->
   stashed = C.buildCompForType T.Stashed, stashed: comp.clone(), name: name
   entity.deleteComponent comp
