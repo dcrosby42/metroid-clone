@@ -134,8 +134,9 @@ exports.soundComponent = (opts={}) ->
 
 exports.sound = (opts={}) ->
   snd = exports.soundComponent(opts)
+  snd.selfDestruct = true
   [
-    name("#{snd.name} sound")
+    name("#{snd.soundId} sound")
     snd
   ]
 
@@ -144,35 +145,25 @@ exports.timerComponent = (opts={}) ->
 
 exports.bullet = ({bullet,position,velocity,lifetime}) ->
   comps = [
-    # Common.Name.merge(name: 'bullet')
     buildComp T.Name, name: 'bullet'
-    # Common.Bullet.merge
-    #   damage: weapon.get('damage')
     buildComp T.Bullet, bullet
-    # Common.Animation.merge
     buildComp T.Animation, {
       layer: 'creatures'
       spriteName: 'bullet'
       state: 'normal'
     }
-    # Common.Position.merge
     buildComp T.Position, position
-    # Common.Velocity.merge
     buildComp T.Velocity, velocity
-    # Common.MapCollider
     tag('map_collider')
-    # Common.HitBox.merge
     buildComp T.HitBox, {
       width: 4
       height: 4
       anchorX: 0.5
       anchorY: 0.5
     }
-    # Common.HitBoxVisual.merge
     buildComp T.HitBoxVisual, color: 0xffffff
 
-    # Common.Sound.merge
-    buildComp T.Sound, {
+    exports.soundComponent {
       soundId: 'short_beam'
       volume: 0.5
       playPosition: 0

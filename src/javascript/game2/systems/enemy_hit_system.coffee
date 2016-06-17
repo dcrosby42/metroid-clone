@@ -29,31 +29,18 @@ class EnemyHitSystem extends StateMachineSystem
             action: 'wakeUp'
             nextState: 'normal'
 
-  normalState: ->
-    # console.log "enemy-hit-system normalState"
-    es = @getEvents(@entity)
-    if es.size > 0
-      console.log "EnemyHitystem",es.toJS()
-    #   @publishEvent @eid, 'shot', es.get(0).get('damage')
-
   damageAction: (damageVal) ->
-    console.log "DAMAGE",damageVal
     @_makeHitSound()
     [enemy,hitBox,animation] = @comps
-    console.log "   hp before",enemy.hp
     enemy.hp -= damageVal
-    console.log "   hp after",enemy.hp
     if enemy.hp > 0
-      console.log "   stun"
       @_stun()
     else
-      console.log "   die"
       @_dropSomething()
       @entity.destroy()
       @_makeSplode()
 
   wakeUpAction: ->
-    console.log "wakeup"
     @_unStun()
 
   #
@@ -128,18 +115,17 @@ class EnemyHitSystem extends StateMachineSystem
 
   _swapOutVelocity: ->
     if velocity = @entity.get T.Velocity
-      stashed = C.buildCompForType T.Stashed, stashed: velocity.clone(), name: 'vel'
-      @entity.deleteComponent velocity
-      @entity.addComponent stashed
+      stashComponent @entity, 'vel', velocity
 
       # Prefab.stash @entity, 'vel', velocity
     
   _swapInVelocity: ->
-    @entity.each T.Stashed, (stashed) =>
-      if stashed.name == 'vel'
-        vel = stashed.stashed
-        @entity.addComponent vel
-        @entity.deleteComponent stashed
+    unstashComponent @entity, 'vel'
+    # @entity.each T.Stashed, (stashed) =>
+    #   if stashed.name == 'vel'
+    #     vel = stashed.stashed
+    #     @entity.addComponent vel
+    #     @entity.deleteComponent stashed
 
 
     # Prefab.unstash @entity, 'vel'
@@ -165,6 +151,20 @@ class EnemyHitSystem extends StateMachineSystem
   #   [x,g1] = fn(g)
   #   @updateComp rngComp.set('state',g1)
   #   return x
+
+stashComponent = (entity, name, comp) ->
+  stashed = C.buildCompForType T.Stashed, stashed: comp.clone(), name: name
+  entity.deleteComponent comp
+  entity.addComponent stashed
+  stashed
+
+unstashComponent = (entity, name) ->
+  entity.each T.Stashed, (stashed) ->
+    if stashed.name == name
+      comp = stashed.stashed
+      entity.addComponent comp
+      entity.deleteComponent stashed
+  null
 
 module.exports = -> new EnemyHitSystem()
 

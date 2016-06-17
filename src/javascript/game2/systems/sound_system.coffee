@@ -13,7 +13,10 @@ class SoundSystem extends BaseSystem
       if sound.loop
         sound.playPosition = 0
       else
-        r.entity.deleteComponent(sound)
+        if sound.selfDestruct
+          r.entity.destroy()
+        else
+          r.entity.deleteComponent(sound)
     else
       sound.playPosition = newPlayPosition
 
