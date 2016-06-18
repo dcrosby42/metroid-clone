@@ -13,6 +13,7 @@ exports.samus = ->
     buildComp Name, name: 'Samus'
     tag('samus')
     tag('viewport_target')
+    tag('vulnerable')
     buildComp Animation, spriteName: 'samus', state: 'stand-right', layer: 'creatures'
     buildComp T.Controller, inputName: 'player1'
 
@@ -32,9 +33,6 @@ exports.samus = ->
 
     buildComp T.Weapons, state: 'beam'
     buildComp T.ShortBeam, state: 'ready', damage: 5, cooldown: 0 #FIXME how is cooldown actually getting set?
-    # TODO Common.Vulnerable
-    # TODO Common.Health.merge
-    #   hp: 30
     tag('map_collider')
     buildComp T.HitBox, {
       x: 50
@@ -46,7 +44,6 @@ exports.samus = ->
     }
     buildComp T.HitBoxVisual, color: 0x0099ff
   ]
-# console.log exports.samus()
 
 exports.hud = ->
   [
@@ -182,16 +179,7 @@ exports.deathTimer = (time) ->
     }
   ]
 
-# exports.healthDrop = ({position}) ->
-#   [
-#     buildComp T.
-#
-#   ]
-#       comps = Items.factory.createPickup
-#         pickup:
-#           itemType: 'health_drop'
-#         position:
-#           x: box.centerX
-#           y: box.centerY
-#
-#       @newEntity comps
+
+exports.damagedComponent = (obj={}) ->
+  buildComp T.Damaged, obj
+

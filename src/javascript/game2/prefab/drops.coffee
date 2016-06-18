@@ -111,11 +111,10 @@ Drops.build = ({pickup,position}) ->
 
 module.exports = Drops
 
-x = Drops.build(
-  pickup:
-    itemType: 'health_drop'
-  position:
-    x: 50
-    y: 70
-)
-console.log x
+# x = Drops.build(
+#   pickup:
+#     itemType: 'health_drop'
+#   position:
+#     x: 50
+#     y: 70
+# )

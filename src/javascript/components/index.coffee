@@ -167,7 +167,7 @@ exports.Rng = class Rng
 exports.Damaged = class Damaged
   Types.registerClass @
   constructor: (@state,@damage,@impulseX,@impulseY,@eid,@cid) -> @type = @constructor.type
-  @default: -> new @('new',1,0.0,0.0)
+  @default: -> new @(null,0.0,0.0,0.0)
   clone: -> new @constructor(@state,@damage,@impulseX,@impulseY,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state and @damage == o.damage and @impulseX == o.impulseX and @impulseY == o.impulseY
 
@@ -240,6 +240,13 @@ exports.Pickup = class Pickup
   @default: -> new @(null,null,null)
   clone: -> new @constructor(@itemType,@itemId,@data,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @itemType == o.itemType and @itemId == o.itemId and @data == o.data
+
+exports.Death = class Death
+  Types.registerClass @
+  constructor: (@state,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(null)
+  clone: -> new @constructor(@state,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state
 
 exports.Types = Types
 

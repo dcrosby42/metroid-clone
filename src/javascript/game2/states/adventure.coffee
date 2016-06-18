@@ -44,9 +44,9 @@ ecsMachine = new EcsMachine([
     # SamusSystems.missile_launcher_system
  
     Systems.samus_pickup_system()
-    # Systems.samus_hit_system
-    # Systems.samus_damage_system
-    # Systems.samus_death_system
+    Systems.samus_hit_system()
+    Systems.samus_damage_system()
+    Systems.samus_death_system()
     #
     Systems.hud_system()
     Systems.zoomer_crawl_system() # EnemiesSystems.zoomer_crawl_system
