@@ -45,18 +45,8 @@ class BaseSystem
   publishGlobalEvent: (event,data=null) -> @eventBucket.addGlobalEvent(event,data)
   
   handleEvents: (eid,handlerMap) ->
-    # if eid == 2 # XXX
-      # console.log "basesystem handleevents eid==2", @getEvents(eid)
-      # console.log "basesystem handleevents eid==2", handlerMap['run']
-      
     @getEvents(eid).forEach (e) ->
       handlerMap[e.get('name')]?(e.data)
-      # fn = handlerMap[e.get('name')]
-      # console.log e
-      # if fn?
-      #   console.log "invoking",fn
-        # fn(e.data)
-
   
 
 module.exports = BaseSystem

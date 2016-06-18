@@ -64,6 +64,7 @@ class SuitControlSystem extends BaseSystem
           # console.log "SuitControlSystem publish",r.eid,name,data
           @publishEvent r.eid, name,data
 
+# TODO: move this somewhere else? it's duplicated in morph_ball_control_system
 handleEventsByState = (events,oracle,stateMap,callback) ->
   events.forEach (e) ->
     # console.log "event:",e.toJS()

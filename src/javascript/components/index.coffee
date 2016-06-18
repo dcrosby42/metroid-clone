@@ -28,7 +28,14 @@ exports.Gravity = class Gravity
 exports.MainTitle = class MainTitle
   Types.registerClass @
   constructor: (@state,@eid,@cid) -> @type = @constructor.type
-  @default: -> new exports.MainTitle('begin')
+  @default: -> new @('begin')
+  clone: -> new @constructor(@state,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state
+
+exports.PowerupCelebration = class PowerupCelebration
+  Types.registerClass @
+  constructor: (@state,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(null)
   clone: -> new @constructor(@state,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state
 
@@ -121,6 +128,13 @@ exports.Suit = class Suit
   @default: -> new @('POSE','DIRECTION','AIM',0.0,0.0,0.0)
   clone: -> new @constructor(@pose,@direction,@aim,@runSpeed,@jumpSpeed,@floatSpeed,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @pose == o.pose and @direction == o.direction and @aim == o.aim and @runSpeed == o.runSpeed and @jumpSpeed == o.jumpSpeed and @floatSpeed == o.floatSpeed
+
+exports.MorphBall = class MorphBall
+  Types.registerClass @
+  constructor: (@direction,@rollSpeed,@floatSpeed,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(null,0,0)
+  clone: -> new @constructor(@direction,@rollSpeed,@floatSpeed,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @direction == o.direction and @rollSpeed == o.rollSpeed and @floatSpeed == o.floatSpeed
 
 exports.Health = class Health
   Types.registerClass @
@@ -248,6 +262,13 @@ exports.Death = class Death
   clone: -> new @constructor(@state,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state
 
+exports.MaruMari = class MaruMari
+  Types.registerClass @
+  constructor: (@state,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(null)
+  clone: -> new @constructor(@state,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state
+
 exports.DoorGel = class DoorGel
   Types.registerClass @
   constructor: (@state,@roomId,@eid,@cid) -> @type = @constructor.type
@@ -298,4 +319,4 @@ ComponentTester = require './component_tester'
 ComponentTester.run(exports, types: Types, excused: [ 'Types', 'buildCompForType', 'emptyCompForType' ])
 
 
-Types.printTypeNames()
+# Types.printTypeNames()

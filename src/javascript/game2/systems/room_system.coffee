@@ -64,16 +64,19 @@ class RoomSystem extends StateMachineSystem
     if roomDef.items?
       for itemDef in roomDef.items
          # TODO searcher for collected items
-        collectedItems = {itemIds: []} # XXX
+        collectedItems = {itemIds: ["item-1"]} # XXX
         {col,row,type,id} = itemDef
         if @itemStillInWorld(id,collectedItems)
           x = roomPos.x + (col * MapConfig.tileWidth) + hoff
           y = roomPos.y + (row * MapConfig.tileHeight) + voff
-          #TODO create new item entity
-          # comps = Items.factory.createPickup
-          #   pickup: { itemType: type, itemId: id }
-          #   position: {x: x, y: y}
-          # @newEntity comps
+          @estore.createEntity Prefab.drop(
+            pickup:
+              itemType: type
+              itemId: id
+            position:
+              x: x
+              y: y
+          )
 
 
     # Spawn doors:
@@ -81,16 +84,9 @@ class RoomSystem extends StateMachineSystem
       for [style,col,row] in roomDef.fixtures['doors']
         x = roomPos.x + (col * MapConfig.tileWidth)
         y = roomPos.y + (row * MapConfig.tileHeight)
-        #TODO create new door entities
-        # doorEnclosure = Doors.factory.createComponents('doorEnclosure', x:x,y:y, style:style, roomId: roomId)
         compLists = Prefab.doorEntities x:x, y:y, style:style, roomId:roomId
         for comps in compLists
-          console.log "room system door entity comps", comps
           @estore.createEntity comps
-        # doorGel = Doors.factory.createComponents('doorGel', x:x, y:y, style:style, roomId: roomId)
-        # @newEntity doorEnclosure
-        # @newEntity doorGel
-
       
   teardownRoomAction: ->
     roomComp = @entity.get(T.Room)
@@ -127,10 +123,11 @@ class RoomSystem extends StateMachineSystem
     @entity.destroy()
 
   itemStillInWorld: (itemId,collectedItems) ->
-    return true #XXX
-   #TODO
-    # collected = @getProp('collected_items','itemIds')
-    # return !collected.has(itemId)
+    # console.log "RoomSystem item still in world?",itemId
+    for id in collectedItems.itemIds
+      if itemId == id
+        return true
+    return false
 
 
 module.exports = -> new RoomSystem()

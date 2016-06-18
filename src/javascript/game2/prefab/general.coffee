@@ -8,6 +8,25 @@ Helpers = require './helpers'
 
 exports.tag = Helpers.tag
 
+exports.suitComponent = (obj={}) ->
+  props =
+    pose: 'standing'
+    direction: 'right',
+    aim: 'straight',
+    runSpeed: 88/1000 # 88 px/sec
+    jumpSpeed: 0.31
+    floatSpeed: 60/1000
+  Object.assign props,obj
+  return buildComp T.Suit, props
+
+exports.morphBallComponent = (obj={}) ->
+  props =
+    direction: 'right',
+    rollSpeed: 88/1000 # 88 px/sec
+    floatSpeed: 60/1000
+  Object.assign props,obj
+  return buildComp T.MorphBall, props
+
 exports.samus = ->
   [
     buildComp Name, name: 'Samus'
@@ -19,14 +38,7 @@ exports.samus = ->
 
     buildComp Position
     buildComp Velocity
-    buildComp T.Suit, {
-      pose: 'standing'
-      direction: 'right',
-      aim: 'straight',
-      runSpeed: 88/1000 # 88 px/sec
-      jumpSpeed: 0.31
-      floatSpeed: 60/1000
-    }
+    exports.suitComponent()
     buildComp T.Motion
     buildComp T.Health, hp: 30
     buildComp T.Gravity, max: 0.15, accel: 0.15/16

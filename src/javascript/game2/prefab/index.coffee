@@ -19,6 +19,7 @@ exports.enemy = (type,opts={}) ->
   return builder(opts)
 
 exports.doorEntities = Doors.doorEntities
+
 exports.drop = Drops.build
 
   

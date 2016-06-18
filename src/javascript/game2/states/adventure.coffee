@@ -33,10 +33,9 @@ ecsMachine = new EcsMachine([
     Systems.suit_velocity_system()
     Systems.suit_sound_system()
     
-    # SamusSystems.morph_ball_control
-    # SamusSystems.morph_ball_velocity
-   
-    # SamusSystems.samus_morph
+    Systems.morph_ball_control_system()
+    Systems.morph_ball_velocity_system()
+    Systems.maru_mari_system() # SamusSystems.samus_morph
   
     # # dev only: EnemiesSystems.zoomer_controller_system
     Systems.weapons_system() # SamusSystems.weapons_system
@@ -47,7 +46,7 @@ ecsMachine = new EcsMachine([
     Systems.samus_hit_system()
     Systems.samus_damage_system()
     Systems.samus_death_system()
-    #
+    
     Systems.hud_system()
     Systems.zoomer_crawl_system() # EnemiesSystems.zoomer_crawl_system
     Systems.gravity_system()
@@ -62,8 +61,8 @@ ecsMachine = new EcsMachine([
     Systems.enemy_hit_system()
     #
     Systems.skree_action_system() # EnemiesSystems.skree_action
-    Systems.suit_animation_system() # TODO SamusSystems.suit_animation
-    # SamusSystems.morph_ball_animation
+    Systems.suit_animation_system() # SamusSystems.suit_animation
+    Systems.morph_ball_animation_system()
     Systems.viewport_shuttle_system()
     Systems.viewport_system()
     Systems.viewport_room_system()

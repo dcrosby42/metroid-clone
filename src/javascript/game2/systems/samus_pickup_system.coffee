@@ -44,9 +44,9 @@ class SamusPickupSystem extends BaseSystem
         #     )
         #   @_celebrate()
         #
-        # when 'maru_mari'
-        #   samusR.entity.addComponent C.buildCompForType(T.MaruMari)
-        #   @_celebrate()
+        when 'maru_mari'
+          samusR.entity.addComponent C.buildCompForType(T.MaruMari) # state: 'inactive'
+          @_celebrate()
 
         else
           console.log "!! SamusPickupSystem: No reaction to Pickup",pickup
@@ -61,8 +61,8 @@ class SamusPickupSystem extends BaseSystem
         timeLimit: 245
     )
 
-  # _celebrate: ->
-  #     @estore.createEntity [C.buildCompForType(T.PowerupCelebration)]
-  #     @publishGlobalEvent 'PowerupCelebrationStarted'
+  _celebrate: ->
+      @estore.createEntity [C.buildCompForType(T.PowerupCelebration)]
+      @publishGlobalEvent 'PowerupCelebrationStarted'
 
 module.exports = -> new SamusPickupSystem()

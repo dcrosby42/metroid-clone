@@ -4,7 +4,7 @@ Immutable = require 'immutable'
 
 Title = require './title'
 Adventure = require './adventure'
-# Powerup = require './powerup'
+Powerup = require './powerup'
 
 Systems = require '../systems'
 
@@ -13,7 +13,7 @@ Systems = require '../systems'
 Modes =
   Title: Title
   Adventure: Adventure
-  # Powerup: Powerup
+  Powerup: Powerup
 
 class Model
   # modeName: valid key in Modes (see above)
@@ -33,7 +33,6 @@ initialStateForMode = (modeName) ->
 exports.initialState = () ->
   # initialStateForMode('Title')
   initialStateForMode('Adventure')
-  # pretendContinue(initialStateForMode('adventure'))
 
 # Action -> Model -> (Model, Effects Action)
 exports.update = (state,input) ->
@@ -55,11 +54,11 @@ exports.update = (state,input) ->
 
       when 'PowerupCelebrationStarted'
         console.log "Powerup!"
-        # state.modeName = 'Powerup'
+        state.modeName = 'Powerup'
 
       when 'PowerupCelebrationDone'
         console.log "Done Powerup!"
-        # state.modeName = 'Adventure'
+        state.modeName = 'Adventure'
 
       when 'Killed'
         console.log "Killed!"

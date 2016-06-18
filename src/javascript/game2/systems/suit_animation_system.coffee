@@ -51,25 +51,16 @@ class SuitAnimationSystem extends BaseSystem
     #   1) flickering stunt just toggles visible on each tick. not great.
     #   2) comp search for 'Damaged' component
     # ...but it works so it isn't getting attention
-    #
-    # if damaged = @getEntityComponent(@eid(), 'damaged')
+    # THREE, three bad things: duped in MorphBallAnimationSystem
     if damaged = r.entity.get(T.Damaged)
-      # animation = animation.update 'visible', (v) -> !v
       animation.visible = !animation.visible
-      # animationChanged = true
     else
       animation.visible = true
-      # animationChanged = true
 
     if newState != oldState
-      # animation = animation.set('state',newState).set('time',0)
       animation.state = newState
       animation.time = 0
-      # animationChanged = true
 
-
-    # if animationChanged
-    #   @updateComp animation
 
 module.exports = -> new SuitAnimationSystem()
 

@@ -47,9 +47,10 @@ class Motions
        @movingLeft == o.movingLeft and
        @xStill == o.xStill
 
-  oracle: -> new Oracle(@)
+  oracle: -> new SuitOracle(@)
+  morphBallOracle: -> new MorphBallOracle(@)
 
-class Oracle
+class SuitOracle
   constructor: (@motions) ->
 
   any:            -> true
@@ -63,6 +64,21 @@ class Oracle
   movingSideways: -> @motions.movingSideways
   airborn:        -> @rising() or @falling()
   spinJumping:    -> false # TODO: boots / suit state for spin jumping?
+
+class MorphBallOracle
+  constructor: (@motions) ->
+    # @states = motionComp.get('states')
+
+  any:            -> true
+  grounded:       -> @motions.touchingBottom
+  underSomething: -> @motions.adjacentTop
+  inTheClear:     -> @grounded() and !@underSomething()
+  # parked:         -> @grounded() and @motions.xStill
+  # rolling:        -> @grounded() and @movingSideways()
+  # rising:         -> @motions.rising
+  # falling:        -> @motions.falling
+  # movingSideways: -> @motions.movingSideways
+  # airborn:        -> @rising() or @falling()
 
 
 ComponentTester = require './component_tester'
