@@ -29,7 +29,6 @@ class SamusDamageSystem extends StateMachineSystem
       done: {}
 
   newState: ->
-    console.log "SDS new->hit"
     @publishEvent @eid, 'hit'
 
   damageAction: ->

@@ -55,7 +55,7 @@ ecsMachine = new EcsMachine([
     Systems.map_ghost_system()
     Systems.bullet_enemy_system()
     # Systems.missile_enemy_system
-    # DoorSystems.bullet_door_system
+    Systems.bullet_door_system()
     # DoorSystems.missile_door_system
     Systems.bullet_system()
     # Systems.missile_system
@@ -68,7 +68,7 @@ ecsMachine = new EcsMachine([
     Systems.viewport_system()
     Systems.viewport_room_system()
     Systems.room_system()
-    # DoorSystems.door_gel_system
+    Systems.door_gel_system()
 ])
 
 

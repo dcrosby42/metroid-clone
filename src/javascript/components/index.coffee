@@ -248,6 +248,20 @@ exports.Death = class Death
   clone: -> new @constructor(@state,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state
 
+exports.DoorGel = class DoorGel
+  Types.registerClass @
+  constructor: (@state,@roomId,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(null,null)
+  clone: -> new @constructor(@state,@roomId,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state and @roomId == o.roomId
+
+exports.DoorFrame = class DoorFrame
+  Types.registerClass @
+  constructor: (@roomId,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(null)
+  clone: -> new @constructor(@roomId,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @roomId == o.roomId
+
 exports.Types = Types
 
 # exports.buildComp = (clazz,obj=null) ->
@@ -283,3 +297,5 @@ exports.buildCompForType = (typeid,obj=null) ->
 ComponentTester = require './component_tester'
 ComponentTester.run(exports, types: Types, excused: [ 'Types', 'buildCompForType', 'emptyCompForType' ])
 
+
+Types.printTypeNames()

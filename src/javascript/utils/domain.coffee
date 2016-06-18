@@ -31,6 +31,11 @@ class Domain
   exists: (typeId) ->
     @typeIdsToClasses[typeId]?
 
+  printTypeNames: ->
+    console.log "Types in Domain #{@name}:"
+    for typeId,name of @typeIdsToNames
+      console.log "  #{typeId}: #{name}"
+
 
 
 module.exports = Domain

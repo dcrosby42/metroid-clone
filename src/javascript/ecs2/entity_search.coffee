@@ -131,6 +131,13 @@ doSearch = (estore,query,handler) ->
       if filter.satisfiedBy(comp)
         # TODO: dedupe this?
         result.entity = estore.getEntity(comp.eid) # THIS LINE IS NOT DUPED IN recurseSearch
+        if !result.entity?
+          console.log "!! EntitySearch.doSearch(): no entity for comp eid='#{comp.eid}' ?? comp:", comp
+          console.log "!! -- query:",query
+          console.log "!! -- estore:",estore
+          console.log "!! -- handler:",handler
+          throw new Error("EntitySearch.doSearch(): failed to get entity for comp? See console. comp.cid=#{comp.cid} comp.eid=#{comp.eid} comp.type=#{comp.type} comp=#{comp.toString}")
+
         result.eid = result.entity.eid # convenience for Systems
         result.comps[slot] = comp
         nextSlot = slot+1

@@ -83,6 +83,10 @@ class RoomSystem extends StateMachineSystem
         y = roomPos.y + (row * MapConfig.tileHeight)
         #TODO create new door entities
         # doorEnclosure = Doors.factory.createComponents('doorEnclosure', x:x,y:y, style:style, roomId: roomId)
+        compLists = Prefab.doorEntities x:x, y:y, style:style, roomId:roomId
+        for comps in compLists
+          console.log "room system door entity comps", comps
+          @estore.createEntity comps
         # doorGel = Doors.factory.createComponents('doorGel', x:x, y:y, style:style, roomId: roomId)
         # @newEntity doorEnclosure
         # @newEntity doorGel
@@ -111,14 +115,16 @@ class RoomSystem extends StateMachineSystem
     #   if pos.x >= roomLeft and pos.x < roomRight and pos.y >= roomTop and pos.y < roomBottom
     #     @destroyEntity pos.get('eid')
     
-    # TODO Remove doors
-    # @searchEntities([{match:{type:'door_gel',roomId:roomId}, as: 'door_gel'}]).forEach (comps) =>
-    #   @destroyEntity comps.getIn(['door_gel','eid'])
-    # @searchEntities([{match:{type:'door_frame',roomId:roomId}, as: 'door_frame'}]).forEach (comps) =>
-    #   @destroyEntity comps.getIn(['door_frame','eid'])
+    # Remove doors
+    gelSearcher = EntitySearch.prepare([{type:T.DoorGel,roomId:roomId}]) # TODO figure out how to parameterize searchers
+    gelSearcher.run @estore, (r) ->
+      r.entity.destroy()
+    frameSearcher = EntitySearch.prepare([{type:T.DoorFrame,roomId:roomId}])
+    frameSearcher.run @estore, (r) ->
+      r.entity.destroy()
 
-    # TODO Remove room
-    # @destroyEntity()
+    # Remove room
+    @entity.destroy()
 
   itemStillInWorld: (itemId,collectedItems) ->
     return true #XXX
