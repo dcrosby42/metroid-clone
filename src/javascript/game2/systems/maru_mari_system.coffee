@@ -81,7 +81,7 @@ class MaruMariSystem extends StateMachineSystem
       resound: true
 
   _clearSounds: ->
-    @entity.each T.Sound, (s) ->
+    @entity.each T.Sound, (s) =>
       @entity.deleteComponent s
 
 module.exports = -> new MaruMariSystem()

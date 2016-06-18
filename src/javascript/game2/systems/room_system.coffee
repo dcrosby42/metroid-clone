@@ -14,12 +14,12 @@ MapConfig = require '../../game/map/config'
 # pickupFilter = EntityStore.expandSearch(['pickup','position'])
 
 enemySearcher = EntitySearch.prepare([T.Enemy,T.Position])
-# pickupSearcher = EntitySearch.prepare([T.Pickup,T.Position])
+pickupSearcher = EntitySearch.prepare([T.Pickup,T.Position])
 
 class RoomSystem extends StateMachineSystem
   @Subscribe: [
     [T.Room,T.Position]
-    # [T.CollectedItems]
+    [T.CollectedItems]
   ]
   @StateMachine:
     componentProperty: [0,'state']
@@ -43,6 +43,7 @@ class RoomSystem extends StateMachineSystem
     roomComp = @entity.get(T.Room)
     roomId = roomComp.roomId
     roomPos = @entity.get(T.Position)
+    [collectedItems] = @rList[1].comps
 
     worldMap = @input.getIn(['static','worldMap'])
     mapRoom = worldMap.getRoomById(roomId)
@@ -64,7 +65,7 @@ class RoomSystem extends StateMachineSystem
     if roomDef.items?
       for itemDef in roomDef.items
          # TODO searcher for collected items
-        collectedItems = {itemIds: ["item-1"]} # XXX
+        # collectedItems = {itemIds: ["item-1"]} # XXX
         {col,row,type,id} = itemDef
         if @itemStillInWorld(id,collectedItems)
           x = roomPos.x + (col * MapConfig.tileWidth) + hoff
@@ -106,6 +107,10 @@ class RoomSystem extends StateMachineSystem
         r.entity.destroy()
     
     # TODO Despawn powerups
+    pickupSearcher.run @estore, (r) ->
+      [pickup,pos] = r.comps
+      if pos.x >= roomLeft and pos.x < roomRight and pos.y >= roomTop and pos.y < roomBottom
+        r.entity.destroy()
     # @searchEntities(pickupFilter).forEach (comps) =>
     #   pos = comps.get('position')
     #   if pos.x >= roomLeft and pos.x < roomRight and pos.y >= roomTop and pos.y < roomBottom
@@ -126,8 +131,8 @@ class RoomSystem extends StateMachineSystem
     # console.log "RoomSystem item still in world?",itemId
     for id in collectedItems.itemIds
       if itemId == id
-        return true
-    return false
+        return false
+    return true
 
 
 module.exports = -> new RoomSystem()

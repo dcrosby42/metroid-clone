@@ -13,11 +13,13 @@ class SamusPickupSystem extends BaseSystem
   @Subscribe: [
       [ {type:T.Tag, name:'samus'}, T.HitBox ],
       [ T.Pickup, T.HitBox ]
+      [ T.CollectedItems ]
     ]
 
-  process: (samusR,pickupR) ->
+  process: (samusR,pickupR,collectedItemsR) ->
     [samus,samusHitBox] = samusR.comps
     [pickup,pickupHitBox] = pickupR.comps
+    [collectedItems] = collectedItemsR.comps
     
     samusBox = new AnchoredBox(samusHitBox)
     pickupBox = new AnchoredBox(pickupHitBox)
@@ -51,6 +53,8 @@ class SamusPickupSystem extends BaseSystem
         else
           console.log "!! SamusPickupSystem: No reaction to Pickup",pickup
 
+      if pickup.itemId?
+        collectedItems.itemIds.push(pickup.itemId)
       pickupR.entity.destroy()
 
   _makePickupSound: ->
