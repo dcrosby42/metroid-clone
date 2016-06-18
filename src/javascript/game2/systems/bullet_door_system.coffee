@@ -7,7 +7,7 @@ AnchoredBox = require '../../utils/anchored_box'
 class BulletDoorSystem extends BaseSystem
   @Subscribe: [
       [ T.Bullet, T.HitBox ]
-      [ T.DoorGel, T.HitBox ]
+      [ T.DoorGel, T.HitBox, {type:T.Tag,name:'map_fixture'}]
     ]
 
   process: (bulletR, doorR) ->
