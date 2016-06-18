@@ -32,20 +32,20 @@ class SamusPickupSystem extends BaseSystem
           healthComp.hp += pickup.data
           @_makePickupSound()
 
-        # when 'missile_container'
-        #   mcount = pickup.data
-        #   console.log "Missiles +",mcount
-        #   missiles = samusR.entity.get('missile_launcher')
-        #   if missiles
-        #     missiles.max += mcount
-        #     missile.count += mcount
-        #   else
-        #     samusR.entity.addComponent C.buildCompForType(T.MissileLauncher,
-        #       max: mcount
-        #       count: mcount
-        #     )
-        #   @_celebrate()
-        #
+        when 'missile_container'
+          mcount = pickup.data
+          console.log "Missiles +",mcount
+          missiles = samusR.entity.get(T.MissileLauncher)
+          if missiles
+            missiles.max += mcount
+            missiles.count += mcount
+          else
+            samusR.entity.addComponent C.buildCompForType(T.MissileLauncher,
+              max: mcount
+              count: mcount
+            )
+          @_celebrate()
+
         when 'maru_mari'
           samusR.entity.addComponent C.buildCompForType(T.MaruMari) # state: 'inactive'
           @_celebrate()

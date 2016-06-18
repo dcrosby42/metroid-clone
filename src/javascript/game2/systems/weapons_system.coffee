@@ -47,13 +47,14 @@ class WeaponsSystem extends StateMachineSystem
     # console.log "WeaponsSystem: fireBeamReleased"
     @publishEvent @eid, 'fireBeamReleased'
 
+
   hasMissilesCondition: ->
-    missiles = @entity.get('missile_launcher')
-    return missiles? and missiles.count > 0
+    missileLauncher = @entity.get(T.MissileLauncher)
+    return missileLauncher? and missileLauncher.count > 0
 
   switchToMissilesAction: ->
     @publishEvent @eid, 'fireBeamReleased'
-    # console.log "WeaponsSystem: switchToMissiles"
+    console.log "WeaponsSystem: switchToMissiles"
 
   # missilesState: ->
     # missiles = @getEntityComponent(@eid(), 'missile_launcher')
@@ -64,7 +65,7 @@ class WeaponsSystem extends StateMachineSystem
     #   @publishEvent 'cycleWeapon'
     #
   fireMissileAction: ->
-    # console.log "WeaponsSystem: fireMissile"
+    console.log "WeaponsSystem: fireMissile"
     @publishEvent @eid, 'fireMissile'
 
   fireMissileReleasedAction: ->

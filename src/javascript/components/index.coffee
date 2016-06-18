@@ -199,12 +199,26 @@ exports.Bullet = class Bullet
   clone: -> new @constructor(@damage,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @damage == o.damage
 
+exports.Missile = class Missile
+  Types.registerClass @
+  constructor: (@damage,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(0)
+  clone: -> new @constructor(@damage,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @damage == o.damage
+
 exports.ShortBeam = class ShortBeam
   Types.registerClass @
   constructor: (@state,@damage,@cooldown,@eid,@cid) -> @type = @constructor.type
   @default: -> new @('ready',5,0)
   clone: -> new @constructor(@state,@damage,@cooldown,@eid,@cid)
   equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @state == o.state and @damage == o.damage and @cooldown == o.cooldown
+
+exports.MissileLauncher = class MissileLauncher
+  Types.registerClass @
+  constructor: (@max,@count,@eid,@cid) -> @type = @constructor.type
+  @default: -> new @(0,0)
+  clone: -> new @constructor(@max,@count,@eid,@cid)
+  equals: (o) -> o? and @eid == o.eid and @cid == o.cid and @max == o.max and @count == o.count
 
 exports.Weapons = class Weapons
   Types.registerClass @

@@ -3,11 +3,14 @@ C = require '../../components'
 T = C.Types
 Prefab = require '../prefab'
 
-MuzzleVelocity = 200/1000
-BulletLifetime = 50 / (200/1000)
+# Common = require '../../components'
+# Immutable = require 'immutable'
+# StateMachineSystem = require '../../../../ecs/state_machine_system'
 
-class ShortBeamSystem extends StateMachineSystem
-  @Subscribe: [T.ShortBeam, T.Suit, T.Position]
+MuzzleVelocity = 200/1000
+
+class MissileLauncherSystem extends StateMachineSystem
+  @Subscribe: [T.MissileLauncher, T.Suit, T.Position]
 
   @StateMachine:
     componentProperty: [0,'state']
@@ -15,100 +18,100 @@ class ShortBeamSystem extends StateMachineSystem
     states:
       ready:
         events:
-          fireBeam:
+          fireMissile:
             action:    'shoot'
             nextState: 'coolDown'
       coolDown:
         events:
-          fireBeamReleased:
+          fireMissileReleased:
             action:    'reset'
             nextState: 'ready'
-          cooldownComplete:
+          missileCooldownComplete:
             nextState: 'repeating'
       repeating:
         events:
           keepFiring:
             action: 'repeat'
             nextState: 'coolDown'
-          fireBeamReleased:
+          fireMissileReleased:
             action: 'reset'
             nextState: 'ready'
 
+  # readyState: ->
+  #   console.log "missilelaunchersystem readyState"
   shootAction: ->
-    @_fireBullet()
+    @_fireMissile()
     @_startCooldown(500)
 
   repeatingState: ->
     @publishEvent @eid, 'keepFiring'
 
   repeatAction: ->
-    @_fireBullet()
+    @_fireMissile()
     @_startCooldown(150)
 
   resetAction: ->
     # Clear cooldown timer(s):
-    @entity.each T.timer, (timer) ->
-      if timer.eventName == 'shortBeamCooldown'
+    @entity.each T.Timer, (timer) ->
+      if timer.eventName == 'missileCooldown'
         @entity.deleteComponent timer
 
-  # ?? 
-  # repeatState: ->
-  #   @publishEvent @eid, 'done'
-  
+  _fireMissile: ->
+    [missileLauncher, suit, position] = @comps
 
-  _fireBullet: ->
-    suit = @entity.get(T.Suit)
-    shortBeam = @entity.get(T.ShortBeam)
-    position = @entity.get(T.Position)
-    @estore.createEntity(newBullet(suit,shortBeam, position))
+
+    if missileLauncher.count <= 0
+      return
+    missileLauncher.count -= 1
     
+    @estore.createEntity newMissile(missileLauncher,suit,position)
 
   _startCooldown: (ms) ->
-    timer = Prefab.timerComponent
+    @entity.addComponent Prefab.timerComponent
       time: ms
-      eventName: 'cooldownComplete'
-      name: 'shortBeamCooldown'
-    @entity.addComponent timer
+      eventName: 'missileCooldownComplete'
+      name: 'missileCooldown'
 
 
-newBullet = (suit, weapon, position) ->
-  shootUp = suit.aim == 'up'
-  direction = suit.direction
+newMissile = (missileLauncher,suit,position) ->
   offsetX = offsetY = vx = vy = 0
 
+  shootUp = suit.aim == 'up'
+
+  missileDir = suit.direction
   if shootUp
     offsetX = 2.5
-    offsetY = -35
+    offsetY = -37
     vx = 0
     vy = -MuzzleVelocity
-    if direction == 'left'
-      offsetX = -2
+    if suit.direction == 'left'
+      offsetX = -3
+    missileDir = "up"
   else
-    offsetX = 10
-    offsetY = -22
+    offsetX = 13
+    offsetY = -20
     vx = MuzzleVelocity
     vy = 0
-    if direction == 'left'
+    if suit.direction == 'left'
       offsetX = -offsetX
       vx = -vx
 
   fireX = position.x + offsetX
   fireY = position.y + offsetY
 
-  return Prefab.bullet(
-    bullet:
-      damage: weapon.damage
+  return Prefab.missile(
+    direction: missileDir
     position:
       x: fireX
       y: fireY
     velocity:
       x: vx
       y: vy
-    lifetime: BulletLifetime
+
   )
-    
-    
 
 
-module.exports = -> new ShortBeamSystem()
+
+
+module.exports = -> new MissileLauncherSystem()
 

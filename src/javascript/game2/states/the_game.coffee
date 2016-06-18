@@ -8,7 +8,6 @@ Powerup = require './powerup'
 
 Systems = require '../systems'
 
-# Items =  require '../entity/items'
 
 Modes =
   Title: Title
@@ -31,8 +30,8 @@ initialStateForMode = (modeName) ->
 
 
 exports.initialState = () ->
-  # initialStateForMode('Title')
-  initialStateForMode('Adventure')
+  initialStateForMode('Title')
+  # initialStateForMode('Adventure')
 
 # Action -> Model -> (Model, Effects Action)
 exports.update = (state,input) ->
@@ -49,8 +48,7 @@ exports.update = (state,input) ->
         state = initialStateForMode('Adventure')
 
       when 'ContinueGame'
-        console.log "Continue new game! TODO"
-        # pretendContinue(initialStateForMode('Adventure'))
+        state = pretendContinue(initialStateForMode('Adventure'))
 
       when 'PowerupCelebrationStarted'
         console.log "Powerup!"
@@ -84,25 +82,34 @@ exports.spriteConfigs = ->
   cfgs
 
 
+#  TODO move this kinda thing somewhere else
 
-# pretendContinue = (state) ->
-#   estore = new EntityStore(state.get('gameState'))
-#
-#   filter = EntityStore.expandSearch(['samus'])
-#   samEid = estore.search(filter).first().getIn(['samus','eid'])
-#
-#   estore.createComponent(samEid, Items.components.MaruMari)
-#
-#   estore.createComponent(samEid,
-#     # Items.components.MissileLauncher.merge(max:5,count:4))
-#     Items.components.MissileLauncher.merge(max:50,count:50))
-#
-#   filter2 = EntityStore.expandSearch(['collected_items'])
-#   collectedItems = estore.search(filter2).first().get('collected_items')
-#   collectedItems = collectedItems.update 'itemIds', (ids) -> ids.add('item-1').add('item-2')
-#   estore.updateComponent(collectedItems)
-#
-#   state.set('gameState',estore.takeSnapshot())
+EntitySearch = require '../../ecs2/entity_search'
+C = require '../../components'
+T = C.Types
+Prefab = require '../prefab'
+
+pretendContinue = (state) ->
+  estore = state.gameState
+
+  samus = null
+  EntitySearch.prepare([{type:T.Tag,name:'samus'}]).run estore, (r) ->
+    samus = r.entity
+
+  samus.addComponent C.buildCompForType(T.MaruMari)
+
+  samus.addComponent C.buildCompForType(T.MissileLauncher,
+    max: 50
+    count: 50
+  )
+
+  EntitySearch.prepare([T.CollectedItems]).run estore, (r) ->
+    cicomp = r.comps[0]
+    cicomp.itemIds.push('item-1')
+    cicomp.itemIds.push('item-2')
+    cicomp.itemIds.push('item-3')
         
+  state.gameState = estore
+  return state
 
 

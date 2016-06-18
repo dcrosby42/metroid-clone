@@ -182,6 +182,52 @@ exports.bullet = ({bullet,position,velocity,lifetime}) ->
   ]
   return comps.concat(exports.deathTimer(lifetime))
 
+exports.missile = ({position,velocity,direction}) ->
+  animState = 'right' # FIXME
+
+  comps = [
+    name('missile')
+    tag('map_collider')
+    buildComp T.Missile,
+      damage: 20
+    buildComp T.Animation, {
+      layer: 'creatures'
+      spriteName: 'missile'
+      state: direction
+    }
+    buildComp T.Position, position
+    buildComp T.Velocity, velocity
+    buildComp T.HitBox, {
+      width: 4
+      height: 4
+      anchorX: 0.5
+      anchorY: 0.5
+    }
+    buildComp T.HitBoxVisual, color: 0xffffff
+
+    exports.soundComponent {
+      soundId: 'rocket_shot'
+      volume: 0.5
+      playPosition: 0
+      timeLimit: 500
+      resound: true
+    }
+  ]
+  return comps
+
+exports.missileShrapnel = ({animation,position,velocity}) ->
+    [
+      buildComp T.Animation, animation
+      tag('map_ghost')
+      buildComp T.HitBox,
+        width: 7
+        height: 7
+        anchorX: 0.54
+        anchorY: 0.54
+      buildComp T.Position, position
+      buildComp T.Velocity, velocity
+    ].concat(exports.deathTimer(75))
+
 exports.deathTimer = (time) ->
   [
     tag('expire_entity')
@@ -194,4 +240,3 @@ exports.deathTimer = (time) ->
 
 exports.damagedComponent = (obj={}) ->
   buildComp T.Damaged, obj
-

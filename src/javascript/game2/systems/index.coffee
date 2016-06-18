@@ -13,6 +13,8 @@ module.exports =
   map_ghost_system: require './map_ghost_system'
   map_physics_system: require './map_physics_system'
   maru_mari_system: require './maru_mari_system'
+  missile_launcher_system: require './missile_launcher_system'
+  missile_system: require './missile_system'
   morph_ball_animation_system: require './morph_ball_animation_system'
   morph_ball_control_system: require './morph_ball_control_system'
   morph_ball_velocity_system: require './morph_ball_velocity_system'

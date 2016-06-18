@@ -61,7 +61,7 @@ class SuitControlSystem extends BaseSystem
           suit.aim = 'straight'
         else
           # most events go through here:
-          # console.log "SuitControlSystem publish",r.eid,name,data
+          console.log "SuitControlSystem publish",r.eid,name,data
           @publishEvent r.eid, name,data
 
 # TODO: move this somewhere else? it's duplicated in morph_ball_control_system

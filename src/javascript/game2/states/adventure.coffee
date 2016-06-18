@@ -40,7 +40,7 @@ ecsMachine = new EcsMachine([
     # # dev only: EnemiesSystems.zoomer_controller_system
     Systems.weapons_system() # SamusSystems.weapons_system
     Systems.short_beam_system()# SamusSystems.short_beam
-    # SamusSystems.missile_launcher_system
+    Systems.missile_launcher_system() # SamusSystems.missile_launcher_system
  
     Systems.samus_pickup_system()
     Systems.samus_hit_system()
@@ -57,7 +57,7 @@ ecsMachine = new EcsMachine([
     Systems.bullet_door_system()
     # DoorSystems.missile_door_system
     Systems.bullet_system()
-    # Systems.missile_system
+    Systems.missile_system()
     Systems.enemy_hit_system()
     #
     Systems.skree_action_system() # EnemiesSystems.skree_action
@@ -81,11 +81,11 @@ exports.initialState = () ->
   # brinstarEntrance = {x:648,y:191}
   brinstarEntrance = {x:648,y:191+(13*240)}
   shaft1 = {x:2600, y:3247}
-  # nearMorphBall = {x:400,y:175}
+  nearMorphBall = {x:400,y:175+(13*240)}
   # onBridge = {x:1466,y:95}
   # samusStartPos = brinstarEntrance
-  samusStartPos = brinstarEntrance
-  # samusStartPos = nearMorphBall
+  # samusStartPos = brinstarEntrance
+  samusStartPos = nearMorphBall
   # samusStartPos = onBridge
 
   samus = estore.createEntity(Prefab.samus())
